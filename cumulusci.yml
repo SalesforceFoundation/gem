@@ -1,0 +1,5 @@
+project:
+    name: adv
+    package:
+        name: adv
+        namespace: adv

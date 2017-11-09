@@ -1,5 +1,8 @@
 project:
-    name: adv
+    dependencies:
+        - github: https://github.com/SalesforceFoundation/Cumulus
+        - github: https://github.com/SalesforceFoundation/HEDAP
+    name: Advancement
     package:
-        name: adv
+        name: Advancement
         namespace: adv

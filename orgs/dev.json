@@ -1,0 +1,13 @@
+{
+  "edition": "Developer", 
+  "orgName": "Advancement - Dev Workspace", 
+  "hasSampleData": "true",
+  "orgPreferences": {
+    "enabled": [
+      "ChatterEnabled",
+      "DisableParallelApexTesting",
+      "S1DesktopEnabled",
+      "Translation"
+    ]
+  }
+}

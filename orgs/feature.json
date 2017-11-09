@@ -1,0 +1,10 @@
+{
+  "edition": "Developer", 
+  "orgName": "Advancement - Feature Test Org", 
+  "hasSampleData": "true",
+  "orgPreferences": {
+    "enabled": [
+      "DisableParallelApexTesting"
+    ]
+  }
+}

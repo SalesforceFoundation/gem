@@ -1,14 +1,5 @@
 
-global with sharing class TDTM_API {
-
-    // @TODO: what do we do with existing custom TDTM records stored in NPSP's or HEDA's Trigger Handler tables?
-    // --> We need to migrate them to the HEDA Trigger Handler table, and make that table match the default combined config
-    // (excluding custom entries).
-
-    // @TODO: if we are just returning in-memory records, how is this going to affect the setTdtmConfig and
-    // getTdtmConfig API methods in HEDA and NPSP?
-    // --> The setTdtmConfig and getTdtmConfig in BOTH packages have to return the combined configuration, and work with the
-    // records in the Trigger Handler table, not just the in-memory records.
+global with sharing class TdtmAPI {
 
     /**
      * @description To be called by the HEDA TDTM trigger dispatcher. It returns the combined HEDA+NPSP TDTM configuration
@@ -17,8 +8,8 @@ global with sharing class TDTM_API {
      * @return
      */
     global static List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
-        TDTM_DefaultConfig config = new TDTM_DefaultConfig();
-        return config.getDefaultTdtmConfigTokens();
+        TdtmGlue glue = new TdtmGlue();
+        return glue.getDefaultTdtmConfigTokens();
     }
 
     /**
@@ -28,8 +19,8 @@ global with sharing class TDTM_API {
      * @return
      */
     global static List<npsp__Trigger_Handler__c> getDefaultTdtmConfigNpspRecords() {
-        TDTM_DefaultConfig config = new TDTM_DefaultConfig();
-        return config.getDefaultTdtmConfigRecords();
+        TdtmGlue glue = new TdtmGlue();
+        return glue.getDefaultTdtmConfigRecords();
     }
 
     /**

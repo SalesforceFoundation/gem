@@ -1,4 +1,4 @@
-global with sharing class API_HEDA {
+global with sharing class API_HEDA /**extends hed.TDTM_Adapter**/ {
 
     /**
      * @description To be called by the HEDA TDTM trigger dispatcher. It returns the combined HEDA+NPSP TDTM configuration
@@ -6,7 +6,7 @@ global with sharing class API_HEDA {
      *
      * @return List<hed.TDTM_Global_API.TdtmToken> The TDTM configuration as HEDA tokens.
      */
-    global static List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
+    global /** override **/ List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         TdtmGlue glue = new TdtmGlue();
         return glue.getDefaultTdtmConfigTokens();
     }
@@ -15,9 +15,9 @@ global with sharing class API_HEDA {
     /**
      * @description Sets the trigger handlers configuration with the data passed as parameter.
      *
-     * @param tokens
-     */
-    global static void setTdtmConfig(List<hed.TDTM_Global_API.TdtmToken> tokens) {
+     * @param tokens The TDTM configuration as HEDA tokens.
+
+    global override void setTdtmConfig(List<hed.TDTM_Global_API.TdtmToken> tokens) {
         //Deactivate everything in the NPSP Trigger Handler table.
         List<npsp__Trigger_Handler__c> npspRecords = [select npsp__Active__c from npsp__Trigger_Handler__c limit 50000];
         for(npsp__Trigger_Handler__c npspRecord : npspRecords) {
@@ -27,5 +27,5 @@ global with sharing class API_HEDA {
 
         //Delegate to the HEDA setTdtmConfig method
         hed.TDTM_Global_API.setTdtmConfig(tokens);
-    }
+    } */
 }

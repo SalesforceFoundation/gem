@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>40.0</apiVersion>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>43</minorNumber>
+        <namespace>hed</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>3</majorNumber>
+        <minorNumber>111</minorNumber>
+        <namespace>npsp</namespace>
+    </packageVersions>
     <status>Active</status>
 </ApexClass>

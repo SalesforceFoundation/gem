@@ -1,4 +1,3 @@
-
 global with sharing class PostInstallScript {
 
     global void onInstall(InstallContext context) {
@@ -14,5 +13,10 @@ global with sharing class PostInstallScript {
         // records, that we don't want to lose.
         TdtmGlue glue = new TdtmGlue();
         glue.combineTdtmConfig();
+
+        //Activate usage of the Advancement TDTM configuration
+        Adv_Settings__c settings = [select use_adv__c from Adv_Settings__c limit 1];
+        settings.use_adv__c = true;
+        upsert settings;
     }
 }

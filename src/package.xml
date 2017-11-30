@@ -7,5 +7,13 @@
         <members>TdtmAPI</members>
         <name>ApexClass</name>
     </types>
+    <types>
+        <members>Adv_Settings__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Adv_Settings__c.use_adv__c</members>
+        <name>CustomField</name>
+    </types>
     <version>40.0</version>
 </Package>

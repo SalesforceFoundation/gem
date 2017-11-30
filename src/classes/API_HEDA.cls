@@ -1,27 +1,17 @@
-global with sharing class TdtmAPI {
+global with sharing class API_HEDA {
 
     /**
      * @description To be called by the HEDA TDTM trigger dispatcher. It returns the combined HEDA+NPSP TDTM configuration
      * as HEDA tokens (since that's what HEDA consumes internally.)
      *
-     * @return
+     * @return List<hed.TDTM_Global_API.TdtmToken> The TDTM configuration as HEDA tokens.
      */
     global static List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         TdtmGlue glue = new TdtmGlue();
         return glue.getDefaultTdtmConfigTokens();
     }
 
-    /**
-     * @description To be called by the NPSP TDTM trigger dispatcher. It returns the combined HEDA+NPSP TDTM configuration
-     * as NPSP records (since that's what NPSP consumes internally.)
-     *
-     * @return
-     */
-    global static List<npsp__Trigger_Handler__c> getDefaultTdtmConfigNpspRecords() {
-        TdtmGlue glue = new TdtmGlue();
-        return glue.getDefaultTdtmConfigRecords();
-    }
-
+    //@TODO: should this method be here or in its own separate class?
     /**
      * @description Sets the trigger handlers configuration with the data passed as parameter.
      *

@@ -2,9 +2,10 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>adv</fullName>
     <types>
-        <members>PostInstallScript</members>
-        <members>TdtmGlue</members>
-        <members>TdtmAPI</members>
+        <members>Post_Install_Script</members>
+        <members>TDTM_Glue</members>
+        <members>API_HEDA</members>
+        <members>API_NPSP</members>
         <name>ApexClass</name>
     </types>
     <types>

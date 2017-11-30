@@ -1,4 +1,4 @@
-global with sharing class PostInstallScript {
+global with sharing class Post_Install_Script {
 
     global void onInstall(InstallContext context) {
         glue();
@@ -11,7 +11,7 @@ global with sharing class PostInstallScript {
         // The install script needs to use the Glue class instead going through the TDTM API class because both the
         // NPSP and HEDA Trigger Handler tables may already have custom TDTM records, or modifications of each package's
         // records, that we don't want to lose.
-        TdtmGlue glue = new TdtmGlue();
+        TDTM_Glue glue = new TDTM_Glue();
         glue.combineTdtmConfig();
 
         //Activate usage of the Advancement TDTM configuration

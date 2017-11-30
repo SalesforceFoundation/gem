@@ -1,4 +1,4 @@
-public with sharing class TdtmGlue {
+public with sharing class TDTM_Glue {
 
     /**
      * @description Returns the default TDTM configuration for Advancement, which is the combination of the NPSP and

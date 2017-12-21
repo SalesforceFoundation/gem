@@ -13,10 +13,5 @@ global with sharing class Post_Install_Script {
         // records, that we don't want to lose.
         TDTM_Glue glue = new TDTM_Glue();
         glue.combineTdtmConfig();
-
-        //Activate usage of the Advancement TDTM configuration
-        Adv_Settings__c settings = [select use_adv__c from Adv_Settings__c limit 1];
-        settings.use_adv__c = true;
-        upsert settings;
     }
 }

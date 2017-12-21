@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>API_HEDA_Class__c</fullName>
+        <defaultValue>&apos;API_HEDA&apos;</defaultValue>
+        <description>The name of the class that provides the Advancement TDTM interface to HEDA.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>The name of the class that provides the Advancement TDTM interface to HEDA.</inlineHelpText>
+        <label>API HEDA Class</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>API_NPSP_Class__c</fullName>
+        <defaultValue>&apos;API_NPSP&apos;</defaultValue>
+        <description>The name of the class that provides the Advancement TDTM interface to NPSP.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>The name of the class that provides the Advancement TDTM interface to NPSP.</inlineHelpText>
+        <label>API NPSP Class</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Use_Advancement__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>Check if you would like to use the Advancement functionality.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Check if you would like to use the Advancement functionality.</inlineHelpText>
+        <label>Use Advancement</label>
+        <type>Checkbox</type>
+    </fields>
+    <label>Advancement Setting</label>
+    <pluralLabel>Advancement Settings</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

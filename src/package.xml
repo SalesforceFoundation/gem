@@ -9,12 +9,18 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>Adv_Settings__c</members>
+        <members>Advancement_Setting__mdt</members>
         <name>CustomObject</name>
     </types>
     <types>
-        <members>Adv_Settings__c.use_adv__c</members>
+        <members>Advancement_Setting__mdt.Use_Advancement__c</members>
+        <members>Advancement_Setting__mdt.API_HEDA_Class__c</members>
+        <members>Advancement_Setting__mdt.API_NPSP_Class__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>Advancement_Setting.Adv_config</members>
+        <name>CustomMetadata</name>
     </types>
     <version>40.0</version>
 </Package>

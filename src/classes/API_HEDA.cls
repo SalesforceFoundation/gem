@@ -8,6 +8,7 @@ global with sharing class API_HEDA /**extends hed.TDTM_Adapter**/ {
      */
     global /** override **/ List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         TdtmGlue glue = new TdtmGlue();
+        TDTM_Glue glue = new TDTM_Glue();
         return glue.getDefaultTdtmConfigTokens();
     }
 

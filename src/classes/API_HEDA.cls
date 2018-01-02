@@ -1,4 +1,4 @@
-global with sharing class API_HEDA /**extends hed.TDTM_Adapter**/ {
+global with sharing class API_HEDA extends heda2.TDTM_Adapter {
 
     /**
      * @description To be called by the HEDA TDTM trigger dispatcher. It returns the combined HEDA+NPSP TDTM configuration
@@ -6,8 +6,7 @@ global with sharing class API_HEDA /**extends hed.TDTM_Adapter**/ {
      *
      * @return List<hed.TDTM_Global_API.TdtmToken> The TDTM configuration as HEDA tokens.
      */
-    global /** override **/ List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
-        TdtmGlue glue = new TdtmGlue();
+    global override List<heda2.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         TDTM_Glue glue = new TDTM_Glue();
         return glue.getDefaultTdtmConfigTokens();
     }

@@ -9,19 +9,19 @@ public with sharing class TDTM_Glue {
      *
      * @return
      */
-    public List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
+    public List<heda2.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         // Get HEDA TDTM tokens
-        List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
+        List<heda2.TDTM_Global_API.TdtmToken> hedaTokens = heda2.TDTM_Global_API.getDefaultTdtmConfig();
 
         // Get NPSP TDTM records
-        List<npsp__Trigger_Handler__c> npspRecords = npsp.TDTM_Config_API.getDefaultRecords();
+        List<npsp3c__Trigger_Handler__c> npspRecords = npsp3c.TDTM_Config_API.getDefaultRecords();
 
         // Transform NPSP TDTM records to tokens
-        List<hed.TDTM_Global_API.TdtmToken> npspTokens = this.npspRecordsToTokens(npspRecords);
+        List<heda2.TDTM_Global_API.TdtmToken> npspTokens = this.npspRecordsToTokens(npspRecords);
 
         //Add npsp prefix to NPSP classes
-        for(hed.TDTM_Global_API.TdtmToken npspToken : npspTokens) {
-            npspToken.className = 'npsp.' + npspToken.className;
+        for(heda2.TDTM_Global_API.TdtmToken npspToken : npspTokens) {
+            npspToken.className = 'npsp3c.' + npspToken.className;
             npspToken.ownedByNamespace = 'npsp';
         }
 
@@ -43,7 +43,7 @@ public with sharing class TDTM_Glue {
      *
      * @return
      */
-    public List<npsp__Trigger_Handler__c> getDefaultTdtmConfigRecords() {
+    public List<npsp3c__Trigger_Handler__c> getDefaultTdtmConfigRecords() {
         return this.tokensToNpspRecords(this.getDefaultTdtmConfigTokens());
     }
 
@@ -57,25 +57,25 @@ public with sharing class TDTM_Glue {
      */
     public void combineTdtmConfig() {
         //Get NPSP's TDTM records
-        List<npsp__Trigger_Handler__c> npspRecords = [
+        List<npsp3c__Trigger_Handler__c> npspRecords = [
                 select
-                        npsp__Active__c,
-                        npsp__Asynchronous__c,
-                        npsp__Class__c,
-                        npsp__Load_Order__c,
-                        npsp__Object__c,
-                        npsp__Trigger_Action__c,
-                        npsp__User_Managed__c,
-                        npsp__Usernames_to_Exclude__c
-                from npsp__Trigger_Handler__c
+                        npsp3c__Active__c,
+                        npsp3c__Asynchronous__c,
+                        npsp3c__Class__c,
+                        npsp3c__Load_Order__c,
+                        npsp3c__Object__c,
+                        npsp3c__Trigger_Action__c,
+                        npsp3c__User_Managed__c,
+                        npsp3c__Usernames_to_Exclude__c
+                from npsp3c__Trigger_Handler__c
                 limit 50000];
 
         //Transform them into tokens
-        List<hed.TDTM_Global_API.TdtmToken> npspTokens = this.npspRecordsToTokens(npspRecords);
-        for(hed.TDTM_Global_API.TdtmToken npspToken : npspTokens) {
+        List<heda2.TDTM_Global_API.TdtmToken> npspTokens = this.npspRecordsToTokens(npspRecords);
+        for(heda2.TDTM_Global_API.TdtmToken npspToken : npspTokens) {
             //@TODO this is not correct for custom tokens! How do we identify those? Do we need to compare with the default
             //@TODO NPSP TDTM config?
-            npspToken.className = 'npsp.' + npspToken.className;
+            npspToken.className = 'npsp3c.' + npspToken.className;
 
             //@TODO this will help tracking the origin of the tokens, but what about those that are custom?
             npspToken.ownedByNamespace = 'npsp';
@@ -85,36 +85,36 @@ public with sharing class TDTM_Glue {
         this.deactivateNpspDupes(npspTokens);
 
         //Get HEDA's TDTM records
-        List<hed__Trigger_Handler__c> hedaRecords = [
+        List<heda2__Trigger_Handler__c> hedaRecords = [
                 select
-                        hed__Active__c,
-                        hed__Asynchronous__c,
-                        hed__Class__c,
-                        hed__Filter_Field__c,
-                        hed__Filter_Value__c,
-                        hed__Load_Order__c,
-                        hed__Object__c,
-                        hed__Owned_by_Namespace__c,
-                        hed__Trigger_Action__c,
-                        hed__User_Managed__c
-                from hed__Trigger_Handler__c
+                        heda2__Active__c,
+                        heda2__Asynchronous__c,
+                        heda2__Class__c,
+                        heda2__Filter_Field__c,
+                        heda2__Filter_Value__c,
+                        heda2__Load_Order__c,
+                        heda2__Object__c,
+                        heda2__Owned_by_Namespace__c,
+                        heda2__Trigger_Action__c,
+                        heda2__User_Managed__c
+                from heda2__Trigger_Handler__c
                 limit 50000];
 
         //Transform them into tokens
-        List<hed.TDTM_Global_API.TdtmToken> tokens = this.hedaRecordsToHedaTokens(hedaRecords);
+        List<heda2.TDTM_Global_API.TdtmToken> tokens = this.hedaRecordsToHedaTokens(hedaRecords);
 
         //Combine NPSP's and HEDA's tokens
         tokens.addAll(npspTokens);
 
         //Move everything into HEDA's Trigger Handler table
-        TdtmAPI.setTdtmConfig(tokens);
+        heda2.TDTM_Global_API.setTdtmConfig(tokens);
     }
 
     /**
      * @description Deactivate those NPSP tokens that have equivalent HEDA tokens.
      */
-    private void deactivateNpspDupes(List<hed.TDTM_Global_API.TdtmToken> npspTokens) {
-        for(hed.TDTM_Global_API.TdtmToken npspToken : npspTokens) {
+    private void deactivateNpspDupes(List<heda2.TDTM_Global_API.TdtmToken> npspTokens) {
+        for(heda2.TDTM_Global_API.TdtmToken npspToken : npspTokens) {
             if(
                     npspToken.className == 'ACCT_IndividualAccounts_TDTM' && npspToken.targetObject == 'Contact'
                             || npspToken.className == 'ADDR_Account_TDTM' && npspToken.targetObject == 'Account'
@@ -132,39 +132,39 @@ public with sharing class TDTM_Glue {
         }
     }
 
-    private List<npsp__Trigger_Handler__c> tokensToNpspRecords(List<hed.TDTM_Global_API.TdtmToken> tokens) {
-        List<npsp__Trigger_Handler__c> records = new List<npsp__Trigger_Handler__c>();
-        for (hed.TDTM_Global_API.TdtmToken token : tokens) {
+    private List<npsp3c__Trigger_Handler__c> tokensToNpspRecords(List<heda2.TDTM_Global_API.TdtmToken> tokens) {
+        List<npsp3c__Trigger_Handler__c> records = new List<npsp3c__Trigger_Handler__c>();
+        for (heda2.TDTM_Global_API.TdtmToken token : tokens) {
             records.add(
-                    new npsp__Trigger_Handler__c(
-                            npsp__Active__c = token.active,
-                            npsp__Asynchronous__c = token.async,
-                            npsp__Class__c = token.className,
-                            npsp__Load_Order__c = token.loadOrderDec,
-                            npsp__Object__c = token.targetObject,
+                    new npsp3c__Trigger_Handler__c(
+                            npsp3c__Active__c = token.active,
+                            npsp3c__Asynchronous__c = token.async,
+                            npsp3c__Class__c = token.className,
+                            npsp3c__Load_Order__c = token.loadOrderDec,
+                            npsp3c__Object__c = token.targetObject,
                             //@TODO: field hed__Owned_by_Namespace__c and its related logic needs to be added to NPSP.
-                            npsp__Trigger_Action__c = token.actions,
-                            npsp__User_Managed__c = token.userManaged
+                            npsp3c__Trigger_Action__c = token.actions,
+                            npsp3c__User_Managed__c = token.userManaged
                             //@TODO: field npsp__Usernames_to_Exclude__c and its related logic needs to be added to HEDA.
                     ));
         }
         return records;
     }
 
-    private List<hed.TDTM_Global_API.TdtmToken> npspRecordsToTokens(List<npsp__Trigger_Handler__c> records) {
-        List<hed.TDTM_Global_API.TdtmToken> tokens = new List<hed.TDTM_Global_API.TdtmToken>();
-        for (npsp__Trigger_Handler__c record : records) {
+    private List<heda2.TDTM_Global_API.TdtmToken> npspRecordsToTokens(List<npsp3c__Trigger_Handler__c> records) {
+        List<heda2.TDTM_Global_API.TdtmToken> tokens = new List<heda2.TDTM_Global_API.TdtmToken>();
+        for (npsp3c__Trigger_Handler__c record : records) {
             tokens.add(
-                    new hed.TDTM_Global_API.TdtmToken(
-                            record.npsp__Class__c,
-                            record.npsp__Object__c,
-                            record.npsp__Trigger_Action__c,
-                            record.npsp__Load_Order__c,
-                            record.npsp__Active__c,
-                            record.npsp__Asynchronous__c,
+                    new heda2.TDTM_Global_API.TdtmToken(
+                            record.npsp3c__Class__c,
+                            record.npsp3c__Object__c,
+                            record.npsp3c__Trigger_Action__c,
+                            record.npsp3c__Load_Order__c,
+                            record.npsp3c__Active__c,
+                            record.npsp3c__Asynchronous__c,
                             '', //@TODO: field hed__Filter_Field__c and its related logic needs to be added to NPSP.
                             '', //@TODO: field hed__Filter_Value__c and its related logic needs to be added to NPSP.
-                            record.npsp__User_Managed__c,
+                            record.npsp3c__User_Managed__c,
                             'npsp' //@TODO: field hed__Owned_by_Namespace__c and its related logic needs to be added to NPSP.
                             //@TODO: field npsp__Usernames_to_Exclude__c and its related logic needs to be added to HEDA.
                     ));
@@ -172,21 +172,21 @@ public with sharing class TDTM_Glue {
         return tokens;
     }
 
-    private List<hed.TDTM_Global_API.TdtmToken> hedaRecordsToHedaTokens(List<hed__Trigger_Handler__c> records) {
-        List<hed.TDTM_Global_API.TdtmToken> tokens = new List<hed.TDTM_Global_API.TdtmToken>();
-        for(hed__Trigger_Handler__c record : records) {
+    private List<heda2.TDTM_Global_API.TdtmToken> hedaRecordsToHedaTokens(List<heda2__Trigger_Handler__c> records) {
+        List<heda2.TDTM_Global_API.TdtmToken> tokens = new List<heda2.TDTM_Global_API.TdtmToken>();
+        for(heda2__Trigger_Handler__c record : records) {
             tokens.add(
-                    new hed.TDTM_Global_API.TdtmToken(
-                            record.hed__Class__c,
-                            record.hed__Object__c,
-                            record.hed__Trigger_Action__c,
-                            record.hed__Load_Order__c,
-                            record.hed__Active__c,
-                            record.hed__Asynchronous__c,
-                            record.hed__Filter_Field__c,
-                            record.hed__Filter_Value__c,
-                            record.hed__User_Managed__c,
-                            record.hed__Owned_by_Namespace__c));
+                    new heda2.TDTM_Global_API.TdtmToken(
+                            record.heda2__Class__c,
+                            record.heda2__Object__c,
+                            record.heda2__Trigger_Action__c,
+                            record.heda2__Load_Order__c,
+                            record.heda2__Active__c,
+                            record.heda2__Asynchronous__c,
+                            record.heda2__Filter_Field__c,
+                            record.heda2__Filter_Value__c,
+                            record.heda2__User_Managed__c,
+                            record.heda2__Owned_by_Namespace__c));
         }
         return tokens;
     }

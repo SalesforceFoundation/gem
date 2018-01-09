@@ -5,7 +5,6 @@
   "orgPreferences": {
     "enabled": [
       "ChatterEnabled",
-      "DisableParallelApexTesting",
       "S1DesktopEnabled",
       "Translation"
     ]

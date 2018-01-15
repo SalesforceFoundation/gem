@@ -8,6 +8,6 @@ global with sharing class API_NPSP extends npsp3c.TDTM_Adapter {
      */
     global override List<npsp3c__Trigger_Handler__c> getDefaultTdtmConfigNpspRecords() {
         TDTM_Glue glue = new TDTM_Glue();
-        return glue.getDefaultTdtmConfigRecords();
+        return glue.getDefaultTdtmConfigRecords('npsp');
     }
 }

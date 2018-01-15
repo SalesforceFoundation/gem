@@ -19,18 +19,16 @@ public with sharing class TDTM_Glue {
         // Transform NPSP TDTM records to tokens
         List<heda2.TDTM_Global_API.TdtmToken> npspTokens = this.npspRecordsToTokens(npspRecords);
 
-        //Add npsp prefix to NPSP classes
-        for(heda2.TDTM_Global_API.TdtmToken npspToken : npspTokens) {
-            npspToken.className = 'npsp3c.' + npspToken.className;
-            npspToken.ownedByNamespace = 'npsp';
-        }
-
         //Deactivate those NPSP tokens that have equivalent HEDA tokens
         this.deactivateNpspDupes(npspTokens);
 
-        // Combine them
-        hedaTokens.addAll(npspTokens);
-        return hedaTokens;
+        if(packageName == 'heda') {
+            return hedaTokens;
+        } else if(packageName == 'npsp') {
+            return npspTokens;
+        } else {
+            return new List<heda2.TDTM_Global_API.TdtmToken>();
+        }
     }
 
     /**
@@ -43,8 +41,8 @@ public with sharing class TDTM_Glue {
      *
      * @return
      */
-    public List<npsp3c__Trigger_Handler__c> getDefaultTdtmConfigRecords() {
-        return this.tokensToNpspRecords(this.getDefaultTdtmConfigTokens());
+    public List<npsp3c__Trigger_Handler__c> getDefaultTdtmConfigRecords(String packageName) {
+        return this.tokensToNpspRecords(this.getDefaultTdtmConfigTokens(packageName));
     }
 
     /**
@@ -115,7 +113,7 @@ public with sharing class TDTM_Glue {
      */
     private void deactivateNpspDupes(List<heda2.TDTM_Global_API.TdtmToken> npspTokens) {
         for(heda2.TDTM_Global_API.TdtmToken npspToken : npspTokens) {
-            if(
+            /*if(
                     npspToken.className == 'ACCT_IndividualAccounts_TDTM' && npspToken.targetObject == 'Contact'
                             || npspToken.className == 'ADDR_Account_TDTM' && npspToken.targetObject == 'Account'
                             || npspToken.className == 'ADDR_Addresses_TDTM' && npspToken.targetObject == 'Address__c'
@@ -126,6 +124,14 @@ public with sharing class TDTM_Glue {
                             || npspToken.className == 'AFFL_Affiliations_TDTM' && npspToken.targetObject == 'npe5__Affiliation__c'
                             || npspToken.className == 'REL_Relationships_Con_TDTM' && npspToken.targetObject == 'Contact'
                             || npspToken.className == 'REL_Relationships_TDTM' && npspToken.targetObject == 'npe4__Relationship__c'
+                    ) {
+                npspToken.active = false;
+            }*/
+
+            if(
+                    npspToken.className == 'ACCT_Accounts_TDTM' && npspToken.targetObject == 'Account'
+                            || npspToken.className == 'ACCT_IndividualAccounts_TDTM' && npspToken.targetObject == 'Contact'
+                            || npspToken.className == 'ADDR_Contact_TDTM' && npspToken.targetObject == 'Contact'
                     ) {
                 npspToken.active = false;
             }

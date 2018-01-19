@@ -10,25 +10,21 @@ public with sharing class TDTM_Glue {
      * @return
      */
     public List<heda2.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
-        // Get HEDA TDTM tokens
-        List<heda2.TDTM_Global_API.TdtmToken> hedaTokens = heda2.TDTM_Global_API.getDefaultTdtmConfig();
-
-        // Get NPSP TDTM records
-        List<npsp3c__Trigger_Handler__c> npspRecords = npsp3c.TDTM_Config_API.getDefaultRecords();
-
-        // Transform NPSP TDTM records to tokens
-        List<heda2.TDTM_Global_API.TdtmToken> npspTokens = this.npspRecordsToTokens(npspRecords);
-
-        //Deactivate those NPSP tokens that have equivalent HEDA tokens
-        this.deactivateNpspDupes(npspTokens);
-
-        if(packageName == 'heda') {
-            return hedaTokens;
-        } else if(packageName == 'npsp') {
-            return npspTokens;
-        } else {
-            return new List<heda2.TDTM_Global_API.TdtmToken>();
+        // Do the similar thing with HEDA Config API
+        List<heda2.TDTM_Global_API.TdtmToken> hedaTokens = new List<heda2.TDTM_Global_API.TdtmToken>();
+        List<heda2__Trigger_Handler__c> tdtmConfig = [select heda2__Class__c, heda2__Object__c, heda2__Trigger_Action__c, heda2__Load_Order__c, heda2__Active__c,
+                heda2__Asynchronous__c, heda2__Filter_Field__c, heda2__Filter_Value__c, heda2__User_Managed__c, heda2__Owned_by_Namespace__c from heda2__Trigger_Handler__c];
+        if(tdtmConfig.size() == 0) {
+            hedaTokens = heda2.TDTM_Global_API.getDefaultTdtmConfig();
         }
+
+        for(heda2__Trigger_Handler__c handler : tdtmConfig) {
+            hedaTokens.add(new heda2.TDTM_Global_API.TdtmToken(handler.heda2__Class__c, handler.heda2__Object__c, handler.heda2__Trigger_Action__c,
+                    handler.heda2__Load_Order__c, handler.heda2__Active__c, handler.heda2__Asynchronous__c,
+                    handler.heda2__Filter_Field__c, handler.heda2__Filter_Value__c, handler.heda2__User_Managed__c, handler.heda2__Owned_by_Namespace__c));
+        }
+
+        return hedaTokens;
     }
 
     /**
@@ -41,8 +37,27 @@ public with sharing class TDTM_Glue {
      *
      * @return
      */
-    public List<npsp3c__Trigger_Handler__c> getDefaultTdtmConfigRecords(String packageName) {
-        return this.tokensToNpspRecords(this.getDefaultTdtmConfigTokens(packageName));
+    public List<npsp3c__Trigger_Handler__c> getDefaultTdtmConfigRecords(List<npsp3c__Trigger_Handler__c> listTH) {
+        //Do the similar thing as NPSP token logic: If the cached Trigger handler is empty, then query the database. otherwise just return the cached one
+        if(listTH == null) {
+            listTH = [select npsp3c__Asynchronous__c, npsp3c__Class__c, npsp3c__Load_Order__c, npsp3c__Object__c, npsp3c__Active__c, npsp3c__Usernames_to_Exclude__c,
+                    npsp3c__Trigger_Action__c from npsp3c__Trigger_Handler__c order by npsp3c__Load_Order__c];
+
+        }
+
+        //deactivate the Trigger Handler that conflict with
+        for(npsp3c__Trigger_Handler__c th : listTH) {
+            if(
+                    th.npsp3c__Class__c == 'ACCT_Accounts_TDTM' && th.npsp3c__Object__c == 'Account'
+                        || th.npsp3c__Class__c == 'ACCT_IndividualAccounts_TDTM' && th.npsp3c__Object__c == 'Contact'
+                        || th.npsp3c__Class__c == 'ADDR_Contact_TDTM' && th.npsp3c__Object__c == 'Contact'
+                //th.npsp3c__Class__c == 'OPP_OpportunityContactRoles_TDTM' && th.npsp3c__Object__c == 'Opportunity'
+                ) {
+                th.npsp3c__Active__c = false;
+            }
+        }
+
+        return listTH;
     }
 
     /**

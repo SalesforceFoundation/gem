@@ -8,7 +8,7 @@ global with sharing class API_HEDA extends heda2.TDTM_Adapter {
      */
     global override List<heda2.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         TDTM_Glue glue = new TDTM_Glue();
-        return glue.getDefaultTdtmConfigTokens('heda');
+        return glue.getDefaultTdtmConfigTokens();
     }
 
     //@TODO: should this method be here or in its own separate class?

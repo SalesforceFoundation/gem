@@ -6,3 +6,28 @@ project:
     package:
         name: Advancement
         namespace: adv
+flows:
+    ci_beta:
+        tasks:
+            6.1:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: hed
+            6.2:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: npsp
+    ci_feature:
+        tasks:
+            7.1:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: hed
+            7.2:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: npsp

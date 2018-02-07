@@ -6,5 +6,10 @@
         <minorNumber>1</minorNumber>
         <namespace>heda2</namespace>
     </packageVersions>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>0</minorNumber>
+        <namespace>npsp3c</namespace>
+    </packageVersions>
     <status>Active</status>
 </ApexClass>

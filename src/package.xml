@@ -4,6 +4,9 @@
     <types>
         <members>Post_Install_Script</members>
         <members>TDTM_Glue</members>
+        <members>Adv_Account_TDTM</members>
+        <members>Adv_Constants</members>
+        <members>Adv_UtilCustomSettingsFacade</members>
         <members>API_HEDA</members>
         <members>API_NPSP</members>
         <name>ApexClass</name>

@@ -37,11 +37,6 @@
 public with sharing class Adv_Constants {
 
     /*******************************************************************************************************
-    * @description One-to-One value for system processor field
-    */
-    public static final String ONE_TO_ONE_PROCESSOR = 'One-to-One';
-
-    /*******************************************************************************************************
     * @description One-to-One org type value
     */
     public static final String ONE_TO_ONE_ORGANIZATION_TYPE = 'One-to-One Individual';
@@ -50,11 +45,6 @@ public with sharing class Adv_Constants {
     * @description Individual Bucket value for system processor field
     */
     public static final String BUCKET_PROCESSOR = 'Individual';
-
-    /*******************************************************************************************************
-    * @description Individual Bucket org type value
-    */
-    public static final String BUCKET_ORGANIZATION_TYPE = 'Bucket Individual';
 
     /*******************************************************************************************************
     * @description Individual Bucket Account name
@@ -76,60 +66,13 @@ public with sharing class Adv_Constants {
     */
     public static final string HH_TYPE = 'Household';
 
-    /*******************************************************************************************************
-    * @description A contact's firstname to use in test code.
-    */
-    public static  string CONTACT_FIRSTNAME_FOR_TESTS = 'test';
-
-    /*******************************************************************************************************
-    * @description A contact's lastname to use in test code.
-    */
-    public static  string CONTACT_LASTNAME_FOR_TESTS = 'Contact_forTests';
-
-    /*******************************************************************************************************
-    * @description A contact's email to use in test code.
-    */
-    public static  string CONTACT_EMAIL_FOR_TESTS = 'junk@test.net';
-
-    /*******************************************************************************************************
-    * @description A contact's preferred email to use in test code.
-    */
-    public static  string CONTACT_PREFERRED_EMAIL_FOR_TESTS = 'Work';
-
-    /*******************************************************************************************************
-    * @description A contact's phone number to use in test code.
-    */
-    public static  string CONTACT_PHONE_FOR_TESTS = '206-777-8888';
-
-    /*******************************************************************************************************
-    * @description A contact's preferred phone to use in test code.
-    */
-    public static  string CONTACT_PREFERRED_PHONE_FOR_TESTS = 'Work';
-
-    /*******************************************************************************************************
-    * @description The name to use for the Individual Bucket Account in test code.
-    */
-    public static  string INDIVIDUAL_ACCOUNT_NAME_FOR_TESTS = 'IndividualAccountNameForTests';
-
-    /*******************************************************************************************************
-    * @description Returns whether we are in the One-to-One Account Model
-    * @return  boolean
-    */
-    public static boolean isOneToOne() {
-        //if no settings exist, create defaults
-        if (Adv_UtilCustomSettingsFacade.getContactsSettings().npe01__Account_Processor__c==ONE_TO_ONE_PROCESSOR) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /*******************************************************************************************************
     * @description Returns whether we are in the Individual Bucket Account Model
     * @return  boolean
     */
     public static boolean isBucketModel() {
-        return (Adv_UtilCustomSettingsFacade.getContactsSettings().npe01__Account_Processor__c == BUCKET_PROCESSOR);
+        return (npsp3c.UTIL_CustomSettings_API.getContactsSettings().npe01__Account_Processor__c == BUCKET_PROCESSOR);
     }
 
     /*******************************************************************************************************
@@ -137,58 +80,6 @@ public with sharing class Adv_Constants {
     * @return  boolean
     */
     public static boolean isHHAccountModel() {
-        return (Adv_UtilCustomSettingsFacade.getContactsSettings().npe01__Account_Processor__c == HH_ACCOUNT_PROCESSOR);
-    }
-
-    /*******************************************************************************************************
-    * @description The Salesforce Id of the Individual Bucket Account
-    */
-    public static Id IndividualAccountId;
-
-    /*******************************************************************************************************
-    * @description The name of the Individual Bucket Account
-    */
-    private static String IndividualAccountName = Adv_Constants.BUCKET_ACCOUNT_NAME;
-
-    /*******************************************************************************************************
-    * @description returns the Salesforce Id of the Individual Bucket Account
-    * @return  Id
-    */
-    public static id getIndividualAccountId () {
-
-        // look up the ID if we haven't already done it
-        if ( IndividualAccountId == null ) {
-            List<Account> acct = [select id,npe01__SYSTEMISINDIVIDUAL__c,npe01__SYSTEM_AccountType__c from account where Name =:IndividualAccountName LIMIT 1];
-            if(acct.size()>0){
-                if(acct[0].npe01__SYSTEMISINDIVIDUAL__c==false || acct[0].npe01__SYSTEM_AccountType__c<>Adv_Constants.BUCKET_ORGANIZATION_TYPE){
-                    acct[0].npe01__SYSTEMISINDIVIDUAL__c = true;
-                    acct[0].npe01__SYSTEM_AccountType__c = Adv_Constants.BUCKET_ORGANIZATION_TYPE;
-                    update acct[0];
-                }
-                IndividualAccountId = acct[0].id;
-            }
-        }
-        return IndividualAccountId;
-    }
-
-    /*******************************************************************************************************
-    * @description Creates an Individual Bucket Account, for use in test code.
-    * @return  Id of the Individual Bucket Account.
-    */
-    public static Id setIndividualAccountForTests(String accountName) {
-        //create a fake Individual Account for tests
-
-        Account individualAccountForTests = new Account(
-                Name=accountName,
-                npe01__SYSTEMISINDIVIDUAL__c = true,
-                npe01__SYSTEM_AccountType__c = Adv_Constants.BUCKET_ORGANIZATION_TYPE
-        );
-
-        insert individualAccountForTests;
-
-        Adv_Constants.BUCKET_ACCOUNT_NAME = accountName;
-        IndividualAccountName = accountName;
-
-        return individualAccountForTests.id;
+        return (npsp3c.UTIL_CustomSettings_API.getContactsSettings().npe01__Account_Processor__c == HH_ACCOUNT_PROCESSOR);
     }
 }

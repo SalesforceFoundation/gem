@@ -93,7 +93,7 @@ global class NPSP_Account_TDTM extends heda2.TDTM_Runnable {
     * @return Id. if none is explicitly specified, returns null.
     */
     public static ID rtIdForAccountModel(boolean isHHAccountModel) {
-        npe01__Contacts_and_Orgs_Settings__c ContactsSettings = Adv_UtilCustomSettingsFacade.getContactsSettings();
+        npe01__Contacts_and_Orgs_Settings__c ContactsSettings = npsp3c.UTIL_CustomSettings_API.getContactsSettings();
         Schema.Recordtypeinfo rtById = null;
         // check if recordtypes are enabled, and if it matches the existing setting
         // we go thru describe to validate that it is a valid recordType ID.

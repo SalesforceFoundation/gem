@@ -63,7 +63,7 @@ global with sharing class API_HEDA extends heda2.Advancement_Adapter {
         set<Id> setOppId = new set<Id>();
 
         // query changed to also include Role = default role, because Contact Merge scenarios were clearing isPrimary (not by our code)!
-        npe01__Contacts_and_Orgs_Settings__c cs = Adv_UtilCustomSettingsFacade.getContactsSettings();
+        npe01__Contacts_and_Orgs_Settings__c cs = npsp3c.UTIL_CustomSettings_API.getContactsSettings();
 
         list<OpportunityContactRole> listOCR = [select ContactId, OpportunityId, Opportunity.isClosed, Opportunity.AccountId, IsPrimary, Role
         from OpportunityContactRole where IsPrimary = true and Opportunity.AccountId in :listAccIdOld and ContactId in :setConId];

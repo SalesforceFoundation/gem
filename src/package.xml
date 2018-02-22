@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Donation_Tag__c.Donation_Opportunity__c</members>
+        <members>Donation_Tag__c.Tag_Name__c</members>
+        <members>Donation_Tag__c.Tag__c</members>
+        <members>Opportunity.Tags__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Donation_Tag__c</members>
+        <members>Tag__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Donations_with_tags</members>
+        <name>ReportType</name>
+    </types>
+    <version>40.0</version>
+</Package>

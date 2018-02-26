@@ -4,25 +4,30 @@
         <fullName>Tags__c</fullName>
         <externalId>false</externalId>
         <label>Tags</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Neurology</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Oncology</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Pediatrics</fullName>
-                <default>false</default>
-            </picklistValues>
-            <sorted>true</sorted>
-        </picklist>
         <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Neurology</fullName>
+                    <default>false</default>
+                    <label>Neurology</label>
+                </value>
+                <value>
+                    <fullName>Oncology</fullName>
+                    <default>false</default>
+                    <label>Oncology</label>
+                </value>
+                <value>
+                    <fullName>Pediatrics</fullName>
+                    <default>false</default>
+                    <label>Pediatrics</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
         <visibleLines>4</visibleLines>
     </fields>
 </CustomObject>

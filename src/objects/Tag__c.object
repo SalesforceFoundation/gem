@@ -52,7 +52,7 @@
     <enableSearch>false</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
-    <label>All</label>
+    <label>Tag</label>
     <nameField>
         <label>Tag Name</label>
         <type>Text</type>

@@ -49,61 +49,8 @@ global class NPSP_Account_TDTM extends heda2.TDTM_Runnable {
     ********************************************************************************************************/
     public override heda2.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
             heda2.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
-
-        heda2.TDTM_Runnable.DmlWrapper dmlWrapper = new heda2.TDTM_Runnable.DmlWrapper();
-
-        ID rtIdAccountHH;
-        ID rtIdAccountOne2One;
-
-        if (triggerAction == heda2.TDTM_Runnable.Action.BeforeInsert || triggerAction == heda2.TDTM_Runnable.Action.BeforeUpdate) {
-            rtIdAccountHH = rtIdForAccountModel(true);
-            rtIdAccountOne2One = rtIdForAccountModel(false);
-        }
-        integer i = 0;
-        for (SObject so : newlist) {
-            Account acc = (Account)so;
-
-            if (triggerAction == heda2.TDTM_Runnable.Action.BeforeInsert || triggerAction == heda2.TDTM_Runnable.Action.BeforeUpdate) {
-                if (acc.RecordTypeId == rtIdAccountHH && acc.RecordTypeId != null) {
-                    if (acc.npe01__SYSTEM_AccountType__c == null || acc.npe01__SYSTEMISINDIVIDUAL__c != true) {
-                        acc.npe01__SYSTEM_AccountType__c = Adv_Constants.HH_ACCOUNT_TYPE;
-                        acc.Type = Adv_Constants.HH_TYPE;
-                        acc.npe01__SYSTEMISINDIVIDUAL__c = true;
-                    }
-                } else if (acc.RecordTypeId == rtIdAccountOne2One && acc.RecordTypeId != null) {
-                    if (acc.npe01__SYSTEM_AccountType__c == null || acc.npe01__SYSTEMISINDIVIDUAL__c != true) {
-                        acc.npe01__SYSTEM_AccountType__c = Adv_Constants.ONE_TO_ONE_ORGANIZATION_TYPE;
-                        acc.npe01__SYSTEMISINDIVIDUAL__c = true;
-                    }
-                } else if (!(Adv_Constants.isBucketModel() && acc.Name == Adv_Constants.BUCKET_ACCOUNT_NAME)) {
-                    if (triggerAction == heda2.TDTM_Runnable.Action.BeforeUpdate && acc.RecordTypeId != oldlist[i].get('RecordTypeId')) {
-                        acc.npe01__SYSTEMISINDIVIDUAL__c = false;
-                        acc.npe01__SYSTEM_AccountType__c = null;
-                    }
-                }
-            }
-            i++;
-        }
-
-        return null;
-    }
-
-    /*******************************************************************************************************
-    * @description utility to return the recordtypeId for a new account, given the account model.
-    * @return Id. if none is explicitly specified, returns null.
-    */
-    public static ID rtIdForAccountModel(boolean isHHAccountModel) {
-        npe01__Contacts_and_Orgs_Settings__c ContactsSettings = npsp3c.UTIL_CustomSettings_API.getContactsSettings();
-        Schema.Recordtypeinfo rtById = null;
-        // check if recordtypes are enabled, and if it matches the existing setting
-        // we go thru describe to validate that it is a valid recordType ID.
-        ID rtId = isHHAccountModel ? ContactsSettings.npe01__HH_Account_RecordTypeID__c : ContactsSettings.npe01__One_to_One_RecordTypeID__c;
-        if (rtId != null) {
-            Schema.DescribeSObjectResult R = Account.SObjectType.getDescribe();
-            Map<Id,Schema.RecordTypeInfo> rtMapById = r.getRecordTypeInfosById();
-            rtById = rtMapById.get(rtId);
-            return (rtById == null ? null : rtById.getRecordTypeID());
-        }
+        npsp3c.Advancement_Adapter adapter = new npsp3c.Advancement_Adapter();
+        adapter.configAccountTDTM(newList, oldList, triggerAction.name());
         return null;
     }
 }

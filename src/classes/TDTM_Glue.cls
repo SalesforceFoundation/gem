@@ -43,7 +43,7 @@ public with sharing class TDTM_Glue {
     public List<heda2.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         List<heda2.TDTM_Global_API.TdtmToken> hedaTokens = new List<heda2.TDTM_Global_API.TdtmToken>();
         List<heda2__Trigger_Handler__c> tdtmConfig = [select heda2__Class__c, heda2__Object__c, heda2__Trigger_Action__c, heda2__Load_Order__c, heda2__Active__c,
-                heda2__Asynchronous__c, heda2__Filter_Field__c, heda2__Filter_Value__c, heda2__User_Managed__c, heda2__Owned_by_Namespace__c from heda2__Trigger_Handler__c];
+                heda2__Asynchronous__c, heda2__Filter_Field__c, heda2__Filter_Value__c, heda2__User_Managed__c, heda2__Owned_by_Namespace__c, heda2__Usernames_to_Exclude__c from heda2__Trigger_Handler__c];
         if(tdtmConfig.size() == 0) {
             hedaTokens = heda2.TDTM_Global_API.getDefaultTdtmConfig();
             //We disabled NPSP ACCT_Account_TDTM to avoid conflict. Since the logic in ACCT_Account_TDTM is needed for NPSP, we need to add equivalent trigger handler to HEDA.
@@ -53,7 +53,7 @@ public with sharing class TDTM_Glue {
         for(heda2__Trigger_Handler__c handler : tdtmConfig) {
             hedaTokens.add(new heda2.TDTM_Global_API.TdtmToken(handler.heda2__Class__c, handler.heda2__Object__c, handler.heda2__Trigger_Action__c,
                     handler.heda2__Load_Order__c, handler.heda2__Active__c, handler.heda2__Asynchronous__c,
-                    handler.heda2__Filter_Field__c, handler.heda2__Filter_Value__c, handler.heda2__User_Managed__c, handler.heda2__Owned_by_Namespace__c));
+                    handler.heda2__Filter_Field__c, handler.heda2__Filter_Value__c, handler.heda2__User_Managed__c, handler.heda2__Owned_by_Namespace__c, handler.heda2__Usernames_to_Exclude__c));
         }
 
 

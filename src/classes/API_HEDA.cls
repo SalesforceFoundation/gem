@@ -30,50 +30,72 @@
 /**
 * @author Salesforce.org
 * @date 2017
-* @group
-* @group-content
+* @group TDTM
+* @group-content ../../ApexDocContent/TDTM.htm
 * @description This class is used to override the default behavior of the HEDA Advancement Adapter class.
 **/
 global with sharing class API_HEDA extends heda2.Advancement_Adapter {
 
-    /**
-     * @description To be called by the HEDA TDTM trigger dispatcher. It returns the HEDA TDTM tokens with the new one from Adv.
-     *
-     * @return A list of HEDA tokens.
-     */
+    /*******************************************************************************************************
+    * @description To be called by the HEDA TDTM trigger dispatcher.
+    * It returns the HEDA TDTM tokens with the new one from Adv
+    * @return List<TDTM_Global_API.TdtmToken> A list of HEDA tokens.
+    *******************************************************************************************************/
     global override List<heda2.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         TDTM_Glue glue = new TDTM_Glue();
         return glue.getDefaultTdtmConfigTokens();
     }
 
-    /**
-    *  @description This method is used to inject the NPSP rollup logic into HEDA Trigger Handler.
-    */
+    /*******************************************************************************************************
+    * @description This method is used to inject the NPSP rollup logic into HEDA Trigger Handler.
+    * @param listAccountId The list of Account (Id's) that need updating.
+    * @return void
+    *******************************************************************************************************/
     global override void rollupAccount(list<Id> listAccountId) {
-        npsp3c.Advancement_Adapter adapter = new npsp3c.Advancement_Adapter();
-        adapter.rollupAccounts(listAccountId);
+        //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
+        if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
+            npsp3c.Advancement_Adapter adapter = new npsp3c.Advancement_Adapter();
+            adapter.rollupAccounts(listAccountId);
+        }
     }
 
-    /**
-     * @description This method is used to inject the NPSP opportunity logic info HEDA Trigger Handler.
-     */
+    /*******************************************************************************************************
+    * @description This method is used to inject the NPSP opportunity logic info HEDA Trigger Handler.
+    * @param mapContactIdAccountIdNew  A map of Contact Id to Account Id, for the Accounts to move opps to
+    * @param mapContactIdAccountIdOld A map of Contact Id to Account Id, for the Accounts to move opps from
+    * @return void
+    *******************************************************************************************************/
     global override void moveOppsToContactAccount(map<Id,Id> mapContactIdAccountIdNew, map<Id,Id> mapContactIdAccountIdOld) {
-        npsp3c.Advancement_Adapter adapter = new npsp3c.Advancement_Adapter();
-        adapter.moveOppsToContactAccount(mapContactIdAccountIdNew, mapContactIdAccountIdOld);
+        //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
+        if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
+            npsp3c.Advancement_Adapter adapter = new npsp3c.Advancement_Adapter();
+            adapter.moveOppsToContactAccount(mapContactIdAccountIdNew, mapContactIdAccountIdOld);
+        }
     }
 
-    /**
-     * @description This method is used to populate NPSP's primary contact field in HEDA Trigger Handler
-     */
+    /*******************************************************************************************************
+    * @description This method is used to populate NPSP's primary contact field in HEDA Trigger Handler
+    * @param a The Account that need updating.
+    * @param contactId The id of the primary contact
+    * @return void
+    *******************************************************************************************************/
     global override void primaryContact(Account a, Id contactId) {
-        a.npe01__One2OneContact__c = contactId;
+        //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
+        if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
+            a.npe01__One2OneContact__c = contactId;
+        }
     }
 
-    /**
-     * @description This method is used to populate NPSP's system account field in HEDA Trigger Handler
-     */
+    /*******************************************************************************************************
+    * @description This method is used to populate NPSP's system account field in HEDA Trigger Handler
+    * @param a The Account that need updating.
+    * @return void
+    *******************************************************************************************************/
     global override void configAccountForContact(Account a) {
-        npsp3c.Advancement_Adapter adapter = new npsp3c.Advancement_Adapter();
-        adapter.configAccountForContact(a);
+        //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
+        if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
+            npsp3c.Advancement_Adapter adapter = new npsp3c.Advancement_Adapter();
+            adapter.configAccountForContact(a);
+        }
     }
 }

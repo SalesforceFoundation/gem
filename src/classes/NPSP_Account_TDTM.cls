@@ -30,8 +30,8 @@
 /**
 * @author Salesforce.org
 * @date 2017
-* @group
-* @group-content
+* @group TDTM
+* @group-content ../../ApexDocContent/TDTM.htm
 * @description This class is used to fill in the NPSP system Account fields. We disabled NPSP ACCT_Accounts_TDTM trigger handler since it cause
 * HEDA unit test cases failed. However, we need to replicate the logic in it and put it into HEDA TDTM framework, since there are some logic in
 * NPSP refers to those fields.
@@ -45,7 +45,7 @@ global class NPSP_Account_TDTM extends heda2.TDTM_Runnable {
     * @param listOld the list of Accounts from trigger old.
     * @param triggerAction which trigger event (BeforeInsert, AfterInsert, etc.).
     * @param objResult the describe for Accounts
-    * @return dmlWrapper
+    * @return dmlWrapper always null
     ********************************************************************************************************/
     public override heda2.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
             heda2.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {

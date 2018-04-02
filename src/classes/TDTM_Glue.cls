@@ -53,17 +53,18 @@ public with sharing class TDTM_Glue {
                 heda2__Asynchronous__c, heda2__Filter_Field__c, heda2__Filter_Value__c, heda2__User_Managed__c, heda2__Owned_by_Namespace__c, heda2__Usernames_to_Exclude__c from heda2__Trigger_Handler__c];
         if(tdtmConfig.size() == 0) {
             hedaTokens = heda2.TDTM_Global_API.getDefaultTdtmConfig();
-            //Check if NPSP ACCT_Accounts_TDTM is active in database, we do not want to inject the logic if it is inactive
-            if(getNPSPTriggerActiveMap().get('ACCT_Accounts_TDTM') == true) {
-                //We disabled NPSP ACCT_Account_TDTM to avoid conflict. Since the logic in ACCT_Account_TDTM is needed for NPSP, we need to add equivalent trigger handler to HEDA.
-                hedaTokens.add(new heda2.TDTM_Global_API.TdtmToken('NPSP_Account_TDTM', 'Account', 'BeforeInsert;BeforeUpdate;AfterUpdate', 1.0, true, false, null, null, false, 'adv'));
-            }
         }
 
         for(heda2__Trigger_Handler__c handler : tdtmConfig) {
             hedaTokens.add(new heda2.TDTM_Global_API.TdtmToken(handler.heda2__Class__c, handler.heda2__Object__c, handler.heda2__Trigger_Action__c,
                     handler.heda2__Load_Order__c, handler.heda2__Active__c, handler.heda2__Asynchronous__c,
                     handler.heda2__Filter_Field__c, handler.heda2__Filter_Value__c, handler.heda2__User_Managed__c, handler.heda2__Owned_by_Namespace__c, handler.heda2__Usernames_to_Exclude__c));
+        }
+
+        //Check if NPSP ACCT_Accounts_TDTM is active in database, we do not want to inject the logic if it is inactive
+        if(getNPSPTriggerActiveMap().get('ACCT_Accounts_TDTM') == true) {
+            //We disabled NPSP ACCT_Account_TDTM to avoid conflict. Since the logic in ACCT_Account_TDTM is needed for NPSP, we need to add equivalent trigger handler to HEDA.
+            hedaTokens.add(new heda2.TDTM_Global_API.TdtmToken('NPSP_Account_TDTM', 'Account', 'BeforeInsert;BeforeUpdate;AfterUpdate', 1.0, true, false, null, null, false, 'adv'));
         }
 
 

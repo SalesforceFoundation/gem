@@ -37,7 +37,9 @@
 */
 @isTest
 public with sharing class UTIL_Namespace_TEST {
-
+    /*******************************************************************************************************
+    * @description Test the namespace functions
+    */
     static testmethod void TestNamespacePrefixFixups() {
         if (UTIL_Namespace.getNamespace()!='') {
             system.assertNotEquals('',UTIL_Namespace.getNamespace());
@@ -59,6 +61,9 @@ public with sharing class UTIL_Namespace_TEST {
         }
     }
 
+    /*******************************************************************************************************
+    * @description Test get real email function
+    */
     static testmethod void testSandboxEmailToRealEmail() {
         String fixedEmail = UTIL_Namespace.sandboxEmailToRealEmail('awheeler=universalcontainers.com@example.com');
         System.assertEquals('awheeler@universalcontainers.com', fixedEmail);

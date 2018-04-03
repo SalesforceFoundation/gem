@@ -36,9 +36,15 @@
 */
 @isTest
 public class UTIL_UnitTestData_TEST {
-
+    /*******************************************************************************************************
+    * @description The opportunity closed won stage
+    *******************************************************************************************************/
     private static string closedWonStage;
 
+    /*******************************************************************************************************
+    * @description Returns opportunity closed won stage
+    * @return String the opportunity closed won stage
+    *******************************************************************************************************/
     public static String getClosedWonStage(){
         if (closedWonStage == null){
             List<OpportunityStage> closedWonStages = [select masterlabel from opportunitystage where isActive = true and iswon = true];
@@ -53,6 +59,10 @@ public class UTIL_UnitTestData_TEST {
         return closedWonStage;
     }
 
+    /*******************************************************************************************************
+    * @description Returns a Contact
+    * @return Contact the new Contact
+    *******************************************************************************************************/
     public static Contact getContact() {
         Contact contact =  new Contact(FirstName = 'Test', LastName = 'Testerson' + Datetime.now().getTime(),
                 heda2__WorkEmail__c = 'fakeemail@salesforce.org', heda2__Preferred_Email__c = 'Work',
@@ -63,6 +73,11 @@ public class UTIL_UnitTestData_TEST {
         return contact;
     }
 
+    /*******************************************************************************************************
+    * @description Returns an Account
+    * @param recTypeId the Account record type id
+    * @return Account the new Account
+    *******************************************************************************************************/
     public static Account getAccount(ID recTypeId) {
         Account acc = new Account(Name = 'Yet Another Org ' + Datetime.now().getTime(), RecordTypeId = recTypeId, Website = 'salesforce.org');
         Database.DMLOptions dmo = new Database.DMLOptions();
@@ -71,6 +86,11 @@ public class UTIL_UnitTestData_TEST {
         return acc;
     }
 
+    /*******************************************************************************************************
+    * @description Returns a list of new Contacts
+    * @param n the number of new Contact
+    * @return List<Contact> the list of new Contact
+    *******************************************************************************************************/
     public static List<Contact> getMultipleTestContacts(Integer n) {
         List<contact> ContactsToAdd = new List<contact>();
         for(Integer i=0; i<n; i++) {
@@ -84,6 +104,11 @@ public class UTIL_UnitTestData_TEST {
         return ContactsToAdd;
     }
 
+    /*******************************************************************************************************
+    * @description Returns a list of new Account
+    * @param n the number of new Account
+    * @return List<Account> the list of new Account
+    *******************************************************************************************************/
     public static List<Account> getMultipleTestAccounts(Integer n, ID recTypeId) {
         List<Account> AcctsToAdd = new List<Account>();
         for(Integer i=0; i<n; i++) {
@@ -96,6 +121,11 @@ public class UTIL_UnitTestData_TEST {
         return AcctsToAdd;
     }
 
+    /*******************************************************************************************************
+    * @description Returns a new User
+    * @param strUsername the name of the new User
+    * @return User the new user
+    *******************************************************************************************************/
     public static User createNewUserForTests(String strUsername) {
 
         Profile p = [SELECT Id FROM Profile WHERE Name='Standard User'];

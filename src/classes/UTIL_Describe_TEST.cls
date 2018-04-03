@@ -41,7 +41,9 @@
 @isTest
 public with sharing class UTIL_Describe_TEST {
 
-    // TEST
+    /*******************************************************************************************************
+    * @description Test the Describe methods
+    */
     static testmethod void testDescribe() {
 
         string s;

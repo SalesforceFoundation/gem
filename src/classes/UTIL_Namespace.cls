@@ -68,17 +68,6 @@ public class UTIL_Namespace {
     }
 
     /*******************************************************************************************************
-    * @description Static method adds the current namespace to a string if we're in a managed context,
-    * with dot notation. If we're not in a managed context, returns the string itself.
-    * @param str Token name.
-    * @return Token name, with namespace prefix and dot notation if in a managed package.
-    ********************************************************************************************************/
-    public static string StrTokenNSPrefixDotNotation(string str) {
-        if (getNamespace() == '') return str;
-        return getNamespace() + '.' + str;
-    }
-
-    /*******************************************************************************************************
     * @description If we are in a managed package, tokens in dynamic SOQL must include the package namespace
     * prefix, bit field describes don't include namespace prefix fields within the package. This method can
     * be used in our describe code to remove an incorrect namespace prefix.

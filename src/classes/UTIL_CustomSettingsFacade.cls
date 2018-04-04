@@ -39,30 +39,30 @@ public with sharing class UTIL_CustomSettingsFacade {
     * @description Creates instance of settings to use in tests.
     * @param mySettings Settings instance with the values to set.
     *******************************************************************************************************/
-    public static void setHEDASettingForTest(heda2__Hierarchy_Settings__c mySettings) {
+    public static void setHEDASettingForTest(hed__Hierarchy_Settings__c mySettings) {
 
-        heda2__Hierarchy_Settings__c hedaSettings = new heda2__Hierarchy_Settings__c();
+        hed__Hierarchy_Settings__c hedaSettings = new hed__Hierarchy_Settings__c();
 
         //create our own based on what's passed in from the test
-        hedaSettings.heda2__Account_Processor__c = mySettings.heda2__Account_Processor__c;
-        hedaSettings.heda2__Accounts_Addresses_Enabled__c = mySettings.heda2__Accounts_Addresses_Enabled__c;
-        hedaSettings.heda2__Contacts_Addresses_Enabled__c = mySettings.heda2__Contacts_Addresses_Enabled__c;
-        hedaSettings.heda2__Simple_Address_Change_Treated_as_Update__c = mySettings.heda2__Simple_Address_Change_Treated_as_Update__c;
-        hedaSettings.heda2__Household_Addresses_RecType__c = mySettings.heda2__Household_Addresses_RecType__c;
-        hedaSettings.heda2__Reciprocal_Method__c = mySettings.heda2__Reciprocal_Method__c;
-        hedaSettings.heda2__Error_Notifications_On__c = mySettings.heda2__Error_Notifications_On__c;
-        hedaSettings.heda2__Error_Notifications_To__c = mySettings.heda2__Error_Notifications_To__c;
-        hedaSettings.heda2__Store_Errors_On__c = mySettings.heda2__Store_Errors_On__c;
-        hedaSettings.heda2__Async_Error_Check_Last_Run__c = mySettings.heda2__Async_Error_Check_Last_Run__c;
-        hedaSettings.heda2__Affl_ProgEnroll_Del__c = mySettings.heda2__Affl_ProgEnroll_Del__c;
-        hedaSettings.heda2__Affl_ProgEnroll_Del_Status__c = mySettings.heda2__Affl_ProgEnroll_Del_Status__c;
-        hedaSettings.heda2__Accounts_to_Delete__c =  mySettings.heda2__Accounts_to_Delete__c;
-        hedaSettings.heda2__Enable_Course_Connections__c = mySettings.heda2__Enable_Course_Connections__c;
-        hedaSettings.heda2__Faculty_RecType__c = mySettings.heda2__Faculty_RecType__c;
-        hedaSettings.heda2__Student_RecType__c = mySettings.heda2__Student_RecType__c;
-        hedaSettings.heda2__Disable_Preferred_Email_Enforcement__c = mySettings.heda2__Disable_Preferred_Email_Enforcement__c;
-        hedaSettings.heda2__Household_Account_Naming_Format__c = mySettings.heda2__Household_Account_Naming_Format__c;
-        hedaSettings.heda2__Automatic_Household_Naming__c = mySettings.heda2__Automatic_Household_Naming__c;
+        hedaSettings.hed__Account_Processor__c = mySettings.hed__Account_Processor__c;
+        hedaSettings.hed__Accounts_Addresses_Enabled__c = mySettings.hed__Accounts_Addresses_Enabled__c;
+        hedaSettings.hed__Contacts_Addresses_Enabled__c = mySettings.hed__Contacts_Addresses_Enabled__c;
+        hedaSettings.hed__Simple_Address_Change_Treated_as_Update__c = mySettings.hed__Simple_Address_Change_Treated_as_Update__c;
+        hedaSettings.hed__Household_Addresses_RecType__c = mySettings.hed__Household_Addresses_RecType__c;
+        hedaSettings.hed__Reciprocal_Method__c = mySettings.hed__Reciprocal_Method__c;
+        hedaSettings.hed__Error_Notifications_On__c = mySettings.hed__Error_Notifications_On__c;
+        hedaSettings.hed__Error_Notifications_To__c = mySettings.hed__Error_Notifications_To__c;
+        hedaSettings.hed__Store_Errors_On__c = mySettings.hed__Store_Errors_On__c;
+        hedaSettings.hed__Async_Error_Check_Last_Run__c = mySettings.hed__Async_Error_Check_Last_Run__c;
+        hedaSettings.hed__Affl_ProgEnroll_Del__c = mySettings.hed__Affl_ProgEnroll_Del__c;
+        hedaSettings.hed__Affl_ProgEnroll_Del_Status__c = mySettings.hed__Affl_ProgEnroll_Del_Status__c;
+        hedaSettings.hed__Accounts_to_Delete__c =  mySettings.hed__Accounts_to_Delete__c;
+        hedaSettings.hed__Enable_Course_Connections__c = mySettings.hed__Enable_Course_Connections__c;
+        hedaSettings.hed__Faculty_RecType__c = mySettings.hed__Faculty_RecType__c;
+        hedaSettings.hed__Student_RecType__c = mySettings.hed__Student_RecType__c;
+        hedaSettings.hed__Disable_Preferred_Email_Enforcement__c = mySettings.hed__Disable_Preferred_Email_Enforcement__c;
+        hedaSettings.hed__Household_Account_Naming_Format__c = mySettings.hed__Household_Account_Naming_Format__c;
+        hedaSettings.hed__Automatic_Household_Naming__c = mySettings.hed__Automatic_Household_Naming__c;
 
         insert hedaSettings;
 
@@ -84,17 +84,17 @@ public with sharing class UTIL_CustomSettingsFacade {
         contactsSettings.npe01__Opportunity_Contact_Role_Default_role__c = mySettings.npe01__Opportunity_Contact_Role_Default_role__c;
         contactsSettings.npe01__Disable_Account_Model_Trigger__c = mySettings.npe01__Disable_Account_Model_Trigger__c;
         contactsSettings.npe01__Payments_Enabled__c = mySettings.npe01__Payments_Enabled__c;
-        contactsSettings.npsp3c__Opp_RecTypes_Excluded_for_Payments__c = mySettings.npsp3c__Opp_RecTypes_Excluded_for_Payments__c;
-        contactsSettings.npsp3c__Opp_Types_Excluded_for_Payments__c = mySettings.npsp3c__Opp_Types_Excluded_for_Payments__c;
-        contactsSettings.npsp3c__Automatic_Campaign_Member_Management__c = mySettings.npsp3c__Automatic_Campaign_Member_Management__c;
-        contactsSettings.npsp3c__Campaign_Member_Responded_Status__c = mySettings.npsp3c__Campaign_Member_Responded_Status__c;
-        contactsSettings.npsp3c__Campaign_Member_Non_Responded_Status__c = mySettings.npsp3c__Campaign_Member_Non_Responded_Status__c;
-        contactsSettings.npsp3c__Organizational_Account_Addresses_Enabled__c = mySettings.npsp3c__Organizational_Account_Addresses_Enabled__c;
-        contactsSettings.npsp3c__Simple_Address_Change_Treated_as_Update__c = mySettings.npsp3c__Simple_Address_Change_Treated_as_Update__c;
-        contactsSettings.npsp3c__Household_Account_Addresses_Disabled__c = mySettings.npsp3c__Household_Account_Addresses_Disabled__c;
-        contactsSettings.npsp3c__Payments_Auto_Close_Stage_Name__c = mySettings.npsp3c__Payments_Auto_Close_Stage_Name__c;
-        contactsSettings.npsp3c__Honoree_Opportunity_Contact_Role__c = mySettings.npsp3c__Honoree_Opportunity_Contact_Role__c;
-        contactsSettings.npsp3c__Notification_Recipient_Opp_Contact_Role__c = mySettings.npsp3c__Notification_Recipient_Opp_Contact_Role__c;
+        contactsSettings.npsp__Opp_RecTypes_Excluded_for_Payments__c = mySettings.npsp__Opp_RecTypes_Excluded_for_Payments__c;
+        contactsSettings.npsp__Opp_Types_Excluded_for_Payments__c = mySettings.npsp__Opp_Types_Excluded_for_Payments__c;
+        contactsSettings.npsp__Automatic_Campaign_Member_Management__c = mySettings.npsp__Automatic_Campaign_Member_Management__c;
+        contactsSettings.npsp__Campaign_Member_Responded_Status__c = mySettings.npsp__Campaign_Member_Responded_Status__c;
+        contactsSettings.npsp__Campaign_Member_Non_Responded_Status__c = mySettings.npsp__Campaign_Member_Non_Responded_Status__c;
+        contactsSettings.npsp__Organizational_Account_Addresses_Enabled__c = mySettings.npsp__Organizational_Account_Addresses_Enabled__c;
+        contactsSettings.npsp__Simple_Address_Change_Treated_as_Update__c = mySettings.npsp__Simple_Address_Change_Treated_as_Update__c;
+        contactsSettings.npsp__Household_Account_Addresses_Disabled__c = mySettings.npsp__Household_Account_Addresses_Disabled__c;
+        contactsSettings.npsp__Payments_Auto_Close_Stage_Name__c = mySettings.npsp__Payments_Auto_Close_Stage_Name__c;
+        contactsSettings.npsp__Honoree_Opportunity_Contact_Role__c = mySettings.npsp__Honoree_Opportunity_Contact_Role__c;
+        contactsSettings.npsp__Notification_Recipient_Opp_Contact_Role__c = mySettings.npsp__Notification_Recipient_Opp_Contact_Role__c;
 
         insert contactsSettings;
     }
@@ -123,7 +123,7 @@ public with sharing class UTIL_CustomSettingsFacade {
         householdsSettings.npo02__Advanced_Household_Naming__c = mySettings.npo02__Advanced_Household_Naming__c;
         householdsSettings.npo02__Enable_Soft_Credit_Rollups__c = mySettings.npo02__Enable_Soft_Credit_Rollups__c;
         householdsSettings.npo02__Soft_Credit_Roles__c = mySettings.npo02__Soft_Credit_Roles__c;
-        householdsSettings.npsp3c__Matched_Donor_Role__c = mySettings.npsp3c__Matched_Donor_Role__c;
+        householdsSettings.npsp__Matched_Donor_Role__c = mySettings.npsp__Matched_Donor_Role__c;
         householdsSettings.npo02__Household_OCR_Excluded_Recordtypes__c = mySettings.npo02__Household_OCR_Excluded_Recordtypes__c;
         householdsSettings.npo02__Household_Creation_Excluded_Recordtypes__c = mySettings.npo02__Household_Creation_Excluded_Recordtypes__c;
         householdsSettings.npo02__Household_Mailing_List_ID__c = mySettings.npo02__Household_Mailing_List_ID__c;

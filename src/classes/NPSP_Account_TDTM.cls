@@ -36,7 +36,7 @@
 * HEDA unit test cases failed. However, we need to replicate the logic in it and put it into HEDA TDTM framework, since there are some logic in
 * NPSP refers to those fields.
 **/
-global class NPSP_Account_TDTM extends heda2.TDTM_Runnable {
+global class NPSP_Account_TDTM extends hed.TDTM_Runnable {
     /*******************************************************************************************************
     * @description Trigger Handler on Accounts that handles ensuring the correct system flags are set on
     * our special accounts (Household, One-to-One), and also detects changes on Household Account that requires
@@ -47,9 +47,9 @@ global class NPSP_Account_TDTM extends heda2.TDTM_Runnable {
     * @param objResult the describe for Accounts
     * @return dmlWrapper always null
     ********************************************************************************************************/
-    public override heda2.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
-            heda2.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
-        npsp3c.Advancement_Adapter adapter = new npsp3c.Advancement_Adapter();
+    public override hed.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
+            hed.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
+        npsp.Advancement_Adapter adapter = new npsp.Advancement_Adapter();
         adapter.configAccountTDTM(newList, oldList, triggerAction.name());
         return null;
     }

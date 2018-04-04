@@ -47,24 +47,24 @@ public with sharing class TDTM_Glue {
     * Inject any additional TDTM trigger handler if needed.
     * @return List<TDTM_Global_API.TdtmToken> A list of HEDA tokens.
     *******************************************************************************************************/
-    public List<heda2.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
-        List<heda2.TDTM_Global_API.TdtmToken> hedaTokens = new List<heda2.TDTM_Global_API.TdtmToken>();
-        List<heda2__Trigger_Handler__c> tdtmConfig = [select heda2__Class__c, heda2__Object__c, heda2__Trigger_Action__c, heda2__Load_Order__c, heda2__Active__c,
-                heda2__Asynchronous__c, heda2__Filter_Field__c, heda2__Filter_Value__c, heda2__User_Managed__c, heda2__Owned_by_Namespace__c, heda2__Usernames_to_Exclude__c from heda2__Trigger_Handler__c];
+    public List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
+        List<hed.TDTM_Global_API.TdtmToken> hedaTokens = new List<hed.TDTM_Global_API.TdtmToken>();
+        List<hed__Trigger_Handler__c> tdtmConfig = [select hed__Class__c, hed__Object__c, hed__Trigger_Action__c, hed__Load_Order__c, hed__Active__c,
+                hed__Asynchronous__c, hed__Filter_Field__c, hed__Filter_Value__c, hed__User_Managed__c, hed__Owned_by_Namespace__c, hed__Usernames_to_Exclude__c from hed__Trigger_Handler__c];
         if(tdtmConfig.size() == 0) {
-            hedaTokens = heda2.TDTM_Global_API.getDefaultTdtmConfig();
+            hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
         }
 
-        for(heda2__Trigger_Handler__c handler : tdtmConfig) {
-            hedaTokens.add(new heda2.TDTM_Global_API.TdtmToken(handler.heda2__Class__c, handler.heda2__Object__c, handler.heda2__Trigger_Action__c,
-                    handler.heda2__Load_Order__c, handler.heda2__Active__c, handler.heda2__Asynchronous__c,
-                    handler.heda2__Filter_Field__c, handler.heda2__Filter_Value__c, handler.heda2__User_Managed__c, handler.heda2__Owned_by_Namespace__c, handler.heda2__Usernames_to_Exclude__c));
+        for(hed__Trigger_Handler__c handler : tdtmConfig) {
+            hedaTokens.add(new hed.TDTM_Global_API.TdtmToken(handler.hed__Class__c, handler.hed__Object__c, handler.hed__Trigger_Action__c,
+                    handler.hed__Load_Order__c, handler.hed__Active__c, handler.hed__Asynchronous__c,
+                    handler.hed__Filter_Field__c, handler.hed__Filter_Value__c, handler.hed__User_Managed__c, handler.hed__Owned_by_Namespace__c, handler.hed__Usernames_to_Exclude__c));
         }
 
         //Check if NPSP ACCT_Accounts_TDTM is active in database, we do not want to inject the logic if it is inactive
         if(getNPSPTriggerActiveMap().get('ACCT_Accounts_TDTM') == true) {
             //We disabled NPSP ACCT_Account_TDTM to avoid conflict. Since the logic in ACCT_Account_TDTM is needed for NPSP, we need to add equivalent trigger handler to HEDA.
-            hedaTokens.add(new heda2.TDTM_Global_API.TdtmToken('NPSP_Account_TDTM', 'Account', 'BeforeInsert;BeforeUpdate;AfterUpdate', 1.0, true, false, null, null, false, 'adv'));
+            hedaTokens.add(new hed.TDTM_Global_API.TdtmToken('NPSP_Account_TDTM', 'Account', 'BeforeInsert;BeforeUpdate;AfterUpdate', 1.0, true, false, null, null, false, 'adv'));
         }
 
 
@@ -77,24 +77,24 @@ public with sharing class TDTM_Glue {
     * @param listTH The list of Trigger handler record for further processing.
     * @return List<Trigger_Handler__c> The list of Trigger Handler record for TDTM to use.
     *******************************************************************************************************/
-    public List<npsp3c__Trigger_Handler__c> getDefaultTdtmConfigRecords(List<npsp3c__Trigger_Handler__c> listTH) {
+    public List<npsp__Trigger_Handler__c> getDefaultTdtmConfigRecords(List<npsp__Trigger_Handler__c> listTH) {
         //Do the similar thing as NPSP token logic:
         // If the cached Trigger handler is empty, then query the database. otherwise just return the cached one.
         if(listTH == null) {
-            listTH = [select npsp3c__Asynchronous__c, npsp3c__Class__c, npsp3c__Load_Order__c, npsp3c__Object__c, npsp3c__Active__c, npsp3c__Usernames_to_Exclude__c,
-                    npsp3c__Trigger_Action__c from npsp3c__Trigger_Handler__c order by npsp3c__Load_Order__c];
+            listTH = [select npsp__Asynchronous__c, npsp__Class__c, npsp__Load_Order__c, npsp__Object__c, npsp__Active__c, npsp__Usernames_to_Exclude__c,
+                    npsp__Trigger_Action__c from npsp__Trigger_Handler__c order by npsp__Load_Order__c];
 
         }
 
         //deactivate the Trigger Handler that conflict with HEDA
-       for(npsp3c__Trigger_Handler__c th : listTH) {
+       for(npsp__Trigger_Handler__c th : listTH) {
             if(
-                    th.npsp3c__Class__c == 'ACCT_Accounts_TDTM' && th.npsp3c__Object__c == 'Account'
-                              || th.npsp3c__Class__c == 'ACCT_IndividualAccounts_TDTM' && th.npsp3c__Object__c == 'Contact'
-                              || th.npsp3c__Class__c == 'ADDR_Contact_TDTM' && th.npsp3c__Object__c == 'Contact'
-                            || th.npsp3c__Class__c == 'ADDR_Account_TDTM' && th.npsp3c__Object__c == 'Account'
+                    th.npsp__Class__c == 'ACCT_Accounts_TDTM' && th.npsp__Object__c == 'Account'
+                              || th.npsp__Class__c == 'ACCT_IndividualAccounts_TDTM' && th.npsp__Object__c == 'Contact'
+                              || th.npsp__Class__c == 'ADDR_Contact_TDTM' && th.npsp__Object__c == 'Contact'
+                            || th.npsp__Class__c == 'ADDR_Account_TDTM' && th.npsp__Object__c == 'Account'
                 ) {
-                th.npsp3c__Active__c = false;
+                th.npsp__Active__c = false;
             }
         }
 
@@ -111,11 +111,11 @@ public with sharing class TDTM_Glue {
             return npspTriggerHandlerActiveMap;
         }
         npspTriggerHandlerActiveMap = new Map<String, Boolean>();
-        List<npsp3c__Trigger_Handler__c> listTH = [select npsp3c__Asynchronous__c, npsp3c__Class__c, npsp3c__Load_Order__c, npsp3c__Object__c, npsp3c__Active__c, npsp3c__Usernames_to_Exclude__c,
-                npsp3c__Trigger_Action__c from npsp3c__Trigger_Handler__c order by npsp3c__Load_Order__c];
+        List<npsp__Trigger_Handler__c> listTH = [select npsp__Asynchronous__c, npsp__Class__c, npsp__Load_Order__c, npsp__Object__c, npsp__Active__c, npsp__Usernames_to_Exclude__c,
+                npsp__Trigger_Action__c from npsp__Trigger_Handler__c order by npsp__Load_Order__c];
         if(listTH != null && listTH.size() > 0) {
-            for(npsp3c__Trigger_Handler__c th: listTH) {
-                npspTriggerHandlerActiveMap.put(th.npsp3c__Class__c, th.npsp3c__Active__c);
+            for(npsp__Trigger_Handler__c th: listTH) {
+                npspTriggerHandlerActiveMap.put(th.npsp__Class__c, th.npsp__Active__c);
             }
         }
         return npspTriggerHandlerActiveMap;

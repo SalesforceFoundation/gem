@@ -41,15 +41,15 @@ private class API_HEDA_TEST {
     @testSetup
     static void setupTriggerHandlers() {
         //Insert HEDA Trigger Handlers
-        List<heda2.TDTM_Global_API.TdtmToken> hedaTokens = heda2.TDTM_Global_API.getDefaultTdtmConfig();
-        heda2.TDTM_Global_API.setTdtmConfig(hedaTokens);
+        List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
+        hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
 
         //Insert NPSP Trigger Handlers
-        List<npsp3c__Trigger_Handler__c> npspHandlers = npsp3c.TDTM_Config_API.getDefaultRecords();
+        List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
         insert npspHandlers;
 
         //Set HEDA custom setting
-        UTIL_CustomSettingsFacade.setHEDASettingForTest(new heda2__Hierarchy_Settings__c(heda2__Account_Processor__c = UTIL_Describe.getHhAccRecTypeID()));
+        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = UTIL_Describe.getHhAccRecTypeID()));
 
         //Set the NPSP Contact setting
         UTIL_CustomSettingsFacade.setNPSPContactsSettingsForTests(new npe01__Contacts_and_Orgs_Settings__c (
@@ -138,11 +138,11 @@ private class API_HEDA_TEST {
         API_HEDA apiHEDA = new API_HEDA();
 
         //System should add the NPSP_Account_TDTM token when HEDA request it
-        List<heda2.TDTM_Global_API.TdtmToken> tokens = apiHEDA.getDefaultTdtmConfigTokens();
+        List<hed.TDTM_Global_API.TdtmToken> tokens = apiHEDA.getDefaultTdtmConfigTokens();
 
         Map<String, Boolean> activeMap = new Map<String, Boolean>();
 
-        for(heda2.TDTM_Global_API.TdtmToken token : tokens) {
+        for(hed.TDTM_Global_API.TdtmToken token : tokens) {
             activeMap.put(token.className, token.active);
         }
 
@@ -341,8 +341,8 @@ private class API_HEDA_TEST {
     * @description Helper method to disable npsp trigger handler
     */
     static void disableTriggerHandler(String triggerHandler) {
-        npsp3c__Trigger_Handler__c th = [Select npsp3c__Active__c from npsp3c__Trigger_Handler__c where npsp3c__Class__c =:triggerhandler];
-        th.npsp3c__Active__c = false;
+        npsp__Trigger_Handler__c th = [Select npsp__Active__c from npsp__Trigger_Handler__c where npsp__Class__c =:triggerhandler];
+        th.npsp__Active__c = false;
         update th;
     }
 }

@@ -65,8 +65,8 @@ public class UTIL_UnitTestData_TEST {
     *******************************************************************************************************/
     public static Contact getContact() {
         Contact contact =  new Contact(FirstName = 'Test', LastName = 'Testerson' + Datetime.now().getTime(),
-                heda2__WorkEmail__c = 'fakeemail@salesforce.org', heda2__Preferred_Email__c = 'Work',
-                heda2__WorkPhone__c = '206-777-8888', heda2__PreferredPhone__c = 'Work',OtherCity = 'Seattle');
+                hed__WorkEmail__c = 'fakeemail@salesforce.org', hed__Preferred_Email__c = 'Work',
+                hed__WorkPhone__c = '206-777-8888', hed__PreferredPhone__c = 'Work',OtherCity = 'Seattle');
         Database.DMLOptions dmo = new Database.DMLOptions();
         dmo.DuplicateRuleHeader.AllowSave = true;
         contact.setOptions(dmo);
@@ -94,8 +94,8 @@ public class UTIL_UnitTestData_TEST {
     public static List<Contact> getMultipleTestContacts(Integer n) {
         List<contact> ContactsToAdd = new List<contact>();
         for(Integer i=0; i<n; i++) {
-            Contact newCon = new Contact(FirstName = i + 'Test' + i, LastName = i + 'Contact_forTests' + i, heda2__WorkEmail__c = 'fakeemail' + i + '@salesforce.org',
-                    heda2__Preferred_Email__c = 'Work', heda2__WorkPhone__c = i + '06-777-888' + i, heda2__PreferredPhone__c = 'Work', OtherCity = 'Seattle');
+            Contact newCon = new Contact(FirstName = i + 'Test' + i, LastName = i + 'Contact_forTests' + i, hed__WorkEmail__c = 'fakeemail' + i + '@salesforce.org',
+                    hed__Preferred_Email__c = 'Work', hed__WorkPhone__c = i + '06-777-888' + i, hed__PreferredPhone__c = 'Work', OtherCity = 'Seattle');
             Database.DMLOptions dmo = new Database.DMLOptions();
             dmo.DuplicateRuleHeader.AllowSave = true;
             newCon.setOptions(dmo);

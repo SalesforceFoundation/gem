@@ -40,11 +40,11 @@ private class API_NPSP_TEST {
     @testSetup
     static void setupTriggerHandlers() {
         //Insert HEDA Trigger Handlers
-        List<heda2.TDTM_Global_API.TdtmToken> hedaTokens = heda2.TDTM_Global_API.getDefaultTdtmConfig();
-        heda2.TDTM_Global_API.setTdtmConfig(hedaTokens);
+        List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
+        hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
 
         //Insert NPSP Trigger Handlers
-        List<npsp3c__Trigger_Handler__c> npspHandlers = npsp3c.TDTM_Config_API.getDefaultRecords();
+        List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
         insert npspHandlers;
     }
 
@@ -55,10 +55,10 @@ private class API_NPSP_TEST {
     @isTest
     static void testGetDefaultTdtmConfigTokens() {
         API_NPSP apiNPSP = new API_NPSP();
-        List<npsp3c__Trigger_Handler__c> triggerHandlers = apiNPSP.getDefaultTdtmConfigNpspRecords(null);
+        List<npsp__Trigger_Handler__c> triggerHandlers = apiNPSP.getDefaultTdtmConfigNpspRecords(null);
         Map<String, Boolean> activeMap = new Map<String, Boolean>();
-        for(npsp3c__Trigger_Handler__c th : triggerHandlers) {
-            activeMap.put(th.npsp3c__Class__c, th.npsp3c__Active__c);
+        for(npsp__Trigger_Handler__c th : triggerHandlers) {
+            activeMap.put(th.npsp__Class__c, th.npsp__Active__c);
         }
 
         system.assertEquals(false, activeMap.get('ACCT_Accounts_TDTM'));

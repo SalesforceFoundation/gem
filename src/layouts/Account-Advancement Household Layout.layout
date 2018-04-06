@@ -32,6 +32,10 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>Phone</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>npo02__HouseholdPhone__c</field>
             </layoutItems>
             <layoutItems>
@@ -298,6 +302,13 @@
         <relatedList>hed__Affiliation__c.hed__Account__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <fields>NAME</fields>
+        <fields>hed__Formula_MailingAddress__c</fields>
+        <fields>hed__Address_Type__c</fields>
+        <fields>hed__Default_Address__c</fields>
+        <relatedList>hed__Address__c.hed__Parent_Account__c</relatedList>
+    </relatedLists>
+    <relatedLists>
         <customButtons>npe01__New_Organization_Donation</customButtons>
         <excludeButtons>New</excludeButtons>
         <fields>OPPORTUNITY.NAME</fields>
@@ -305,13 +316,6 @@
         <fields>OPPORTUNITY.AMOUNT</fields>
         <fields>OPPORTUNITY.CLOSE_DATE</fields>
         <relatedList>RelatedOpportunityList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <fields>hed__Formula_MailingAddress__c</fields>
-        <fields>hed__Address_Type__c</fields>
-        <fields>hed__Default_Address__c</fields>
-        <relatedList>hed__Address__c.hed__Parent_Account__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>

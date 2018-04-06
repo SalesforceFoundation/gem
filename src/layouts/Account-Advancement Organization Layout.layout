@@ -359,20 +359,11 @@
         </relatedContentItems>
     </relatedContent>
     <relatedLists>
-        <fields>VERSION.TITLE</fields>
-        <fields>VERSION.CREATED_DATE</fields>
-        <fields>VERSION.LAST_UPDATE</fields>
-        <relatedList>ContentDocumentRelatedList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <fields>OWNER.FIRST_NAME</fields>
-        <fields>OWNER.LAST_NAME</fields>
-        <fields>hed__Role__c</fields>
-        <fields>hed__Status__c</fields>
-        <fields>hed__StartDate__c</fields>
-        <fields>hed__EndDate__c</fields>
-        <relatedList>hed__Affiliation__c.hed__Account__c</relatedList>
+        <fields>FULL_NAME</fields>
+        <fields>CONTACT.TITLE</fields>
+        <fields>CONTACT.EMAIL</fields>
+        <fields>CONTACT.PHONE1</fields>
+        <relatedList>RelatedContactList</relatedList>
     </relatedLists>
     <relatedLists>
         <customButtons>npe01__New_Organization_Donation</customButtons>
@@ -392,6 +383,16 @@
         <fields>npe03__Total__c</fields>
         <fields>npe03__Total_Paid_Installments__c</fields>
         <relatedList>npe03__Recurring_Donation__c.npe03__Organization__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>OWNER.FIRST_NAME</fields>
+        <fields>OWNER.LAST_NAME</fields>
+        <fields>hed__Role__c</fields>
+        <fields>hed__Status__c</fields>
+        <fields>hed__StartDate__c</fields>
+        <fields>hed__EndDate__c</fields>
+        <relatedList>hed__Affiliation__c.hed__Account__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>

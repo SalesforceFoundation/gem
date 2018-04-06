@@ -30,10 +30,6 @@ New/Modified tasks
 New/Modified Flows
 ------------------
 
-### `hedaectomy`
-  Removes the config and non-managed HEDA metadata
-
-
 ### `ci_beta_install`
   Modified - First will attempt to run `delete_dev_config` ignoring failures to remove previous Dev configuration. Finally deploys DEV configiguration and runs some post install methods as the final tasks
 

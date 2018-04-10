@@ -92,7 +92,7 @@ private class API_HEDA_TEST {
         List<Opportunity> oppToInsert = new List<Opportunity>();
 
         Opportunity newOpp1 =
-                new opportunity (
+                new Opportunity (
                         name = 'testopp',
                         accountId = con1.AccountId,
                         stagename=UTIL_UnitTestData_TEST.getClosedWonStage(),
@@ -101,7 +101,7 @@ private class API_HEDA_TEST {
         oppToInsert.add(newOpp1);
 
         Opportunity newOpp2 =
-                new opportunity (
+                new Opportunity (
                         name = 'testopp',
                         accountId = con2.AccountId,
                         stagename=UTIL_UnitTestData_TEST.getClosedWonStage(),
@@ -113,7 +113,7 @@ private class API_HEDA_TEST {
     }
 
     /*******************************************************************************************************
-    * @description Test if Adv add NPSP_Account_TDTM into HEDA tokens.
+    * @description Test if Adv add NPSP_Account_TDTM into HEDA tokens
     */
     @isTest
     static void testGetDefaultTdtmConfigTokens() {
@@ -121,7 +121,7 @@ private class API_HEDA_TEST {
     }
 
     /*******************************************************************************************************
-    * @description Test if Adv add NPSP_Account_TDTM into HEDA tokens.
+    * @description Test if Adv add NPSP_Account_TDTM into HEDA tokens
     */
     @isTest
     static void testGetDefaultTdtmConfigTokensNegative() {
@@ -155,7 +155,7 @@ private class API_HEDA_TEST {
 
     /*******************************************************************************************************
     * @description Test if Adv recalculate the Total when moving the primary contact from one account to
-    * another account.
+    * another account
     */
     @isTest
     static void testRollupAccount() {
@@ -164,7 +164,7 @@ private class API_HEDA_TEST {
 
     /*******************************************************************************************************
     * @description Test if Adv recalculate the Total when moving the primary contact from one account to
-    * another account.
+    * another account
     */
     @isTest
     static void testRollupAccountNegative() {
@@ -210,7 +210,7 @@ private class API_HEDA_TEST {
 
     /*******************************************************************************************************
     * @description Test if Adv move the opportunity when moving the primary contact from one account to
-    * another account.
+    * another account
     */
     @isTest
     static void testMoveOppsToContactAccount() {
@@ -219,7 +219,7 @@ private class API_HEDA_TEST {
 
     /*******************************************************************************************************
     * @description Test if Adv move the opportunity when moving the primary contact from one account to
-    * another account.
+    * another account
     */
     @isTest
     static void testMoveOppsToContactAccountNegative() {

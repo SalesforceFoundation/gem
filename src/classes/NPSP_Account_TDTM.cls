@@ -40,10 +40,10 @@ global class NPSP_Account_TDTM extends hed.TDTM_Runnable {
     /*******************************************************************************************************
     * @description Trigger Handler on Accounts that handles ensuring the correct system flags are set on
     * our special accounts (Household, One-to-One), and also detects changes on Household Account that requires
-    * name updating.
-    * @param listNew the list of Accounts from trigger new.
-    * @param listOld the list of Accounts from trigger old.
-    * @param triggerAction which trigger event (BeforeInsert, AfterInsert, etc.).
+    * name updating
+    * @param listNew the list of Accounts from trigger new
+    * @param listOld the list of Accounts from trigger old
+    * @param triggerAction which trigger event (BeforeInsert, AfterInsert, etc.)
     * @param objResult the describe for Accounts
     * @return dmlWrapper always null
     ********************************************************************************************************/

@@ -50,7 +50,7 @@ private class NPSP_Account_TDTM_TEST {
     }
 
     /*******************************************************************************************************
-    * @description Test if system updates npsp fields when Account record type changes.
+    * @description Test if system updates npsp fields when Account record type changes
     */
     @isTest
     static void testAccountTDTM() {

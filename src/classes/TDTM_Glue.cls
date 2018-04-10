@@ -37,15 +37,15 @@
 public with sharing class TDTM_Glue {
 
     /*******************************************************************************************************
-    * @description Hold active/inactive NPSP Trigger Hanlder in a map, to avoid repetitive soql calls.
+    * @description Hold active/inactive NPSP Trigger Hanlder in a map, to avoid repetitive soql calls
     *********************************************************************************************************/
     @TestVisible
     private static Map<String, Boolean> npspTriggerHandlerActiveMap;
 
     /*******************************************************************************************************
-    * @description Returns the default TDTM configuration for HEDA.
-    * Inject any additional TDTM trigger handler if needed.
-    * @return List<TDTM_Global_API.TdtmToken> A list of HEDA tokens.
+    * @description Returns the default TDTM configuration for HEDA
+    * Inject any additional TDTM trigger handler if needed
+    * @return List<TDTM_Global_API.TdtmToken> A list of HEDA tokens
     *******************************************************************************************************/
     public List<hed.TDTM_Global_API.TdtmToken> getDefaultTdtmConfigTokens() {
         List<hed.TDTM_Global_API.TdtmToken> hedaTokens = new List<hed.TDTM_Global_API.TdtmToken>();
@@ -72,10 +72,10 @@ public with sharing class TDTM_Glue {
     }
 
     /*******************************************************************************************************
-    * @description Returns the default TDTM configuration for NPSP.
-    * Deactivate some trigger handlers if it conflicts with HEDA(cause HEDA test cases to fail).
-    * @param listTH The list of Trigger handler record for further processing.
-    * @return List<Trigger_Handler__c> The list of Trigger Handler record for TDTM to use.
+    * @description Returns the default TDTM configuration for NPSP
+    * Deactivate some trigger handlers if it conflicts with HEDA(cause HEDA test cases to fail)
+    * @param listTH The list of Trigger handler record for further processing
+    * @return List<Trigger_Handler__c> The list of Trigger Handler record for TDTM to use
     *******************************************************************************************************/
     public List<npsp__Trigger_Handler__c> getDefaultTdtmConfigRecords(List<npsp__Trigger_Handler__c> listTH) {
         //Do the similar thing as NPSP token logic:
@@ -104,7 +104,7 @@ public with sharing class TDTM_Glue {
     /********************************************************************************************************
     * @description Returns a map of all NPSP trigger handlers and its corresponding status
     * from database (active or inactive)
-    * @return Map<String, Boolean> List of trigger handler tokens with the default values.
+    * @return Map<String, Boolean> List of trigger handler tokens with the default values
     *********************************************************************************************************/
     public static Map<String, Boolean> getNPSPTriggerActiveMap() {
         if (npspTriggerHandlerActiveMap != null && npspTriggerHandlerActiveMap.size() > 0) {

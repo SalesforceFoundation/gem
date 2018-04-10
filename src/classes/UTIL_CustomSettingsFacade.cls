@@ -33,11 +33,11 @@
 * Needs to be "without sharing" so that the Install Script can run it.
 */
 
-public with sharing class UTIL_CustomSettingsFacade {
+public without sharing class UTIL_CustomSettingsFacade {
 
     /*******************************************************************************************************
-    * @description Creates instance of settings to use in tests.
-    * @param mySettings Settings instance with the values to set.
+    * @description Creates instance of settings to use in tests
+    * @param mySettings Settings instance with the values to set
     *******************************************************************************************************/
     public static void setHEDASettingForTest(hed__Hierarchy_Settings__c mySettings) {
 
@@ -69,8 +69,8 @@ public with sharing class UTIL_CustomSettingsFacade {
     }
 
     /*******************************************************************************************************
-    * @description Creates instance of settings to use in tests.
-    * @parameter mySettings Settings instance with the values to set.
+    * @description Creates instance of settings to use in tests
+    * @parameter mySettings Settings instance with the values to set
     *******************************************************************************************************/
     public static void setNPSPContactsSettingsForTests(npe01__Contacts_And_Orgs_Settings__c mySettings) {
 
@@ -100,8 +100,8 @@ public with sharing class UTIL_CustomSettingsFacade {
     }
 
     /*******************************************************************************************************
-    * @description Creates instance of settings to use in tests.
-    * @parameter mySettings Settings instance with the values to set.
+    * @description Creates instance of settings to use in tests
+    * @parameter mySettings Settings instance with the values to set
     *******************************************************************************************************/
     public static void setNPSPHouseholdsSettingsForTests(npo02__Households_Settings__c mySettings) {
 

@@ -54,7 +54,7 @@ global with sharing class API_HEDA extends hed.Advancement_Adapter {
     global override void rollupAccounts(list<Id> listAccountId) {
         //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
         if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
-            npsp.Advancement_Adapter adapter = new npsp.Advancement_Adapter();
+            npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
             adapter.rollupAccounts(listAccountId);
         }
     }
@@ -68,7 +68,7 @@ global with sharing class API_HEDA extends hed.Advancement_Adapter {
     global override void moveOppsToContactAccount(Map<Id,Id> mapContactIdAccountIdNew, Map<Id,Id> mapContactIdAccountIdOld) {
         //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
         if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
-            npsp.Advancement_Adapter adapter = new npsp.Advancement_Adapter();
+            npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
             adapter.moveOppsToContactAccount(mapContactIdAccountIdNew, mapContactIdAccountIdOld);
         }
     }
@@ -94,7 +94,7 @@ global with sharing class API_HEDA extends hed.Advancement_Adapter {
     global override void configAccountForContact(Account a) {
         //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
         if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
-            npsp.Advancement_Adapter adapter = new npsp.Advancement_Adapter();
+            npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
             adapter.configAccountForContact(a);
         }
     }

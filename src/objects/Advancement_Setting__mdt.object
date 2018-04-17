@@ -3,10 +3,10 @@
     <fields>
         <fullName>API_HEDA_Class__c</fullName>
         <defaultValue>&apos;API_HEDA&apos;</defaultValue>
-        <description>The name of the class that provides the Advancement TDTM interface to HEDA.</description>
+        <description>The name of the class that enables HEDA to access the Gift Processing TDTM interface. Do not change the default value for this field.</description>
         <externalId>false</externalId>
         <fieldManageability>SubscriberControlled</fieldManageability>
-        <inlineHelpText>The name of the class that provides the Advancement TDTM interface to HEDA.</inlineHelpText>
+        <inlineHelpText>The name of the class that enables HEDA to access the Gift Processing TDTM interface. Do not change the default value for this field.</inlineHelpText>
         <label>API HEDA Class</label>
         <length>255</length>
         <required>false</required>
@@ -16,10 +16,10 @@
     <fields>
         <fullName>API_NPSP_Class__c</fullName>
         <defaultValue>&apos;API_NPSP&apos;</defaultValue>
-        <description>The name of the class that provides the Advancement TDTM interface to NPSP.</description>
+        <description>The name of the class that enables NPSP to access the Gift Processing TDTM interface. Do not change the default value for this field.</description>
         <externalId>false</externalId>
         <fieldManageability>SubscriberControlled</fieldManageability>
-        <inlineHelpText>The name of the class that provides the Advancement TDTM interface to NPSP.</inlineHelpText>
+        <inlineHelpText>The name of the class that enables NPSP to access the Gift Processing TDTM interface. Do not change the default value for this field.</inlineHelpText>
         <label>API NPSP Class</label>
         <length>255</length>
         <required>false</required>
@@ -29,10 +29,10 @@
     <fields>
         <fullName>Use_Advancement__c</fullName>
         <defaultValue>true</defaultValue>
-        <description>Check if you would like to use the Advancement functionality.</description>
+        <description>Enable Gift Processing in HEDA and NPSP. Do not change the default value for this field.</description>
         <externalId>false</externalId>
         <fieldManageability>SubscriberControlled</fieldManageability>
-        <inlineHelpText>Check if you would like to use the Advancement functionality.</inlineHelpText>
+        <inlineHelpText>Enable Gift Processing in HEDA and NPSP. Do not change the default value for this field.</inlineHelpText>
         <label>Use Advancement</label>
         <type>Checkbox</type>
     </fields>

@@ -34,7 +34,7 @@
 * @group-content ../../ApexDocContent/TDTM.htm
 * @description This class is used to override the default behavior of the NPSP Advancement Adapter class.
 **/
-global with sharing class API_NPSP extends npsp.Advancement_Adapter {
+global with sharing class API_NPSP extends npsp.ADV_Adapter {
 
     /*******************************************************************************************************
     * @description To be called by the NPSP TDTM trigger dispatcher

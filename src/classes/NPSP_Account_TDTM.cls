@@ -49,7 +49,7 @@ global class NPSP_Account_TDTM extends hed.TDTM_Runnable {
     ********************************************************************************************************/
     public override hed.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
             hed.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
-        npsp.Advancement_Adapter adapter = new npsp.Advancement_Adapter();
+        npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
         adapter.configAccountTDTM(newList, oldList, triggerAction.name());
         return null;
     }

@@ -1,0 +1,107 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" controller="GiftEntryFormController">
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:dependency resource="markup://force:*" type="EVENT"/>
+
+    <aura:attribute type="npsp__DataImport__c" name="giftObject" />
+    <aura:attribute type="npsp__DataImport__c" name="giftObjectFields" />
+    <aura:attribute type="String[]" name="paymentMethods" />
+
+    <aura:attribute type="String" name="error" />
+    <aura:attribute type="String" name="batchId" />
+    <aura:attribute type="Boolean" name="showForm" default="true" />
+    <aura:attribute type="Boolean" name="showSuccess" default="false" />
+    <aura:attribute type="Boolean" name="disabled" default="false" />
+    <aura:attribute type="Boolean" name="showSpinner" default="false" />
+
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+
+    <force:recordData aura:id="giftData" 
+        fields="npsp__Account1_Name__c" 
+        mode="EDIT" 
+        targetRecord="{!v.giftObject}" 
+        targetFields="{!v.giftObjectFields}"
+        targetError="{!v.error}" />
+
+    <lightning:card title="Enter New Gift" iconName="standard:thanks">
+        <aura:set attribute="actions">
+            <lightning:button label="Save" />
+        </aura:set>
+
+        <aura:if isTrue="{!v.error != null}">
+            <ui:message title="Error" severity="error">
+                {!v.error}
+            </ui:message>
+        </aura:if>
+        <aura:if isTrue="{!v.showForm}">
+
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Donor Information
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <lightning:input aura:id="giftField" name="firstName" label="First Name" 
+                        value="{!v.giftObjectFields.npsp__Contact1_Firstname__c}" required="true" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <lightning:input aura:id="giftField" name="lastName" label="Last Name" 
+                        value="{!v.giftObjectFields.npsp__Contact1_Lastname__c}" required="true" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Donation Information
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <lightning:input aura:id="giftField" name="firstName" label="Donation Name"
+                        value="{!v.giftObjectFields.npsp__Donation_Name__c}" required="true" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <lightning:select aura:id="giftField" name="select" label="Payment Method" required="true"
+                        value="{!v.giftObjectFields.npsp__Payment_Method__c}">
+                        <aura:iteration items="{!v.paymentMethods}" var="method">
+                            <option value="{!method}" text="{!method}"></option>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <lightning:input aura:id="giftField" name="donationDate" label="Donation Date" type="date"
+                        value="{!v.giftObjectFields.npsp__Donation_Date__c}" required="true" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <lightning:input type="number" aura:id="giftField" name="firstName" label="Donation Amount" 
+                        formatter="currency" value="{!v.giftObjectFields.npsp__Donation_Amount__c}" required="true" />
+                </div>
+
+                <div class="slds-m-top_medium slds-p-around_small">
+                    <lightning:button label="Create Gift" variant="brand" onclick="{!c.clickCreate}" />
+                </div>
+
+                <!-- Fields that are filled in by default and hidden from the User -->
+                <div class="slds-hidden" style="height: 0">
+                    <!-- <lightning:inputField aura:id="batchIdField" fieldName="npsp__NPSP_Data_Import_Batch__c" /> -->
+                    <lightning:input aura:id="donationDonorField" name="donorSelection" label="Donor"
+                        value="{!v.giftObjectFields.npsp__Donation_Donor__c}" />
+                </div>
+
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!v.showSuccess}">
+            <div class="slds-p-around_small">
+                <p>Gift Saved! Please wait while we redirect you.</p>
+            </div>
+        </aura:if>
+    </lightning:card>
+
+</aura:component>

@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>GiftEntryFormController</members>
+        <members>GiftEntryFormController_TEST</members>
+        <members>Post_Install_Script</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>GiftEntryForm</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>giftApp</members>
+        <members>giftEntryForm</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
         <members>Gift_Entry</members>
         <name>CustomApplication</name>
     </types>
@@ -15,6 +30,10 @@
         <members>Donation_Tag__c</members>
         <members>Tag__c</members>
         <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Gift_Entry</members>
+        <name>CustomTab</name>
     </types>
     <types>
         <members>Opportunity-Advancement Gift Layout</members>

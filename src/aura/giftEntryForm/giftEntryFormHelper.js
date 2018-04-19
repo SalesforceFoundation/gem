@@ -10,7 +10,7 @@
     submitForm: function(component, helper) {
         component.find("giftData").saveRecord(function(saveResult) {
             if (saveResult.state === "SUCCESS" || saveResult.state === "DRAFT") {
-                component.set("v.error", "Success, now redirecting to new Gift");
+                //component.set("v.error", "Success, now redirecting to new Gift");
                 console.log("Record Saved:");
                 console.log(saveResult.recordId);
                 // Now, run the gift creation process

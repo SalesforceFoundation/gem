@@ -27,7 +27,6 @@
 
     <lightning:card title="Enter New Gift" iconName="standard:thanks">
         <aura:set attribute="actions">
-            <lightning:button label="Save" />
         </aura:set>
 
         <aura:if isTrue="{!v.error != null}">
@@ -99,7 +98,7 @@
         </aura:if>
         <aura:if isTrue="{!v.showSuccess}">
             <div class="slds-p-around_small">
-                <p>Gift Saved! Please wait while we redirect you.</p>
+                <p>{!$Label.c.Gift_Saved_Message}</p>
             </div>
         </aura:if>
     </lightning:card>

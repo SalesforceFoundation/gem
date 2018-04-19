@@ -27,6 +27,10 @@
         <name>CustomField</name>
     </types>
     <types>
+        <members>Gift_Saved_Message</members>
+        <name>CustomLabel</name>
+    </types>
+    <types>
         <members>Donation_Tag__c</members>
         <members>Tag__c</members>
         <name>CustomObject</name>

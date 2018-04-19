@@ -6,3 +6,93 @@ project:
     package:
         name: Advancement
         namespace: adv
+    git:
+        prefix_release: rel/
+        repo_url: https://github.com/SalesforceFoundation/adv
+
+tasks:
+    deploy_dev_config:
+        description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
+        class_path: cumulusci.tasks.salesforce.DeployBundles
+        options:
+            namespace_inject: $project_config.project__package__namespace
+            path: dev_config/src
+            unmanaged: True
+
+    delete_dev_config:
+        description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
+        class_path: cumulusci.tasks.salesforce.Deploy
+        options:
+            path: dev_config/delete
+
+    execute_install_apex:
+        description: Runs most of the install script methods from STG_InstallScript class
+        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        options:
+            apex: >
+                Post_Install_Script.giftSetup();
+
+    update_admin_profile:
+        class_path: tasks.salesforce.UpdateAdminProfile
+
+flows:
+    ci_beta:
+        tasks:
+            6.1:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: hed
+            6.2:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: npsp
+    ci_feature:
+        tasks:
+            6.1:
+                task: update_admin_profile
+            7.1:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: hed
+            7.2:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: npsp
+    dev_org:
+        tasks:
+            6.1:
+                task: update_admin_profile
+            8:
+                task: deploy_dev_config
+            9:
+                task: execute_install_apex
+    dev_org_namespaced:
+        tasks:
+            6:
+                options:
+                    namespaced_org: True
+            6.1:
+                task: update_admin_profile
+            8:
+                task: deploy_dev_config
+            9:
+                task: execute_install_apex                
+    install_beta:
+        tasks:
+            5:
+                options:
+                    managed: True
+            6:
+                task: deploy_dev_config
+                options:
+                    unmanaged: False
+
+orgs:
+    scratch:
+        dev_namespaced:
+            config_file: orgs/dev.json
+            namespaced: True

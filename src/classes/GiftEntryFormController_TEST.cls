@@ -59,6 +59,10 @@ private class GiftEntryFormController_TEST {
         );
         insert diObj;
 
+        // Test error handling
+        Id oppId = GiftEntryFormController.getOpportunityIdFromImport(diObj.Id);
+        System.assertEquals(null, oppId);
+
         GiftEntryFormController ge = new GiftEntryFormController();
         
         Test.startTest();
@@ -74,6 +78,13 @@ private class GiftEntryFormController_TEST {
         List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c 
             where npe01__Payment_Amount__c =: donationAmount];
         System.assertEquals(1, paymentList.size());
+
+        // Make sure the Opportunity ID returned is the same as the one created
+        oppId = GiftEntryFormController.getOpportunityIdFromImport(diObj.Id);
+        System.assertEquals(oppId, oppList[0].Id);
+
+        Map<String,List<String>> picklistValueMap = GiftEntryFormController.getPickListValues();
+        System.assert(picklistValueMap.size() > 0);
     }
 
     @isTest

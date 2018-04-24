@@ -35,10 +35,41 @@
 * @description Base Class for Gift Entry Components with Aura Enabled Methods
 */
 public class GiftEntryFormController {
+
 	public Boolean hasPerm {get;set;} // Permission check
 
     public GiftEntryFormController(){
         hasPerm = Schema.sObjectType.npsp__DataImport__c.isCreateable();
+    }
+
+    @AuraEnabled
+    public static Map<String, List<String>> getPickListValues(){
+        // TODO: Return all relevant picklist options for the gift entry form
+        Map<String, List<String>> picklistMap = new Map<String, List<String>>();
+
+        List<String> pickListValuesList = new List<String>();
+        Schema.DescribeFieldResult fieldResult =  
+            npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe();
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        for( Schema.PicklistEntry pickListVal : ple){
+            pickListValuesList.add(pickListVal.getLabel());
+        }
+
+        picklistMap.put('paymentMethods', pickListValuesList);
+        return picklistMap;
+    }
+
+    @AuraEnabled
+    public static Id getOpportunityIdFromImport(Id diObjId){
+        try {
+            npsp__DataImport__c di = [SELECT npsp__DonationImported__c 
+                FROM npsp__DataImport__c
+                WHERE Id =: diObjId];
+            return di.npsp__DonationImported__c;
+        } catch(Exception e){
+            System.debug(e);
+            return null;
+        }
     }
 
     @AuraEnabled

@@ -40,8 +40,6 @@
         if(!namespace || namespace.length === 0) {
             namespace = "c";
         }
-        //console.log('namespace: ' + namespace);
-        //console.log('namespacePrefix' + namespacePrefix);
 
         $Lightning.use(namespace + ":giftApp", function() {
             loadComponents(namespacePrefix);
@@ -51,18 +49,17 @@
             $Lightning.createComponent(namespace + ":giftEntryForm", {namespacePrefix : namespacePrefix}, giftContainerId,
                 function(component) {
                     $A.eventService.addHandler({
-                        event: 'force:navigateToObjectHome',
+                        event: 'force:navigateToSObject',
                         handler: function(event) {
-                            var scope = event.getParam('scope');
-                            //var resetHistory = event.getParam('resetHistory');
+                            var recordId = event.getParam('recordId');
+                            var view = 'detail';
+                            console.log(recordId);
                             if (sforce && sforce.one) {
                                 // VF page in Mobile or Lightning
-                                sforce.one.navigateToObjectHome(scope);
+                                sforce.one.navigateToSObject(recordId);
                             } else {
                                 // VF page in Classic
-                                if (scope === 'Opportunity') {
-                                    window.location = '{!URLFOR($Action.Opportunity.Tab, $ObjectType.Opportunity)}';
-                                }
+                                window.location = '/'+recordId;
                             }
                         }
                     });

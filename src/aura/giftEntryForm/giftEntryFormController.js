@@ -19,7 +19,11 @@
         );
 
         helper.setPicklists(component);
-
+    },
+    handleFieldChange: function(component, event, helper){
+        var formValid = helper.validateForm(component);
+        var btn = component.find("createButton");
+        btn.set("v.disabled",!formValid);
     },
     clickCreate: function(component, event, helper) {        
         component.set('v.showSpinner', true);
@@ -28,7 +32,6 @@
         // If we pass error checking, submit the form
         if(validForm){
             helper.submitForm(component, helper);
-            //component.set('v.showSpinner', false);
         } else {
             component.set('v.showSpinner', false);
             console.log("Form is invalid");

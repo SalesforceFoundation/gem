@@ -40,6 +40,9 @@
         <name>CustomTab</name>
     </types>
     <types>
+        <members>Account-Advancement Household Layout</members>
+        <members>Account-Advancement Organization Layout</members>
+        <members>Contact-Advancement Contact Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
         <name>Layout</name>
     </types>

@@ -4,8 +4,8 @@
     <description>HEDA Advancement Gift Entry</description>
     <formFactors>Large</formFactors>
     <label>Gift Entry</label>
-    <tab>standard-Account</tab>
-    <tab>standard-Contact</tab>
-    <tab>standard-Opportunity</tab>
-    <tab>standard-report</tab>
+    <tabs>standard-Account</tabs>
+    <tabs>standard-Contact</tabs>
+    <tabs>standard-Opportunity</tabs>
+    <tabs>standard-report</tabs>
 </CustomApplication>

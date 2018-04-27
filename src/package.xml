@@ -24,6 +24,9 @@
         <members>Donation_Tag__c.Tag_Name__c</members>
         <members>Donation_Tag__c.Tag__c</members>
         <members>Opportunity.Tags__c</members>
+        <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
+        <members>npsp__DataImport__c.Donation_Honoree_Name__c</members>
+        <members>npsp__DataImport__c.Notification_Recipient_Name__c</members>
         <name>CustomField</name>
     </types>
     <types>

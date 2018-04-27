@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Donation_Honoree_Contact__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Honoree_Contact__c</inlineHelpText>
+        <label>Donation Honoree Contact</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>NPSP Data Imports (Donation Honoree Contact)</relationshipLabel>
+        <relationshipName>NPSP_Data_Imports</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Donation_Honoree_Name__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Honoree_Name__c</inlineHelpText>
+        <label>Donation Honoree Name</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Notification_Recipient_Name__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Notification_Recipient_Name__c</inlineHelpText>
+        <label>Notification Recipient Name</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

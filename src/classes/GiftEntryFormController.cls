@@ -76,21 +76,13 @@ public class GiftEntryFormController {
     public static void runGiftProcess(Id diObjId){
         npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getInstance();
 
-        // TODO: Query all fields from this object instead of a subset
-        List<npsp__DataImport__c> listDI = [SELECT Id,
-                npsp__Contact1_Firstname__c,
-                npsp__Contact1_Lastname__c,
-                npsp__Donation_Name__c,
-                npsp__Payment_Method__c,
-                npsp__Donation_Date__c,
-                npsp__Donation_Amount__c,
-                npsp__NPSP_Data_Import_Batch__c
-            FROM npsp__DataImport__c 
-            WHERE Id =: diObjId];
+        String allDIFields = getAllFieldsFromObject('npsp__DataImport__c');
+        List<npsp__DataImport__c> listDI = 
+            Database.query('SELECT '+ allDIFields +' FROM npsp__DataImport__c WHERE Id = :diObjId');
 
         System.debug(diSettings);
         System.debug(diObjId);
-        System.debug(listDI);
+        System.debug(listDI); 
 
         npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, false);
     }
@@ -123,5 +115,29 @@ public class GiftEntryFormController {
             insert diSettings;
         }
     }
+
+    // TODO: Move to UTIL class
+    public static String getAllFieldsFromObject(String sobjectname){
+  		if(!Schema.getGlobalDescribe().containsKey(sobjectname)){
+          return 'Invalid object name';
+        }
+    	Map<String, Schema.SObjectField> fields = 
+            Schema.getGlobalDescribe().get(sobjectname).getDescribe().SObjectType.getDescribe().fields.getMap();
+  
+    	List<String> accessiblefields = new List<String>();
+  
+    	for(Schema.SObjectField field : fields.values()){
+      		if(field.getDescribe().isAccessible()){
+        	    accessiblefields.add(field.getDescribe().getName());
+            }
+    	}
+  
+    	String allfields = '';
+    	for(String fieldname : accessiblefields){
+      		allfields += fieldname+',';
+        }
+    	allfields = allfields.subString(0,allfields.length()-1);
+    	return allfields;
+  	}
 
 }

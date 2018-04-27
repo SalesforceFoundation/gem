@@ -39,6 +39,10 @@ private class GiftEntryFormController_TEST {
 
     private static String cFirst = 'Testfirst';
     private static String cLast = 'Testlast';
+    private static String c2First = 'Secondname';
+    private static String c2Last = 'Secondlast';
+    private static String tributeName = 'Tribute Name';
+    private static String recipientName = 'Recipient Name';
     private static String donationName = 'Test Donation';
     private static Decimal donationAmount = 100;
     
@@ -52,10 +56,14 @@ private class GiftEntryFormController_TEST {
         npsp__DataImport__c diObj = new npsp__DataImport__c(
             npsp__Contact1_Firstname__c = cFirst,
             npsp__Contact1_Lastname__c = cLast,
+            npsp__Contact2_Firstname__c = c2First,
+            npsp__Contact2_Lastname__c = c2Last,
             npsp__Donation_Name__c = donationName,
             npsp__Payment_Method__c = 'Cash',
             npsp__Donation_Date__c = System.today(),
-            npsp__Donation_Amount__c = donationAmount
+            npsp__Donation_Amount__c = donationAmount,
+            Notification_Recipient_Name__c = recipientName,
+            Donation_Honoree_Name__c = tributeName
         );
         insert diObj;
 
@@ -69,10 +77,19 @@ private class GiftEntryFormController_TEST {
         GiftEntryFormController.runGiftProcess(diObj.Id);
         Test.stopTest();
         
-        List<Opportunity> oppList = [Select Id from Opportunity where Name =: donationName];
+        List<Opportunity> oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c
+            from Opportunity 
+            where Name =: donationName
+            and npsp__Honoree_Name__c =: tributeName
+            and npsp__Notification_Recipient_Name__c =: recipientName
+        ];
+        //System.debug(oppList);
         System.assertEquals(1, oppList.size());
 
         List<Contact> cList = [Select Id from Contact where FirstName =: cFirst and LastName =: cLast];
+        System.assertEquals(1, cList.size());
+
+        cList = [Select Id from Contact where FirstName =: c2First and LastName =: c2Last];
         System.assertEquals(1, cList.size());
 
         List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c 

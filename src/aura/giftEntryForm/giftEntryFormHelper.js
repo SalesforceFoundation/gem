@@ -1,6 +1,6 @@
 ({
     setDefaults: function (component) {
-        component.find("donationDonorField").set("v.value", "Contact1");
+        this.setHiddenField(component, 'donationDonorField', 'Contact1');
     },
     setPicklists: function(component) {
         var action = component.get("c.getPickListValues");
@@ -13,6 +13,7 @@
                 // console.log("Picklist options:");
                 // console.log(picklistOptions);
                 component.set("v.paymentMethods", picklistOptions.paymentMethods);
+                component.set("v.selectedPaymentMethod", picklistOptions.paymentMethods[0]);
             } else if (state === "ERROR") {
                 var errors = response.getError();
                 if (errors) {
@@ -28,28 +29,8 @@
 
         $A.enqueueAction(action);
     },
-    submitForm: function(component, helper) {
-        component.find("giftData").saveRecord(function(saveResult) {
-            if (saveResult.state === "SUCCESS" || saveResult.state === "DRAFT") {
-                // console.log("Record Saved:");
-                // console.log(saveResult.recordId);
-                // Now, run the gift creation process
-                helper.processGift(component, saveResult.recordId);
-            } else if (saveResult.state === "ERROR") {
-                var errors = response.getError();
-                if (errors) {
-                    if (errors[0] && errors[0].message) {
-                        var errorMsg = errors[0].message;
-                        component.set("v.error", errorMsg);
-                    }
-                } else {
-                    console.log("Unknown error");
-                }
-            } else {
-                console.log('Unknown problem, state: ' + saveResult.state +
-                            ', error: ' + JSON.stringify(saveResult.error));
-            }
-        });
+    setHiddenField: function(component, fieldId, newVal){
+        component.find(fieldId).set('v.value', newVal);
     },
     redirectToDonation: function(component, dataImportObjId){
         var action = component.get("c.getOpportunityIdFromImport");
@@ -131,7 +112,8 @@
             //inputCmp.showHelpMessageIfInvalid();
 
             var fieldVal = inputCmp.get("v.value");
-            var isValid = inputCmp.get('v.validity').valid;
+            var isValid = fieldVal ? true : false;
+            //var isValid = inputCmp.get('v.validity').valid;
             
             return validSoFar && isValid;
         }, true);

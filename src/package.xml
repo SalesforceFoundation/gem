@@ -33,13 +33,14 @@
         <name>CustomField</name>
     </types>
     <types>
+    	<members>Advancement_Setting.Adv_config</members>
+    	<name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>Advancement_Setting__mdt</members>
         <members>Donation_Tag__c</members>
         <members>Tag__c</members>
         <name>CustomObject</name>
-    </types>
-    <types>
-        <members>Advancement_Setting.Adv_config</members>
-        <name>CustomMetadata</name>
     </types>
     <types>
         <members>Account-Advancement Household Layout</members>

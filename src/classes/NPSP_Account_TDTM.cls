@@ -30,17 +30,27 @@
 /**
 * @author Salesforce.org
 * @date 2017
-* @group
-* @group-content
-* @description This is the post install script for Adv.
+* @group TDTM
+* @group-content ../../ApexDocContent/TDTM.htm
+* @description This class is used to fill in the NPSP system Account fields. We disabled NPSP ACCT_Accounts_TDTM trigger handler since it cause
+* HEDA unit test cases failed. However, we need to replicate the logic in it and put it into HEDA TDTM framework, since there are some logic in
+* NPSP refers to those fields.
 **/
-global with sharing class Post_Install_Script {
-
-    global void onInstall(InstallContext context) {
-
-    }
-
-    global static void giftSetup(){
-      GiftEntryFormController.insertGiftEntrySettings();
+global class NPSP_Account_TDTM extends hed.TDTM_Runnable {
+    /*******************************************************************************************************
+    * @description Trigger Handler on Accounts that handles ensuring the correct system flags are set on
+    * our special accounts (Household, One-to-One), and also detects changes on Household Account that requires
+    * name updating
+    * @param listNew the list of Accounts from trigger new
+    * @param listOld the list of Accounts from trigger old
+    * @param triggerAction which trigger event (BeforeInsert, AfterInsert, etc.)
+    * @param objResult the describe for Accounts
+    * @return dmlWrapper always null
+    ********************************************************************************************************/
+    public override hed.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
+            hed.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
+        npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
+        adapter.configAccountTDTM(newList, oldList, triggerAction.name());
+        return null;
     }
 }

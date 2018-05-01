@@ -6,6 +6,7 @@ project:
     package:
         name: Advancement
         namespace: adv1
+        api_version: 42.0
     git:
         prefix_release: rel/
         repo_url: https://github.com/SalesforceFoundation/adv

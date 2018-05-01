@@ -61,7 +61,6 @@
         <members>Gift_Entry</members>
         <name>CustomTab</name>
     </types>
-    <types>
     <types>       
         <members>Account-Advancement Household Layout</members>
         <members>Account-Advancement Organization Layout</members>

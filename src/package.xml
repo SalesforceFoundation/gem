@@ -42,9 +42,10 @@
         <members>Tag__c</members>
         <name>CustomObject</name>
     </types>
-    <types>
+    <types>       
         <members>Account-Advancement Household Layout</members>
         <members>Account-Advancement Organization Layout</members>
+        <members>Advancement_Setting__mdt-Advancement Setting Layout</members>
         <members>Contact-Advancement Contact Layout</members>
         <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>

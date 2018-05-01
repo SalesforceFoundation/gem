@@ -21,7 +21,9 @@
         <members>Account-Advancement Household Layout</members>
         <members>Account-Advancement Organization Layout</members>
         <members>Contact-Advancement Contact Layout</members>
+        <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
+        <members>Tag__c-All Layout</members>
         <name>Layout</name>
     </types>
     <types>

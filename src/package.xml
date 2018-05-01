@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>adv</fullName>
+    <fullName>Advancement</fullName>
     <types>
         <members>API_HEDA</members>
         <members>API_HEDA_TEST</members>
@@ -46,12 +46,14 @@
         <members>Account-Advancement Household Layout</members>
         <members>Account-Advancement Organization Layout</members>
         <members>Contact-Advancement Contact Layout</members>
+        <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
+        <members>Tag__c-All Layout</members>
         <name>Layout</name>
     </types>
     <types>
         <members>Donations_with_tags</members>
         <name>ReportType</name>
     </types>
-    <version>40.0</version>
+    <version>42.0</version>
 </Package>

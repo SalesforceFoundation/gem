@@ -4,11 +4,11 @@
     <protected>false</protected>
     <values>
         <field>API_HEDA_Class__c</field>
-        <value xsi:type="xsd:string">adv1.API_HEDA</value>
+        <value xsi:type="xsd:string">API_HEDA</value>
     </values>
     <values>
         <field>API_NPSP_Class__c</field>
-        <value xsi:type="xsd:string">adv1.API_NPSP</value>
+        <value xsi:type="xsd:string">API_NPSP</value>
     </values>
     <values>
         <field>Use_Advancement__c</field>

@@ -6,6 +6,8 @@
         <members>API_HEDA_TEST</members>
         <members>API_NPSP</members>
         <members>API_NPSP_TEST</members>
+        <members>GiftEntryFormController</members>
+        <members>GiftEntryFormController_TEST</members>
         <members>NPSP_Account_TDTM</members>
         <members>NPSP_Account_TDTM_TEST</members>
         <members>Post_Install_Script</members>
@@ -17,6 +19,15 @@
         <members>UTIL_Namespace_TEST</members>
         <members>UTIL_UnitTestData_TEST</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>GiftEntryForm</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>giftApp</members>
+        <members>giftEntryForm</members>
+        <name>AuraDefinitionBundle</name>
     </types>
     <types>
         <members>Gift_Entry</members>
@@ -33,6 +44,10 @@
         <name>CustomField</name>
     </types>
     <types>
+        <members>Gift_Saved_Message</members>
+        <name>CustomLabel</name>
+    </types>
+    <types>
     	<members>Advancement_Setting.Adv_config</members>
     	<name>CustomMetadata</name>
     </types>
@@ -41,6 +56,10 @@
         <members>Donation_Tag__c</members>
         <members>Tag__c</members>
         <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Gift_Entry</members>
+        <name>CustomTab</name>
     </types>
     <types>       
         <members>Account-Advancement Household Layout</members>

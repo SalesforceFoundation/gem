@@ -8,4 +8,5 @@
     <tabs>standard-Contact</tabs>
     <tabs>standard-Opportunity</tabs>
     <tabs>standard-report</tabs>
+    <tabs>Gift_Entry</tabs>
 </CustomApplication>

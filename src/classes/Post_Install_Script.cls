@@ -39,4 +39,8 @@ global with sharing class Post_Install_Script {
     global void onInstall(InstallContext context) {
 
     }
+
+    global static void giftSetup(){
+      GiftEntryFormController.insertGiftEntrySettings();
+    }
 }

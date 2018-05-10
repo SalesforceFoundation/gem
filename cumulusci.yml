@@ -31,26 +31,31 @@ tasks:
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         options:
             apex: >
-                UTIL_CustomSettingsFacade.getSettings();
+                Post_Install_Script.giftSetup();
+
+    update_admin_profile:
+        class_path: tasks.salesforce.UpdateAdminProfile
 
 flows:
     dev_org:
         tasks:
+            6.1:
+                task: update_admin_profile
             8:
                 task: deploy_dev_config
-            # 9:
-            #     task: execute_install_apex
-
+            9:
+                task: execute_install_apex
     dev_org_namespaced:
         tasks:
             6:
                 options:
                     namespaced_org: True
+            6.1:
+                task: update_admin_profile
             8:
                 task: deploy_dev_config
-            # 9:
-            #     task: execute_install_apex                
-
+            9:
+                task: execute_install_apex
     install_beta:
         tasks:
             5:

@@ -146,10 +146,12 @@ private class API_HEDA_TEST {
             activeMap.put(token.className, token.active);
         }
 
+        String npspAccountTrigger = UTIL_Namespace.getNamespace()  == '' ? 'NPSP_Account_TDTM' : UTIL_Namespace.getNamespace()  + '.' + 'NPSP_Account_TDTM';
+
         if(!isNegative) {
-            system.assertEquals(true, activeMap.get('NPSP_Account_TDTM'));
+            system.assertEquals(true, activeMap.get(npspAccountTrigger));
         } else {
-            system.assertEquals(null, activeMap.get('NPSP_Account_TDTM'));
+            system.assertEquals(null, activeMap.get(npspAccountTrigger));
         }
     }
 

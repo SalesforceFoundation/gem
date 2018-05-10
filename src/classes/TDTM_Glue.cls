@@ -64,7 +64,8 @@ public with sharing class TDTM_Glue {
         //Check if NPSP ACCT_Accounts_TDTM is active in database, we do not want to inject the logic if it is inactive
         if(getNPSPTriggerActiveMap().get('ACCT_Accounts_TDTM') == true) {
             //We disabled NPSP ACCT_Account_TDTM to avoid conflict. Since the logic in ACCT_Account_TDTM is needed for NPSP, we need to add equivalent trigger handler to HEDA.
-            hedaTokens.add(new hed.TDTM_Global_API.TdtmToken('NPSP_Account_TDTM', 'Account', 'BeforeInsert;BeforeUpdate;AfterUpdate', 1.0, true, false, null, null, false, 'adv', null));
+            String npspAccountTrigger = UTIL_Namespace.getNamespace()  == '' ? 'NPSP_Account_TDTM' : UTIL_Namespace.getNamespace()  + '.' + 'NPSP_Account_TDTM';
+            hedaTokens.add(new hed.TDTM_Global_API.TdtmToken(npspAccountTrigger, 'Account', 'BeforeInsert;BeforeUpdate;AfterUpdate', 1.0, true, false, null, null, false, 'adv', null));
         }
 
 

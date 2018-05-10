@@ -1,0 +1,30 @@
+.idea
+.externalToolBuilders
+.appcloud
+.project
+.settings
+build.properties
+salesforce.schema
+Referenced Packages
+/uninstall
+/uninstallsrc
+/installdeploy
+/installedPackages
+test_results.json
+test_results.xml
+unpackaged/*/*/*.zip
+unpackaged/namespaced_zipped
+unpackaged/zipped
+unpackaged_stage
+packaged
+.*.swp
+*.pyc
+.sfdx
+.vscode
+
+# macOS Specific Ignores
+# https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
+*.DS_Store
+.AppleDouble
+.LSOverride
+

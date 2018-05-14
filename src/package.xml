@@ -31,12 +31,13 @@
     </types>
     <types>
         <members>Gift_Entry</members>
+        <members>Gift_Entry_Lightning</members>
         <name>CustomApplication</name>
     </types>
     <types>
-        <members>Advancement_Setting__mdt.Use_Advancement__c</members>
         <members>Advancement_Setting__mdt.API_HEDA_Class__c</members>
         <members>Advancement_Setting__mdt.API_NPSP_Class__c</members>
+        <members>Advancement_Setting__mdt.Use_Advancement__c</members>
         <members>Donation_Tag__c.Donation_Opportunity__c</members>
         <members>Donation_Tag__c.Tag_Name__c</members>
         <members>Donation_Tag__c.Tag__c</members>
@@ -61,7 +62,11 @@
         <members>Gift_Entry</members>
         <name>CustomTab</name>
     </types>
-    <types>       
+    <types>
+        <members>Gift_Entry</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
         <members>Account-Advancement Household Layout</members>
         <members>Account-Advancement Organization Layout</members>
         <members>Advancement_Setting__mdt-Advancement Setting Layout</members>

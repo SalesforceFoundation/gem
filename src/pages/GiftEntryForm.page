@@ -45,8 +45,14 @@
             loadComponents(namespacePrefix);
         });
         
-        function loadComponents(namespacePrefix) {
-            $Lightning.createComponent(namespace + ":giftEntryForm", {namespacePrefix : namespacePrefix}, giftContainerId,
+        function loadComponents(namespacePrefix) {      
+            var recordId = "{!$CurrentPage.parameters.Id}";
+            //var recordId = "a0Q11000008a4cwEAA";
+            console.log('Id: ' + recordId);
+
+            $Lightning.createComponent(namespace + ":giftEntryForm", 
+                {namespacePrefix : namespacePrefix, recordId : recordId}, 
+                giftContainerId,
                 function(component) {
                     $A.eventService.addHandler({
                         event: 'force:navigateToSObject',
@@ -63,7 +69,9 @@
                             }
                         }
                     });
-            });
+                }
+            );
         }
+
     </script>
 </apex:page>

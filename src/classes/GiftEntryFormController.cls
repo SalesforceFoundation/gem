@@ -37,6 +37,7 @@
 public class GiftEntryFormController {
 
 	public Boolean hasPerm {get;set;} // Permission check
+    
 
     public GiftEntryFormController(){
         hasPerm = Schema.sObjectType.npsp__DataImport__c.isCreateable();
@@ -47,16 +48,22 @@ public class GiftEntryFormController {
         // TODO: Return all relevant picklist options for the gift entry form
         Map<String, List<String>> picklistMap = new Map<String, List<String>>();
 
-        List<String> pickListValuesList = new List<String>();
         Schema.DescribeFieldResult fieldResult =  
             npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe();
+        picklistMap.put('paymentMethods', returnPicklistValuesList(fieldResult));
+        fieldResult = Opportunity.StageName.getDescribe();
+        picklistMap.put('donationStages', returnPicklistValuesList(fieldResult));
+
+        return picklistMap;
+    }
+
+    private static List<String> returnPicklistValuesList(Schema.DescribeFieldResult fieldResult){
+        List<String> pickListValuesList = new List<String>();
         List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
         for( Schema.PicklistEntry pickListVal : ple){
             pickListValuesList.add(pickListVal.getLabel());
         }
-
-        picklistMap.put('paymentMethods', pickListValuesList);
-        return picklistMap;
+        return pickListValuesList;
     }
 
     @AuraEnabled
@@ -72,9 +79,20 @@ public class GiftEntryFormController {
         }
     }
 
+    /*******************************************************************************************************
+    * @description Set DataImport Settings that are important to Gift Entry matching
+    * @return npsp__Data_Import_Settings__c diSettings object used to process gifts
+    */
+    private static npsp__Data_Import_Settings__c getGiftEntrySettings(){
+        npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
+        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
+        diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c';
+        return diSettings;
+    }
+
     @AuraEnabled
     public static void runGiftProcess(Id diObjId){
-        npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getInstance();
+        npsp__Data_Import_Settings__c diSettings = getGiftEntrySettings();
 
         String allDIFields = getAllFieldsFromObject('npsp__DataImport__c');
         List<npsp__DataImport__c> listDI = 
@@ -110,7 +128,10 @@ public class GiftEntryFormController {
         List<npsp__Data_Import_Settings__c> diSettings = [select ID from npsp__Data_Import_Settings__c];
         if(diSettings.size() == 0) {
             diSettings.add(
-                new npsp__Data_Import_Settings__c()
+                new npsp__Data_Import_Settings__c(
+                    npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate,
+                    npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c'
+                )
             );
             insert diSettings;
         }

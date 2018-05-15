@@ -1,21 +1,28 @@
 ({
     setDefaults: function (component) {
-        this.setHiddenField(component, 'donationDonorField', 'Contact1');
+        //this.setHiddenField(component, 'donationDonorField', 'Contact1');
     },
     setPicklists: function(component) {
         var action = component.get("c.getPickListValues");
 
         action.setCallback(this, function(response) {
-            //console.log(response);
             var state = response.getState();
             if (state === "SUCCESS") {
                 var picklistOptions = response.getReturnValue();
-                // console.log("Picklist options:");
-                // console.log(picklistOptions);
+                console.log("Picklist options:");
+                console.log(picklistOptions);
+                
                 component.set("v.paymentMethods", picklistOptions.paymentMethods);
-                component.set("v.selectedPaymentMethod", picklistOptions.paymentMethods[0]);
+                this.setStartingPicklistValue(component, "paymentMethodField", "v.selectedPaymentMethod", 
+                    picklistOptions.paymentMethods[0]);
+
+                component.set("v.donationStages", picklistOptions.donationStages);
+                this.setStartingPicklistValue(component, "stageField", "v.selectedStage", 
+                    picklistOptions.donationStages[0]);
+
             } else if (state === "ERROR") {
                 var errors = response.getError();
+                console.log(errors);
                 if (errors) {
                     if (errors[0] && errors[0].message) {
                         var errorMsg = errors[0].message;
@@ -29,8 +36,22 @@
 
         $A.enqueueAction(action);
     },
+    setStartingPicklistValue: function(component, fieldId, selectVal, defaultVal){
+        var field = component.find(fieldId);
+        var curValue = field.get("v.value");
+        if(!curValue){
+            // This will make sure the actual field value matches the picklist, in case
+            // the user never changes the picklist
+            component.set(selectVal, defaultVal);
+        } else {
+            component.set(selectVal, curValue);
+        }
+    },
     setHiddenField: function(component, fieldId, newVal){
-        component.find(fieldId).set('v.value', newVal);
+        var field = component.find(fieldId);
+        if(field){
+            field.set("v.value", newVal);
+        }
     },
     redirectToDonation: function(component, dataImportObjId){
         var action = component.get("c.getOpportunityIdFromImport");
@@ -76,12 +97,10 @@
         });
 
         action.setCallback(this, function(response) {
-            //console.log(response);
             var state = response.getState();
             if (state === "SUCCESS") {
-                //console.log("return value: " + response.getReturnValue());
                 // Navigate to Opportunity page
-                this.redirectToDonation(component, dataImportObjId);
+                //this.redirectToDonation(component, dataImportObjId);
             } else if (state === "ERROR") {
                 var errors = response.getError();
                 if (errors) {
@@ -107,12 +126,15 @@
         component.set("v.error", null);
         var validForm = true;
         // Show error messages if required fields are blank
-        validForm = component.find('giftField').reduce(function (validSoFar, inputCmp) {
+        validForm = component.find('requiredField').reduce(function (validSoFar, inputCmp) {
             // Displays error messages for invalid fields
             //inputCmp.showHelpMessageIfInvalid();
 
+            if(!inputCmp){ 
+                return false;
+            }
             var fieldVal = inputCmp.get("v.value");
-            var isValid = fieldVal ? true : false;
+            var isValid = fieldVal != undefined;
             //var isValid = inputCmp.get('v.validity').valid;
             
             return validSoFar && isValid;

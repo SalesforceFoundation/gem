@@ -47,6 +47,7 @@
         <members>Account-Advancement Organization Layout</members>
         <members>Contact-Advancement Contact Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
+        <members>npsp__DataImport__c-npsp__Data Import Layout</members>
         <name>Layout</name>
     </types>
     <types>

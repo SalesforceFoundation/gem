@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Advancement</fullName>
     <types>
+        <members>API_HEDA</members>
+        <members>API_HEDA_TEST</members>
+        <members>API_NPSP</members>
+        <members>API_NPSP_TEST</members>
         <members>GiftEntryFormController</members>
         <members>GiftEntryFormController_TEST</members>
+        <members>NPSP_Account_TDTM</members>
+        <members>NPSP_Account_TDTM_TEST</members>
         <members>Post_Install_Script</members>
+        <members>TDTM_Glue</members>
+        <members>UTIL_CustomSettingsFacade</members>
+        <members>UTIL_Describe</members>
+        <members>UTIL_Describe_TEST</members>
+        <members>UTIL_Namespace</members>
+        <members>UTIL_Namespace_TEST</members>
+        <members>UTIL_UnitTestData_TEST</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -17,9 +31,13 @@
     </types>
     <types>
         <members>Gift_Entry</members>
+        <members>Gift_Entry_Lightning</members>
         <name>CustomApplication</name>
     </types>
     <types>
+        <members>Advancement_Setting__mdt.API_HEDA_Class__c</members>
+        <members>Advancement_Setting__mdt.API_NPSP_Class__c</members>
+        <members>Advancement_Setting__mdt.Use_Advancement__c</members>
         <members>Donation_Tag__c.Donation_Opportunity__c</members>
         <members>Donation_Tag__c.Tag_Name__c</members>
         <members>Donation_Tag__c.Tag__c</members>
@@ -34,6 +52,11 @@
         <name>CustomLabel</name>
     </types>
     <types>
+    	<members>Advancement_Setting.Adv_config</members>
+    	<name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>Advancement_Setting__mdt</members>
         <members>Donation_Tag__c</members>
         <members>Tag__c</members>
         <name>CustomObject</name>
@@ -43,16 +66,23 @@
         <name>CustomTab</name>
     </types>
     <types>
+        <members>Gift_Entry</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
         <members>Account-Advancement Household Layout</members>
         <members>Account-Advancement Organization Layout</members>
+        <members>Advancement_Setting__mdt-Advancement Setting Layout</members>
         <members>Contact-Advancement Contact Layout</members>
+        <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
         <members>npsp__DataImport__c-npsp__Data Import Layout</members>
+        <members>Tag__c-All Layout</members>
         <name>Layout</name>
     </types>
     <types>
         <members>Donations_with_tags</members>
         <name>ReportType</name>
     </types>
-    <version>40.0</version>
+    <version>42.0</version>
 </Package>

@@ -5,7 +5,8 @@ project:
     name: Advancement
     package:
         name: Advancement
-        namespace: adv
+        namespace: adv1
+        api_version: 42.0
     git:
         prefix_release: rel/
         repo_url: https://github.com/SalesforceFoundation/adv
@@ -36,32 +37,6 @@ tasks:
         class_path: tasks.salesforce.UpdateAdminProfile
 
 flows:
-    ci_beta:
-        tasks:
-            6.1:
-                task: run_tests
-                options:
-                    managed: True
-                    namespace: hed
-            6.2:
-                task: run_tests
-                options:
-                    managed: True
-                    namespace: npsp
-    ci_feature:
-        tasks:
-            6.1:
-                task: update_admin_profile
-            7.1:
-                task: run_tests
-                options:
-                    managed: True
-                    namespace: hed
-            7.2:
-                task: run_tests
-                options:
-                    managed: True
-                    namespace: npsp
     dev_org:
         tasks:
             6.1:

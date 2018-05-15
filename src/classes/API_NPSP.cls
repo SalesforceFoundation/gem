@@ -30,17 +30,19 @@
 /**
 * @author Salesforce.org
 * @date 2017
-* @group
-* @group-content
-* @description This is the post install script for Adv.
+* @group TDTM
+* @group-content ../../ApexDocContent/TDTM.htm
+* @description This class is used to override the default behavior of the NPSP Advancement Adapter class.
 **/
-global with sharing class Post_Install_Script {
+global with sharing class API_NPSP extends npsp.ADV_Adapter {
 
-    global void onInstall(InstallContext context) {
-
-    }
-
-    global static void giftSetup(){
-      GiftEntryFormController.insertGiftEntrySettings();
+    /*******************************************************************************************************
+    * @description To be called by the NPSP TDTM trigger dispatcher
+    * It returns the NPSP Trigger Handler records exclude those are conflict with HEDA
+    * @return List<Trigger_Handler__c> The list of Trigger Handler record for TDTM to use
+    *******************************************************************************************************/
+    global override List<npsp__Trigger_Handler__c> getDefaultTdtmConfigNpspRecords(List<npsp__Trigger_Handler__c> listTH) {
+        TDTM_Glue glue = new TDTM_Glue();
+        return glue.getDefaultTdtmConfigRecords(listTH);
     }
 }

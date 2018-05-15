@@ -4,6 +4,10 @@
         <application>%%%NAMESPACE%%%Gift_Entry</application>
         <visible>true</visible>
     </applicationVisibilities>
+    <applicationVisibilities>
+        <application>%%%NAMESPACE%%%Gift_Entry_Lightning</application>
+        <visible>true</visible>
+    </applicationVisibilities>
     <fieldPermissions>
         <editable>true</editable>
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Honoree_Contact__c</field>
@@ -56,6 +60,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Contact-%%%NAMESPACE%%%Advancement Contact Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
     <tabVisibilities>
         <tab>%%%NAMESPACE%%%Gift_Entry</tab>

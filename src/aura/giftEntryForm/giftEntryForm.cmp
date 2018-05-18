@@ -1,29 +1,31 @@
 <aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" controller="GiftEntryFormController">
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="giftPicklistChangeEvent" action="{!c.handlePicklistChange}" event="c:giftPicklistChangeEvent" />
     <aura:dependency resource="markup://force:*" type="EVENT" />
 
     <aura:attribute type="String[]" name="paymentMethods" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
-    <aura:handler name="change" value="{!v.selectedPaymentMethod}" action="{!c.handlePaymentMethodChange}"/>
-
     <aura:attribute type="String[]" name="donationStages" />
-    <aura:attribute type="String" name="selectedStage" />
-    <aura:handler name="change" value="{!v.selectedStage}" action="{!c.handleStageChange}"/>
+    <aura:attribute type="String[]" name="matchingGiftStatuses" />
 
+    <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
     <aura:attribute type="String" name="batchId" />
+    <aura:attribute type="String" name="closedStage" default="Closed Won" />
     <aura:attribute type="Boolean" name="showForm" default="true" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disabled" default="true" />
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
+    <aura:attribute type="Boolean" name="oppClosed" default="false" />
+    <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
 
     <aura:if isTrue="{!v.showSpinner}">
         <lightning:spinner />
     </aura:if>
 
-    <lightning:card title="Enter New Gift" iconName="standard:thanks">
+    <lightning:card title="Enter Gift" iconName="standard:thanks">
         <aura:set attribute="actions">
         </aura:set>
 
@@ -32,129 +34,172 @@
                 {!v.error}
             </ui:message>
         </aura:if>
-            <lightning:recordEditForm aura:id="giftEditForm" 
-                recordId="{!v.recordId}"
-                onload="{!c.handleLoad}" 
-                onsubmit="{!c.handleSubmit}"
-                onsuccess="{!c.handleSuccess}" 
-                objectApiName="npsp__DataImport__c">
 
-                <lightning:messages />
-                
-                <div class="slds-grid slds-wrap">
+        <aura:if isTrue="{!v.showForm}">
+        <lightning:recordEditForm aura:id="giftEditForm" 
+            recordId="{!v.recordId}"
+            onload="{!c.handleLoad}"  
+            onsubmit="{!c.handleSubmit}"
+            onsuccess="{!c.handleSuccess}" 
+            objectApiName="npsp__DataImport__c">
 
-                    <aura:if isTrue="{!v.showForm}">
-                
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-page-header slds-page-header__title">
-                            Donor Information
-                        </div>
-                    </div>
-                    <aura:iteration items="['npsp__Contact1_Firstname__c','npsp__Contact1_Lastname__c']" var="item">
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <lightning:inputField aura:id='requiredField' fieldName="{!item}" onchange="{!c.handleFieldChange}" />
-                        </div>
-                    </aura:iteration>
+            <lightning:messages />
 
-                    <aura:iteration items="['npsp__Contact2_Firstname__c','npsp__Contact2_Lastname__c']" var="item">
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <lightning:inputField fieldName="{!item}" onchange="{!c.handleFieldChange}" />
-                        </div>
-                    </aura:iteration>
-
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-page-header slds-page-header__title">
-                            Donation Information
-                        </div>
-                    </div>
-                    <aura:iteration items="['npsp__Donation_Name__c','npsp__Donation_Date__c','npsp__Donation_Amount__c']"
-                        var="item">
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <lightning:inputField class="" aura:id='requiredField' fieldName="{!item}" onchange="{!c.handleFieldChange}" />
-                        </div>
-                    </aura:iteration>
-
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:select aura:id="requiredField" name="select" label="Payment Method" required="true"
-                            value="{!v.selectedPaymentMethod}">
-                            <aura:iteration items="{!v.paymentMethods}" var="method">
-                                <option value="{!method}" text="{!method}" selected="{!method == v.selectedPaymentMethod}"></option>
-                            </aura:iteration>
-                        </lightning:select>
-                    </div>
-
-                    <!-- Only show for Payment method = Check -->
-                    <aura:if isTrue="{!v.selectedPaymentMethod == 'Check'}">
-                        <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                            <lightning:inputField aura:id='requiredField' fieldName="npsp__Payment_Check_Reference_Number__c" onchange="{!c.handleFieldChange}" />
-                        </div>
-                    </aura:if>
-
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:select aura:id="requiredField" name="select" label="Donation Stage" required="true"
-                            value="{!v.selectedStage}">
-                            <aura:iteration items="{!v.donationStages}" var="stage">
-                                <option value="{!stage}" text="{!stage}" selected="{!stage == v.selectedStage}"></option>
-                            </aura:iteration>
-                        </lightning:select>
-                    </div>
-
-                    <div class="slds-col slds-size_1-of-1">
-                            <div class="slds-page-header slds-page-header__title">
-                                Tribute Information
-                            </div>
-                        </div>
-                        <!-- As of Spring '18, lookup doesn't work: Donation_Honoree_Contact__c -->
-                        <aura:iteration items="['Donation_Honoree_Name__c','Notification_Recipient_Name__c']" var="item">
-                            <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                                <lightning:inputField fieldName="{!item}" />
-                            </div>
-                        </aura:iteration>
-
-                    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                        <lightning:button aura:id="createButton" disabled="true" label="Create Gift" variant="brand" onclick="{!c.clickCreate}" />
-                    </div>
-
-                    <!-- Fields that are filled in by default and hidden from the user -->
-                    <div class="slds-hidden" style="height: 0">
-                        <lightning:inputField aura:id="batchIdField" fieldName="npsp__NPSP_Data_Import_Batch__c" />
-                        <lightning:inputField aura:id="recordTypeIdField" fieldName="npsp__Donation_Record_Type_Name__c" />
-                        <lightning:inputField aura:id="stageField" fieldName="npsp__Donation_Stage__c" />
-                        <lightning:inputField aura:id="paymentMethodField" fieldName="npsp__Payment_Method__c" />
-                        <lightning:inputField aura:id="donationDonorField" fieldName="npsp__Donation_Donor__c" />
-                    </div>
-
-                    </aura:if>
-
-                </div>
-            </lightning:recordEditForm>
-
-            <aura:if isTrue="{!v.showSuccess}">
-
-            <lightning:recordViewForm aura:id="giftViewForm" 
-                recordId="{!v.recordId}"
-                objectApiName="npsp__DataImport__c">
-
-                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_info" role="alert">
-                    <span class="slds-assistive-text">{!$Label.c.Gift_Saved_Message}</span>
-                    <h2>{!$Label.c.Gift_Saved_Message}</h2>
-                </div>
+            <div class="slds-grid slds-wrap">
 
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">
-                        Import Results:
+                        Donor Information
                     </div>
                 </div>
-                <aura:iteration items="['npsp__Contact1ImportStatus__c','npsp__FailureInformation__c','npsp__DonationImportStatus__c','npsp__PaymentImportStatus__c']" 
-                    var="item">
+                <aura:iteration items="['npsp__Contact1_Firstname__c','npsp__Contact1_Lastname__c']" var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:outputField fieldName="{!item}" onchange="{!c.handleFieldChange}" />
+                        <lightning:inputField class="show-required"
+                            aura:id='requiredField' 
+                            fieldName="{!item}" 
+                            onchange="{!c.handleFieldChange}" />
                     </div>
                 </aura:iteration>
-                <lightning:button aura:id="redirectButton" disabled="false" label="Go to Donation" variant="brand" onclick="{!c.clickGoToDonation}" />
-            </lightning:recordViewForm>
 
-            </aura:if>
+                <aura:iteration items="['npsp__Contact2_Firstname__c','npsp__Contact2_Lastname__c']" var="item">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <lightning:inputField fieldName="{!item}" onchange="{!c.handleFieldChange}" />
+                    </div>
+                </aura:iteration>
+
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Donation Information
+                    </div>
+                </div>
+                <aura:iteration items="['npsp__Donation_Name__c','npsp__Donation_Date__c','npsp__Donation_Amount__c','Do_Not_Automatically_Create_Payment__c']"
+                    var="item">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <aura:if isTrue="{!v.oppClosed}">
+                            <lightning:outputField fieldName="{!item}" />
+                        <aura:set attribute="else">
+                            <lightning:inputField class="show-required"
+                                aura:id='requiredField' 
+                                fieldName="{!item}" 
+                                onchange="{!c.handleFieldChange}" />                                        
+                        </aura:set>
+                        </aura:if>
+                    </div>
+                </aura:iteration>
+
+                <c:giftPicklist picklistValues="{!v.donationStages}" 
+                    fieldLabel="Donation Stage" 
+                    isRequired="true"
+                    isDisabled="{!v.oppClosed == true}"
+                    inputFieldId="stageField" />
+                <lightning:inputField class="hidden-field" aura:id="stageField" fieldName="npsp__Donation_Stage__c" />
+
+                <c:giftPicklist picklistValues="{!v.paymentMethods}" 
+                    fieldLabel="Payment Method" 
+                    isRequired="true"
+                    isDisabled="{!v.oppClosed == true}"
+                    inputFieldId="paymentMethodField"
+                    selectedVal="{!v.selectedPaymentMethod}" />
+                <lightning:inputField class="hidden-field" aura:id="paymentMethodField" fieldName="npsp__Payment_Method__c" />
+                    
+                <!-- Only show for Payment method = Check -->
+                <aura:if isTrue="{!v.selectedPaymentMethod == 'Check'}">
+                    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                        <lightning:inputField class="show-required"
+                            aura:id='requiredField' 
+                            fieldName="npsp__Payment_Check_Reference_Number__c" 
+                            onchange="{!c.handleFieldChange}" />
+                    </div>
+                </aura:if>
+
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Tribute Information
+                    </div>
+                </div>
+                <aura:iteration items="['Donation_Honoree_Name__c','Notification_Recipient_Name__c']" var="item">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <lightning:inputField fieldName="{!item}" />
+                    </div>
+                </aura:iteration>
+
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Matching Gift
+                    </div>
+                </div>
+                <aura:iteration items="['Donation_Matching_Gift_Employer__c','Donation_Matching_Gift_Account__c','Donation_Matching_Gift__c']" var="item">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <lightning:inputField fieldName="{!item}" />
+                    </div>
+                </aura:iteration>
+
+                <c:giftPicklist picklistValues="{!v.matchingGiftStatuses}" 
+                    fieldLabel="Matching Gift Status" 
+                    inputFieldId="matchingGiftStatusField" />
+                <lightning:inputField class="hidden-field" aura:id="matchingGiftStatusField" fieldName="Donation_Matching_Gift_Status__c" />
+
+                <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                    <lightning:button aura:id="createButton" disabled="true" label="Create Gift" variant="brand" onclick="{!c.clickCreate}" />
+                </div>
+
+                <!-- Fields that are hidden from the user, set by code-->
+                <div class="slds-hidden" style="height: 0">
+                    <lightning:inputField aura:id="batchIdField" fieldName="npsp__NPSP_Data_Import_Batch__c" />
+                    <lightning:inputField aura:id="recordTypeIdField" fieldName="npsp__Donation_Record_Type_Name__c" />
+                    <lightning:inputField aura:id="donationDonorField" fieldName="npsp__Donation_Donor__c" />
+                </div>
+            </div>
+
+        </lightning:recordEditForm>
+        </aura:if>
+
+        <aura:if isTrue="{!v.showSuccess}">
+        <lightning:recordEditForm aura:id="giftViewForm" 
+            onload="{!c.handleDryRunLoad}" 
+            recordId="{!v.returnedRecordId}"
+            objectApiName="npsp__DataImport__c">
+
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        {!$Label.c.Gift_Saved_Message}
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                        <aura:if isTrue="{!v.showDonationImportError}">
+                            <p>{!$Label.c.Gift_Donation_Locked}</p>
+                        </aura:if>
+                    </div>
+                </div>
+
+                <aura:iteration items="['npsp__Status__c','npsp__FailureInformation__c','npsp__Contact1ImportStatus__c','npsp__Contact1Imported__c','npsp__Account1ImportStatus__c','npsp__Account1Imported__c','npsp__Donation_Possible_Matches__c','npsp__Payment_Possible_Matches__c','empty','npsp__DonationImported__c','npsp__PaymentImportStatus__c','npsp__PaymentImported__c']"
+                    var="item">
+                    <aura:if isTrue="{!item == 'empty'}">
+                        <div class="slds-col slds-size_1-of-2">
+                        </div>
+                    <aura:set attribute="else">
+                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                            <lightning:outputField fieldName="{!item}" />
+                        </div>
+                    </aura:set>
+                    </aura:if>
+                </aura:iteration>
+              
+                <div class="slds-hidden" style="height: 0">
+                    <lightning:inputField aura:id="donationImportStatus" fieldName="npsp__DonationImportStatus__c" />                    
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                    <lightning:button class="slds-m-right_medium" label="Back to form" onclick="{!c.clickBackToForm}" />
+                    <lightning:button label="Create Gift" variant="brand" onclick="{!c.clickRunProcess}" />
+                </div>
+
+            </div>
+        </lightning:recordEditForm>
+        </aura:if>
 
     </lightning:card>
 

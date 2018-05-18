@@ -21,12 +21,9 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>GiftEntryForm</members>
-        <name>ApexPage</name>
-    </types>
-    <types>
-        <members>giftApp</members>
         <members>giftEntryForm</members>
+        <members>giftPicklist</members>
+        <members>giftPicklistChangeEvent</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
@@ -44,16 +41,22 @@
         <members>Opportunity.Tags__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Name__c</members>
+        <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>        
+        <members>npsp__DataImport__c.Donation_Matching_Gift_Account__c</members>
+        <members>npsp__DataImport__c.Donation_Matching_Gift_Employer__c</members>
+        <members>npsp__DataImport__c.Donation_Matching_Gift_Status__c</members>
+        <members>npsp__DataImport__c.Donation_Matching_Gift__c</members>
         <members>npsp__DataImport__c.Notification_Recipient_Name__c</members>
         <name>CustomField</name>
     </types>
     <types>
+        <members>Gift_Donation_Locked</members>
         <members>Gift_Saved_Message</members>
         <name>CustomLabel</name>
     </types>
     <types>
-    	<members>Advancement_Setting.Adv_config</members>
-    	<name>CustomMetadata</name>
+        <members>Advancement_Setting.Adv_config</members>
+        <name>CustomMetadata</name>
     </types>
     <types>
         <members>Advancement_Setting__mdt</members>
@@ -62,11 +65,14 @@
         <name>CustomObject</name>
     </types>
     <types>
+        <members>npsp__DataImport__c</members>
         <members>Gift_Entry</members>
         <name>CustomTab</name>
     </types>
     <types>
         <members>Gift_Entry</members>
+        <members>Gift_Update</members>
+        <members>Opportunity_Record_Page</members>
         <name>FlexiPage</name>
     </types>
     <types>
@@ -76,8 +82,8 @@
         <members>Contact-Advancement Contact Layout</members>
         <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
-        <members>npsp__DataImport__c-npsp__Data Import Layout</members>
         <members>Tag__c-All Layout</members>
+        <members>npsp__DataImport__c-npsp__Data Import Layout</members>
         <name>Layout</name>
     </types>
     <types>

@@ -5,10 +5,11 @@
     <label>Gift Entry</label>
     <navType>Standard</navType>
     <tabs>standard-home</tabs>
-    <tabs>Gift_Entry</tabs>
     <tabs>standard-Account</tabs>
     <tabs>standard-Contact</tabs>
     <tabs>standard-Opportunity</tabs>
     <tabs>standard-report</tabs>
+    <tabs>Gift_Entry</tabs>
+    <tabs>npsp__DataImport__c</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

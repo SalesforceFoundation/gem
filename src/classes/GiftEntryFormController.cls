@@ -45,14 +45,16 @@ public class GiftEntryFormController {
 
     @AuraEnabled
     public static Map<String, List<String>> getPickListValues(){
-        // TODO: Return all relevant picklist options for the gift entry form
+        // TODO: Pass this an array of object.picklist fields to return
         Map<String, List<String>> picklistMap = new Map<String, List<String>>();
 
         Schema.DescribeFieldResult fieldResult =  
             npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe();
-        picklistMap.put('paymentMethods', returnPicklistValuesList(fieldResult));
+        picklistMap.put('npe01__Payment_Method__c', returnPicklistValuesList(fieldResult));
         fieldResult = Opportunity.StageName.getDescribe();
-        picklistMap.put('donationStages', returnPicklistValuesList(fieldResult));
+        picklistMap.put('StageName', returnPicklistValuesList(fieldResult));
+        fieldResult = Opportunity.npsp__Matching_Gift_Status__c.getDescribe();
+        picklistMap.put('npsp__Matching_Gift_Status__c', returnPicklistValuesList(fieldResult));
 
         return picklistMap;
     }
@@ -66,6 +68,11 @@ public class GiftEntryFormController {
         return pickListValuesList;
     }
 
+    /*******************************************************************************************************
+    * @description Return the imported Opportunity (Donation) from a DataImport process
+    * @param diObjId Id of DataImport object that created or matching this Opportunity
+    * @return Id of the Opportunity
+    */
     @AuraEnabled
     public static Id getOpportunityIdFromImport(Id diObjId){
         try {
@@ -87,11 +94,18 @@ public class GiftEntryFormController {
         npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
         diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
         diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c';
+        diSettings.npsp__Contact_Matching_Rule__c = 'Firstname,Lastname';
         return diSettings;
     }
 
+    /*******************************************************************************************************
+    * @description Run the DataImport process on a single gift
+    * @param diObjId Id of DataImport object to be processed
+    * @param dryRunMode Boolean to set if the process should only return import results and not process
+    * @return void
+    */
     @AuraEnabled
-    public static void runGiftProcess(Id diObjId){
+    public static void runGiftProcess(Id diObjId, Boolean dryRunMode){
         npsp__Data_Import_Settings__c diSettings = getGiftEntrySettings();
 
         String allDIFields = getAllFieldsFromObject('npsp__DataImport__c');
@@ -102,7 +116,7 @@ public class GiftEntryFormController {
         System.debug(diObjId);
         System.debug(listDI); 
 
-        npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, false);
+        npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
     }
 
     // Useful for processing a large number of DataImport objects

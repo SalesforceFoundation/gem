@@ -12,7 +12,7 @@
     <aura:handler name="change" value="{!v.selectedVal}" action="{!c.handlePicklistChange}"/>
     
     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-        <lightning:select aura:id="requiredField" 
+        <lightning:select aura:id="{!v.isRequired == true ? 'requiredField' : 'selectInput'}" 
             name="select" 
             label="{!v.fieldLabel}" 
             required="{!v.isRequired}"

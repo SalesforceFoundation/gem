@@ -13,12 +13,12 @@
                 // console.log("Picklist options:");
                 // console.log(picklistOptions);
                 
-                this.setupPicklist(component, "paymentMethodField", "v.selectedPaymentMethod", "v.paymentMethods",
-                    picklistOptions.npe01__Payment_Method__c);
+                this.setupPicklist(component, "paymentMethodField", "v.selectedPaymentMethod", 
+                    "v.paymentMethods", picklistOptions.npe01__Payment_Method__c);
                 this.setupPicklist(component, "stageField", "v.selectedStage", "v.donationStages",
                     picklistOptions.StageName);
-                this.setupPicklist(component, "matchingGiftStatusField", "v.matchingGiftStatus", "v.matchingGiftStatuses",
-                    picklistOptions.npsp__Matching_Gift_Status__c);
+                this.setupPicklist(component, "matchingGiftStatusField", "v.matchingGiftStatus", 
+                    "v.matchingGiftStatuses", picklistOptions.npsp__Matching_Gift_Status__c);
 
             } else if (state === "ERROR") {
                 this.handleError(component, response);
@@ -28,6 +28,9 @@
         $A.enqueueAction(action);
     },
     setupPicklist: function(component, fieldId, selectedVal, optionListVal, optionListReturned){
+        // Add a "none" option to the start of every picklist
+        var noneOption = component.get("v.picklistNoneText");
+        optionListReturned.unshift(noneOption);
         component.set(optionListVal, optionListReturned);
         this.setStartingPicklistValue(component, fieldId, selectedVal, optionListReturned[0]);
     },
@@ -109,6 +112,7 @@
     },
     checkValidation: function(component){
         var formValid = this.validateForm(component);
+        console.log(formValid);
         var btn = component.find('createButton');
         btn.set('v.disabled',!formValid);
     },
@@ -119,14 +123,9 @@
         validForm = component.find('requiredField').reduce(function (validSoFar, inputCmp) {
             // Displays error messages for invalid fields
             //inputCmp.showHelpMessageIfInvalid();
-
-            if(!inputCmp){ 
-                return false;
-            }
             var fieldVal = inputCmp.get("v.value");
-            var isValid = fieldVal != undefined;
+            var isValid = fieldVal || fieldVal === false;
             //var isValid = inputCmp.get('v.validity').valid;
-            
             return validSoFar && isValid;
         }, true);
 

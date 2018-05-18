@@ -7,11 +7,14 @@
     <aura:attribute type="String[]" name="paymentMethods" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String[]" name="donationStages" />
+    <aura:attribute type="String" name="selectedStage" />    
     <aura:attribute type="String[]" name="matchingGiftStatuses" />
+    <aura:attribute type="String" name="matchingGiftStatus" />    
 
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
     <aura:attribute type="String" name="batchId" />
+    <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
     <aura:attribute type="Boolean" name="showForm" default="true" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
@@ -19,6 +22,7 @@
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
+    <aura:attribute type="Boolean" name="dataLoaded" default="false" />    
     <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
 
     <aura:if isTrue="{!v.showSpinner}">
@@ -61,7 +65,8 @@
                     </div>
                 </aura:iteration>
 
-                <aura:iteration items="['npsp__Contact2_Firstname__c','npsp__Contact2_Lastname__c']" var="item">
+                <!-- 'npsp__Contact2_Firstname__c','npsp__Contact2_Lastname__c','npsp__Contact2_Home_Phone__c','npsp__Contact2_Personal_Email__c' -->
+                <aura:iteration items="['npsp__Contact1_Home_Phone__c','npsp__Contact1_Personal_Email__c']" var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                         <lightning:inputField fieldName="{!item}" onchange="{!c.handleFieldChange}" />
                     </div>
@@ -89,14 +94,13 @@
 
                 <c:giftPicklist picklistValues="{!v.donationStages}" 
                     fieldLabel="Donation Stage" 
-                    isRequired="true"
                     isDisabled="{!v.oppClosed == true}"
-                    inputFieldId="stageField" />
+                    inputFieldId="stageField"
+                    selectedVal="{!v.selectedStage}" />
                 <lightning:inputField class="hidden-field" aura:id="stageField" fieldName="npsp__Donation_Stage__c" />
 
                 <c:giftPicklist picklistValues="{!v.paymentMethods}" 
                     fieldLabel="Payment Method" 
-                    isRequired="true"
                     isDisabled="{!v.oppClosed == true}"
                     inputFieldId="paymentMethodField"
                     selectedVal="{!v.selectedPaymentMethod}" />
@@ -111,6 +115,12 @@
                             onchange="{!c.handleFieldChange}" />
                     </div>
                 </aura:if>
+
+                <aura:iteration items="['npsp__Donation_Description__c','npsp__Donation_Campaign_Name__c']" var="item">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <lightning:inputField fieldName="{!item}" />
+                    </div>
+                </aura:iteration>
 
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">
@@ -136,10 +146,13 @@
 
                 <c:giftPicklist picklistValues="{!v.matchingGiftStatuses}" 
                     fieldLabel="Matching Gift Status" 
-                    inputFieldId="matchingGiftStatusField" />
+                    inputFieldId="matchingGiftStatusField" 
+                    selectedVal="{!v.matchingGiftStatus}" />
                 <lightning:inputField class="hidden-field" aura:id="matchingGiftStatusField" fieldName="Donation_Matching_Gift_Status__c" />
 
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                    <lightning:input aura:id="doDryRun" type="checkbox" checked="true" class="slds-m-bottom_small"
+                        label="Show attempted data matches before submitting?" name="doDryRun" />
                     <lightning:button aura:id="createButton" disabled="true" label="Create Gift" variant="brand" onclick="{!c.clickCreate}" />
                 </div>
 
@@ -175,7 +188,7 @@
                     </div>
                 </div>
 
-                <aura:iteration items="['npsp__Status__c','npsp__FailureInformation__c','npsp__Contact1ImportStatus__c','npsp__Contact1Imported__c','npsp__Account1ImportStatus__c','npsp__Account1Imported__c','npsp__Donation_Possible_Matches__c','npsp__Payment_Possible_Matches__c','empty','npsp__DonationImported__c','npsp__PaymentImportStatus__c','npsp__PaymentImported__c']"
+                <aura:iteration items="['npsp__Status__c','npsp__FailureInformation__c','npsp__Contact1ImportStatus__c','npsp__Contact1Imported__c','npsp__Account1ImportStatus__c','npsp__Account1Imported__c','npsp__Donation_Possible_Matches__c','npsp__Payment_Possible_Matches__c','npsp__DonationImportStatus__c','npsp__DonationImported__c','npsp__PaymentImportStatus__c','npsp__PaymentImported__c']"
                     var="item">
                     <aura:if isTrue="{!item == 'empty'}">
                         <div class="slds-col slds-size_1-of-2">

@@ -39,9 +39,9 @@
         <members>Donation_Tag__c.Tag_Name__c</members>
         <members>Donation_Tag__c.Tag__c</members>
         <members>Opportunity.Tags__c</members>
+        <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Name__c</members>
-        <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>        
         <members>npsp__DataImport__c.Donation_Matching_Gift_Account__c</members>
         <members>npsp__DataImport__c.Donation_Matching_Gift_Employer__c</members>
         <members>npsp__DataImport__c.Donation_Matching_Gift_Status__c</members>
@@ -65,8 +65,8 @@
         <name>CustomObject</name>
     </types>
     <types>
-        <members>npsp__DataImport__c</members>
         <members>Gift_Entry</members>
+        <members>npsp__DataImport__c</members>
         <name>CustomTab</name>
     </types>
     <types>

@@ -6,9 +6,6 @@
             component.set('v.editMode', true);
             component.find('createButton').set('v.label', 'Update Gift');
         }
-
-        helper.setPicklists(component);
-        helper.setDefaults(component);
     },
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
@@ -36,9 +33,18 @@
     clickBackToForm: function(component, event, helper){
         component.set("v.showForm", true);
         component.set("v.showSuccess", false);
+        helper.checkValidation(component);
     },
     handleLoad: function(component, event, helper) {
         //console.log("Handle Load");
+        // In the case of a new gift, the recordId changes, which would trigger a second load event
+        if(component.get("v.dataLoaded")){
+            return;
+        }
+        component.set("v.dataLoaded", true);
+        helper.setPicklists(component);
+        helper.setDefaults(component);
+
         var stageField = component.find("stageField");
         if(stageField){
             var stage = stageField.get("v.value");
@@ -62,13 +68,18 @@
             component.set('v.recordId', returnedId);
         }
         // Process the gift as a dry run, see how object matching would turn out
-        helper.processGift(component, returnedId, true);
+        var doDryRun = component.find("doDryRun").get("v.checked");
+        helper.processGift(component, returnedId, doDryRun);
     },
     handlePicklistChange: function(component, event, helper) {
         var newVal = event.getParam("newValue");
         var fieldId = event.getParam("fieldId");
         //console.log('Picklist change: ' + newVal + " " + fieldId);
         if(newVal && fieldId){
+            var noneOption = component.get("v.picklistNoneText");
+            if(newVal == noneOption){
+                newVal = '';
+            }
             helper.setHiddenField(component, fieldId, newVal);
         }
     },

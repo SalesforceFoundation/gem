@@ -4,10 +4,6 @@
         <application>%%%NAMESPACE%%%Gift_Entry</application>
         <visible>true</visible>
     </applicationVisibilities>
-    <applicationVisibilities>
-        <application>%%%NAMESPACE%%%Gift_Entry_Lightning</application>
-        <visible>true</visible>
-    </applicationVisibilities>
     <layoutAssignments>
         <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
     </layoutAssignments>

@@ -21,17 +21,12 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>GiftEntryForm</members>
-        <name>ApexPage</name>
-    </types>
-    <types>
         <members>giftApp</members>
         <members>giftEntryForm</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
         <members>Gift_Entry</members>
-        <members>Gift_Entry_Lightning</members>
         <name>CustomApplication</name>
     </types>
     <types>

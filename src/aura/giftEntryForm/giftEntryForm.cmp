@@ -51,6 +51,14 @@
 
             <div class="slds-grid slds-wrap">
 
+                <aura:if isTrue="{!v.oppClosed}">     
+                    <div class="slds-col slds-size_1-of-1">
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>{!$Label.c.Gift_Donation_Locked}</h2>
+                        </div>
+                    </div>
+                </aura:if>
+
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">
                         Donor Information
@@ -109,16 +117,26 @@
                 <!-- Only show for Payment method = Check -->
                 <aura:if isTrue="{!v.selectedPaymentMethod == 'Check'}">
                     <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                        <lightning:inputField class="show-required"
-                            aura:id='requiredField' 
-                            fieldName="npsp__Payment_Check_Reference_Number__c" 
-                            onchange="{!c.handleFieldChange}" />
+                        <aura:if isTrue="{!v.oppClosed}">
+                            <lightning:outputField fieldName="npsp__Payment_Check_Reference_Number__c" />
+                        <aura:set attribute="else">
+                            <lightning:inputField class="show-required"
+                                aura:id='requiredField' 
+                                fieldName="npsp__Payment_Check_Reference_Number__c" 
+                                onchange="{!c.handleFieldChange}" />                                       
+                        </aura:set> 
+                        </aura:if>
                     </div>
                 </aura:if>
 
                 <aura:iteration items="['npsp__Donation_Description__c','npsp__Donation_Campaign_Name__c']" var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!item}" />
+                        <aura:if isTrue="{!v.oppClosed}">
+                            <lightning:outputField fieldName="{!item}" />
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="{!item}" />                                        
+                        </aura:set>
+                        </aura:if>
                     </div>
                 </aura:iteration>
 
@@ -129,7 +147,12 @@
                 </div>
                 <aura:iteration items="['Donation_Honoree_Name__c','Notification_Recipient_Name__c']" var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!item}" />
+                        <aura:if isTrue="{!v.oppClosed}">
+                            <lightning:outputField fieldName="{!item}" />
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="{!item}" />                                        
+                        </aura:set>
+                        </aura:if>
                     </div>
                 </aura:iteration>
 
@@ -140,19 +163,26 @@
                 </div>
                 <aura:iteration items="['Donation_Matching_Gift_Employer__c','Donation_Matching_Gift_Account__c','Donation_Matching_Gift__c']" var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!item}" />
+                        <aura:if isTrue="{!v.oppClosed}">
+                            <lightning:outputField fieldName="{!item}" />
+                        <aura:set attribute="else">
+                            <lightning:inputField
+                                fieldName="{!item}" />                                        
+                        </aura:set>
+                        </aura:if>
                     </div>
                 </aura:iteration>
 
                 <c:giftPicklist picklistValues="{!v.matchingGiftStatuses}" 
                     fieldLabel="Matching Gift Status" 
+                    isDisabled="{!v.oppClosed == true}"
                     inputFieldId="matchingGiftStatusField" 
                     selectedVal="{!v.matchingGiftStatus}" />
                 <lightning:inputField class="hidden-field" aura:id="matchingGiftStatusField" fieldName="Donation_Matching_Gift_Status__c" />
 
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
                     <lightning:input aura:id="doDryRun" type="checkbox" checked="true" class="slds-m-bottom_small"
-                        label="Show attempted data matches before submitting?" name="doDryRun" />
+                        label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
                     <lightning:button aura:id="createButton" disabled="true" label="Create Gift" variant="brand" onclick="{!c.clickCreate}" />
                 </div>
 
@@ -175,16 +205,16 @@
 
             <div class="slds-grid slds-wrap">
                 <div class="slds-col slds-size_1-of-1">
-                    <div class="slds-page-header slds-page-header__title">
-                        {!$Label.c.Gift_Saved_Message}
-                    </div>
+                    <aura:if isTrue="{!v.showDonationImportError}">
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>{!$Label.c.Gift_Donation_Locked}</h2>
+                        </div>
+                    </aura:if>
                 </div>
 
                 <div class="slds-col slds-size_1-of-1">
-                    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                        <aura:if isTrue="{!v.showDonationImportError}">
-                            <p>{!$Label.c.Gift_Donation_Locked}</p>
-                        </aura:if>
+                    <div class="slds-page-header slds-page-header__title">
+                        {!$Label.c.Gift_Saved_Message}
                     </div>
                 </div>
 

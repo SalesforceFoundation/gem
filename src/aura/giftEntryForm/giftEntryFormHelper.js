@@ -112,7 +112,6 @@
     },
     checkValidation: function(component){
         var formValid = this.validateForm(component);
-        console.log(formValid);
         var btn = component.find('createButton');
         btn.set('v.disabled',!formValid);
     },

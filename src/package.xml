@@ -52,6 +52,7 @@
     <types>
         <members>Gift_Donation_Locked</members>
         <members>Gift_Saved_Message</members>
+        <members>Gift_Show_Matching</members>
         <name>CustomLabel</name>
     </types>
     <types>
@@ -66,7 +67,6 @@
     </types>
     <types>
         <members>Gift_Entry</members>
-        <members>npsp__DataImport__c</members>
         <name>CustomTab</name>
     </types>
     <types>

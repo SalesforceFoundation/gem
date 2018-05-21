@@ -4,10 +4,6 @@
         <application>%%%NAMESPACE%%%Gift_Entry</application>
         <visible>true</visible>
     </applicationVisibilities>
-    <applicationVisibilities>
-        <application>%%%NAMESPACE%%%Gift_Entry_Lightning</application>
-        <visible>true</visible>
-    </applicationVisibilities>
     <fieldPermissions>
         <editable>true</editable>
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Do_Not_Automatically_Create_Payment__c</field>

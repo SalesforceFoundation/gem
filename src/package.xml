@@ -28,7 +28,6 @@
     </types>
     <types>
         <members>Gift_Entry</members>
-        <members>Gift_Entry_Lightning</members>
         <name>CustomApplication</name>
     </types>
     <types>

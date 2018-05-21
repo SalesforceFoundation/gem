@@ -2,14 +2,14 @@ project:
     dependencies:
         - github: https://github.com/SalesforceFoundation/Cumulus
         - github: https://github.com/SalesforceFoundation/HEDAP
-    name: Advancement
+    name: Frida
     package:
-        name: Advancement
+        name: Frida
         namespace: adv1
         api_version: 42.0
     git:
         prefix_release: rel/
-        repo_url: https://github.com/SalesforceFoundation/adv
+        repo_url: https://github.com/SalesforceFoundation/Frida
 
 tasks:
     deploy_dev_config:

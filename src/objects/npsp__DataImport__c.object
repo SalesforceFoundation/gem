@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <fields>
+        <fullName>Do_Not_Automatically_Create_Payment__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Check to prevent automatic payment creation</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npe01__Do_Not_Automatically_Create_Payment__c</inlineHelpText>
+        <label>Do Not Automatically Create Payment</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Donation_Honoree_Contact__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -23,6 +33,57 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Donation_Matching_Gift_Account__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Lookup to the matching gift for this Opportunity</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Matching_Gift_Account__c</inlineHelpText>
+        <label>Donation Matching Gift Account</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>NPSP Data Imports (Account)</relationshipLabel>
+        <relationshipName>NPSP_Data_Imports</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Donation_Matching_Gift_Employer__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Matching_Gift_Employer__c</inlineHelpText>
+        <label>Donation Matching Gift Employer</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Donation_Matching_Gift_Status__c</fullName>
+        <description>Holds the status of the matching gift, passed to the Donation when imported</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Matching_Gift_Status__c</inlineHelpText>
+        <label>Donation Matching Gift Status</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Donation_Matching_Gift__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Lookup to the matching gift for this Donation</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Matching_Gift__c</inlineHelpText>
+        <label>Donation Matching Gift</label>
+        <referenceTo>Opportunity</referenceTo>
+        <relationshipLabel>NPSP Data Imports (Donation Matching Gift)</relationshipLabel>
+        <relationshipName>NPSP_Data_Imports</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Notification_Recipient_Name__c</fullName>

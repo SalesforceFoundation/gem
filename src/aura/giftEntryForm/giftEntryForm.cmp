@@ -166,8 +166,7 @@
                         <aura:if isTrue="{!v.oppClosed}">
                             <lightning:outputField fieldName="{!item}" />
                         <aura:set attribute="else">
-                            <lightning:inputField
-                                fieldName="{!item}" />                                        
+                            <lightning:inputField fieldName="{!item}" />                                        
                         </aura:set>
                         </aura:if>
                     </div>

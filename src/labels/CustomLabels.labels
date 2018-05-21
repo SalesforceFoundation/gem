@@ -14,4 +14,11 @@
         <shortDescription>Gift Saved Message</shortDescription>
         <value>Gift saved, but not created, here are the results of data matching:</value>
     </labels>
+    <labels>
+        <fullName>Gift_Show_Matching</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Show Matching</shortDescription>
+        <value>Show data matching results before submitting?</value>
+    </labels>
 </CustomLabels>

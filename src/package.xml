@@ -21,7 +21,6 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>giftApp</members>
         <members>giftEntryForm</members>
         <name>AuraDefinitionBundle</name>
     </types>

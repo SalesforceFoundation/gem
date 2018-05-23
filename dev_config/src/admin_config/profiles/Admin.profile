@@ -42,6 +42,9 @@
     <layoutAssignments>
         <layout>Contact-%%%NAMESPACE%%%Advancement Contact Layout</layout>
     </layoutAssignments>
+    <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+    </layoutAssignments>
     <tabVisibilities>
         <tab>%%%NAMESPACE%%%Gift_Entry</tab>
         <visibility>DefaultOn</visibility>

@@ -1,0 +1,28 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- <aura:handler name="giftGetRelatedJSON" action="{!c.handleSetJSON}" event="c:giftGetRelatedJSON" /> -->
+
+    <aura:attribute type="String" name="sectionTitle" default="Allocation" />
+    <aura:attribute type="String" name="objectName" default="npsp__Allocation__c" />
+    <aura:attribute type="String" name="rowCmpName" default="c:giftRelatedAllocation" />
+    <aura:attribute type="Object" name="jsonObj" />
+    <aura:attribute type="sObject[]" name="rowList" />    
+    
+    <div class="slds-col slds-size_1-of-1">
+        <div class="slds-page-header slds-page-header__title">
+            {!v.sectionTitle}
+        </div>
+    </div>
+
+    {!v.body}
+
+    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+        <lightning:button label="Add new" onclick="{!c.clickAddRow}" />
+    </div>
+
+    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+        <lightning:button label="Test JSON parse" onclick="{!c.handleSetJSON}" />
+    </div>
+    
+</aura:component>

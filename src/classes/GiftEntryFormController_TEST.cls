@@ -163,6 +163,32 @@ private class GiftEntryFormController_TEST {
 
         Map<String,List<String>> picklistValueMap = GiftEntryFormController.getPickListValues();
         System.assert(picklistValueMap.size() > 0);
+
+        // Now test the JSON related list object creation
+        String gauAmt = '123';
+        String gauPerc = '12';
+        String gauName = 'Test2';
+        npsp__General_Accounting_Unit__c testGau = 
+            new npsp__General_Accounting_Unit__c(Name=gauName, npsp__Active__c=true);
+
+        insert testGau;
+        String gauId = (String)testGau.Id;
+
+        String jsonString = '{"npsp__Allocation__c":[';
+        jsonString += '{"npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"'+gauAmt+'","npsp__Percent__c":"","npsp__Opportunity__c":"'+oppId+'"}';
+        jsonString += ',';      
+        jsonString += '{"npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"","npsp__Percent__c":"'+gauPerc+'","npsp__Opportunity__c":"'+oppId+'"}';
+        jsonString += ']}';
+        diObj.Post_Process_Object_JSON__c = jsonString;
+        update diObj;
+        List<npsp__DataImport__c> diList = new List<npsp__DataImport__c>{diObj};
+        GiftEntryFormController.processJSONList(diList);
+
+        // Check that the allocations were created
+        List<npsp__Allocation__c> testList = [Select Id from npsp__Allocation__c 
+            where npsp__General_Accounting_Unit__c =: gauId];
+        System.assertEquals(2, testList.size());
+        
     }
 
     @isTest

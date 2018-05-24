@@ -7,15 +7,20 @@
     <aura:attribute type="String[]" name="paymentMethods" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String[]" name="donationStages" />
-    <aura:attribute type="String" name="selectedStage" />    
+    <aura:attribute type="String" name="selectedStage" />
     <aura:attribute type="String[]" name="matchingGiftStatuses" />
-    <aura:attribute type="String" name="matchingGiftStatus" />    
+    <aura:attribute type="String" name="matchingGiftStatus" />
+
+    <aura:registerEvent name="giftGetRelatedJSON" type="c:giftGetRelatedJSON"/>
+    <aura:attribute type="Object" name="jsonObject" />
+    <!-- <aura:handler name="change" value="{!v.allocationListJson}" action="{!c.handleJsonChange}"/> -->
 
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
     <aura:attribute type="String" name="batchId" />
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
+    <aura:attribute type="String" name="oppIdToFill" default="**oppId**" />
     <aura:attribute type="Boolean" name="showForm" default="true" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disabled" default="true" />
@@ -58,6 +63,14 @@
                         </div>
                     </div>
                 </aura:if>
+
+                <!-- objectDefault='{"npsp__General_Accounting_Unit__c":"","npsp__Amount__c":"","npsp__Percent__c":"","npsp__Opportunity__c":"oppId"}' -->
+                
+                <c:giftFormRelated 
+                    sectionTitle="Allocation"
+                    objectName="npsp__Allocation__c"
+                    rowCmpName="c:giftRelatedAllocation"
+                    jsonObj="{!v.jsonObject}" />
 
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">
@@ -182,7 +195,12 @@
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
                     <lightning:input aura:id="doDryRun" type="checkbox" checked="true" class="slds-m-bottom_small"
                         label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
-                    <lightning:button aura:id="createButton" disabled="true" label="Create Gift" variant="brand" onclick="{!c.clickCreate}" />
+                    <lightning:button aura:id="createButton" 
+                        disabled="true" 
+                        label="Create Gift" 
+                        variant="brand" 
+                        onclick="{!c.handleJsonChange}" />
+                        <!-- onclick="{!c.clickCreate}" /> -->
                 </div>
 
                 <!-- Fields that are hidden from the user, set by code-->

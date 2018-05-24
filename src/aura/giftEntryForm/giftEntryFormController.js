@@ -6,6 +6,7 @@
             component.set('v.editMode', true);
             component.find('createButton').set('v.label', 'Update Gift');
         }
+        //helper.addAllocationHelper(component);
     },
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
@@ -94,5 +95,22 @@
                 component.set("v.showDonationImportError", true);
             }
         }
+    },
+    handleJsonChange: function(component) {
+        // TODO: Check that all JSON objects have been updated before submitting?
+        var jsonVal = component.get("v.allocationListJson");
+        console.log(JSON.stringify(jsonVal));
+    },
+    getJsonObjects: function(component){
+        // var cmpEvent = component.getEvent("giftGetRelatedJSON");
+        // cmpEvent.setParams({
+        //     "newValue" : newVal,
+        //     "fieldId" : fieldId
+        // });
+        // cmpEvent.fire();
+        // console.log('json evt fired');
+
+        
+
     }
 })

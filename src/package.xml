@@ -22,8 +22,10 @@
     </types>
     <types>
         <members>giftEntryForm</members>
+        <members>giftFormRelated</members>
         <members>giftPicklist</members>
         <members>giftPicklistChangeEvent</members>
+        <members>giftRelatedAllocation</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>

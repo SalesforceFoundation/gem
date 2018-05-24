@@ -108,7 +108,7 @@ public class GiftEntryFormController {
     public static void runGiftProcess(Id diObjId, Boolean dryRunMode){
         npsp__Data_Import_Settings__c diSettings = getGiftEntrySettings();
 
-        String allDIFields = getAllFieldsFromObject('npsp__DataImport__c');
+        String allDIFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npsp__DataImport__c');
         List<npsp__DataImport__c> listDI = 
             Database.query('SELECT '+ allDIFields +' FROM npsp__DataImport__c WHERE Id = :diObjId');
 
@@ -135,7 +135,7 @@ public class GiftEntryFormController {
     }
 
     /*******************************************************************************************************
-    * @description Inserts the default Data Import Settings Object.
+    * @description Inserts the default Data Import Settings Object if there is none.
     * @return void
     */
     public static void insertGiftEntrySettings() {
@@ -151,28 +151,53 @@ public class GiftEntryFormController {
         }
     }
 
-    // TODO: Move to UTIL class
-    public static String getAllFieldsFromObject(String sobjectname){
-  		if(!Schema.getGlobalDescribe().containsKey(sobjectname)){
-          return 'Invalid object name';
+    /*******************************************************************************************************
+    * @description For a list of DataImport objects with Post Process JSON values filled in,
+    * process those lists to add related objects
+    * @param listDi List of DataImport objects that will have Post_Process_Object_JSON__c processed
+    * @return void
+    */
+    public static void processJSONList(List<npsp__DataImport__c> listDi){   
+        List<SObject> objsToUpsert = new List<SObject>();
+
+        Set<Id> diIdSet = new Set<Id>();
+        // Select the fields we need
+        for(npsp__DataImport__c di : listDi){
+            diIdSet.add(di.Id);
         }
-    	Map<String, Schema.SObjectField> fields = 
-            Schema.getGlobalDescribe().get(sobjectname).getDescribe().SObjectType.getDescribe().fields.getMap();
-  
-    	List<String> accessiblefields = new List<String>();
-  
-    	for(Schema.SObjectField field : fields.values()){
-      		if(field.getDescribe().isAccessible()){
-        	    accessiblefields.add(field.getDescribe().getName());
+
+        List<npsp__DataImport__c> listDiWithFields = 
+            [SELECT Id, Post_Process_Object_JSON__c, npsp__DonationImported__c 
+            FROM npsp__DataImport__c 
+            WHERE Id in :diIdSet];
+
+        List<SObject> thisList;
+        Map<String, Object> objNameToObjList;
+        for(npsp__DataImport__c di : listDiWithFields){
+            if(di.Post_Process_Object_JSON__c == null){
+                continue;
             }
-    	}
-  
-    	String allfields = '';
-    	for(String fieldname : accessiblefields){
-      		allfields += fieldname+',';
+            thisList = new List<SObject>();
+            objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(di.Post_Process_Object_JSON__c);
+            System.debug(objNameToObjList);
+            // For each objet type included, add the list
+            for(String objName : objNameToObjList.keySet()){
+                Object objList = objNameToObjList.get(objName);
+                if(objList != null){
+                    String objListString = JSON.serialize(objList);
+                    //System.debug(objListString);
+                    Type listType = Type.forName('List<' + objName + '>');
+                    thisList = (List<SObject>)JSON.deserialize(objListString, listType);
+                    objsToUpsert.addAll(thisList);
+                }
+            }
         }
-    	allfields = allfields.subString(0,allfields.length()-1);
-    	return allfields;
-  	}
+
+        // TODO: How to handle upsert? Need to separate into object lists?
+        if(!objsToUpsert.isEmpty()){
+            insert objsToUpsert;
+        }
+
+    }
 
 }

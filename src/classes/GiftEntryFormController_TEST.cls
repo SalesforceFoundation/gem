@@ -98,7 +98,7 @@ private class GiftEntryFormController_TEST {
             npsp__PaymentImportStatus__c
             from npsp__DataImport__c 
             where Id =: diObj.Id];
-        System.debug(diObj);
+        //System.debug(diObj);
 
         // There should not be a payment, it will need to be added later
         List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c];
@@ -119,7 +119,7 @@ private class GiftEntryFormController_TEST {
             and npsp__Notification_Recipient_Name__c =: updateStringTest
         ];
 
-        System.debug(oppList);
+        //System.debug(oppList);
         System.assertEquals(1, oppList.size());
     }
     

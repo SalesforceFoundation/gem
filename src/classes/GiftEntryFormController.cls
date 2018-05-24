@@ -37,12 +37,14 @@
 public class GiftEntryFormController {
 
 	public Boolean hasPerm {get;set;} // Permission check
-    
-
     public GiftEntryFormController(){
         hasPerm = Schema.sObjectType.npsp__DataImport__c.isCreateable();
     }
 
+    /*******************************************************************************************************
+    * @description Return a Map of string (picklist field name) to a list of strings (picklist values)
+    * @return Map<String, List<String>> which maps a picklist field name to picklist values
+    */
     @AuraEnabled
     public static Map<String, List<String>> getPickListValues(){
         // TODO: Pass this an array of object.picklist fields to return
@@ -58,7 +60,12 @@ public class GiftEntryFormController {
 
         return picklistMap;
     }
-
+    
+    /*******************************************************************************************************
+    * @description Return a list of picklist values for a given field
+    * @param fieldResult DescribeFieldResult of picklist field
+    * @return List<String> with all picklist values for the provided field
+    */
     private static List<String> returnPicklistValuesList(Schema.DescribeFieldResult fieldResult){
         List<String> pickListValuesList = new List<String>();
         List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
@@ -108,18 +115,18 @@ public class GiftEntryFormController {
     public static void runGiftProcess(Id diObjId, Boolean dryRunMode){
         npsp__Data_Import_Settings__c diSettings = getGiftEntrySettings();
 
-        String allDIFields = getAllFieldsFromObject('npsp__DataImport__c');
+        String allDIFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npsp__DataImport__c');
         List<npsp__DataImport__c> listDI = 
             Database.query('SELECT '+ allDIFields +' FROM npsp__DataImport__c WHERE Id = :diObjId');
 
-        System.debug(diSettings);
-        System.debug(diObjId);
-        System.debug(listDI); 
+        // System.debug(diSettings);
+        // System.debug(diObjId);
+        // System.debug(listDI); 
 
         npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
     }
 
-    // Useful for processing a large number of DataImport objects
+    // Not currently used, but useful for processing a large number of DataImport objects
     @AuraEnabled
     public static Id runGiftBatch(Id batchId){
         if(batchId != null){
@@ -135,7 +142,7 @@ public class GiftEntryFormController {
     }
 
     /*******************************************************************************************************
-    * @description Inserts the default Data Import Settings Object.
+    * @description Inserts the default Data Import Settings Object, if none exists
     * @return void
     */
     public static void insertGiftEntrySettings() {
@@ -150,29 +157,5 @@ public class GiftEntryFormController {
             insert diSettings;
         }
     }
-
-    // TODO: Move to UTIL class
-    public static String getAllFieldsFromObject(String sobjectname){
-  		if(!Schema.getGlobalDescribe().containsKey(sobjectname)){
-          return 'Invalid object name';
-        }
-    	Map<String, Schema.SObjectField> fields = 
-            Schema.getGlobalDescribe().get(sobjectname).getDescribe().SObjectType.getDescribe().fields.getMap();
-  
-    	List<String> accessiblefields = new List<String>();
-  
-    	for(Schema.SObjectField field : fields.values()){
-      		if(field.getDescribe().isAccessible()){
-        	    accessiblefields.add(field.getDescribe().getName());
-            }
-    	}
-  
-    	String allfields = '';
-    	for(String fieldname : accessiblefields){
-      		allfields += fieldname+',';
-        }
-    	allfields = allfields.subString(0,allfields.length()-1);
-    	return allfields;
-  	}
 
 }

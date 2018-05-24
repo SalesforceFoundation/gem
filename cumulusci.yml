@@ -37,6 +37,18 @@ tasks:
         class_path: tasks.salesforce.UpdateAdminProfile
 
 flows:
+    ci_beta:
+        tasks:
+            6.1:
+                task: update_admin_profile
+            8:
+                task: deploy_dev_config
+    ci_feature:
+        tasks:
+            6.1:
+                task: update_admin_profile
+            8:
+                task: deploy_dev_config
     dev_org:
         tasks:
             6.1:

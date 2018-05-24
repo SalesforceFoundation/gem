@@ -4,6 +4,7 @@
         <application>%%%NAMESPACE%%%Gift_Entry</application>
         <visible>true</visible>
     </applicationVisibilities>
+
     <fieldPermissions>
         <editable>true</editable>
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Do_Not_Automatically_Create_Payment__c</field>
@@ -44,6 +45,7 @@
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Notification_Recipient_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
+
     <layoutAssignments>
         <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
     </layoutAssignments>
@@ -85,6 +87,7 @@
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
+    
     <tabVisibilities>
         <tab>%%%NAMESPACE%%%Gift_Entry</tab>
         <visibility>DefaultOn</visibility>

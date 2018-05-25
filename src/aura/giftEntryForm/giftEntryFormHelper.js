@@ -94,13 +94,14 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                component.set("v.showForm", false);
-                component.set("v.showSuccess", true);
-                component.set("v.showSpinner", false);
-
-                // Navigate to Opportunity page
                 if(!dryRun){
+                    // If not a dry run, navigate to Opportunity page
                     this.redirectToDonation(component, dataImportObjId);
+                } else {
+                    // If dry run, show the results of data matching
+                    component.set("v.showSpinner", false);
+                    component.set("v.showForm", false);
+                    component.set("v.showSuccess", true);
                 }
             } else if (state === "ERROR") {
                 var errors = response.getError();

@@ -129,7 +129,7 @@
                     </div>
                 </aura:if>
 
-                <aura:iteration items="['npsp__Donation_Description__c','npsp__Donation_Campaign_Name__c']" var="item">
+                <aura:iteration items="['npsp__Donation_Description__c','Donation_Primary_Campaign__c']" var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                         <aura:if isTrue="{!v.oppClosed}">
                             <lightning:outputField fieldName="{!item}" />

@@ -33,12 +33,12 @@
     clickBackToForm: function(component, event, helper){
         component.set("v.showForm", true);
         component.set("v.showSuccess", false);
-        helper.checkValidation(component);
     },
     handleLoad: function(component, event, helper) {
         //console.log("Handle Load");
         // In the case of a new gift, the recordId changes, which would trigger a second load event
         if(component.get("v.dataLoaded")){
+            helper.checkValidation(component);
             return;
         }
         component.set("v.dataLoaded", true);

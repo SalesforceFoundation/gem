@@ -9,6 +9,17 @@
 		var obj = component.get(vObj);
         objList.push(obj);
 		component.set(vArray, objList);
-		console.log(objList);
-	}
+        //console.log(objList);
+    }
+    // setOppIdPlaceholder: function(component){
+    //     var oppFieldName = component.get("v.oppField");        
+    //     var itemObj = component.get("v.item");        
+    //     if(itemObj){
+    //         var curVal = itemObj[oppFieldName];
+	// 		if(!curVal){
+	// 			var oppPlaceholder = $A.get("$Label.c.Gift_Donation_ID_Placeholder");
+    //             itemObj[oppFieldName] = oppPlaceholder;
+	// 		}
+	// 	}
+    // }
 })

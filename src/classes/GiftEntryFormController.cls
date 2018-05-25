@@ -114,9 +114,12 @@ public class GiftEntryFormController {
 
         System.debug(diSettings);
         System.debug(diObjId);
-        System.debug(listDI); 
+        System.debug(listDI);
 
         npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
+        if(!dryRunMode){
+            processJSONList(listDI);
+        }
     }
 
     // Useful for processing a large number of DataImport objects
@@ -177,6 +180,7 @@ public class GiftEntryFormController {
             if(di.Post_Process_Object_JSON__c == null){
                 continue;
             }
+            String oppId = di.npsp__DonationImported__c;
             thisList = new List<SObject>();
             objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(di.Post_Process_Object_JSON__c);
             System.debug(objNameToObjList);
@@ -185,7 +189,12 @@ public class GiftEntryFormController {
                 Object objList = objNameToObjList.get(objName);
                 if(objList != null){
                     String objListString = JSON.serialize(objList);
-                    //System.debug(objListString);
+                    // Replace opportunity Id placeholders with the actual Id
+                    if(oppId != null){
+                        String oppIdPlaceholderRegex = Label.Gift_Donation_ID_Placeholder;
+                        objListString = objListString.replaceAll(oppIdPlaceholderRegex, oppId);
+                        System.debug(objListString);
+                    }
                     Type listType = Type.forName('List<' + objName + '>');
                     thisList = (List<SObject>)JSON.deserialize(objListString, listType);
                     objsToUpsert.addAll(thisList);

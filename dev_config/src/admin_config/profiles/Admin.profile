@@ -44,6 +44,11 @@
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Notification_Recipient_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Post_Process_Object_JSON__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <layoutAssignments>
         <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
     </layoutAssignments>

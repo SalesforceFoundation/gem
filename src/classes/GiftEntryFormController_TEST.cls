@@ -174,10 +174,11 @@ private class GiftEntryFormController_TEST {
         insert testGau;
         String gauId = (String)testGau.Id;
 
+        String oppIdPlaceholder = Label.Gift_Donation_ID_Placeholder;
         String jsonString = '{"npsp__Allocation__c":[';
-        jsonString += '{"npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"'+gauAmt+'","npsp__Percent__c":"","npsp__Opportunity__c":"'+oppId+'"}';
+        jsonString += '{"npsp__Opportunity__c":"'+oppIdPlaceholder+'","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"'+gauAmt+'","npsp__Percent__c":"","npsp__Opportunity__c":"'+oppId+'"}';
         jsonString += ',';      
-        jsonString += '{"npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"","npsp__Percent__c":"'+gauPerc+'","npsp__Opportunity__c":"'+oppId+'"}';
+        jsonString += '{"npsp__Opportunity__c":"'+oppIdPlaceholder+'","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"","npsp__Percent__c":"'+gauPerc+'","npsp__Opportunity__c":"'+oppId+'"}';
         jsonString += ']}';
         diObj.Post_Process_Object_JSON__c = jsonString;
         update diObj;
@@ -186,7 +187,8 @@ private class GiftEntryFormController_TEST {
 
         // Check that the allocations were created
         List<npsp__Allocation__c> testList = [Select Id from npsp__Allocation__c 
-            where npsp__General_Accounting_Unit__c =: gauId];
+            where npsp__General_Accounting_Unit__c =: gauId
+            and npsp__Opportunity__c =: oppId];
         System.assertEquals(2, testList.size());
         
     }

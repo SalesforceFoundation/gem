@@ -6,7 +6,6 @@
             component.set('v.editMode', true);
             component.find('createButton').set('v.label', 'Update Gift');
         }
-        //helper.addAllocationHelper(component);
     },
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
@@ -17,17 +16,17 @@
 
         // If we pass validation, submit the form
         if(validForm){
+            // Fill in the JSON data field        
+            helper.fillJsonField(component);
             component.find('giftEditForm').submit();
         } else {
             component.set('v.showSpinner', false);
         }
     },
     clickGoToDonation: function(component, event, helper){
-        var recordId = component.get('v.returnedRecordId');
-        helper.redirectToDonation(component, recordId);
+        helper.redirectToDonation(component);
     },
     clickRunProcess: function(component, event, helper){
-        //helper.prepareRelatedObjects(component);
         var diId = component.get('v.returnedRecordId');
         helper.processGift(component, diId, false);
     },
@@ -84,7 +83,7 @@
             helper.setHiddenField(component, fieldId, newVal);
         }
     },
-    handleDryRunLoad: function(component) {
+    handleDryRunLoad: function(component, event, helper) {
         //console.log("Handle dry run load");
         // Hide and show messages based on results of the dry run import
         var donationImportStatusField = component.find("donationImportStatus");
@@ -96,21 +95,7 @@
             }
         }
     },
-    handleJsonChange: function(component) {
-        // TODO: Check that all JSON objects have been updated before submitting?
-        var jsonVal = component.get("v.allocationListJson");
-        console.log(JSON.stringify(jsonVal));
-    },
-    getJsonObjects: function(component){
-        // var cmpEvent = component.getEvent("giftGetRelatedJSON");
-        // cmpEvent.setParams({
-        //     "newValue" : newVal,
-        //     "fieldId" : fieldId
-        // });
-        // cmpEvent.fire();
-        // console.log('json evt fired');
-
-        
-
+    doJsonUpdate: function(component, event, helper) {
+        helper.fillJsonField(component);
     }
 })

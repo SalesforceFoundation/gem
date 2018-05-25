@@ -13,14 +13,13 @@
 
     <aura:registerEvent name="giftGetRelatedJSON" type="c:giftGetRelatedJSON"/>
     <aura:attribute type="Object" name="jsonObject" />
-    <!-- <aura:handler name="change" value="{!v.allocationListJson}" action="{!c.handleJsonChange}"/> -->
 
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
     <aura:attribute type="String" name="batchId" />
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
-    <aura:attribute type="String" name="oppIdToFill" default="**oppId**" />
+    <aura:attribute type="String" name="oppId" />
     <aura:attribute type="Boolean" name="showForm" default="true" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disabled" default="true" />
@@ -54,7 +53,10 @@
 
             <lightning:messages />
 
-            <div class="slds-grid slds-wrap">
+            <div class="slds-grid slds-wrap" aura:id="formWrapper">
+
+                <!-- <lightning:button label="Test JSON" 
+                    onclick="{!c.doJsonUpdate}" /> -->
 
                 <aura:if isTrue="{!v.oppClosed}">     
                     <div class="slds-col slds-size_1-of-1">
@@ -64,12 +66,12 @@
                     </div>
                 </aura:if>
 
-                <!-- objectDefault='{"npsp__General_Accounting_Unit__c":"","npsp__Amount__c":"","npsp__Percent__c":"","npsp__Opportunity__c":"oppId"}' -->
-                
                 <c:giftFormRelated 
                     sectionTitle="Allocation"
                     objectName="npsp__Allocation__c"
                     rowCmpName="c:giftRelatedAllocation"
+                    oppField="npsp__Opportunity__c"
+                    fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
                     jsonObj="{!v.jsonObject}" />
 
                 <div class="slds-col slds-size_1-of-1">
@@ -199,15 +201,16 @@
                         disabled="true" 
                         label="Create Gift" 
                         variant="brand" 
-                        onclick="{!c.handleJsonChange}" />
+                        onclick="{!c.clickCreate}" />
                         <!-- onclick="{!c.clickCreate}" /> -->
                 </div>
 
-                <!-- Fields that are hidden from the user, set by code-->
+                <!-- Fields that are hidden from the user, set by code -->
                 <div class="slds-hidden" style="height: 0">
                     <lightning:inputField aura:id="batchIdField" fieldName="npsp__NPSP_Data_Import_Batch__c" />
                     <lightning:inputField aura:id="recordTypeIdField" fieldName="npsp__Donation_Record_Type_Name__c" />
                     <lightning:inputField aura:id="donationDonorField" fieldName="npsp__Donation_Donor__c" />
+                    <lightning:inputField aura:id="postProcessJsonField" fieldName="Post_Process_Object_JSON__c" />
                 </div>
             </div>
 

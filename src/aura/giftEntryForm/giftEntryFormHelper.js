@@ -55,24 +55,36 @@
             field.set("v.value", newVal);
         }
     },
-    redirectToDonation: function(component, dataImportObjId){
+    redirectToDonation: function(component){
+        var oppId = component.get("v.oppId");
+
+        if(!oppId){
+            var recordId = component.get('v.returnedRecordId');
+            var redirectAfter = true;
+            this.getImportedDonationId(component, recordId, redirectAfter);
+        } else {
+            var event = $A.get("e.force:navigateToSObject");
+            event.setParams({
+                recordId: oppId
+            });
+            event.fire();
+        }
+    },
+    getImportedDonationId: function(component, dataImportObjId, redirectAfter){
         var action = component.get("c.getOpportunityIdFromImport");
         action.setParams({
             diObjId: dataImportObjId
         });
 
         action.setCallback(this, function(response) {
-            //console.log(response);
             var state = response.getState();
             if (state === "SUCCESS") {
                 var oppId = response.getReturnValue();
+                component.set("v.oppId", oppId);
                 //console.log("New opp ID: " + oppId);
-
-                var event = $A.get('e.force:navigateToSObject');
-                event.setParams({
-                    recordId: oppId
-                });
-                event.fire();
+                if(redirectAfter){
+                    this.redirectToDonation(component);
+                }
             } else if (state === "ERROR") {
                 this.handleError(component, response);
             }
@@ -141,5 +153,17 @@
         } else {
             console.log("Unknown error");
         }
+    },
+    fillJsonField: function(component) {
+        var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
+        //console.log(relatedCmp);
+        for(var i=0; i < relatedCmp.length; i++){
+            relatedCmp[i].handleJsonUpdate();
+        }
+        var jsonField = component.find("postProcessJsonField");
+        var jsonObj = component.get("v.jsonObject");
+        jsonObj = JSON.stringify(jsonObj);
+        //console.log(jsonObj);
+        jsonField.set("v.value", jsonObj);
     }
 })

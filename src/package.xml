@@ -52,6 +52,7 @@
     </types>
     <types>
         <members>Gift_Donation_Locked</members>
+        <members>Gift_Donation_ID_Placeholder</members>
         <members>Gift_Saved_Message</members>
         <members>Gift_Show_Matching</members>
         <name>CustomLabel</name>

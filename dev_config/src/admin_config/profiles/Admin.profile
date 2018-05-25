@@ -4,6 +4,7 @@
         <application>%%%NAMESPACE%%%Gift_Entry</application>
         <visible>true</visible>
     </applicationVisibilities>
+
     <fieldPermissions>
         <editable>true</editable>
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Do_Not_Automatically_Create_Payment__c</field>
@@ -17,6 +18,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Honoree_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Matching_Gift__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -36,7 +42,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Matching_Gift__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Primary_Campaign__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -90,6 +96,7 @@
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
+    
     <tabVisibilities>
         <tab>%%%NAMESPACE%%%Gift_Entry</tab>
         <visibility>DefaultOn</visibility>

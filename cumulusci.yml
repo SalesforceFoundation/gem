@@ -2,14 +2,14 @@ project:
     dependencies:
         - github: https://github.com/SalesforceFoundation/Cumulus
         - github: https://github.com/SalesforceFoundation/HEDAP
-    name: Frida
+    name: Advancement
     package:
-        name: Frida
+        name: Advancement
         namespace: adv1
         api_version: 42.0
     git:
         prefix_release: rel/
-        repo_url: https://github.com/SalesforceFoundation/Frida
+        repo_url: https://github.com/SalesforceFoundation/adv
 
 tasks:
     deploy_dev_config:
@@ -37,6 +37,18 @@ tasks:
         class_path: tasks.salesforce.UpdateAdminProfile
 
 flows:
+    ci_beta:
+        tasks:
+            6.1:
+                task: update_admin_profile
+            8:
+                task: deploy_dev_config
+    ci_feature:
+        tasks:
+            6.1:
+                task: update_admin_profile
+            8:
+                task: deploy_dev_config
     dev_org:
         tasks:
             6.1:

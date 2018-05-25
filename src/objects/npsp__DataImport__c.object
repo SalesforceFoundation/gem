@@ -110,4 +110,14 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
+    <fields>
+        <fullName>Post_Process_Object_JSON__c</fullName>
+        <description>Holds JSON for related objects to add after processing the gift</description>
+        <externalId>false</externalId>
+        <label>Post Process Object JSON</label>
+        <length>131072</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
 </CustomObject>

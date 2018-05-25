@@ -2,15 +2,20 @@
     handleAddRow: function(component){
         // Now, create the component that contains the fields and pass it the list of data
         var rowList = component.getReference("v.rowList");
+        var rowListArray = component.get("v.rowList");
+        var newRowNum = rowListArray.length;
         var rowCmpName = component.get("v.rowCmpName");
         var oppField = component.get("v.oppField");
+
         $A.createComponent(
             rowCmpName, {
                 "rowList": rowList,
-                "oppField": oppField
+                "rowComponent": rowCmpName,
+                "rowNum": newRowNum
             },
             function(relatedCmp, status, errorMessage){
                 if (status === "SUCCESS") {
+                    // Add the component to the page
                     var body = component.get("v.body");
                     body.push(relatedCmp);
                     component.set("v.body", body);
@@ -56,6 +61,10 @@
         fieldList.push(oppField);
         for(var i=0; i < arrayList.length; i++){
             var oldObj = arrayList[i];
+            // If this row was deleted, skip it
+            if(!oldObj){
+                continue;
+            }
             var newObj = {};
             // For each object, only save the fields we want
             for(var j=0; j < fieldList.length; j++){

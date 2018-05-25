@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>Gift_Donation_ID_Placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Donation ID Placeholder</shortDescription>
+        <value>OpportunityIdPlaceholder</value>
+    </labels>
+    <labels>
         <fullName>Gift_Donation_Locked</fullName>
         <language>en_US</language>
         <protected>true</protected>

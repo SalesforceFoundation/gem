@@ -1,9 +1,7 @@
-<aura:component>
-    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-    <aura:attribute type="sObject[]" name="rowList" />
-    <aura:attribute type="String" name="oppField" />
+<aura:component extends="c:giftFormRelatedRow">
     <aura:attribute name="item" type="npsp__Allocation__c" default="{sobjectType:'npsp__Allocation__c'}" />
 
+    <div class="slds-grid slds-wrap">
         <div class="slds-col slds-size_2-of-4 slds-p-around_small">
             <label class="slds-form-element__label">General Accounting Unit</label>
             <force:inputField value="{!v.item.npsp__General_Accounting_Unit__c}" />
@@ -22,10 +20,8 @@
         </div>
 
         <div class="slds-hidden" style="height: 0; width: 0;">
-        <!-- <div> -->
             <lightning:input name="oppId" type="text" label="opp" value="{!v.item.npsp__Opportunity__c}" />
-            <!-- <force:inputField value="{!v.item.npsp__Opportunity__c}" /> -->
-            <!-- <force:inputField value="{!v.item.Id}" /> -->
         </div>
+    </div>
 
 </aura:component>

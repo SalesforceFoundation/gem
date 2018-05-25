@@ -1,0 +1,14 @@
+<aura:component extensible="true">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:registerEvent name="giftFormDeleteRowEvent" type="c:giftFormDeleteRowEvent" />
+    <aura:attribute type="sObject[]" name="rowList" />
+    <aura:attribute type="Integer" name="rowNum" />
+    
+    <div class="slds-col slds-size_5-of-6">
+        {!v.body}
+    </div>
+    <div class="slds-col slds-size_1-of-6 slds-p-around_small" style="margin-top:20px;">
+        <lightning:button label="Remove" onclick="{!c.clickDeleteRow}" />
+    </div>
+    
+</aura:component>

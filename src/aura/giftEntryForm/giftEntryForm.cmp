@@ -55,8 +55,8 @@
 
             <div class="slds-grid slds-wrap" aura:id="formWrapper">
 
-                <!-- <lightning:button label="Test JSON" 
-                    onclick="{!c.doJsonUpdate}" /> -->
+                <lightning:button label="Test JSON" 
+                    onclick="{!c.doJsonUpdate}" />
 
                 <aura:if isTrue="{!v.oppClosed}">     
                     <div class="slds-col slds-size_1-of-1">
@@ -66,8 +66,7 @@
                     </div>
                 </aura:if>
 
-                <c:giftFormRelated 
-                    sectionTitle="Allocation"
+                <c:giftFormRelated sectionTitle="Allocation"
                     objectName="npsp__Allocation__c"
                     rowCmpName="c:giftRelatedAllocation"
                     oppField="npsp__Opportunity__c"

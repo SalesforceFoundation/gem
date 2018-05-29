@@ -4,10 +4,14 @@
 		helper.addRowHelper(component);
 	},
 	clickDeleteRow : function(component, event, helper) {
-		// Call delete row event 
-		var rowIndex = component.get("v.rowNum");
-		var deleteEvent = component.getEvent("giftFormDeleteRowEvent");
-		deleteEvent.setParams({"rowIndex" : rowIndex});
-		deleteEvent.fire();
+        // Can't fully remove because array index numbers after this one would be wrong
+		var rowIdentifier = component.get("v.rowNum");
+		var rowList = component.get("v.rowList");
+		rowList[rowIdentifier] = null;
+		component.destroy();
+	},
+	checkValidation : function(component, event, helper) {
+		var isValid = helper.validateRow(component, helper);
+		return isValid;
 	}
 })

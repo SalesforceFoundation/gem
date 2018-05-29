@@ -93,7 +93,6 @@
         $A.enqueueAction(action);
     },
     processGift: function(component, dataImportObjId, dryRun) {
-        //console.log(dataImportObjId);
         component.set("v.showSpinner", true);
 
         // Now run the batch for this single gift
@@ -106,14 +105,15 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
+                this.scrollToTop();
+                // Navigate to Opportunity page
                 if(!dryRun){
-                    // If not a dry run, navigate to Opportunity page
                     this.redirectToDonation(component, dataImportObjId);
                 } else {
                     // If dry run, show the results of data matching
-                    component.set("v.showSpinner", false);
                     component.set("v.showForm", false);
                     component.set("v.showSuccess", true);
+                    component.set("v.showSpinner", false);
                 }
             } else if (state === "ERROR") {
                 var errors = response.getError();
@@ -133,12 +133,16 @@
         var validForm = true;
         // Show error messages if required fields are blank
         validForm = component.find('requiredField').reduce(function (validSoFar, inputCmp) {
+            var disabled = inputCmp.get("v.disabled");
+            if(disabled){
+                return validSoFar;
+            }
             // Displays error messages for invalid fields
             //inputCmp.showHelpMessageIfInvalid();
             var fieldVal = inputCmp.get("v.value");
             var isValid = fieldVal || fieldVal === false;
             //var isValid = inputCmp.get('v.validity').valid;
-            return validSoFar && isValid;
+            return isValid && validSoFar;
         }, true);
 
         return validForm;
@@ -157,14 +161,19 @@
     },
     fillJsonField: function(component) {
         var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
-        //console.log(relatedCmp);
+        var allRowsValid = true;
         for(var i=0; i < relatedCmp.length; i++){
-            relatedCmp[i].handleJsonUpdate();
+            var jsonResp = relatedCmp[i].handleJsonUpdate();
+            allRowsValid = allRowsValid && jsonResp;
         }
         var jsonField = component.find("postProcessJsonField");
         var jsonObj = component.get("v.jsonObject");
         jsonObj = JSON.stringify(jsonObj);
         //console.log(jsonObj);
         jsonField.set("v.value", jsonObj);
+        return allRowsValid;
+    },
+    scrollToTop: function(){
+        window.scrollTo(0, 0);
     }
 })

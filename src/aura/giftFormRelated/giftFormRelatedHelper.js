@@ -71,15 +71,29 @@
                 var fieldName = fieldList[j];
                 newObj[fieldName] = oldObj[fieldName];
             }
-            
             this.setOppIdPlaceholder(component, newObj, oppFieldName);
-
             newObjList.push(newObj);
         }
         jsonObj[objectName] = newObjList;
         component.set("v.jsonObj", jsonObj);
         // console.log('JSON set:');
         // console.log(JSON.stringify(jsonObj));
+    },
+    validateRows: function(component){
+        var rowCmpName = component.get("v.rowCmpName");
+        var relatedWrapper = component.find("relatedWrapper");
+        var relatedRows = relatedWrapper.find({instancesOf:rowCmpName});
+        var rowsAreValid = true;
+        for(var i=0; i < relatedRows.length; i++){
+            var thisRow = relatedRows[i];
+            var rowValid = thisRow.checkValidation();
+            if(rowValid === undefined){
+                // If the component has been removed
+                rowValid = true;
+            }
+            rowsAreValid = rowValid && rowsAreValid;
+        }
+        return rowsAreValid;
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

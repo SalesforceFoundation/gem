@@ -13,3 +13,6 @@
 .THIS .hidden-field {
     display: none;
 }
+.THIS .slds-hidden {
+    height: 0;
+}

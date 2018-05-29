@@ -22,7 +22,6 @@
     </types>
     <types>
         <members>giftEntryForm</members>
-        <members>giftFormDeleteRowEvent</members>
         <members>giftFormRelated</members>
         <members>giftFormRelatedRow</members>
         <members>giftPicklist</members>

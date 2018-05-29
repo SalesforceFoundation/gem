@@ -1,8 +1,6 @@
 <aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-    <aura:handler name="giftFormDeleteRowEvent" event="c:giftFormDeleteRowEvent"
-        action="{!c.handleRemoveRow}"/>
     <aura:method name="handleJsonUpdate" />
 
     <aura:attribute type="String" name="sectionTitle" default="Allocation" />
@@ -19,7 +17,9 @@
         </div>
     </div>
 
-    {!v.body}
+    <div aura:id="relatedWrapper" class="slds-col slds-wrap slds-grid">
+        {!v.body}
+    </div>
 
     <div class="slds-col slds-size_1-of-1 slds-p-around_small">
         <lightning:button label="Add new" onclick="{!c.clickAddRow}" />

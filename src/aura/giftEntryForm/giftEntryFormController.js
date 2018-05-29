@@ -16,9 +16,17 @@
 
         // If we pass validation, submit the form
         if(validForm){
-            // Fill in the JSON data field        
-            helper.fillJsonField(component);
-            component.find('giftEditForm').submit();
+            // Fill in the JSON data field
+            var jsonIsValid = helper.fillJsonField(component);
+            // console.log('jsonIsValid:'); 
+            // console.log(jsonIsValid); 
+            if(jsonIsValid){
+                component.set("v.submitError", "");
+                component.find('giftEditForm').submit();
+            } else {
+                component.set('v.showSpinner', false);
+                component.set("v.submitError", "Missing required fields.");
+            }
         } else {
             component.set('v.showSpinner', false);
         }
@@ -33,6 +41,7 @@
     clickBackToForm: function(component, event, helper){
         component.set("v.showForm", true);
         component.set("v.showSuccess", false);
+        helper.scrollToTop();
     },
     handleLoad: function(component, event, helper) {
         //console.log("Handle Load");
@@ -89,7 +98,7 @@
         var donationImportStatusField = component.find("donationImportStatus");
         if(donationImportStatusField){
             var donationImportStatus = donationImportStatusField.get("v.value");
-            var importFailureString = $A.get("$Label.npsp.bdiErrorDonationLookupMatch");
+            var importFailureString = $A.get("$Label.unknown_custom_label");
             if(donationImportStatus == importFailureString){
                 component.set("v.showDonationImportError", true);
             }

@@ -16,6 +16,7 @@
 
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
+    <aura:attribute type="String" name="submitError" />
     <aura:attribute type="String" name="batchId" />
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
@@ -43,7 +44,8 @@
             </ui:message>
         </aura:if>
 
-        <aura:if isTrue="{!v.showForm}">
+        <!-- <aura:if isTrue="{!v.showForm}"> -->
+        <div class="{!v.showForm ? '' : 'slds-hidden'}">
         <lightning:recordEditForm aura:id="giftEditForm" 
             recordId="{!v.recordId}"
             onload="{!c.handleLoad}"  
@@ -193,6 +195,14 @@
                     selectedVal="{!v.matchingGiftStatus}" />
                 <lightning:inputField class="hidden-field" aura:id="matchingGiftStatusField" fieldName="Donation_Matching_Gift_Status__c" />
 
+                <aura:if isTrue="{!v.submitError}">     
+                    <div class="slds-col slds-size_1-of-1">
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>{!v.submitError}</h2>
+                        </div>
+                    </div>
+                </aura:if>
+
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
                     <lightning:input aura:id="doDryRun" type="checkbox" checked="true" class="slds-m-bottom_small"
                         label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
@@ -205,7 +215,7 @@
                 </div>
 
                 <!-- Fields that are hidden from the user, set by code -->
-                <div class="slds-hidden" style="height: 0">
+                <div class="slds-hidden">
                     <lightning:inputField aura:id="batchIdField" fieldName="npsp__NPSP_Data_Import_Batch__c" />
                     <lightning:inputField aura:id="recordTypeIdField" fieldName="npsp__Donation_Record_Type_Name__c" />
                     <lightning:inputField aura:id="donationDonorField" fieldName="npsp__Donation_Donor__c" />
@@ -214,7 +224,8 @@
             </div>
 
         </lightning:recordEditForm>
-        </aura:if>
+        </div>
+        <!-- </aura:if> -->
 
         <aura:if isTrue="{!v.showSuccess}">
         <lightning:recordEditForm aura:id="giftViewForm" 
@@ -250,7 +261,7 @@
                     </aura:if>
                 </aura:iteration>
               
-                <div class="slds-hidden" style="height: 0">
+                <div class="slds-hidden">
                     <lightning:inputField aura:id="donationImportStatus" fieldName="npsp__DonationImportStatus__c" />                    
                 </div>
 

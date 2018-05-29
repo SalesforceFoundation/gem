@@ -12,13 +12,15 @@
                 var picklistOptions = response.getReturnValue();
                 // console.log("Picklist options:");
                 // console.log(picklistOptions);
-                
+
                 this.setupPicklist(component, "paymentMethodField", "v.selectedPaymentMethod", 
                     "v.paymentMethods", picklistOptions.npe01__Payment_Method__c);
                 this.setupPicklist(component, "stageField", "v.selectedStage", "v.donationStages",
                     picklistOptions.StageName);
                 this.setupPicklist(component, "matchingGiftStatusField", "v.matchingGiftStatus", 
                     "v.matchingGiftStatuses", picklistOptions.npsp__Matching_Gift_Status__c);
+                this.setupPicklist(component, "ackPrefStatusField", "v.ackPrefStatus", 
+                    "v.ackPrefStatuses", picklistOptions.npsp__Acknowledgment_Status__c);
 
             } else if (state === "ERROR") {
                 this.handleError(component, response);

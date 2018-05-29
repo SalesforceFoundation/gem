@@ -57,7 +57,9 @@ public class GiftEntryFormController {
         picklistMap.put('StageName', returnPicklistValuesList(fieldResult));
         fieldResult = Opportunity.npsp__Matching_Gift_Status__c.getDescribe();
         picklistMap.put('npsp__Matching_Gift_Status__c', returnPicklistValuesList(fieldResult));
-
+        fieldResult = Opportunity.npsp__Acknowledgment_Status__c.getDescribe();
+        picklistMap.put('npsp__Acknowledgment_Status__c', returnPicklistValuesList(fieldResult));
+        
         return picklistMap;
     }
     

@@ -7,9 +7,11 @@
     <aura:attribute type="String[]" name="paymentMethods" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String[]" name="donationStages" />
-    <aura:attribute type="String" name="selectedStage" />    
+    <aura:attribute type="String" name="selectedStage" />
     <aura:attribute type="String[]" name="matchingGiftStatuses" />
-    <aura:attribute type="String" name="matchingGiftStatus" />    
+    <aura:attribute type="String" name="matchingGiftStatus" />
+    <aura:attribute type="String[]" name="ackPrefStatuses" />
+    <aura:attribute type="String" name="ackPrefStatus" />
 
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
@@ -145,16 +147,23 @@
                         Tribute Information
                     </div>
                 </div>
-                <aura:iteration items="['Donation_Honoree_Name__c','Notification_Recipient_Name__c']" var="item">
+                <aura:iteration items="['Donation_Honoree_Name__c','Notification_Recipient_Name__c','Donation_Notification_Message__c']" var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                         <aura:if isTrue="{!v.oppClosed}">
                             <lightning:outputField fieldName="{!item}" />
                         <aura:set attribute="else">
-                            <lightning:inputField fieldName="{!item}" />                                        
+                            <lightning:inputField fieldName="{!item}" />
                         </aura:set>
                         </aura:if>
                     </div>
                 </aura:iteration>
+
+                <c:giftPicklist picklistValues="{!v.ackPrefStatuses}" 
+                    fieldLabel="Acknowledgement Preference" 
+                    isDisabled="{!v.oppClosed == true}"
+                    inputFieldId="ackPrefStatusField" 
+                    selectedVal="{!v.ackPrefStatus}" />
+                <lightning:inputField class="hidden-field" aura:id="ackPrefStatusField" fieldName="Donation_Acknowledgment_Status__c" />
 
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">

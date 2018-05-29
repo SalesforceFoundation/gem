@@ -83,7 +83,7 @@
             helper.setHiddenField(component, fieldId, newVal);
         }
     },
-    handleDryRunLoad: function(component) {
+    handleDryRunLoad: function(component, event, helper) {
         //console.log("Handle dry run load");
         // Hide and show messages based on results of the dry run import
         var donationImportStatusField = component.find("donationImportStatus");

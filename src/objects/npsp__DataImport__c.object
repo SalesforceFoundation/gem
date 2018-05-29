@@ -11,6 +11,18 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Donation_Acknowledgment_Status__c</fullName>
+        <description>Sets the Acknowledgment Status on the Donation</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Acknowledgment_Status__c</inlineHelpText>
+        <label>Donation Acknowledgment Status</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Donation_Honoree_Contact__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -84,6 +96,17 @@
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Donation_Notification_Message__c</fullName>
+        <description>Sets the Notification Message on the Donation</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Notification_Message__c</inlineHelpText>
+        <label>Donation Notification Message</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
     </fields>
     <fields>
         <fullName>Donation_Primary_Campaign__c</fullName>

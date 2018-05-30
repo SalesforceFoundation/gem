@@ -36,12 +36,12 @@
             itemObj[oppFieldName] = oppPlaceholder;
         }
     },
-    updateJsonObject: function(component){
+    updateJsonObject: function(component, arrayList){
         var jsonObj = component.get("v.jsonObj");
         var objectName = component.get("v.objectName");
         var fieldList = component.get("v.fieldList");
         var oppField = component.get("v.oppField");
-        var arrayList = component.get("v.rowList");
+        //var arrayList = component.get("v.rowList");
 
         var oppFieldName = component.get("v.oppField");
 
@@ -80,20 +80,34 @@
         // console.log(JSON.stringify(jsonObj));
     },
     validateRows: function(component){
+        // Returns valid items or false if there is a validation issue
         var rowCmpName = component.get("v.rowCmpName");
         var relatedWrapper = component.find("relatedWrapper");
         var relatedRows = relatedWrapper.find({instancesOf:rowCmpName});
+        var validRows = [];
         var rowsAreValid = true;
+        var invalidRow = false;
         for(var i=0; i < relatedRows.length; i++){
             var thisRow = relatedRows[i];
             var rowValid = thisRow.checkValidation();
             if(rowValid === undefined){
-                // If the component has been removed
-                rowValid = true;
+                // Skip this row, it's either deleted or blank
             }
-            rowsAreValid = rowValid && rowsAreValid;
+            else if(rowValid){
+                // Add this row to the array to pass along
+                var item = thisRow.get("v.item");
+                validRows.push(item);
+            } else {
+                // There is a row that's invalid, show an error message
+                invalidRow = true;
+            }
         }
-        return rowsAreValid;
+
+        if(invalidRow){
+            return false;
+        } else {
+            return validRows;
+        }
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

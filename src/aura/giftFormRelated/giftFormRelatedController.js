@@ -7,9 +7,10 @@
         helper.handleAddRow(component);
     },
     handleJsonUpdate: function(component, event, helper) {
-        var isValid = helper.validateRows(component);
+        var validRows = helper.validateRows(component);
+        var isValid = validRows && validRows.length > 0;
         if(isValid){
-            helper.updateJsonObject(component);
+            helper.updateJsonObject(component, validRows);
         }
         return isValid;
     }

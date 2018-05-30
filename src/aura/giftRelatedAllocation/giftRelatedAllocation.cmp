@@ -4,25 +4,25 @@
     <div class="slds-grid slds-wrap">
         <div class="slds-col slds-size_2-of-4 slds-p-around_small">
             <label class="slds-form-element__label">General Accounting Unit</label>
-            <force:inputField aura:id="requiredField" 
+            <force:inputField aura:id="requiredField" class="show-required"
                 value="{!v.item.npsp__General_Accounting_Unit__c}" />
         </div>
         <div class="slds-col slds-size_1-of-4 slds-p-around_small">
-            <lightning:input aura:id="requiredField"
+            <lightning:input aura:id="requiredField" class="show-required"
                             name="allocationAmt" type="number" label="Amount"
                             formatter="currency"
                             disabled="{!v.item.npsp__Percent__c ? true : false}"
                             value="{!v.item.npsp__Amount__c}" />
         </div>
         <div class="slds-col slds-size_1-of-4 slds-p-around_small">
-            <lightning:input aura:id="requiredField"
+            <lightning:input aura:id="requiredField" class="show-required"
                             name="allocationPerc" type="number" label="Percent" 
                             max="100" min="0"    
                             disabled="{!v.item.npsp__Amount__c ? true : false}"
                             value="{!v.item.npsp__Percent__c}" />
         </div>
 
-        <div class="slds-hidden" style="height: 0; width: 0;">
+        <div class="slds-hidden">
             <lightning:input name="oppId" type="text" label="opp" value="{!v.item.npsp__Opportunity__c}" />
         </div>
     </div>

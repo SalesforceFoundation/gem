@@ -11,7 +11,6 @@
     <aura:attribute type="String[]" name="matchingGiftStatuses" />
     <aura:attribute type="String" name="matchingGiftStatus" />
 
-    <aura:registerEvent name="giftGetRelatedJSON" type="c:giftGetRelatedJSON"/>
     <aura:attribute type="Object" name="jsonObject" />
 
     <aura:attribute type="String" name="returnedRecordId" />
@@ -57,8 +56,8 @@
 
             <div class="slds-grid slds-wrap" aura:id="formWrapper">
 
-                <lightning:button label="Test JSON" 
-                    onclick="{!c.doJsonUpdate}" />
+                <!-- <lightning:button label="Test JSON" 
+                    onclick="{!c.doJsonUpdate}" /> -->
 
                 <aura:if isTrue="{!v.oppClosed}">     
                     <div class="slds-col slds-size_1-of-1">
@@ -67,13 +66,6 @@
                         </div>
                     </div>
                 </aura:if>
-
-                <c:giftFormRelated sectionTitle="Allocation"
-                    objectName="npsp__Allocation__c"
-                    rowCmpName="c:giftRelatedAllocation"
-                    oppField="npsp__Opportunity__c"
-                    fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
-                    jsonObj="{!v.jsonObject}" />
 
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">
@@ -195,6 +187,13 @@
                     selectedVal="{!v.matchingGiftStatus}" />
                 <lightning:inputField class="hidden-field" aura:id="matchingGiftStatusField" fieldName="Donation_Matching_Gift_Status__c" />
 
+                <c:giftFormRelated sectionTitle="Allocation"
+                    objectName="npsp__Allocation__c"
+                    rowCmpName="c:giftRelatedAllocation"
+                    oppField="npsp__Opportunity__c"
+                    fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
+                    jsonObj="{!v.jsonObject}" />
+                    
                 <aura:if isTrue="{!v.submitError}">     
                     <div class="slds-col slds-size_1-of-1">
                         <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">

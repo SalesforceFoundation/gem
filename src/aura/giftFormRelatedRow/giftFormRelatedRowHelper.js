@@ -16,7 +16,9 @@
         // Check if this row has all required inputs filled in
         // If none are filled in, assume this row should not be processed
 
-        var validForm = true;
+        var needsError = [];
+        var validForm = false;
+        var allBlank = true;
         // Show error messages if required fields are blank
         var reqFields = component.find('requiredField');
         // console.log('reqFields:');
@@ -37,11 +39,22 @@
             // Show error for invalid fields
             if(!isValid){
                 helper.addError(inputCmp);
+                needsError.push(inputCmp);
             } else {
+                // There is at least one valid field
+                allBlank = false;
                 helper.removeError(inputCmp);
             }
             return isValid && validSoFar;
         }, true);
+
+        // If ALL fields are blank, skip this row and consider it valid
+        if(allBlank){
+            for(var i=0; i<needsError.length; i++){
+                helper.removeError( needsError[i] );
+            }
+            return undefined; // This is interpreted as a blank row
+        }
 
         return validForm;
     },

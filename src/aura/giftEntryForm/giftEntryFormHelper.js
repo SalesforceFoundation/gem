@@ -168,7 +168,11 @@
         }
         var jsonField = component.find("postProcessJsonField");
         var jsonObj = component.get("v.jsonObject");
-        jsonObj = JSON.stringify(jsonObj);
+        if(!allRowsValid){
+            jsonObj = null;
+        } else {
+            jsonObj = JSON.stringify(jsonObj);
+        }
         //console.log(jsonObj);
         jsonField.set("v.value", jsonObj);
         return allRowsValid;

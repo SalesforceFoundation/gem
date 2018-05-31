@@ -10,6 +10,11 @@
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
     },
+    handleAmountChange: function(component, event, helper){
+        var newAmt = event.getParam("value");
+        helper.updateAmountField(component, newAmt);
+        helper.checkValidation(component);
+    },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
         var validForm = helper.validateForm(component);
@@ -54,6 +59,7 @@
         helper.setPicklists(component);
         helper.setDefaults(component);
 
+        // If the opportunity stage is Closed, disable Opportunity fields
         var stageField = component.find("stageField");
         if(stageField){
             var stage = stageField.get("v.value");
@@ -61,6 +67,14 @@
             var oppClosed = stage == closedStage ? true : false;
             component.set("v.oppClosed", oppClosed);
         }
+
+        // Also set the amount in the payment scheduler
+        var amtField = component.find("amtField");
+        if(amtField){
+            var amt = amtField.get("v.value");
+            helper.updateAmountField(component, amt);
+        }
+
         helper.checkValidation(component);
     },
     handleSubmit: function(component, event, helper) {

@@ -24,9 +24,11 @@
         <members>giftEntryForm</members>
         <members>giftFormRelated</members>
         <members>giftFormRelatedRow</members>
+        <members>giftPaymentScheduler</members>
         <members>giftPicklist</members>
         <members>giftPicklistChangeEvent</members>
         <members>giftRelatedAllocation</members>
+        <members>giftRelatedPayment</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>

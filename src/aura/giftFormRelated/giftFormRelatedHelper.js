@@ -1,5 +1,5 @@
 ({
-    handleAddRow: function(component){
+    handleAddRow: function(component, item){
         // Now, create the component that contains the fields and pass it the list of data
         var rowList = component.getReference("v.rowList");
         var rowListArray = component.get("v.rowList");
@@ -11,7 +11,8 @@
             rowCmpName, {
                 "rowList": rowList,
                 "rowComponent": rowCmpName,
-                "rowNum": newRowNum
+                "rowNum": newRowNum,
+                "item": item
             },
             function(relatedCmp, status, errorMessage){
                 if (status === "SUCCESS") {
@@ -48,6 +49,7 @@
         if(jsonObj == null){
             // If adding first row, set to empty object
             jsonObj = {};
+            component.set("v.jsonObj", jsonObj);
         } else {
             // If retrieved, turn the attribute into an actual Javascript object
             jsonObj = this.proxyToObj(jsonObj);
@@ -56,6 +58,7 @@
         // Get the relevant fields from the list of objects    
         var newObjList = [];
         arrayList = this.proxyToObj(arrayList);
+        //console.log(arrayList);
         fieldList = this.proxyToObj(fieldList);
         // Add the Opportunity field so it gets included
         fieldList.push(oppField);
@@ -74,9 +77,16 @@
             this.setOppIdPlaceholder(component, newObj, oppFieldName);
             newObjList.push(newObj);
         }
-        jsonObj[objectName] = newObjList;
-        component.set("v.jsonObj", jsonObj);
+        // console.log(objectName);
+        // console.log(arrayList);
+        //jsonObj[objectName] = newObjList;
+
+        // Can't set entire object, async calls overwrite each other
+        // Should overwrite with blank array if no list is passed!
+        component.set("v.jsonObj."+objectName, newObjList);
+        
         // console.log('JSON set:');
+        // jsonObj = component.get("v.jsonObj");
         // console.log(JSON.stringify(jsonObj));
     },
     validateRows: function(component){

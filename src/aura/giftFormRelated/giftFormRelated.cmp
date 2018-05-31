@@ -1,9 +1,13 @@
-<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+<aura:component access="global"
+    implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:method name="handleJsonUpdate" />
+    <aura:attribute type="sObject[]" name="itemList" />    
+    <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
 
-    <aura:attribute type="String" name="sectionTitle" default="Allocation" />
+    <aura:attribute type="String" name="sectionTitle" />
+    <aura:attribute type="String" name="buttonTitle" default="Add New" />
     <aura:attribute type="String" name="objectName" default="npsp__Allocation__c" />
     <aura:attribute type="String" name="rowCmpName" default="c:giftRelatedAllocation" />
     <aura:attribute type="Object" name="jsonObj" />
@@ -11,18 +15,20 @@
     <aura:attribute type="String[]" name="fieldList"  />
     <aura:attribute type="String" name="oppField"  />
     
+    <aura:if isTrue="{!v.sectionTitle}">
     <div class="slds-col slds-size_1-of-1">
         <div class="slds-page-header slds-page-header__title">
             {!v.sectionTitle}
         </div>
     </div>
+    </aura:if>
 
     <div aura:id="relatedWrapper" class="slds-col slds-wrap slds-grid">
         {!v.body}
     </div>
 
     <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-        <lightning:button label="Add new" onclick="{!c.clickAddRow}" />
+        <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
     </div>
     
 </aura:component>

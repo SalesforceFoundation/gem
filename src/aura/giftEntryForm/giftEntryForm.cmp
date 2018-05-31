@@ -28,6 +28,7 @@
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
     <aura:attribute type="Boolean" name="dataLoaded" default="false" />    
     <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
+    <aura:attribute type="Decimal" name="donationAmount" />
 
     <aura:if isTrue="{!v.showSpinner}">
         <lightning:spinner />
@@ -43,7 +44,6 @@
             </ui:message>
         </aura:if>
 
-        <!-- <aura:if isTrue="{!v.showForm}"> -->
         <div class="{!v.showForm ? '' : 'slds-hidden'}">
         <lightning:recordEditForm aura:id="giftEditForm" 
             recordId="{!v.recordId}"
@@ -93,7 +93,7 @@
                         Donation Information
                     </div>
                 </div>
-                <aura:iteration items="['npsp__Donation_Name__c','npsp__Donation_Date__c','npsp__Donation_Amount__c','Do_Not_Automatically_Create_Payment__c']"
+                <aura:iteration items="['npsp__Donation_Name__c','npsp__Donation_Date__c']"
                     var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                         <aura:if isTrue="{!v.oppClosed}">
@@ -107,6 +107,18 @@
                         </aura:if>
                     </div>
                 </aura:iteration>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <aura:if isTrue="{!v.oppClosed}">
+                        <lightning:outputField fieldName="npsp__Donation_Amount__c" />
+                    <aura:set attribute="else">
+                        <lightning:inputField class="show-required"
+                            aura:id='amtField' 
+                            fieldName="npsp__Donation_Amount__c" 
+                            onchange="{!c.handleAmountChange}" />                                        
+                    </aura:set>
+                    </aura:if>
+                </div>
 
                 <c:giftPicklist picklistValues="{!v.donationStages}" 
                     fieldLabel="Donation Stage" 
@@ -187,13 +199,18 @@
                     selectedVal="{!v.matchingGiftStatus}" />
                 <lightning:inputField class="hidden-field" aura:id="matchingGiftStatusField" fieldName="Donation_Matching_Gift_Status__c" />
 
+                <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
+                    picklistValues="{!v.paymentMethods}" 
+                    jsonObject="{!v.jsonObject}" 
+                    donationAmt="{!v.donationAmount}" />
+
                 <c:giftFormRelated sectionTitle="Allocation"
                     objectName="npsp__Allocation__c"
                     rowCmpName="c:giftRelatedAllocation"
                     oppField="npsp__Opportunity__c"
                     fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
                     jsonObj="{!v.jsonObject}" />
-                    
+
                 <aura:if isTrue="{!v.submitError}">     
                     <div class="slds-col slds-size_1-of-1">
                         <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
@@ -210,11 +227,11 @@
                         label="Create Gift" 
                         variant="brand" 
                         onclick="{!c.clickCreate}" />
-                        <!-- onclick="{!c.clickCreate}" /> -->
                 </div>
 
                 <!-- Fields that are hidden from the user, set by code -->
                 <div class="slds-hidden">
+                    <lightning:inputField aura:id="doNotAutoCreatePayment" fieldName="Do_Not_Automatically_Create_Payment__c"  /> 
                     <lightning:inputField aura:id="batchIdField" fieldName="npsp__NPSP_Data_Import_Batch__c" />
                     <lightning:inputField aura:id="recordTypeIdField" fieldName="npsp__Donation_Record_Type_Name__c" />
                     <lightning:inputField aura:id="donationDonorField" fieldName="npsp__Donation_Donor__c" />
@@ -224,7 +241,6 @@
 
         </lightning:recordEditForm>
         </div>
-        <!-- </aura:if> -->
 
         <aura:if isTrue="{!v.showSuccess}">
         <lightning:recordEditForm aura:id="giftViewForm" 

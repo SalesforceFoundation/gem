@@ -15,7 +15,6 @@
     validateRow: function(component, helper) {
         // Check if this row has all required inputs filled in
         // If none are filled in, assume this row should not be processed
-
         var needsError = [];
         var validForm = false;
         var allBlank = true;
@@ -34,7 +33,7 @@
                 return validSoFar;
             }
             var fieldVal = inputCmp.get("v.value");
-            // console.log(fieldVal);
+            //console.log(fieldVal);
             var isValid = fieldVal || fieldVal === false;
             // Show error for invalid fields
             if(!isValid){

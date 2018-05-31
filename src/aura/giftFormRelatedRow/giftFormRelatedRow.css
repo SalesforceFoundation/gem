@@ -1,6 +1,8 @@
-.THIS .slds-has-error .slds-box--border {
-    border-color: rgb(194, 57, 52);
-    border-width: 2px;
+.THIS .slds-has-error,
+.THIS .slds-has-error .slds-box--border,
+.THIS .slds-has-error.uiInput--select .uiPopupTrigger a {
+    border-color: rgb(194, 57, 52) !important;
+    border-width: 2px !important;
 }
 .THIS .show-required {
     font-weight: 400; 
@@ -14,4 +16,10 @@
 .THIS .slds-hidden {
     height: 0;
     width: 0;
+}
+.THIS .uiInput--default .form-element__label {
+    color: rgb(112, 110, 107);
+    font-size: .75rem;
+    line-height: 1.5;
+    margin-bottom: .125rem;
 }

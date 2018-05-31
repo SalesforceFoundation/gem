@@ -55,6 +55,9 @@
             field.set("v.value", newVal);
         }
     },
+    updateAmountField: function(component, amt){
+        component.set("v.donationAmount", amt);
+    },
     redirectToDonation: function(component){
         var oppId = component.get("v.oppId");
 
@@ -162,18 +165,25 @@
     fillJsonField: function(component) {
         var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
         var allRowsValid = true;
+
         for(var i=0; i < relatedCmp.length; i++){
             var jsonResp = relatedCmp[i].handleJsonUpdate();
             allRowsValid = allRowsValid && jsonResp;
         }
+
+        // Need to prevent overwrite by undefined related objects!
         var jsonField = component.find("postProcessJsonField");
         var jsonObj = component.get("v.jsonObject");
-        if(!allRowsValid){
-            jsonObj = null;
-        } else {
-            jsonObj = JSON.stringify(jsonObj);
+        //console.log("All rows valid: " + allRowsValid); 
+        if(jsonObj.npe01__OppPayment__c && jsonObj.npe01__OppPayment__c.length > 0){
+            // Payments are being scheduled, do not create one for the full donation
+            var autoPaymentField = component.find('doNotAutoCreatePayment');
+            if(autoPaymentField){
+                autoPaymentField.set("v.value", true);
+            }
         }
-        //console.log(jsonObj);
+        jsonObj = JSON.stringify(jsonObj);
+        console.log(jsonObj);
         jsonField.set("v.value", jsonObj);
         return allRowsValid;
     },

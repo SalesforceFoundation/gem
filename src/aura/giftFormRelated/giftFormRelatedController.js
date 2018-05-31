@@ -8,8 +8,7 @@
     },
     handleJsonUpdate: function(component, event, helper) {
         var validRows = helper.validateRows(component);
-        //console.log(validRows);
-        var isValid = validRows && validRows.length > 0;
+        var isValid = validRows;
         // If there are no rows, the JSON gets overwritten
         helper.updateJsonObject(component, validRows);
         return isValid;

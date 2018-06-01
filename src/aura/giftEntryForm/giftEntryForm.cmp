@@ -218,6 +218,7 @@
                     rowCmpName="c:giftRelatedAllocation"
                     oppField="npsp__Opportunity__c"
                     fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
+                    donationAmt="{!v.donationAmount}"
                     jsonObj="{!v.jsonObject}" />
 
                 <aura:if isTrue="{!v.submitError}">     

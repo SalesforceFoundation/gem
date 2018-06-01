@@ -2,6 +2,9 @@
     <aura:attribute name="item" 
         type="npe01__OppPayment__c" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
+    <aura:handler name="change" 
+        value="{!v.item.npe01__Payment_Amount__c}" 
+        action="{!c.handleAmountChange}"/>
 
     <div class="slds-grid slds-wrap">
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
@@ -14,7 +17,6 @@
                 label="Amount" variant="label-hidden"
                 formatter="currency"
                 step="0.01"
-                disabled="{!v.item.npsp__Percent__c ? true : false}"
                 value="{!v.item.npe01__Payment_Amount__c}" />
         </div>
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
@@ -31,7 +33,7 @@
             </aura:if>
             <force:inputField aura:id="requiredField" 
                 value="{!v.item.npe01__Payment_Method__c}" />
-        </div> 
+        </div>
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
                 <label class="show-required slds-form-element__label">Check/Card Number</label>

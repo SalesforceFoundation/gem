@@ -17,6 +17,11 @@
         // First, clear the existing rows
         component.set("v.body", []);
         component.set("v.rowList", []);
+
+        // Set the starting total to the donation amount
+        var donationAmt = component.get("v.donationAmt");
+        console.log(donationAmt);
+        component.set("v.amountTotal", donationAmt);
         
         // Now add the calculated payments
         var itemList = event.getParam("value");

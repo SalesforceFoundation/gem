@@ -2,6 +2,21 @@
 	addRowHelper: function(component){
         this.addToObjectArray(component, "v.rowList", "v.item");
     },
+    amountChanged: function(component, event, helper){
+		var newAmt = this.checkUndefined(event.getParam("value"));
+        var oldAmt = this.checkUndefined(event.getParam("oldValue"));
+        //var total = this.checkUndefined(component.get("v.amountTotal"));
+        var total = component.get("v.amountTotal");
+        if(total === undefined){
+            // If the total was undefined, set it to the old amount
+            total = oldAmt;
+        }
+        console.log(newAmt + ", " + oldAmt + ", " + total);
+        total += (newAmt - oldAmt);
+        component.set("v.amountTotal", total);
+        // console.log('new total: ');
+        console.log(total);
+    },
     addToObjectArray: function(component, vArray, vObj){
         // Now, create the component that contains the fields and pass it the list of data
         // The parent list needs an actual reference to the item, 
@@ -62,5 +77,12 @@
     },
     removeError: function(inputCmp){
         $A.util.removeClass(inputCmp, 'slds-has-error');
+    },
+    checkUndefined: function(num){
+        if(num === undefined){
+            return 0;
+        } else {
+            return num;
+        }
     }
 })

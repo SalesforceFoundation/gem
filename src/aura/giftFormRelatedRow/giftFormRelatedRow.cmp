@@ -3,6 +3,7 @@
     <aura:attribute type="sObject[]" name="rowList" />
     <aura:attribute type="Integer" name="rowNum" />
     <aura:attribute type="Boolean" name="showLabels" default="true" />
+    <aura:attribute type="Decimal" name="amountTotal" />
     <aura:method name="checkValidation" />
 
     <div class="slds-col slds-size_7-of-8">

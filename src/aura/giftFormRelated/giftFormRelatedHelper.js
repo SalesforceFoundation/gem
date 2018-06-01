@@ -5,7 +5,8 @@
         var rowListArray = component.get("v.rowList");
         var newRowNum = rowListArray.length;
         var rowCmpName = component.get("v.rowCmpName");
-        var oppField = component.get("v.oppField");
+        var amountTotal = component.getReference("v.amountTotal");
+        //var oppField = component.get("v.oppField");
         var showLabels = true;
         if(newRowNum > 0 || index && index > 0){
             showLabels = false;
@@ -17,6 +18,7 @@
                 "rowComponent": rowCmpName,
                 "rowNum": newRowNum,
                 "item": item,
+                "amountTotal": amountTotal,
                 "showLabels": showLabels
             },
             function(relatedCmp, status, errorMessage){
@@ -36,6 +38,7 @@
         );
     },
     setOppIdPlaceholder: function(component, itemObj, oppFieldName){
+        // Set the opportunity field to a placeholder, which gets replaced in Apex
         var curVal = itemObj[oppFieldName];
         if(!curVal){
             var oppPlaceholder = $A.get("$Label.c.Gift_Donation_ID_Placeholder");

@@ -4,6 +4,7 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:method name="handleJsonUpdate" />
     <aura:attribute type="sObject[]" name="itemList" />    
+    <aura:attribute type="Decimal" name="donationAmt" />
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
 
     <aura:attribute type="String" name="sectionTitle" />
@@ -12,8 +13,9 @@
     <aura:attribute type="String" name="rowCmpName" default="c:giftRelatedAllocation" />
     <aura:attribute type="Object" name="jsonObj" />
     <aura:attribute type="sObject[]" name="rowList" />  
-    <aura:attribute type="String[]" name="fieldList"  />
-    <aura:attribute type="String" name="oppField"  />
+    <aura:attribute type="String[]" name="fieldList" />
+    <aura:attribute type="String" name="oppField" />
+    <aura:attribute type="Decimal" name="amountTotal" />
     
     <aura:if isTrue="{!v.sectionTitle}">
     <div class="slds-col slds-size_1-of-1">

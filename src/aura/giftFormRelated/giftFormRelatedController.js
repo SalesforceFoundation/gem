@@ -23,7 +23,7 @@
         itemList = helper.proxyToObj(itemList);
         //console.log(itemList);
         for(var i=0; i<itemList.length; i++){
-            helper.handleAddRow(component, itemList[i]);
+            helper.handleAddRow(component, itemList[i], i);
         }
     }
 })

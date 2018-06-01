@@ -2,12 +2,16 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:attribute type="sObject[]" name="rowList" />
     <aura:attribute type="Integer" name="rowNum" />
+    <aura:attribute type="Boolean" name="showLabels" default="true" />
     <aura:method name="checkValidation" />
 
     <div class="slds-col slds-size_7-of-8">
         {!v.body}
     </div>
-    <div class="slds-col slds-size_1-of-8 slds-p-around_small" style="margin-top:20px;">
+    <div class="slds-col slds-size_1-of-8 slds-p-around_small">
+        <aura:if isTrue="{!v.showLabels}">
+            <label class="slds-form-element__label"></label><br/>
+        </aura:if>
         <lightning:button label="Remove" onclick="{!c.clickDeleteRow}" />
     </div>
     

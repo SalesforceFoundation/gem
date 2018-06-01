@@ -9,6 +9,7 @@
     <aura:attribute type="Integer" name="intervalNum" />
     <aura:attribute type="Integer" name="paymentNum" default="1" />
     <aura:attribute type="Date" name="startDate" />
+    <aura:attribute type="String" name="calculateButtonLabel" default="Calculate Payments" />
     <aura:attribute type="String" name="sectionTitle" />
 
     <aura:attribute name="singlePayment" 
@@ -72,7 +73,7 @@
         </div>
         
         <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-            <lightning:button label="Calculate Payments" 
+            <lightning:button label="{!v.calculateButtonLabel}" 
                 onclick="{!c.clickCalculate}" />
         </div>
     </div>

@@ -4,6 +4,7 @@
         component.set('v.startDate', helper.convertDateToString(today));
     },
 	clickCalculate : function(component, event, helper) {
+		component.set("v.calculateButtonLabel", "Clear and Calculate New Payments");
 		// Based on inputs, auto-generate payments for this Donation
 		var amt = component.get("v.donationAmt");
 		var paymentMethod = component.get("v.selectedPaymentMethod");

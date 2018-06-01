@@ -1,18 +1,23 @@
 ({
-    handleAddRow: function(component, item){
+    handleAddRow: function(component, item, index){
         // Now, create the component that contains the fields and pass it the list of data
         var rowList = component.getReference("v.rowList");
         var rowListArray = component.get("v.rowList");
         var newRowNum = rowListArray.length;
         var rowCmpName = component.get("v.rowCmpName");
         var oppField = component.get("v.oppField");
+        var showLabels = true;
+        if(newRowNum > 0 || index && index > 0){
+            showLabels = false;
+        }
 
         $A.createComponent(
             rowCmpName, {
                 "rowList": rowList,
                 "rowComponent": rowCmpName,
                 "rowNum": newRowNum,
-                "item": item
+                "item": item,
+                "showLabels": showLabels
             },
             function(relatedCmp, status, errorMessage){
                 if (status === "SUCCESS") {

@@ -3,19 +3,24 @@
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:method name="handleJsonUpdate" />
-    <aura:attribute type="sObject[]" name="itemList" />    
-    <aura:attribute type="Decimal" name="donationAmt" />
+    <aura:attribute type="sObject[]" name="itemList" />
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
+    <!-- <aura:handler name="change" value="{!v.amountTotal}" action="{!c.handleAmtChange}"/> -->
+    <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
+    <aura:handler name="change" value="{!v.checkAmountTotals}" action="{!c.handleAmtChange}"/>
 
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="buttonTitle" default="Add New" />
     <aura:attribute type="String" name="objectName" default="npsp__Allocation__c" />
     <aura:attribute type="String" name="rowCmpName" default="c:giftRelatedAllocation" />
     <aura:attribute type="Object" name="jsonObj" />
-    <aura:attribute type="sObject[]" name="rowList" />  
+    <aura:attribute type="sObject[]" name="rowList" />
     <aura:attribute type="String[]" name="fieldList" />
     <aura:attribute type="String" name="oppField" />
+    <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="Decimal" name="amountTotal" />
+    <aura:attribute type="Boolean" name="showAmountError" default="false" />
+    <aura:attribute type="Boolean" name="checkAmountTotals" default="true" />
     
     <aura:if isTrue="{!v.sectionTitle}">
     <div class="slds-col slds-size_1-of-1">
@@ -24,6 +29,12 @@
         </div>
     </div>
     </aura:if>
+    
+    <div class="{!v.showAmountError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
+        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+            <h2>{!$Label.c.Gift_Amounts_Do_Not_Match}</h2>
+        </div>
+    </div>
 
     <div aura:id="relatedWrapper" class="slds-col slds-wrap slds-grid">
         {!v.body}

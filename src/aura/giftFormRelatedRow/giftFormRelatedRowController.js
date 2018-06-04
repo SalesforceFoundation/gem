@@ -2,7 +2,6 @@
 	doInit: function(component, event, helper) {
 		// Add the new item to the related array
 		helper.addRowHelper(component);
-		//helper.addAmountHandler(component);
 	},
 	clickDeleteRow: function(component, event, helper) {
         // Can't fully remove because array index numbers after this one would be wrong
@@ -18,5 +17,8 @@
 	},
 	handleAmountChange: function(component, event, helper) {
 		helper.amountChanged(component, event, helper);
+	},
+	handleAmountCheck: function(component, event, helper) {
+		helper.amountCheck(component, event, helper);
 	}
 })

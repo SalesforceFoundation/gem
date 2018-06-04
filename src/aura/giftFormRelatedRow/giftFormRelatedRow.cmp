@@ -4,6 +4,8 @@
     <aura:attribute type="Integer" name="rowNum" />
     <aura:attribute type="Boolean" name="showLabels" default="true" />
     <aura:attribute type="Decimal" name="amountTotal" />
+    <aura:attribute type="Decimal" name="donationAmt" />
+    <aura:attribute type="Boolean" name="checkAmountTotals" />
     <aura:method name="checkValidation" />
 
     <div class="slds-col slds-size_7-of-8">

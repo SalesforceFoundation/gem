@@ -85,7 +85,7 @@
             oppField="npe01__Opportunity__c"
             itemList="{!v.payments}"
             fieldList="npe01__Payment_Amount__c,npe01__Paid__c,npe01__Payment_Date__c,npe01__Payment_Method__c,npe01__Check_Reference_Number__c"
-            donationAmt="{!v.donationAmount}"
+            donationAmt="{!v.donationAmt}"
             jsonObj="{!v.jsonObject}" />
     </div>
 

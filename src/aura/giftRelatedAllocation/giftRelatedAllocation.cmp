@@ -19,6 +19,7 @@
                 <label class="show-required slds-form-element__label">Amount</label>
             </aura:if>
             <lightning:input aura:id="requiredField"
+                onblur="{!c.handleAmountCheck}"
                 name="allocationAmt" 
                 type="number" 
                 label="Amount" variant="label-hidden"
@@ -31,11 +32,11 @@
                 <label class="show-required slds-form-element__label">Percent</label>
             </aura:if>
             <lightning:input aura:id="requiredField"
+                onblur="{!c.handlePercentChange}"
                 name="allocationPerc" 
                 type="number" 
                 label="Percent" variant="label-hidden"
                 max="100" min="0" 
-                disabled="{!v.item.npsp__Amount__c ? true : false}"
                 value="{!v.item.npsp__Percent__c}" />
         </div>
 

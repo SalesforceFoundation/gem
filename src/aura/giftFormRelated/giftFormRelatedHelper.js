@@ -6,6 +6,8 @@
         var newRowNum = rowListArray.length;
         var rowCmpName = component.get("v.rowCmpName");
         var amountTotal = component.getReference("v.amountTotal");
+        var donationAmt = component.getReference("v.donationAmt");
+        var checkAmountTotals = component.getReference("v.checkAmountTotals");
         //var oppField = component.get("v.oppField");
         var showLabels = true;
         if(newRowNum > 0 || index && index > 0){
@@ -19,6 +21,8 @@
                 "rowNum": newRowNum,
                 "item": item,
                 "amountTotal": amountTotal,
+                "donationAmt": donationAmt,
+                "checkAmountTotals": checkAmountTotals,
                 "showLabels": showLabels
             },
             function(relatedCmp, status, errorMessage){
@@ -126,6 +130,12 @@
         } else {
             return validRows;
         }
+    },
+    getAmountTotal: function(component){
+        // Returns valid items or false if there is a validation issue
+        var relatedWrapper = component.find("relatedWrapper");
+        var relatedRows = relatedWrapper.find("v.amountNumber");
+        //console.log(relatedRows); 
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

@@ -28,7 +28,7 @@
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
-    <aura:attribute type="Boolean" name="dataLoaded" default="false" />    
+    <aura:attribute type="Boolean" name="dataLoaded" default="false" />
     <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
     <aura:attribute type="Decimal" name="donationAmount" />
 

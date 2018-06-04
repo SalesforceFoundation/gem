@@ -12,6 +12,7 @@
                 <label class="show-required slds-form-element__label">Amount</label>
             </aura:if>
             <lightning:input aura:id="requiredField" 
+                onblur="{!c.handleAmountCheck}"
                 name="paymentAmt" 
                 type="number" 
                 label="Amount" variant="label-hidden"

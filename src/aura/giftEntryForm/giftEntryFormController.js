@@ -43,7 +43,6 @@
         }
         component.set("v.dataLoaded", true);
         helper.setPicklists(component);
-        helper.setDefaults(component);
 
         var stageField = component.find("stageField");
         if(stageField){
@@ -53,9 +52,6 @@
             component.set("v.oppClosed", oppClosed);
         }
         helper.checkValidation(component);
-    },
-    handleSubmit: function(component, event, helper) {
-        //console.log("Handle Submit");
     },
     handleSuccess: function(component, event, helper) {
         //console.log("Handle Success");

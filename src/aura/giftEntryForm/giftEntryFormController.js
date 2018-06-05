@@ -57,7 +57,6 @@
         }
         component.set("v.dataLoaded", true);
         helper.setPicklists(component);
-        helper.setDefaults(component);
 
         // If the opportunity stage is Closed, disable Opportunity fields
         var stageField = component.find("stageField");
@@ -76,9 +75,6 @@
         }
 
         helper.checkValidation(component);
-    },
-    handleSubmit: function(component, event, helper) {
-        //console.log("Handle Submit");
     },
     handleSuccess: function(component, event, helper) {
         //console.log("Handle Success");

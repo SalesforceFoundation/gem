@@ -50,7 +50,6 @@
         <lightning:recordEditForm aura:id="giftEditForm" 
             recordId="{!v.recordId}"
             onload="{!c.handleLoad}"  
-            onsubmit="{!c.handleSubmit}"
             onsuccess="{!c.handleSuccess}" 
             objectApiName="npsp__DataImport__c">
 

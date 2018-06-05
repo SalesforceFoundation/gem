@@ -1,9 +1,5 @@
 ({
-    setDefaults: function (component) {
-        //this.setHiddenField(component, 'donationDonorField', 'Contact1');
-    },
     setPicklists: function(component) {
-
         var action = component.get("c.getPickListValues");
 
         action.setCallback(this, function(response) {
@@ -39,7 +35,8 @@
     setStartingPicklistValue: function(component, fieldId, selectVal, defaultVal){
         var field = component.find(fieldId);
         if(!field){
-            console.log(fieldId + ' was not found');
+            var errorMsg = 'Picklist ' + fieldId + ' was not found';
+            this.setErrorMessage(component, errorMsg);
             return;
         }
         var curValue = field.get("v.value");
@@ -146,8 +143,7 @@
             //inputCmp.showHelpMessageIfInvalid();
             var fieldVal = inputCmp.get("v.value");
             var isValid = fieldVal || fieldVal === false;
-            //var isValid = inputCmp.get('v.validity').valid;
-            return isValid && validSoFar;
+            return validSoFar && isValid;
         }, true);
 
         return validForm;
@@ -157,11 +153,10 @@
         if (errors) {
             if (errors[0] && errors[0].message) {
                 var errorMsg = errors[0].message;
-                console.log("Error message: " + errorMsg);
-                component.set("v.error", errorMsg);
+                this.setErrorMessage(component, errorMsg);
             }
         } else {
-            console.log("Unknown error");
+            this.setErrorMessage(component, "Unknown error");
         }
     },
     fillJsonField: function(component) {
@@ -191,5 +186,8 @@
     },
     scrollToTop: function(){
         window.scrollTo(0, 0);
+    },
+    setErrorMessage: function(component, errorMsg){
+        component.set("v.error", errorMsg);
     }
 })

@@ -36,7 +36,7 @@
         <lightning:spinner />
     </aura:if>
 
-    <lightning:card title="Enter Gift" iconName="standard:thanks">
+    <div class="slds-card">
         <aura:set attribute="actions">
         </aura:set>
 
@@ -298,6 +298,6 @@
         </lightning:recordEditForm>
         </aura:if>
 
-    </lightning:card>
+    </div>
 
 </aura:component>

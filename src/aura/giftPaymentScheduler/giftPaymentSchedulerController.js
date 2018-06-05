@@ -44,7 +44,7 @@
 			}
 
 			singlePayment = helper.proxyToObj(singlePaymentProxy);
-			singlePayment.npe01__Payment_Date__c = helper.convertDateToString(dateObject);
+			singlePayment.npe01__Scheduled_Date__c = helper.convertDateToString(dateObject);
 			singlePayment.npe01__Payment_Amount__c = paymentAmt;
 			singlePayment.npe01__Payment_Method__c = paymentMethod;
 			paymentList.push(singlePayment);

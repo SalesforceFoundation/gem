@@ -12,7 +12,6 @@
 	},
 	checkValidation: function(component, event, helper) {
 		var isValid = helper.validateRow(component, helper);
-		//console.log(isValid); 
 		return isValid;
 	},
 	handleAmountChange: function(component, event, helper) {

@@ -101,8 +101,9 @@ public class GiftEntryFormController {
     */
     private static npsp__Data_Import_Settings__c getGiftEntrySettings(){
         npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
-        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
-        diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c';
+        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.BestMatchOrCreate;
+        diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_amount__c;npsp__donation_date__c';
+        diSettings.npsp__Donation_Date_Range__c = 5;
         diSettings.npsp__Contact_Matching_Rule__c = 'Firstname,Lastname';
         return diSettings;
     }

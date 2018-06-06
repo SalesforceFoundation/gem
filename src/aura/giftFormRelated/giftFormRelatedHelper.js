@@ -8,6 +8,7 @@
         var amountTotal = component.getReference("v.amountTotal");
         var donationAmt = component.getReference("v.donationAmt");
         var checkAmountTotals = component.getReference("v.checkAmountTotals");
+        var noDuplicateValueList = component.getReference("v.noDuplicateValueList");
         //var oppField = component.get("v.oppField");
         var showLabels = true;
         if(newRowNum > 0 || index && index > 0){
@@ -23,6 +24,7 @@
                 "amountTotal": amountTotal,
                 "donationAmt": donationAmt,
                 "checkAmountTotals": checkAmountTotals,
+                "noDuplicateValueList": noDuplicateValueList,
                 "showLabels": showLabels
             },
             function(relatedCmp, status, errorMessage){
@@ -54,8 +56,6 @@
         var objectName = component.get("v.objectName");
         var fieldList = component.get("v.fieldList");
         var oppField = component.get("v.oppField");
-        //var arrayList = component.get("v.rowList");
-
         var oppFieldName = component.get("v.oppField");
 
         if(jsonObj == null){
@@ -84,7 +84,8 @@
             // For each object, only save the fields we want
             for(var j=0; j < fieldList.length; j++){
                 var fieldName = fieldList[j];
-                newObj[fieldName] = oldObj[fieldName];
+                var fieldVal = oldObj[fieldName];
+                newObj[fieldName] = fieldVal;
             }
             this.setOppIdPlaceholder(component, newObj, oppFieldName);
             newObjList.push(newObj);
@@ -114,8 +115,7 @@
             var rowValid = thisRow.checkValidation();
             if(rowValid === undefined){
                 // Skip this row, it's either deleted or blank
-            }
-            else if(rowValid){
+            } else if(rowValid){
                 // Add this row to the array to pass along
                 var item = thisRow.get("v.item");
                 validRows.push(item);

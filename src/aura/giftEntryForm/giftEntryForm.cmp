@@ -57,9 +57,6 @@
 
             <div class="slds-grid slds-wrap" aura:id="formWrapper">
 
-                <!-- <lightning:button label="Test JSON" 
-                    onclick="{!c.doJsonUpdate}" /> -->
-
                 <aura:if isTrue="{!v.oppClosed}">     
                     <div class="slds-col slds-size_1-of-1">
                         <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
@@ -237,6 +234,9 @@
                         variant="brand" 
                         onclick="{!c.clickCreate}" />
                 </div>
+
+                <!-- <lightning:button label="Test JSON" 
+                    onclick="{!c.doJsonUpdate}" /> -->
 
                 <!-- Fields that are hidden from the user, set by code -->
                 <div class="slds-hidden">

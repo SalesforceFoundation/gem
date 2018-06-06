@@ -5,7 +5,6 @@
     <aura:method name="handleJsonUpdate" />
     <aura:attribute type="sObject[]" name="itemList" />
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
-    <!-- <aura:handler name="change" value="{!v.amountTotal}" action="{!c.handleAmtChange}"/> -->
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.checkAmountTotals}" action="{!c.handleAmtChange}"/>
 
@@ -16,6 +15,7 @@
     <aura:attribute type="Object" name="jsonObj" />
     <aura:attribute type="sObject[]" name="rowList" />
     <aura:attribute type="String[]" name="fieldList" />
+    <aura:attribute type="String[]" name="noDuplicateValueList" />
     <aura:attribute type="String" name="oppField" />
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="Decimal" name="amountTotal" />

@@ -5,6 +5,9 @@
     <aura:handler name="change" 
         value="{!v.item.npe01__Payment_Amount__c}" 
         action="{!c.handleAmountChange}"/>
+    <aura:handler name="change" 
+        value="{!v.item.npe01__Scheduled_Date__c}" 
+        action="{!c.handlePaid}"/>
 
     <div class="slds-grid slds-wrap">
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
@@ -22,7 +25,7 @@
         </div>
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">Payment Date</label>
+                <label class="show-required slds-form-element__label">Scheduled Date</label>
             </aura:if>
             <ui:inputDate aura:id="requiredField" 
                 value="{!v.item.npe01__Scheduled_Date__c}" 
@@ -37,10 +40,9 @@
         </div>
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">Check/Card Number</label>
+                <label class="slds-form-element__label">Check/Card Number</label>
             </aura:if>
-            <lightning:input aura:id="requiredField"
-                disabled="{!!(v.item.npe01__Payment_Method__c == 'Check' || v.item.npe01__Payment_Method__c == 'Credit Card')}"
+            <lightning:input disabled="{!v.item.npe01__Payment_Method__c != 'Check'}"
                 label="Check/Card Number" variant="label-hidden"
                 value="{!v.item.npe01__Check_Reference_Number__c}" />
         </div>
@@ -50,12 +52,14 @@
             </aura:if>
             <lightning:input name="paymentPaid" 
                 type="checkbox" 
+                onchange="{!c.handlePaid}" 
                 label="Paid" variant="label-hidden"
                 checked="{!v.item.npe01__Paid__c}" />
         </div>
 
         <div class="slds-hidden">
             <lightning:input name="oppId" type="text" label="Opportunity" value="{!v.item.npe01__Opportunity__c}" />
+            <ui:inputDate aura:id="paymentDate" value="{!v.item.npe01__Payment_Date__c}" />
         </div>
     </div>
 

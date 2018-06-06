@@ -7,6 +7,8 @@
         helper.handleAddRow(component);
     },
     handleJsonUpdate: function(component, event, helper) {
+        // Reset the duplicate checking array
+        component.set("v.noDuplicateValueList", []);
         var validRows = helper.validateRows(component);
         var isValid = validRows;
         // If there are no rows, the JSON gets overwritten

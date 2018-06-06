@@ -18,8 +18,12 @@
 		var singlePayment;
 		var dateObject;
 
+		var paymentAmt = amt / paymentNum;
+		var remainder = amt % paymentNum;
+
 		// Calcualte data for payments
 		for(var i=0; i<paymentNum; i++){
+			var thisPayment = paymentAmt;
 			dateObject = new Date(startDate);
 			if(i > 0){
 				var interval = i*intervalNum;
@@ -32,20 +36,20 @@
 					dateObject.setFullYear(dateObject.getFullYear() + interval);
 				}
 			}
-
-			var paymentAmt = amt / paymentNum;
-			if(helper.countDecimals(paymentAmt) > 2 ){
-				// The amount is a repeating decimal, round down
-				paymentAmt = Math.round(paymentAmt * 100) / 100;
-				// To add up to the total, a single payment rounds up
-				if(i==0){
-					paymentAmt += 0.01;
+			
+			if(helper.countDecimals(thisPayment) > 2 ){
+				// Round down to the nearest decimal
+				thisPayment = Math.floor(thisPayment * 100) / 100;
+				// If there was a remainder, add it here
+				if(i < remainder){
+					thisPayment += 0.01;
 				}
+				thisPayment = Math.round(thisPayment * 100) / 100;
 			}
 
 			singlePayment = helper.proxyToObj(singlePaymentProxy);
 			singlePayment.npe01__Scheduled_Date__c = helper.convertDateToString(dateObject);
-			singlePayment.npe01__Payment_Amount__c = paymentAmt;
+			singlePayment.npe01__Payment_Amount__c = thisPayment;
 			singlePayment.npe01__Payment_Method__c = paymentMethod;
 			paymentList.push(singlePayment);
 		}

@@ -6,7 +6,17 @@
     <aura:attribute type="Decimal" name="amountTotal" />
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="Boolean" name="checkAmountTotals" />
+    <aura:attribute type="String[]" name="noDuplicateValueList" />
     <aura:method name="checkValidation" />
+
+    <aura:attribute type="Boolean" name="showError" default="false" />
+    <aura:attribute type="String" name="errorMessage" />
+    
+    <div class="{!v.showError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
+        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+            <h2>{!v.errorMessage}</h2>
+        </div>
+    </div>
 
     <div class="slds-col slds-size_7-of-8">
         {!v.body}

@@ -117,17 +117,57 @@
     },
     validateForm: function(component) {
         component.set("v.error", null);
-        var validForm = true;
         // Show error messages if required fields are blank
-        validForm = component.find('requiredField').reduce(function (validSoFar, inputCmp) {
-            // Displays error messages for invalid fields
-            //inputCmp.showHelpMessageIfInvalid();
-            var fieldVal = inputCmp.get("v.value");
-            var isValid = fieldVal || fieldVal === false;
-            return validSoFar && isValid;
-        }, true);
+        var validForm = this.checkFields(component, 'requiredField', true);
+        
+        // Check that at least one combination of donor fields is valid, otherwise show error
+        // First check if an Account field is filled in
+        var accountDonorExists = this.checkFields(component, 'requiredAccountField', false);
+        // Check if Contact1 Firstname and Lastname are filled in
+        var donorExists = this.checkFields(component, 'requiredContactField', true);
+        // Check any other donor fields we could use
+        donorExists = donorExists || this.checkFields(component, 'requiredDonorField', false);
+
+        if(accountDonorExists && !donorExists){
+            // Only an account is filled in, use that as the Donor
+            this.setHiddenField(component, 'donationDonorField', 'Account1');
+        } else {
+            this.setHiddenField(component, 'donationDonorField', 'Contact1');
+        }
+
+        if(!accountDonorExists && !donorExists){
+            // Show error if no Donors have been entered
+            component.set("v.submitError", "Donor information is required.");
+            return false;
+        } else {
+            component.set("v.submitError", "");
+        }
 
         return validForm;
+    },
+    checkFields: function(component, fieldId, allMustBeValid){
+        var findResult = component.find(fieldId); 
+        if(!findResult){
+            return allMustBeValid;
+        }
+        findResult = this.singleInputToArray(findResult);
+        var validationResult = findResult.reduce(function (validSoFar, inputCmp) {
+            var fieldVal = inputCmp.get("v.value");
+            var isValid = fieldVal || fieldVal === false;
+            if(!allMustBeValid && (isValid || validSoFar)){
+                // We only need one of these fields filled in
+                return true;
+            }
+            return validSoFar && isValid;
+        }, allMustBeValid);
+
+        return validationResult;
+    },
+    singleInputToArray: function(findResult){
+        if(findResult && !findResult.length){
+            findResult = [findResult];
+        }
+        return findResult;
     },
     handleError: function(component, response) {
         var errors = response.getError();

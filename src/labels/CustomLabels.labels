@@ -8,6 +8,13 @@
         <value>Note: Amounts do not match with Donation total</value>
     </labels>
     <labels>
+        <fullName>Gift_Amounts_Greater_than_Donation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Amounts Greater than Donation</shortDescription>
+        <value>Amount total cannot be greater than donation amount</value>
+    </labels>
+    <labels>
         <fullName>Gift_Donation_ID_Placeholder</fullName>
         <language>en_US</language>
         <protected>true</protected>

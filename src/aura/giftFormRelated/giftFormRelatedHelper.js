@@ -103,6 +103,10 @@
         // console.log(JSON.stringify(jsonObj));
     },
     validateRows: function(component){
+        var preventSubmit = component.get("v.preventSubmit");
+        if(preventSubmit){
+            return false;
+        }
         // Returns valid items or false if there is a validation issue
         var rowCmpName = component.get("v.rowCmpName");
         var relatedWrapper = component.find("relatedWrapper");

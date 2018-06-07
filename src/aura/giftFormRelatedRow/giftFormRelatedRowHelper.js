@@ -43,31 +43,21 @@
         var validSoFar = true;
         var validForm = true;
         var duplicateCheck = true;
-        // var allBlank = true;
         
         // Show error messages if required fields are blank
         var reqFields = component.find('requiredField');
         //console.log(reqFields); 
 
         var noDuplicatesList = component.find('noDuplicates');
-        // console.log('noDuplicatesList');
-        // console.log(noDuplicatesList);
-
         //console.log(noDuplicates); 
         
         if(!reqFields && !noDuplicatesList){
             return true;
         }
-
-        if(reqFields && !reqFields.length){
-            reqFields = [reqFields];
-        }
-        if(noDuplicatesList && !noDuplicatesList.length){
-            noDuplicatesList = [noDuplicatesList];
-        }
+     
+        reqFields = this.singleInputToArray(reqFields);
+        noDuplicatesList = this.singleInputToArray(noDuplicatesList);
         
-        // TODO: Combine these into one array?
-
         // Check required fields
         if(reqFields){
             validForm = reqFields.reduce(function (validSoFar, inputCmp) {
@@ -94,6 +84,12 @@
         }
 
         return validForm && duplicateCheck;
+    },
+    singleInputToArray: function(findResult){
+        if(findResult && !findResult.length){
+            findResult = [findResult];
+        }
+        return findResult;
     },
     validateField: function(component, inputCmp, validationInfo, checkDupes, helper){
         var disabled = inputCmp.get("v.disabled");

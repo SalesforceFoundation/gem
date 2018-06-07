@@ -19,8 +19,10 @@
     <aura:attribute type="String" name="oppField" />
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="Decimal" name="amountTotal" />
-    <aura:attribute type="Boolean" name="showAmountError" default="false" />
+    <aura:attribute type="String" name="amountError" />
     <aura:attribute type="Boolean" name="checkAmountTotals" default="true" />
+    <aura:attribute type="Boolean" name="preventAmountSurplus" default="false" />
+    <aura:attribute type="Boolean" name="preventSubmit" default="false" />
     
     <aura:if isTrue="{!v.sectionTitle}">
     <div class="slds-col slds-size_1-of-1">
@@ -30,9 +32,9 @@
     </div>
     </aura:if>
     
-    <div class="{!v.showAmountError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
+    <div class="{!v.amountError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
         <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-            <h2>{!$Label.c.Gift_Amounts_Do_Not_Match}</h2>
+            <h2>{!v.amountError}</h2>
         </div>
     </div>
 

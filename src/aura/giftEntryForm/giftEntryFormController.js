@@ -30,7 +30,7 @@
                 component.find('giftEditForm').submit();
             } else {
                 component.set('v.showSpinner', false);
-                component.set("v.submitError", "Missing required fields.");
+                component.set("v.submitError", "Error on form");
             }
         } else {
             component.set('v.showSpinner', false);
@@ -108,7 +108,7 @@
         var donationImportStatusField = component.find("donationImportStatus");
         if(donationImportStatusField){
             var donationImportStatus = donationImportStatusField.get("v.value");
-            var importFailureString = $A.get("$Label.unknown_custom_label");
+            var importFailureString = $A.get("$Label.npsp.bdiErrorDonationLookupMatch");
             if(donationImportStatus == importFailureString){
                 component.set("v.showDonationImportError", true);
             }

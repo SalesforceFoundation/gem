@@ -181,6 +181,10 @@
                 <behavior>Edit</behavior>
                 <field>Donation_Acknowledgment_Status__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Donation_Tribute_Type__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>

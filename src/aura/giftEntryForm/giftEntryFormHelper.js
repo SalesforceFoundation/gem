@@ -1,23 +1,56 @@
 ({
-    setPicklists: function(component) {
+    setDefaults: function(component, helper){
+        // If Updating and Stage is set to Closed, disable Donation fields
+        var stageField = component.find("stageField");
+        if(stageField){
+            var stage = stageField.get("v.value");
+            var closedStage = component.get("v.closedStage");
+            var oppClosed = stage == closedStage ? true : false;
+            component.set("v.oppClosed", oppClosed);
+        }
+
+        // For new forms, set Date to Today, otherwise use existing value
+        var dateField = component.find("dateField");
+        if(dateField){
+            var closeDate = dateField.get("v.value");
+            if(!closeDate){
+                // Set Close Date to Today
+                closeDate = new Date();
+                closeDate = this.convertDateToString(closeDate);
+            }
+            component.set("v.paymentDate", closeDate);            
+        }
+
+        this.setPicklists(component, helper);
+    },
+    setPicklists: function(component, helper) {
         var action = component.get("c.getPickListValues");
 
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
+                // Return value is a map of string arrays for our picklists
                 var picklistOptions = response.getReturnValue();
-                // console.log("Picklist options:");
-                // console.log(picklistOptions);
+                // Add "None" option to start of each picklist
+                var noneOption = component.get("v.picklistNoneText");
+                var noneObj = {value:'', label:noneOption};
 
-                this.setupPicklist(component, "paymentMethodField", "v.selectedPaymentMethod", 
-                    "v.paymentMethods", picklistOptions.npe01__Payment_Method__c);
-                this.setupPicklist(component, "stageField", "v.selectedStage", "v.donationStages",
-                    picklistOptions.StageName);
-                this.setupPicklist(component, "matchingGiftStatusField", "v.matchingGiftStatus", 
-                    "v.matchingGiftStatuses", picklistOptions.npsp__Matching_Gift_Status__c);
-                this.setupPicklist(component, "ackPrefStatusField", "v.ackPrefStatus", 
-                    "v.ackPrefStatuses", picklistOptions.npsp__Acknowledgment_Status__c);
+                for(var field in picklistOptions){
+                    var optionList = picklistOptions[field];
+                    var convertedList = [];
+                    convertedList.push(noneObj);
+                    for(var i in optionList){
+                        // The values come into Javascript as JSON strings, need to parse
+                        var option = JSON.parse(optionList[i]);
+                        convertedList.push(option);
+                    }
+                    picklistOptions[field] = convertedList;
+                }
+                // Setting this map will update all of the picklists
+                component.set("v.picklistOptions", picklistOptions);
 
+                // Check to see if values were already set for picklists
+                helper.setupPicklistValues(component, helper);
             } else if (state === "ERROR") {
                 this.handleError(component, response);
             }
@@ -25,28 +58,35 @@
 
         $A.enqueueAction(action);
     },
-    setupPicklist: function(component, fieldId, selectedVal, optionListVal, optionListReturned){
-        // Add a "none" option to the start of every picklist
-        var noneOption = component.get("v.picklistNoneText");
-        optionListReturned.unshift(noneOption);
-        component.set(optionListVal, optionListReturned);
-        this.setStartingPicklistValue(component, fieldId, selectedVal, optionListReturned[0]);
+    setupPicklistValues: function(component, helper){
+        var picklistCmp = component.find("formWrapper").find({instancesOf:"c:giftPicklist"});
+        // For each picklist, check for existing field values, otherwise set the first option
+        for(var i=0; i < picklistCmp.length; i++){
+            helper.setStartingPicklistValue(component, picklistCmp[i]);
+        }
     },
-    setStartingPicklistValue: function(component, fieldId, selectVal, defaultVal){
+    setStartingPicklistValue: function(component, picklistCmp){
+        var fieldId = picklistCmp.get("v.inputFieldId");
         var field = component.find(fieldId);
         if(!field){
             var errorMsg = 'Picklist ' + fieldId + ' was not found';
             this.setErrorMessage(component, errorMsg);
             return;
         }
+
         var curValue = field.get("v.value");
+        // If a value does not exist, set the picklist to the first option
         if(!curValue){
-            // This will make sure the actual field value matches the picklist, in case
-            // the user never changes the picklist
-            component.set(selectVal, defaultVal);
-        } else {
-            component.set(selectVal, curValue);
+            var options = this.proxyToObj(picklistCmp.get("v.picklistValues"));
+            curValue = options[0].value;
+            this.setHiddenField(component, fieldId, curValue);
         }
+        //console.log(curValue); 
+        picklistCmp.set("v.selectedVal", curValue);
+
+        // Allow the picklist change event to fire
+        // Without this, the default picklist value overwrites existing object values
+        picklistCmp.set("v.callEvent", true);
     },
     setHiddenField: function(component, fieldId, newVal){
         var field = component.find(fieldId);
@@ -122,20 +162,18 @@
         
         // Check that at least one combination of donor fields is valid, otherwise show error
         // First check if an Account field is filled in
-        var accountDonorExists = this.checkFields(component, 'requiredAccountField', false);
-        // Check if Contact1 Firstname and Lastname are filled in
-        var donorExists = this.checkFields(component, 'requiredContactField', true);
-        // Check any other donor fields we could use
-        donorExists = donorExists || this.checkFields(component, 'requiredDonorField', false);
-
-        if(accountDonorExists && !donorExists){
-            // Only an account is filled in, use that as the Donor
-            this.setHiddenField(component, 'donationDonorField', 'Account1');
+        var donorType = component.get("v.donorType");
+        var donorExists = false;
+        if(donorType == "Account1"){
+            donorExists = this.checkFields(component, 'requiredAccountField', false);
         } else {
-            this.setHiddenField(component, 'donationDonorField', 'Contact1');
+            // Check if Contact1 Firstname and Lastname are filled in
+            donorExists = this.checkFields(component, 'requiredContactField', true);        
+            // Check any other donor fields we could use
+            donorExists = donorExists || this.checkFields(component, 'requiredDonorField', false);
         }
 
-        if(!accountDonorExists && !donorExists){
+        if(!donorExists){
             // Show error if no Donors have been entered
             component.set("v.submitError", "Donor information is required.");
             return false;
@@ -180,7 +218,21 @@
             this.setErrorMessage(component, "Unknown error");
         }
     },
+    clearInputs: function(component, fieldId){
+        var findResult = component.find(fieldId);
+        findResult = this.singleInputToArray(findResult);
+        for(var i in findResult){
+            var inputCmp = findResult[i].set("v.value", '');
+        }
+    },
     setErrorMessage: function(component, errorMsg){
         component.set("v.error", errorMsg);
+    },
+    convertDateToString: function(dateObj){
+		return dateObj.toISOString().split('T')[0];
+    },
+    proxyToObj: function(attr){
+        // Used to convert a Proxy object to an actual Javascript object
+        return JSON.parse(JSON.stringify(attr));
     }
 })

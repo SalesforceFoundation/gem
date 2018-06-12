@@ -53,6 +53,7 @@
         <members>npsp__DataImport__c.Donation_Matching_Gift__c</members>
         <members>npsp__DataImport__c.Donation_Notification_Message__c</members>
         <members>npsp__DataImport__c.Donation_Primary_Campaign__c</members>
+        <members>npsp__DataImport__c.Donation_Tribute_Type__c</members>
         <members>npsp__DataImport__c.Notification_Recipient_Name__c</members>
         <members>npsp__DataImport__c.Post_Process_Object_JSON__c</members>
         <name>CustomField</name>

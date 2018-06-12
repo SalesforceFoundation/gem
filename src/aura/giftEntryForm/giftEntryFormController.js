@@ -48,7 +48,7 @@
         component.set("v.showSuccess", false);
         helper.scrollToTop();
     },
-    handleLoad: function(component, event, helper) {
+    handleLoad: function(component, event, helper){
         //console.log("Handle Load");
         // In the case of a new gift, the recordId changes, which would trigger a second load event
         if(component.get("v.dataLoaded")){
@@ -56,24 +56,35 @@
             return;
         }
         component.set("v.dataLoaded", true);
-        helper.setPicklists(component);
 
-        // If the opportunity stage is Closed, disable Opportunity fields
-        var stageField = component.find("stageField");
-        if(stageField){
-            var stage = stageField.get("v.value");
-            var closedStage = component.get("v.closedStage");
-            var oppClosed = stage == closedStage ? true : false;
-            component.set("v.oppClosed", oppClosed);
-        }
-
+        // Setup Picklists and any default form values
+        helper.setDefaults(component, helper);
+        
         // Also set the amount in the payment scheduler
         var amtField = component.find("amtField");
         if(amtField){
             var amt = amtField.get("v.value");
             helper.updateAmountField(component, amt);
         }
+        
+        helper.checkValidation(component);
 
+    },
+    handleDateChange: function(component, event, helper){
+        var newDate = event.getParam("value");
+        helper.setHiddenField(component, "dateField", newDate);
+        helper.checkValidation(component);
+    },
+    handleDonorTypeChange: function(component, event, helper){
+        var donorType = event.getParam("value");
+        // Need to clear the other donor fields
+        if(donorType == 'Account1'){
+            helper.clearInputs(component, 'requiredContactField');
+            helper.clearInputs(component, 'requiredDonorField');
+        } else if(donorType == 'Contact1'){
+            helper.clearInputs(component, 'requiredAccountField');
+        }
+        
         helper.checkValidation(component);
     },
     handleSuccess: function(component, event, helper) {
@@ -94,11 +105,7 @@
         var newVal = event.getParam("newValue");
         var fieldId = event.getParam("fieldId");
         //console.log('Picklist change: ' + newVal + " " + fieldId);
-        if(newVal && fieldId){
-            var noneOption = component.get("v.picklistNoneText");
-            if(newVal == noneOption){
-                newVal = '';
-            }
+        if(fieldId){
             helper.setHiddenField(component, fieldId, newVal);
         }
     },

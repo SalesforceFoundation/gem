@@ -47,18 +47,20 @@ public class GiftEntryFormController {
     */
     @AuraEnabled
     public static Map<String, List<String>> getPickListValues(){
-        // TODO: Pass this an array of object.picklist fields to return
-        Map<String, List<String>> picklistMap = new Map<String, List<String>>();
+        Map<String, List<String>> picklistMap = 
+            new Map<String, List<String>>();
 
         Schema.DescribeFieldResult fieldResult =  
             npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe();
-        picklistMap.put('npe01__Payment_Method__c', returnPicklistValuesList(fieldResult));
+        picklistMap.put('npsp__Payment_Method__c', returnPicklistValuesList(fieldResult));
         fieldResult = Opportunity.StageName.getDescribe();
-        picklistMap.put('StageName', returnPicklistValuesList(fieldResult));
+        picklistMap.put('npsp__Donation_Stage__c', returnPicklistValuesList(fieldResult));
         fieldResult = Opportunity.npsp__Matching_Gift_Status__c.getDescribe();
-        picklistMap.put('npsp__Matching_Gift_Status__c', returnPicklistValuesList(fieldResult));
+        picklistMap.put('Donation_Matching_Gift_Status__c', returnPicklistValuesList(fieldResult));
         fieldResult = Opportunity.npsp__Acknowledgment_Status__c.getDescribe();
-        picklistMap.put('npsp__Acknowledgment_Status__c', returnPicklistValuesList(fieldResult));
+        picklistMap.put('Donation_Acknowledgment_Status__c', returnPicklistValuesList(fieldResult));
+        fieldResult = Opportunity.npsp__Tribute_Type__c.getDescribe();
+        picklistMap.put('Donation_Tribute_Type__c', returnPicklistValuesList(fieldResult));
         
         return picklistMap;
     }
@@ -71,8 +73,15 @@ public class GiftEntryFormController {
     private static List<String> returnPicklistValuesList(Schema.DescribeFieldResult fieldResult){
         List<String> pickListValuesList = new List<String>();
         List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        picklistOptionWrapper plWrapper;
+        String plValue;
+        String optionJson;
         for( Schema.PicklistEntry pickListVal : ple){
-            pickListValuesList.add(pickListVal.getLabel());
+            plValue = pickListVal.getLabel();
+            plWrapper = new picklistOptionWrapper(plValue);
+            // Convert to JSON for easier parsing in Javascript
+            optionJson = JSON.serialize(plWrapper);
+            pickListValuesList.add(optionJson);
         }
         return pickListValuesList;
     }
@@ -219,4 +228,16 @@ public class GiftEntryFormController {
 
     }
 
+    * @description Holds the lable and value for a picklist option in the Gift Entry Form
+    * @attribute label String for the visible label
+    * @attribute value String for the actual input
+    */
+    class picklistOptionWrapper {
+        String label {get; set;}
+        String value {get; set;}
+        picklistOptionWrapper(String optionValue){
+            this.label = optionValue;
+            this.value = optionValue;
+        }
+    }
 }

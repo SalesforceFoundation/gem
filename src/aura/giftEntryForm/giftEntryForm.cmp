@@ -146,7 +146,8 @@
                         <lightning:inputField class="show-required"
                             aura:id='amtField' 
                             fieldName="npsp__Donation_Amount__c" 
-                            onchange="{!c.handleAmountChange}" />                                        
+                            onchange="{!c.handleAmountChange}" />  
+                    </aura:set>                                      
                     <label class="show-required slds-form-element__label">Scheduled Date</label>
                     <aura:if isTrue="{!v.oppClosed}">
                         <lightning:outputField fieldName="npsp__Donation_Date__c" />

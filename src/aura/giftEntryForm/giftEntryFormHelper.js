@@ -264,6 +264,7 @@
     },
     scrollToTop: function(){
         window.scrollTo(0, 0);
+    },
     clearInputs: function(component, fieldId){
         var findResult = component.find(fieldId);
         findResult = this.singleInputToArray(findResult);

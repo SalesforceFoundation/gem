@@ -227,7 +227,8 @@ public class GiftEntryFormController {
         }
 
     }
-
+    
+    /*******************************************************************************************************
     * @description Holds the lable and value for a picklist option in the Gift Entry Form
     * @attribute label String for the visible label
     * @attribute value String for the actual input

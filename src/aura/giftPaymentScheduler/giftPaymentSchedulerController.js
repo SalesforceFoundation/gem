@@ -19,7 +19,7 @@
 		var dateObject;
 
 		var paymentAmt = amt / paymentNum;
-		var remainder = amt % paymentNum;
+        var remainder = (amt * 100) % paymentNum;
 
 		// Calcualte data for payments
 		for(var i=0; i<paymentNum; i++){

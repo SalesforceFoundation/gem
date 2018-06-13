@@ -37,28 +37,60 @@
 public class GiftEntryFormController {
 
 	public Boolean hasPerm {get;set;} // Permission check
-
     public GiftEntryFormController(){
         hasPerm = Schema.sObjectType.npsp__DataImport__c.isCreateable();
     }
 
+    /*******************************************************************************************************
+    * @description Return a Map of string (picklist field name) to a list of strings (picklist values)
+    * @return Map<String, List<String>> which maps a picklist field name to picklist values
+    */
     @AuraEnabled
     public static Map<String, List<String>> getPickListValues(){
-        // TODO: Return all relevant picklist options for the gift entry form
-        Map<String, List<String>> picklistMap = new Map<String, List<String>>();
+        Map<String, List<String>> picklistMap = 
+            new Map<String, List<String>>();
 
-        List<String> pickListValuesList = new List<String>();
         Schema.DescribeFieldResult fieldResult =  
             npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe();
-        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-        for( Schema.PicklistEntry pickListVal : ple){
-            pickListValuesList.add(pickListVal.getLabel());
-        }
-
-        picklistMap.put('paymentMethods', pickListValuesList);
+        picklistMap.put('npsp__Payment_Method__c', returnPicklistValuesList(fieldResult));
+        fieldResult = Opportunity.StageName.getDescribe();
+        picklistMap.put('npsp__Donation_Stage__c', returnPicklistValuesList(fieldResult));
+        fieldResult = Opportunity.npsp__Matching_Gift_Status__c.getDescribe();
+        picklistMap.put('Donation_Matching_Gift_Status__c', returnPicklistValuesList(fieldResult));
+        fieldResult = Opportunity.npsp__Acknowledgment_Status__c.getDescribe();
+        picklistMap.put('Donation_Acknowledgment_Status__c', returnPicklistValuesList(fieldResult));
+        fieldResult = Opportunity.npsp__Tribute_Type__c.getDescribe();
+        picklistMap.put('Donation_Tribute_Type__c', returnPicklistValuesList(fieldResult));
+        
         return picklistMap;
     }
+    
+    /*******************************************************************************************************
+    * @description Return a list of picklist values for a given field
+    * @param fieldResult DescribeFieldResult of picklist field
+    * @return List<String> with all picklist values for the provided field
+    */
+    private static List<String> returnPicklistValuesList(Schema.DescribeFieldResult fieldResult){
+        List<String> pickListValuesList = new List<String>();
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        picklistOptionWrapper plWrapper;
+        String plValue;
+        String optionJson;
+        for( Schema.PicklistEntry pickListVal : ple){
+            plValue = pickListVal.getLabel();
+            plWrapper = new picklistOptionWrapper(plValue);
+            // Convert to JSON for easier parsing in Javascript
+            optionJson = JSON.serialize(plWrapper);
+            pickListValuesList.add(optionJson);
+        }
+        return pickListValuesList;
+    }
 
+    /*******************************************************************************************************
+    * @description Return the imported Opportunity (Donation) from a DataImport process
+    * @param diObjId Id of DataImport object that created or matching this Opportunity
+    * @return Id of the Opportunity
+    */
     @AuraEnabled
     public static Id getOpportunityIdFromImport(Id diObjId){
         try {
@@ -72,30 +104,40 @@ public class GiftEntryFormController {
         }
     }
 
-    @AuraEnabled
-    public static void runGiftProcess(Id diObjId){
-        npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getInstance();
-
-        // TODO: Query all fields from this object instead of a subset
-        List<npsp__DataImport__c> listDI = [SELECT Id,
-                npsp__Contact1_Firstname__c,
-                npsp__Contact1_Lastname__c,
-                npsp__Donation_Name__c,
-                npsp__Payment_Method__c,
-                npsp__Donation_Date__c,
-                npsp__Donation_Amount__c,
-                npsp__NPSP_Data_Import_Batch__c
-            FROM npsp__DataImport__c 
-            WHERE Id =: diObjId];
-
-        System.debug(diSettings);
-        System.debug(diObjId);
-        System.debug(listDI);
-
-        npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, false);
+    /*******************************************************************************************************
+    * @description Set DataImport Settings that are important to Gift Entry matching
+    * @return npsp__Data_Import_Settings__c diSettings object used to process gifts
+    */
+    private static npsp__Data_Import_Settings__c getGiftEntrySettings(){
+        npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
+        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
+        diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c';
+        diSettings.npsp__Contact_Matching_Rule__c = 'Firstname,Lastname';
+        return diSettings;
     }
 
-    // Useful for processing a large number of DataImport objects
+    /*******************************************************************************************************
+    * @description Run the DataImport process on a single gift
+    * @param diObjId Id of DataImport object to be processed
+    * @param dryRunMode Boolean to set if the process should only return import results and not process
+    * @return void
+    */
+    @AuraEnabled
+    public static void runGiftProcess(Id diObjId, Boolean dryRunMode){
+        npsp__Data_Import_Settings__c diSettings = getGiftEntrySettings();
+
+        String allDIFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npsp__DataImport__c');
+        List<npsp__DataImport__c> listDI = 
+            Database.query('SELECT '+ allDIFields +' FROM npsp__DataImport__c WHERE Id = :diObjId');
+
+        // System.debug(diSettings);
+        // System.debug(diObjId);
+        // System.debug(listDI); 
+
+        npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
+    }
+
+    // Not currently used, but useful for processing a large number of DataImport objects
     @AuraEnabled
     public static Id runGiftBatch(Id batchId){
         if(batchId != null){
@@ -111,17 +153,33 @@ public class GiftEntryFormController {
     }
 
     /*******************************************************************************************************
-    * @description Inserts the default Data Import Settings Object.
+    * @description Inserts the default Data Import Settings Object, if none exists
     * @return void
     */
     public static void insertGiftEntrySettings() {
         List<npsp__Data_Import_Settings__c> diSettings = [select ID from npsp__Data_Import_Settings__c];
         if(diSettings.size() == 0) {
             diSettings.add(
-                new npsp__Data_Import_Settings__c()
+                new npsp__Data_Import_Settings__c(
+                    npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate,
+                    npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c'
+                )
             );
             insert diSettings;
         }
     }
 
+    /*******************************************************************************************************
+    * @description Holds the lable and value for a picklist option in the Gift Entry Form
+    * @attribute label String for the visible label
+    * @attribute value String for the actual input
+    */
+    class picklistOptionWrapper {
+        String label {get; set;}
+        String value {get; set;}
+        picklistOptionWrapper(String optionValue){
+            this.label = optionValue;
+            this.value = optionValue;
+        }
+    }
 }

@@ -37,15 +37,19 @@ tasks:
         class_path: tasks.salesforce.UpdateAdminProfile
 
 flows:
+    config_apextest:
+        steps:
+            3: 
+                task: deploy_dev_config
     config_dev:
         steps:
-            3:
+            3: 
                 task: deploy_dev_config
             4:
                 task: execute_install_apex
     config_managed:
         steps:
-            3:
+            3: 
                 task: deploy_dev_config
                 options:
                     unmanaged: False

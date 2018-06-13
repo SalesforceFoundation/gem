@@ -39,24 +39,93 @@ private class GiftEntryFormController_TEST {
 
     private static String cFirst = 'Testfirst';
     private static String cLast = 'Testlast';
+    private static String c2First = 'Secondname';
+    private static String c2Last = 'Secondlast';
+    private static String openStage = 'Prospecting';
+    private static String openStage2 = 'Qualification';
+    private static String tributeName = 'Tribute Name';
+    private static String recipientName = 'Recipient Name';
+    private static String updateStringTest = 'New Text';
     private static String donationName = 'Test Donation';
     private static Decimal donationAmount = 100;
     
     @testSetup static void setupGiftEntry() {
     	GiftEntryFormController.insertGiftEntrySettings();
     }
+
+    @isTest
+    private static void testDataImportUpdate() {
+
+        List<npsp__Data_Import_Settings__c> diSettingsList = 
+            [Select npsp__Donation_Matching_Behavior__c from npsp__Data_Import_Settings__c];
+
+        npsp__DataImport__c diObj = getTestDI();
+        diObj.npsp__Donation_Stage__c = openStage;
+        diObj.Do_Not_Automatically_Create_Payment__c = true;
+        insert diObj;
+        
+        GiftEntryFormController.runGiftProcess(diObj.Id, false);
+        
+        List<Opportunity> oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c
+            from Opportunity 
+            where Name =: donationName
+            and npsp__Honoree_Name__c =: tributeName
+            and npsp__Notification_Recipient_Name__c =: recipientName
+            and StageName =: openStage
+        ];
+    
+        System.assertEquals(1, oppList.size());
+
+        // Now make a change to the DataImport object, 
+        // and check that the Donation and Payment were updated
+        diObj.npsp__Payment_Method__c = 'Check';
+        diObj.Notification_Recipient_Name__c = updateStringTest;
+        diObj.npsp__Donation_Stage__c = openStage2;
+        Decimal newAmt = 500;
+        diObj.npsp__Donation_Amount__c = newAmt;
+
+        update diObj;
+
+        Test.startTest();
+        GiftEntryFormController.runGiftProcess(diObj.Id, false);
+        Test.stopTest();
+
+        // Check the errors on diObj
+        diObj = [Select npsp__Status__c,
+            npsp__Contact1ImportStatus__c,
+            npsp__FailureInformation__c,
+            npsp__DonationImportStatus__c,
+            npsp__PaymentImportStatus__c
+            from npsp__DataImport__c 
+            where Id =: diObj.Id];
+        //System.debug(diObj);
+
+        // There should not be a payment, it will need to be added later
+        List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c];
+        System.assertEquals(0, paymentList.size());
+
+        // Make sure there is still only 1 opportunity
+        oppList = [Select Id from Opportunity];
+        System.assertEquals(1, oppList.size());
+
+        // Now check that the Opportunity was correctly updated
+        oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c,
+            Amount, StageName
+            from Opportunity 
+            where Name =: donationName
+            and npsp__Honoree_Name__c =: tributeName
+            and npsp__Notification_Recipient_Name__c =: updateStringTest
+            and StageName =: openStage2
+            and npsp__Notification_Recipient_Name__c =: updateStringTest
+        ];
+
+        //System.debug(oppList);
+        System.assertEquals(1, oppList.size());
+    }
     
     @isTest
-    private static void runGiftProcess() {
-        // TODO: Create or use an existing helper method
-        npsp__DataImport__c diObj = new npsp__DataImport__c(
-            npsp__Contact1_Firstname__c = cFirst,
-            npsp__Contact1_Lastname__c = cLast,
-            npsp__Donation_Name__c = donationName,
-            npsp__Payment_Method__c = 'Cash',
-            npsp__Donation_Date__c = System.today(),
-            npsp__Donation_Amount__c = donationAmount
-        );
+    private static void testRunGiftProcess() {
+        npsp__DataImport__c diObj = getTestDI();
         insert diObj;
 
         // Test error handling
@@ -66,13 +135,22 @@ private class GiftEntryFormController_TEST {
         GiftEntryFormController ge = new GiftEntryFormController();
         
         Test.startTest();
-        GiftEntryFormController.runGiftProcess(diObj.Id);
+        GiftEntryFormController.runGiftProcess(diObj.Id, false);
         Test.stopTest();
         
-        List<Opportunity> oppList = [Select Id from Opportunity where Name =: donationName];
+        List<Opportunity> oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c
+            from Opportunity 
+            where Name =: donationName
+            and npsp__Honoree_Name__c =: tributeName
+            and npsp__Notification_Recipient_Name__c =: recipientName
+        ];
+        //System.debug(oppList);
         System.assertEquals(1, oppList.size());
 
         List<Contact> cList = [Select Id from Contact where FirstName =: cFirst and LastName =: cLast];
+        System.assertEquals(1, cList.size());
+
+        cList = [Select Id from Contact where FirstName =: c2First and LastName =: c2Last];
         System.assertEquals(1, cList.size());
 
         List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c 
@@ -89,17 +167,12 @@ private class GiftEntryFormController_TEST {
 
     @isTest
     private static void runGiftBatch() {
-        // TODO: Create or use an existing helper method
         npsp__DataImportBatch__c diBatch = new npsp__DataImportBatch__c(Name = 'Gift Entry Batch');
         insert diBatch;
 
-        insert new npsp__DataImport__c(npsp__NPSP_Data_Import_Batch__c = diBatch.Id,
-            npsp__Contact1_Firstname__c = cFirst,
-            npsp__Contact1_Lastname__c = cLast,
-            npsp__Donation_Name__c = donationName,
-            npsp__Payment_Method__c = 'Cash',
-            npsp__Donation_Date__c = System.today(),
-            npsp__Donation_Amount__c = donationAmount);
+        npsp__DataImport__c diObj = getTestDI();
+        diObj.npsp__NPSP_Data_Import_Batch__c = diBatch.Id;
+        insert diObj;
         
         // Test error handling
         GiftEntryFormController.runGiftBatch(null);
@@ -117,6 +190,21 @@ private class GiftEntryFormController_TEST {
         List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c 
             where npe01__Payment_Amount__c =: donationAmount];
         System.assertEquals(1, paymentList.size());
+    }
+
+    private static npsp__DataImport__c getTestDI(){
+        return new npsp__DataImport__c(
+            npsp__Contact1_Firstname__c = cFirst,
+            npsp__Contact1_Lastname__c = cLast,
+            npsp__Contact2_Firstname__c = c2First,
+            npsp__Contact2_Lastname__c = c2Last,
+            npsp__Donation_Name__c = donationName,
+            npsp__Payment_Method__c = 'Cash',
+            npsp__Donation_Date__c = System.today(),
+            npsp__Donation_Amount__c = donationAmount,
+            Notification_Recipient_Name__c = recipientName,
+            Donation_Honoree_Name__c = tributeName
+        );
     }
     
 }

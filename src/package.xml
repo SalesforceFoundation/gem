@@ -21,12 +21,9 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>GiftEntryForm</members>
-        <name>ApexPage</name>
-    </types>
-    <types>
-        <members>giftApp</members>
         <members>giftEntryForm</members>
+        <members>giftPicklist</members>
+        <members>giftPicklistChangeEvent</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
@@ -34,22 +31,36 @@
         <name>CustomApplication</name>
     </types>
     <types>
-        <members>Advancement_Setting__mdt.Use_Advancement__c</members>
         <members>Advancement_Setting__mdt.API_HEDA_Class__c</members>
         <members>Advancement_Setting__mdt.API_NPSP_Class__c</members>
+        <members>Advancement_Setting__mdt.Use_Advancement__c</members>
         <members>Donation_Tag__c.Donation_Opportunity__c</members>
         <members>Donation_Tag__c.Tag_Name__c</members>
         <members>Donation_Tag__c.Tag__c</members>
         <members>Opportunity.Tags__c</members>
+        <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
+        <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
+        <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
+        <members>npsp__DataImport__c.Donation_Honoree_Name__c</members>
+        <members>npsp__DataImport__c.Donation_Matching_Gift_Account__c</members>
+        <members>npsp__DataImport__c.Donation_Matching_Gift_Employer__c</members>
+        <members>npsp__DataImport__c.Donation_Matching_Gift_Status__c</members>
+        <members>npsp__DataImport__c.Donation_Matching_Gift__c</members>
+        <members>npsp__DataImport__c.Donation_Notification_Message__c</members>
+        <members>npsp__DataImport__c.Donation_Primary_Campaign__c</members>
+        <members>npsp__DataImport__c.Donation_Tribute_Type__c</members>
+        <members>npsp__DataImport__c.Notification_Recipient_Name__c</members>
         <name>CustomField</name>
     </types>
     <types>
+        <members>Gift_Donation_Locked</members>
         <members>Gift_Saved_Message</members>
+        <members>Gift_Show_Matching</members>
         <name>CustomLabel</name>
     </types>
     <types>
-    	<members>Advancement_Setting.Adv_config</members>
-    	<name>CustomMetadata</name>
+        <members>Advancement_Setting.Adv_config</members>
+        <name>CustomMetadata</name>
     </types>
     <types>
         <members>Advancement_Setting__mdt</members>
@@ -61,7 +72,13 @@
         <members>Gift_Entry</members>
         <name>CustomTab</name>
     </types>
-    <types>       
+    <types>
+        <members>Gift_Entry</members>
+        <members>Gift_Update</members>
+        <members>Opportunity_Record_Page</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
         <members>Account-Advancement Household Layout</members>
         <members>Account-Advancement Organization Layout</members>
         <members>Advancement_Setting__mdt-Advancement Setting Layout</members>
@@ -69,6 +86,7 @@
         <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
         <members>Tag__c-All Layout</members>
+        <members>npsp__DataImport__c-npsp__Data Import Layout</members>
         <name>Layout</name>
     </types>
     <types>

@@ -20,4 +20,5 @@
     <tabs>standard-report</tabs>
     <tabs>Gift_Entry</tabs>
     <tabs>npsp__DataImport__c</tabs>
+    <uiType>Lightning</uiType>
 </CustomApplication>

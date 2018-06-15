@@ -27,7 +27,7 @@
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
-        <members>Gift_Entry_Lightning</members>
+        <members>Gift_Entry</members>
         <name>CustomApplication</name>
     </types>
     <types>

@@ -68,7 +68,8 @@
         </div>
         <div class="slds-col slds-size_2-of-8">
             <c:giftPicklist picklistValues="{!v.picklistValues}" 
-                fieldLabel="Payment Method" 
+                fieldLabel="Payment Method"
+                inputFieldId="schedulerPaymentMethod"
                 selectedVal="{!v.selectedPaymentMethod}" />
         </div>
         

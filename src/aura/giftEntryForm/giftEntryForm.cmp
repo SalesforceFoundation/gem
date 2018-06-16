@@ -124,7 +124,7 @@
                         Donation Information
                     </div>
                 </div>
-                <aura:iteration items="['npsp__Donation_Name__c','npsp__Donation_Amount__c']"
+                <aura:iteration items="['npsp__Donation_Name__c']"
                     var="item">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                         <aura:if isTrue="{!v.oppClosed}">
@@ -262,7 +262,7 @@
                     fieldName="Donation_Matching_Gift_Status__c" />
 
                 <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
-                    picklistValues="{!v.paymentMethods}" 
+                    picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}"
                     jsonObject="{!v.jsonObject}" 
                     donationAmt="{!v.donationAmount}" />
 

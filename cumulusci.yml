@@ -54,7 +54,7 @@ flows:
                 options:
                     unmanaged: False
     ci_feature:
-      tasks:
+      steps:
         7.1:
            task: run_tests
            options:

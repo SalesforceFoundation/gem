@@ -1,0 +1,31 @@
+<aura:component extensible="true">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute type="sObject[]" name="rowList" />
+    <aura:attribute type="Integer" name="rowNum" />
+    <aura:attribute type="Boolean" name="showLabels" default="true" />
+    <aura:attribute type="Decimal" name="amountTotal" />
+    <aura:attribute type="Decimal" name="donationAmt" />
+    <aura:attribute type="Boolean" name="checkAmountTotals" />
+    <aura:attribute type="String[]" name="noDuplicateValueList" />
+    <aura:method name="checkValidation" />
+
+    <aura:attribute type="Boolean" name="showError" default="false" />
+    <aura:attribute type="String" name="errorMessage" />
+    
+    <div class="{!v.showError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
+        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+            <h2>{!v.errorMessage}</h2>
+        </div>
+    </div>
+
+    <div class="slds-col slds-size_7-of-8">
+        {!v.body}
+    </div>
+    <div class="slds-col slds-size_1-of-8 slds-p-around_small">
+        <aura:if isTrue="{!v.showLabels}">
+            <label class="slds-form-element__label"></label><br/>
+        </aura:if>
+        <lightning:button label="Remove" onclick="{!c.clickDeleteRow}" />
+    </div>
+    
+</aura:component>

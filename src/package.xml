@@ -22,8 +22,13 @@
     </types>
     <types>
         <members>giftEntryForm</members>
+        <members>giftFormRelated</members>
+        <members>giftFormRelatedRow</members>
+        <members>giftPaymentScheduler</members>
         <members>giftPicklist</members>
         <members>giftPicklistChangeEvent</members>
+        <members>giftRelatedAllocation</members>
+        <members>giftRelatedPayment</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
@@ -50,9 +55,13 @@
         <members>npsp__DataImport__c.Donation_Primary_Campaign__c</members>
         <members>npsp__DataImport__c.Donation_Tribute_Type__c</members>
         <members>npsp__DataImport__c.Notification_Recipient_Name__c</members>
+        <members>npsp__DataImport__c.Post_Process_Object_JSON__c</members>
         <name>CustomField</name>
     </types>
     <types>
+        <members>Gift_Amounts_Do_Not_Match</members>
+        <members>Gift_Amounts_Greater_than_Donation</members>
+        <members>Gift_Donation_ID_Placeholder</members>
         <members>Gift_Donation_Locked</members>
         <members>Gift_Saved_Message</members>
         <members>Gift_Show_Matching</members>

@@ -54,6 +54,7 @@
             component.set("v.preventSubmit", true);
             amtError = $A.get("$Label.c.Gift_Amounts_Greater_than_Donation");
         } else if(showError){
+            component.set("v.preventSubmit", false);
             amtError = $A.get("$Label.c.Gift_Amounts_Do_Not_Match");
         } else {
             component.set("v.preventSubmit", false);

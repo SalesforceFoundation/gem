@@ -148,7 +148,9 @@
                             fieldName="npsp__Donation_Amount__c" 
                             onchange="{!c.handleAmountChange}" />  
                     </aura:set>
-                    </aura:if>                                      
+                    </aura:if>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">                                  
                     <label class="show-required slds-form-element__label">Scheduled Date</label>
                     <aura:if isTrue="{!v.oppClosed}">
                         <lightning:outputField fieldName="npsp__Donation_Date__c" />
@@ -271,6 +273,15 @@
                     rowCmpName="c:giftRelatedAllocation"
                     oppField="npsp__Opportunity__c"
                     fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
+                    donationAmt="{!v.donationAmount}"
+                    preventAmountSurplus="true"
+                    jsonObj="{!v.jsonObject}" />
+
+                <c:giftFormRelated sectionTitle="Partial Soft Credits"
+                    objectName="npsp__Partial_Soft_Credit__c"
+                    rowCmpName="c:giftRelatedSoftCredit"
+                    oppField="npsp__Opportunity__c"
+                    fieldList="npsp__Amount__c,npsp__Contact__c"
                     donationAmt="{!v.donationAmount}"
                     preventAmountSurplus="true"
                     jsonObj="{!v.jsonObject}" />

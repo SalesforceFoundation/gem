@@ -29,6 +29,7 @@
         <members>giftPicklistChangeEvent</members>
         <members>giftRelatedAllocation</members>
         <members>giftRelatedPayment</members>
+        <members>giftRelatedSoftCredit</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>

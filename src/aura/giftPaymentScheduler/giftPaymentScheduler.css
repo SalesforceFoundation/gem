@@ -1,0 +1,6 @@
+.THIS .uiInput--default .form-element__label {
+    color: rgb(112, 110, 107);
+    font-size: .75rem;
+    line-height: 1.5;
+    margin-bottom: .125rem;
+}

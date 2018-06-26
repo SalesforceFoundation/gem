@@ -10,29 +10,43 @@
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
     },
+    handleAmountChange: function(component, event, helper){
+        var newAmt = event.getParam("value");
+        helper.updateAmountField(component, newAmt);
+        helper.checkValidation(component);
+    },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
         var validForm = helper.validateForm(component);
 
         // If we pass validation, submit the form
         if(validForm){
-            component.find('giftEditForm').submit();
+            // Fill in the JSON data field
+            var jsonIsValid = helper.fillJsonField(component);
+            // console.log('jsonIsValid:'); 
+            // console.log(jsonIsValid); 
+            if(jsonIsValid){
+                component.set("v.submitError", "");
+                component.find('giftEditForm').submit();
+            } else {
+                component.set('v.showSpinner', false);
+                component.set("v.submitError", "Error on form");
+            }
         } else {
             component.set('v.showSpinner', false);
         }
     },
     clickGoToDonation: function(component, event, helper){
-        var recordId = component.get('v.returnedRecordId');
-        helper.redirectToDonation(component, recordId);
+        helper.redirectToDonation(component);
     },
     clickRunProcess: function(component, event, helper){
-        //helper.prepareRelatedObjects(component);
         var diId = component.get('v.returnedRecordId');
         helper.processGift(component, diId, false);
     },
     clickBackToForm: function(component, event, helper){
         component.set("v.showForm", true);
         component.set("v.showSuccess", false);
+        helper.scrollToTop();
     },
     handleLoad: function(component, event, helper){
         //console.log("Handle Load");
@@ -45,6 +59,16 @@
 
         // Setup Picklists and any default form values
         helper.setDefaults(component, helper);
+        
+        // Also set the amount in the payment scheduler
+        var amtField = component.find("amtField");
+        if(amtField){
+            var amt = amtField.get("v.value");
+            helper.updateAmountField(component, amt);
+        }
+        
+        helper.checkValidation(component);
+
     },
     handleDateChange: function(component, event, helper){
         var newDate = event.getParam("value");
@@ -60,6 +84,7 @@
         } else if(donorType == 'Contact1'){
             helper.clearInputs(component, 'requiredAccountField');
         }
+        
         helper.checkValidation(component);
     },
     handleSuccess: function(component, event, helper) {
@@ -95,5 +120,8 @@
                 component.set("v.showDonationImportError", true);
             }
         }
+    },
+    doJsonUpdate: function(component, event, helper) {
+        helper.fillJsonField(component);
     }
 })

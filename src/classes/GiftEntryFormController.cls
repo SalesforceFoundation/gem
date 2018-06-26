@@ -110,8 +110,9 @@ public class GiftEntryFormController {
     */
     private static npsp__Data_Import_Settings__c getGiftEntrySettings(){
         npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
-        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
-        diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c';
+        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.BestMatchOrCreate;
+        diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_amount__c;npsp__donation_date__c';
+        diSettings.npsp__Donation_Date_Range__c = 5;
         diSettings.npsp__Contact_Matching_Rule__c = 'Firstname,Lastname';
         return diSettings;
     }
@@ -135,6 +136,9 @@ public class GiftEntryFormController {
         // System.debug(listDI); 
 
         npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
+        if(!dryRunMode){
+            processJSONList(listDI);
+        }
     }
 
     // Not currently used, but useful for processing a large number of DataImport objects
@@ -169,6 +173,61 @@ public class GiftEntryFormController {
         }
     }
 
+    /*******************************************************************************************************
+    * @description For a list of DataImport objects with Post Process JSON values filled in,
+    * process those lists to add related objects
+    * @param listDi List of DataImport objects that will have Post_Process_Object_JSON__c processed
+    * @return void
+    */
+    public static void processJSONList(List<npsp__DataImport__c> listDi){   
+        List<SObject> objsToUpsert = new List<SObject>();
+
+        Set<Id> diIdSet = new Set<Id>();
+        // Select the fields we need
+        for(npsp__DataImport__c di : listDi){
+            diIdSet.add(di.Id);
+        }
+
+        List<npsp__DataImport__c> listDiWithFields = 
+            [SELECT Id, Post_Process_Object_JSON__c, npsp__DonationImported__c 
+            FROM npsp__DataImport__c 
+            WHERE Id in :diIdSet];
+
+        List<SObject> thisList;
+        Map<String, Object> objNameToObjList;
+        for(npsp__DataImport__c di : listDiWithFields){
+            if(di.Post_Process_Object_JSON__c == null){
+                continue;
+            }
+            String oppId = di.npsp__DonationImported__c;
+            thisList = new List<SObject>();
+            objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(di.Post_Process_Object_JSON__c);
+            System.debug(objNameToObjList);
+            // For each objet type included, add the list
+            for(String objName : objNameToObjList.keySet()){
+                Object objList = objNameToObjList.get(objName);
+                if(objList != null){
+                    String objListString = JSON.serialize(objList);
+                    // Replace opportunity Id placeholders with the actual Id
+                    if(oppId != null){
+                        String oppIdPlaceholderRegex = Label.Gift_Donation_ID_Placeholder;
+                        objListString = objListString.replaceAll(oppIdPlaceholderRegex, oppId);
+                        System.debug(objListString);
+                    }
+                    Type listType = Type.forName('List<' + objName + '>');
+                    thisList = (List<SObject>)JSON.deserialize(objListString, listType);
+                    objsToUpsert.addAll(thisList);
+                }
+            }
+        }
+
+        // TODO: How to handle upsert? Need to separate into object lists?
+        if(!objsToUpsert.isEmpty()){
+            insert objsToUpsert;
+        }
+
+    }
+    
     /*******************************************************************************************************
     * @description Holds the lable and value for a picklist option in the Gift Entry Form
     * @attribute label String for the visible label

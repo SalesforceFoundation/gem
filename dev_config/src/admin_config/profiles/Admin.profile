@@ -7,70 +7,70 @@
 
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Do_Not_Automatically_Create_Payment__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Acknowledgment_Status__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Acknowledgment_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Honoree_Contact__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Honoree_Contact__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Honoree_Name__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Honoree_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Matching_Gift__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Matching_Gift__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Matching_Gift_Account__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Matching_Gift_Account__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Matching_Gift_Employer__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Matching_Gift_Employer__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Matching_Gift_Status__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Matching_Gift_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Notification_Message__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Notification_Message__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Primary_Campaign__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Primary_Campaign__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Donation_Tribute_Type__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Tribute_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Notification_Recipient_Name__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Notification_Recipient_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.Post_Process_Object_JSON__c</field>
+        <field>npsp__DataImport__c.%%%NAMESPACE%%%Post_Process_Object_JSON__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    
+
     <layoutAssignments>
         <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
     </layoutAssignments>
@@ -111,6 +111,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>npsp__DataImport__c-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
     
     <tabVisibilities>

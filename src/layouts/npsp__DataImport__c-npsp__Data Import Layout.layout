@@ -37,6 +37,10 @@
                 <behavior>Edit</behavior>
                 <field>npsp__NPSP_Data_Import_Batch__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Post_Process_Object_JSON__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>

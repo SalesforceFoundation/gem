@@ -1,0 +1,93 @@
+<aura:component >
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="Decimal" name="donationAmt" />
+    <aura:attribute type="Boolean" name="showPayments" default="false" />
+    <aura:attribute type="String[]" name="picklistValues" />
+    <aura:attribute type="String" name="selectedPaymentMethod" />
+    <aura:attribute type="String" name="intervalFreq" />
+    <aura:attribute type="Integer" name="intervalNum" />
+    <aura:attribute type="Integer" name="paymentNum" default="1" />
+    <aura:attribute type="Date" name="startDate" />
+    <aura:attribute type="String" name="calculateButtonLabel" default="Calculate Payments" />
+    <aura:attribute type="String" name="sectionTitle" />
+
+    <aura:attribute name="singlePayment" 
+        type="npe01__OppPayment__c" 
+        default="{sobjectType:'npe01__OppPayment__c'}" />
+    <aura:attribute type="npe01__OppPayment__c[]" name="payments" />
+
+    <aura:attribute type="Object" name="jsonObject" />
+
+    <div class="slds-col slds-size_1-of-1">
+        <div class="slds-page-header slds-page-header__title">
+            {!v.sectionTitle}
+        </div>
+    </div>
+
+    <!-- First page, will auto-generate payment rows -->
+    <div class="slds-grid slds-wrap slds-size_1-of-1">
+        <div class="slds-col slds-size_1-of-8 slds-p-around_small">
+            Donation Amount: <ui:outputCurrency value="{!v.donationAmt}"/>
+        </div>
+        <div class="slds-col slds-size_1-of-8 slds-p-around_small">
+            <lightning:input type="number" value="{!v.paymentNum}" label="Number of Payments" step="1" />
+        </div>
+        <div class="slds-col slds-size_2-of-8 slds-p-around_small">
+            <ui:inputDate class="show-required"
+                label="Date of First Payment"
+                value="{!v.startDate}" 
+                displayDatePicker="true" />
+        </div>
+        <div class="slds-col slds-size_1-of-8 slds-p-top_small">
+            <lightning:select name="interval" 
+                label="Interval" 
+                value="{!v.intervalNum}">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </lightning:select>
+        </div>
+        <div class="slds-col slds-size_1-of-8 slds-p-top_small">
+            <lightning:select name="frequency" 
+                label="Frequency" 
+                value="{!v.intervalFreq}">
+                <option value="Week">Week</option>
+                <option value="Month">Month</option>
+                <option value="Year">Year</option>
+            </lightning:select>
+        </div>
+        <div class="slds-col slds-size_2-of-8">
+            <c:giftPicklist picklistValues="{!v.picklistValues}" 
+                fieldLabel="Payment Method"
+                inputFieldId="schedulerPaymentMethod"
+                selectedVal="{!v.selectedPaymentMethod}" />
+        </div>
+        
+        <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+            <lightning:button label="{!v.calculateButtonLabel}" 
+                onclick="{!c.clickCalculate}" />
+        </div>
+    </div>
+
+    <!-- Show a row for each payment -->
+    <div class="{!v.showPayments ? 'slds-size_1-of-1' : 'slds-hidden'}">
+        <c:giftFormRelated objectName="npe01__OppPayment__c"
+            rowCmpName="c:giftRelatedPayment"
+            oppField="npe01__Opportunity__c"
+            itemList="{!v.payments}"
+            fieldList="npe01__Payment_Amount__c,npe01__Paid__c,npe01__Scheduled_Date__c,npe01__Payment_Date__c,npe01__Payment_Method__c,npe01__Check_Reference_Number__c"
+            donationAmt="{!v.donationAmt}"
+            jsonObj="{!v.jsonObject}" />
+    </div>
+
+</aura:component>

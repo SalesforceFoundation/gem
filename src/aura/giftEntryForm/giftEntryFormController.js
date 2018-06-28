@@ -8,6 +8,9 @@
         }
         var namespace = component.getType().split(':')[0];
         component.set("v.namespacePrefix", namespace);
+        if(namespace != "c"){
+            component.set("v.namespaceFieldPrefix", namespace+'__');
+        }
     },
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);

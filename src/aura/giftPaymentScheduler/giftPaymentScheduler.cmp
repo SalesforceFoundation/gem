@@ -11,6 +11,7 @@
     <aura:attribute type="Date" name="startDate" />
     <aura:attribute type="String" name="calculateButtonLabel" default="Calculate Payments" />
     <aura:attribute type="String" name="sectionTitle" />
+    <aura:attribute type="String" name="rowCmpName" />
 
     <aura:attribute name="singlePayment" 
         type="npe01__OppPayment__c" 
@@ -82,7 +83,7 @@
     <!-- Show a row for each payment -->
     <div class="{!v.showPayments ? 'slds-size_1-of-1' : 'slds-hidden'}">
         <c:giftFormRelated objectName="npe01__OppPayment__c"
-            rowCmpName="c:giftRelatedPayment"
+            rowCmpName="{!v.rowCmpName}"
             oppField="npe01__Opportunity__c"
             itemList="{!v.payments}"
             fieldList="npe01__Payment_Amount__c,npe01__Paid__c,npe01__Scheduled_Date__c,npe01__Payment_Date__c,npe01__Payment_Method__c,npe01__Check_Reference_Number__c"

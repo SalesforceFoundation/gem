@@ -12,6 +12,7 @@
     <aura:attribute type="String" name="ackPrefStatus" />
     <aura:attribute type="String" name="tributeType" />
     <aura:attribute type="String" name="donorType" />
+    <aura:attribute type="String" name="namespacePrefix" />
 
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
@@ -264,13 +265,14 @@
                     fieldName="Donation_Matching_Gift_Status__c" />
 
                 <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
                     picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}"
                     jsonObject="{!v.jsonObject}" 
                     donationAmt="{!v.donationAmount}" />
 
                 <c:giftFormRelated sectionTitle="Allocation"
                     objectName="npsp__Allocation__c"
-                    rowCmpName="c:giftRelatedAllocation"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
                     oppField="npsp__Opportunity__c"
                     fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
                     donationAmt="{!v.donationAmount}"
@@ -280,7 +282,7 @@
 
                 <c:giftFormRelated sectionTitle="Soft Credits"
                     objectName="npsp__Partial_Soft_Credit__c"
-                    rowCmpName="c:giftRelatedSoftCredit"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
                     oppField="npsp__Opportunity__c"
                     fieldList="npsp__Amount__c,npsp__Contact__c,npsp__Role_Name__c"
                     donationAmt="{!v.donationAmount}"

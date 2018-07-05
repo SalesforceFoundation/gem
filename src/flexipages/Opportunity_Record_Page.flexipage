@@ -100,9 +100,6 @@
     </flexiPageRegions>
     <flexiPageRegions>
         <componentInstances>
-            <componentName>cooper:companyInsightTeaserCard</componentName>
-        </componentInstances>
-        <componentInstances>
             <componentName>force:relatedListContainer</componentName>
         </componentInstances>
         <mode>Replace</mode>

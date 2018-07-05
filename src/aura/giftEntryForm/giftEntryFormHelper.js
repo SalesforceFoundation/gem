@@ -67,6 +67,9 @@
     },
     setStartingPicklistValue: function(component, picklistCmp){
         var fieldId = picklistCmp.get("v.inputFieldId");
+        //TO DO: For some nested picklist component (e.g. Payment Method in the Scheduler),
+        // we will not find it in the current component. Need to have a way to handle it
+        if(fieldId == 'schedulerPaymentMethod') return;
         var field = component.find(fieldId);
         if(!field){
             var errorMsg = 'Picklist ' + fieldId + ' was not found';
@@ -94,24 +97,39 @@
             field.set("v.value", newVal);
         }
     },
-    redirectToDonation: function(component, dataImportObjId){
+    updateAmountField: function(component, amt){
+        component.set("v.donationAmount", amt);
+    },
+    redirectToDonation: function(component){
+        var oppId = component.get("v.oppId");
+
+        if(!oppId){
+            var recordId = component.get('v.returnedRecordId');
+            var redirectAfter = true;
+            this.getImportedDonationId(component, recordId, redirectAfter);
+        } else {
+            var event = $A.get("e.force:navigateToSObject");
+            event.setParams({
+                recordId: oppId
+            });
+            event.fire();
+        }
+    },
+    getImportedDonationId: function(component, dataImportObjId, redirectAfter){
         var action = component.get("c.getOpportunityIdFromImport");
         action.setParams({
             diObjId: dataImportObjId
         });
 
         action.setCallback(this, function(response) {
-            //console.log(response);
             var state = response.getState();
             if (state === "SUCCESS") {
                 var oppId = response.getReturnValue();
+                component.set("v.oppId", oppId);
                 //console.log("New opp ID: " + oppId);
-
-                var event = $A.get('e.force:navigateToSObject');
-                event.setParams({
-                    recordId: oppId
-                });
-                event.fire();
+                if(redirectAfter){
+                    this.redirectToDonation(component);
+                }
             } else if (state === "ERROR") {
                 this.handleError(component, response);
             }
@@ -120,7 +138,6 @@
         $A.enqueueAction(action);
     },
     processGift: function(component, dataImportObjId, dryRun) {
-        //console.log(dataImportObjId);
         component.set("v.showSpinner", true);
 
         // Now run the batch for this single gift
@@ -133,14 +150,15 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
+                this.scrollToTop();
+                // Navigate to Opportunity page
                 if(!dryRun){
-                    // If not a dry run, navigate to Opportunity page
                     this.redirectToDonation(component, dataImportObjId);
                 } else {
                     // If dry run, show the results of data matching
-                    component.set("v.showSpinner", false);
                     component.set("v.showForm", false);
                     component.set("v.showSuccess", true);
+                    component.set("v.showSpinner", false);
                 }
             } else if (state === "ERROR") {
                 var errors = response.getError();
@@ -190,6 +208,10 @@
         }
         findResult = this.singleInputToArray(findResult);
         var validationResult = findResult.reduce(function (validSoFar, inputCmp) {
+            var disabled = inputCmp.get("v.disabled");
+            if(disabled){
+                return validSoFar;
+            }
             var fieldVal = inputCmp.get("v.value");
             var isValid = fieldVal || fieldVal === false;
             if(!allMustBeValid && (isValid || validSoFar)){
@@ -217,6 +239,34 @@
         } else {
             this.setErrorMessage(component, "Unknown error");
         }
+    },
+    fillJsonField: function(component) {
+        var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
+        var allRowsValid = true;
+
+        for(var i=0; i < relatedCmp.length; i++){
+            var jsonResp = relatedCmp[i].handleJsonUpdate();
+            allRowsValid = allRowsValid && jsonResp;
+        }
+
+        // Need to prevent overwrite by undefined related objects!
+        var jsonField = component.find("postProcessJsonField");
+        var jsonObj = component.get("v.jsonObject");
+        //console.log("All rows valid: " + allRowsValid); 
+        if(jsonObj.npe01__OppPayment__c && jsonObj.npe01__OppPayment__c.length > 0){
+            // Payments are being scheduled, do not create one for the full donation
+            var autoPaymentField = component.find('doNotAutoCreatePayment');
+            if(autoPaymentField){
+                autoPaymentField.set("v.value", true);
+            }
+        }
+        jsonObj = JSON.stringify(jsonObj);
+        console.log(jsonObj);
+        jsonField.set("v.value", jsonObj);
+        return allRowsValid;
+    },
+    scrollToTop: function(){
+        window.scrollTo(0, 0);
     },
     clearInputs: function(component, fieldId){
         var findResult = component.find(fieldId);

@@ -9,6 +9,15 @@
         <type>Flexipage</type>
         <pageOrSobjectType>npsp__DataImport__c</pageOrSobjectType>
     </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override updated by Lightning App Builder during activation.</comment>
+        <content>Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+    </actionOverrides>
     <description>HEDA Advancement Gift Entry</description>
     <formFactors>Large</formFactors>
     <label>Gift Entry</label>

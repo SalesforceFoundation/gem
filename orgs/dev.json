@@ -6,7 +6,8 @@
     "enabled": [
       "ChatterEnabled",
       "S1DesktopEnabled",
-      "Translation"
+      "Translation",
+      "DisableParallelApexTesting"
     ]
   }
 }

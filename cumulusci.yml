@@ -66,6 +66,14 @@ flows:
                 managed: True
                 namespace: npsp
 
+    ci_feature:
+      steps:
+        7.1:
+           task: run_tests
+           options:
+               managed: True
+               namespace: hed
+               
 orgs:
     scratch:
         dev_namespaced:

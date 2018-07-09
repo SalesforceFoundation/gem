@@ -329,6 +329,54 @@ private class API_HEDA_TEST {
     }
 
     /*******************************************************************************************************
+     * @description Test Create Contact/Account with Administrative Account model
+     */
+    @isTest
+    static void testConfigNPSPAccountModelAdministrative(){
+        delete [Select Id from Contact];
+
+        //Set HEDA custom setting with Administrative
+        hed__Hierarchy_Settings__c hedaSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
+        hedaSettings.hed__Account_Processor__c = UTIL_Describe.getAdminAccRecTypeID();
+        update hedaSettings;
+
+        Contact con = UTIL_UnitTestData_TEST.getContact();
+        Test.startTest();
+        insert con;
+        Test.stopTest();
+
+        con = [SELECT Account.npe01__SYSTEM_AccountType__c, Account.npe01__SYSTEMISINDIVIDUAL__c, Account.Type FROM Contact
+        WHERE Id =: con.Id];
+        system.assertEquals(null, con.Account.Type);
+        system.assertEquals('One-to-One Individual', con.Account.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(true, con.Account.npe01__SYSTEMISINDIVIDUAL__c);
+    }
+
+    /*******************************************************************************************************
+     * @description Test Create Contact/Account with Household Account Model
+     */
+    @isTest
+    static void testConfigNPSPAccountModelHousehold(){
+        delete [Select Id from Contact];
+
+        //Set HEDA custom setting with Household
+        hed__Hierarchy_Settings__c hedaSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
+        hedaSettings.hed__Account_Processor__c = UTIL_Describe.getHhAccRecTypeID();
+        update hedaSettings;
+
+        Contact con = UTIL_UnitTestData_TEST.getContact();
+        Test.startTest();
+        insert con;
+        Test.stopTest();
+
+        con = [SELECT Account.npe01__SYSTEM_AccountType__c, Account.npe01__SYSTEMISINDIVIDUAL__c, Account.Type FROM Contact
+        WHERE Id =: con.Id];
+        system.assertEquals('Household', con.Account.Type);
+        system.assertEquals('Household Account', con.Account.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(true, con.Account.npe01__SYSTEMISINDIVIDUAL__c);
+    }
+
+    /*******************************************************************************************************
     * @description Helper method to re insert Contact
     */
     static void reInsertContact() {

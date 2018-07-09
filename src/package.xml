@@ -11,6 +11,7 @@
         <members>NPSP_Account_TDTM</members>
         <members>NPSP_Account_TDTM_TEST</members>
         <members>Post_Install_Script</members>
+        <members>Post_Install_Script_TEST</members>
         <members>TDTM_Glue</members>
         <members>UTIL_CustomSettingsFacade</members>
         <members>UTIL_Describe</members>

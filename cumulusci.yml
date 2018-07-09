@@ -32,6 +32,7 @@ tasks:
         options:
             apex: >
                 Post_Install_Script.giftSetup();
+                Post_Install_Script.populateNPSPAccountModel();
 
     update_admin_profile:
         class_path: tasks.salesforce.UpdateAdminProfile

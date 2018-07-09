@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2017, Salesforce.org
+    Copyright (c) 2018, Salesforce.org
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,33 @@
 */
 /**
 * @author Salesforce.org
-* @date 2017
-* @group
-* @group-content
-* @description This is the post install script for Adv.
-**/
-global with sharing class Post_Install_Script implements InstallHandler{
+* @date 2018
+* @group Settings
+* @group-content ../../ApexDocContent/Settings.htm
+* @description Test Class for the Install Script for the ADV package.
+*/
+@isTest
+public with sharing class Post_Install_Script_TEST {
 
-    global void onInstall(InstallContext context) {
-        //Initial installation.
-        if(context.previousVersion() == null) {
-            populateNPSPAccountModel();
-        }
-    }
+    @isTest
+    static void onInstall() {
+        //Set HEDA Account Model to Administrative
+        hed__Hierarchy_Settings__c hedaOrgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
+        hedaOrgSettings.hed__Account_Processor__c = UTIL_Describe.getAdminAccRecTypeID();
+        insert hedaOrgSettings;
 
-    global static void giftSetup(){
-        GiftEntryFormController.insertGiftEntrySettings();
-    }
+        //Set NPSP Account Model to Household
+        npe01__Contacts_And_Orgs_Settings__c npspOrgSettings = npsp.UTIL_CustomSettings_API.getContactsSettings();
+        npspOrgSettings.npe01__Account_Processor__c = 'Household Account';
 
-    global static void populateNPSPAccountModel() {
-        TDTM_Glue.updateNPSPAccountModel();
+        Test.startTest();
+        //Run the install script
+        Test.testInstall(new Post_Install_Script(), null);
+        Test.stopTest();
+
+        //Verify that the NPSP Account Model now becomes One-to-One
+        npspOrgSettings = npsp.UTIL_CustomSettings_API.getContactsSettings();
+        system.assertEquals('One-to-One Individual',npspOrgSettings.npe01__Account_Processor__c);
+        system.assertEquals(hedaOrgSettings.hed__Account_Processor__c,npspOrgSettings.npe01__One_to_One_RecordTypeID__c);
     }
 }

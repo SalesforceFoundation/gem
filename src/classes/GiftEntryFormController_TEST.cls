@@ -50,7 +50,8 @@ private class GiftEntryFormController_TEST {
     private static Decimal donationAmount = 100;
     
     @testSetup static void setupGiftEntry() {
-    	GiftEntryFormController.insertGiftEntrySettings();
+        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = UTIL_Describe.getHhAccRecTypeID()));
+        GiftEntryFormController.insertGiftEntrySettings();
     }
 
     @isTest

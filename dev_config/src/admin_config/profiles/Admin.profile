@@ -70,6 +70,7 @@
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Post_Process_Object_JSON__c</field>
         <readable>true</readable>
     </fieldPermissions>
+
     <layoutAssignments>
         <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
     </layoutAssignments>
@@ -110,6 +111,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>npsp__DataImport__c-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
     
     <tabVisibilities>

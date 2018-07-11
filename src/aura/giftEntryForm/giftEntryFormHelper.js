@@ -67,13 +67,13 @@
     },
     setStartingPicklistValue: function(component, picklistCmp){
         var fieldId = picklistCmp.get("v.inputFieldId");
-        //TO DO: For some nested picklist component (e.g. Payment Method in the Scheduler),
-        // we will not find it in the current component. Need to have a way to handle it
-        if(fieldId == 'schedulerPaymentMethod') return;
+        // For nested picklist components (e.g. Payment Method in the Scheduler),
+        // we will not find it in the current component, so just return
         var field = component.find(fieldId);
         if(!field){
-            var errorMsg = 'Picklist ' + fieldId + ' was not found';
-            this.setErrorMessage(component, errorMsg);
+            //var errorMsg = 'Picklist ' + fieldId + ' was not found';
+            //this.setErrorMessage(component, errorMsg);
+            //console.log(errorMsg); 
             return;
         }
 

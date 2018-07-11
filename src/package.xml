@@ -29,6 +29,7 @@
         <members>giftPicklistChangeEvent</members>
         <members>giftRelatedAllocation</members>
         <members>giftRelatedPayment</members>
+        <members>giftRelatedSoftCredit</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
@@ -95,7 +96,7 @@
         <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
         <members>Tag__c-All Layout</members>
-        <members>npsp__DataImport__c-npsp__Data Import Layout</members>
+        <members>npsp__DataImport__c-Advancement Gift Layout</members>
         <name>Layout</name>
     </types>
     <types>

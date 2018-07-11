@@ -5,6 +5,7 @@
         var rowListArray = component.get("v.rowList");
         var newRowNum = rowListArray.length;
         var rowCmpName = component.get("v.rowCmpName");
+        var picklistOptions = component.get("v.picklistOptions");
         var amountTotal = component.getReference("v.amountTotal");
         var donationAmt = component.getReference("v.donationAmt");
         var checkAmountTotals = component.getReference("v.checkAmountTotals");
@@ -19,6 +20,7 @@
             rowCmpName, {
                 "rowList": rowList,
                 "rowComponent": rowCmpName,
+                "picklistOptions": picklistOptions,
                 "rowNum": newRowNum,
                 "item": item,
                 "amountTotal": amountTotal,

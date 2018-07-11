@@ -1,0 +1,52 @@
+<aura:component extends="c:giftFormRelatedRow">
+    <aura:attribute name="item" 
+        type="npsp__Partial_Soft_Credit__c" 
+        default="{sobjectType:'npsp__Partial_Soft_Credit__c'}"/>
+    <aura:handler name="change" 
+        value="{!v.item.npsp__Amount__c}" 
+        action="{!c.handleAmountChange}"/>
+
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_2-of-5 slds-p-around_small">
+            <aura:if isTrue="{!v.showLabels}">
+                <label class="show-required slds-form-element__label">Contact</label>
+            </aura:if>
+            <force:inputField aura:id="noDuplicates"
+                value="{!v.item.npsp__Contact__c}" />
+        </div>
+        <div class="slds-col slds-size_1-of-5 slds-p-around_small">
+            <aura:if isTrue="{!v.showLabels}">
+                <label class="show-required slds-form-element__label">Amount</label>
+            </aura:if>
+            <lightning:input aura:id="requiredField"
+                onblur="{!c.handleAmountCheck}"
+                name="allocationAmt" 
+                type="number" 
+                label="Amount" variant="label-hidden"
+                formatter="currency"
+                value="{!v.item.npsp__Amount__c}" />
+        </div>
+        <div class="slds-col slds-size_2-of-5 slds-p-around_small">
+            <aura:if isTrue="{!v.showLabels}">
+                <label class="show-required slds-form-element__label">Role Name</label>
+            </aura:if>
+            <lightning:select name="select" 
+                label="Role Name"
+                variant="label-hidden"
+                value="{!v.item.npsp__Role_Name__c}">
+                <aura:iteration items="{!v.picklistOptions.npsp__Role_Name__c}" var="plWrapper">
+                    <option value="{!plWrapper.value}"
+                        text="{!plWrapper.label}"
+                        selected="{!plWrapper.value == v.selectedVal}">
+                    </option>
+                </aura:iteration>
+            </lightning:select>
+        </div>
+
+        <div class="slds-hidden">
+            <force:inputField value="{!v.item.npsp__Opportunity__c}" />
+            <force:inputField value="{!v.item.npsp__Role_Name__c}" />
+        </div>
+    </div>
+
+</aura:component>

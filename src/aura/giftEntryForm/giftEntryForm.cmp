@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="slds-col slds-size_1-of-1">
-                    <c:giftPicklist picklistValues="[{value:'Contact1',label:'Contact'},{value:'Account1',label:'Account'}]" 
+                    <c:giftPicklist picklistValues="[{value:'Contact1',label:'Contact'},{value:'Account1',label:'Account'},{value:'',label:'Account with Contact'}]" 
                         fieldLabel="Donor Type" 
                         inputFieldId="donorTypeField"
                         isDisabled="{!v.oppClosed == true}"
@@ -85,7 +85,19 @@
                         fieldName="npsp__Donation_Donor__c" />
                 </div>
 
-                <aura:if isTrue="{!v.donorType == 'Contact1'}">
+                <aura:if isTrue="{!v.donorType != 'Contact1'}">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <lightning:inputField aura:id='requiredAccountField' 
+                            onchange="{!c.handleFieldChange}"
+                            fieldName="npsp__Account1_Name__c" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <lightning:inputField aura:id='requiredAccountField' 
+                            onchange="{!c.handleFieldChange}"
+                            fieldName="npsp__Account1Imported__c" />
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.donorType != 'Account1'}">
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                         <lightning:inputField aura:id='requiredContactField' 
                             onchange="{!c.handleFieldChange}"
@@ -107,18 +119,6 @@
                             onchange="{!c.handleFieldChange}"
                             fieldName="npsp__Contact1Imported__c" />
                     </div>
-                <aura:set attribute="else">
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField aura:id='requiredAccountField' 
-                            onchange="{!c.handleFieldChange}"
-                            fieldName="npsp__Account1_Name__c" />
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField aura:id='requiredAccountField' 
-                            onchange="{!c.handleFieldChange}"
-                            fieldName="npsp__Account1Imported__c" />
-                    </div>
-                </aura:set> 
                 </aura:if>
 
                 <div class="slds-col slds-size_1-of-1">
@@ -272,6 +272,7 @@
                     fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
                     donationAmt="{!v.donationAmount}"
                     preventAmountSurplus="true"
+                    preventAmountDeficit="true"
                     picklistOptions="{!v.picklistOptions}"
                     jsonObj="{!v.jsonObject}" />
 
@@ -282,6 +283,7 @@
                     fieldList="npsp__Amount__c,npsp__Contact__c,npsp__Role_Name__c"
                     donationAmt="{!v.donationAmount}"
                     preventAmountSurplus="true"
+                    preventAmountDeficit="false"
                     picklistOptions="{!v.picklistOptions}"
                     jsonObj="{!v.jsonObject}" />
 

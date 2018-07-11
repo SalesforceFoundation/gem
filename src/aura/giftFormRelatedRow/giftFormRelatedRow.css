@@ -23,3 +23,6 @@
     line-height: 1.5;
     margin-bottom: .125rem;
 }
+.THIS .slds-form-element .slds-form-element__label {
+    display: none;
+}

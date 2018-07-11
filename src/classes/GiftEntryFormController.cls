@@ -50,35 +50,68 @@ public class GiftEntryFormController {
         Map<String, List<String>> picklistMap = 
             new Map<String, List<String>>();
 
-        Schema.DescribeFieldResult fieldResult =  
-            npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe();
-        picklistMap.put('npsp__Payment_Method__c', returnPicklistValuesList(fieldResult));
-        fieldResult = Opportunity.StageName.getDescribe();
-        picklistMap.put('npsp__Donation_Stage__c', returnPicklistValuesList(fieldResult));
-        fieldResult = Opportunity.npsp__Matching_Gift_Status__c.getDescribe();
-        picklistMap.put('Donation_Matching_Gift_Status__c', returnPicklistValuesList(fieldResult));
-        fieldResult = Opportunity.npsp__Acknowledgment_Status__c.getDescribe();
-        picklistMap.put('Donation_Acknowledgment_Status__c', returnPicklistValuesList(fieldResult));
-        fieldResult = Opportunity.npsp__Tribute_Type__c.getDescribe();
-        picklistMap.put('Donation_Tribute_Type__c', returnPicklistValuesList(fieldResult));
+        List<Schema.PicklistEntry> picklistValues = 
+            npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe().getPicklistValues();
+        picklistMap.put('npsp__Payment_Method__c', returnPicklistValuesList(picklistValues));
+
+        picklistValues = Opportunity.StageName.getDescribe().getPicklistValues();
+        picklistMap.put('npsp__Donation_Stage__c', returnPicklistValuesList(picklistValues));
+        
+        picklistValues = Opportunity.npsp__Matching_Gift_Status__c.getDescribe().getPicklistValues();
+        picklistMap.put('Donation_Matching_Gift_Status__c', returnPicklistValuesList(picklistValues));
+        
+        picklistValues = Opportunity.npsp__Acknowledgment_Status__c.getDescribe().getPicklistValues();
+        picklistMap.put('Donation_Acknowledgment_Status__c', returnPicklistValuesList(picklistValues));
+        
+        picklistValues = Opportunity.npsp__Tribute_Type__c.getDescribe().getPicklistValues();
+        picklistMap.put('Donation_Tribute_Type__c', returnPicklistValuesList(picklistValues));
+
+        picklistValues = OpportunityContactRole.Role.getDescribe().getPicklistValues();
+        picklistMap.put('npsp__Role_Name__c', returnSoftCreditRoleList(picklistValues));
         
         return picklistMap;
+    }
+
+    /*******************************************************************************************************
+    * @description Return a list of picklist values for the soft credit role field
+    * Uses NPSP custom settings to determine which opportunity contact roles should be included
+    * @param ple List<Schema.PicklistEntry> of picklist entries for the field
+    * @return List<String> with picklist values filtered for soft credit roles
+    */
+    private static List<String> returnSoftCreditRoleList(List<Schema.PicklistEntry> ple){
+        Set<String> contactRoles = new Set<String>();
+        Set<String> softCreditRoles = new Set<String>();
+        String softCreditRoleString = 
+            npsp.UTIL_CustomSettings_API.getHouseholdsSettings().npo02__Soft_Credit_Roles__c;
+        if (softCreditRoleString != null){
+            softCreditRoles = new set<String>(softCreditRoleString.split(';'));
+        }
+
+        List<Schema.PicklistEntry> pleRoles = new List<Schema.PicklistEntry>();
+        for (Schema.PicklistEntry pe : ple) {
+            if (pe.getValue() != npsp.UTIL_CustomSettings_API.getContactsSettings().npe01__Opportunity_Contact_Role_Default_role__c &&
+                (softCreditRoles.contains(pe.getValue()) || softCreditRoles.contains(pe.getLabel()))) {
+                pleRoles.add(pe);
+            }
+        }
+        return returnPicklistValuesList(pleRoles);
     }
     
     /*******************************************************************************************************
     * @description Return a list of picklist values for a given field
-    * @param fieldResult DescribeFieldResult of picklist field
+    * @param ple List<Schema.PicklistEntry> of picklist entries for the field
     * @return List<String> with all picklist values for the provided field
     */
-    private static List<String> returnPicklistValuesList(Schema.DescribeFieldResult fieldResult){
+    private static List<String> returnPicklistValuesList(List<Schema.PicklistEntry> ple){
         List<String> pickListValuesList = new List<String>();
-        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
         picklistOptionWrapper plWrapper;
+        String plLabel;
         String plValue;
         String optionJson;
         for( Schema.PicklistEntry pickListVal : ple){
-            plValue = pickListVal.getLabel();
-            plWrapper = new picklistOptionWrapper(plValue);
+            plLabel = pickListVal.getLabel();
+            plValue = pickListVal.getValue();
+            plWrapper = new picklistOptionWrapper(plLabel, plValue);
             // Convert to JSON for easier parsing in Javascript
             optionJson = JSON.serialize(plWrapper);
             pickListValuesList.add(optionJson);
@@ -238,6 +271,10 @@ public class GiftEntryFormController {
         String value {get; set;}
         picklistOptionWrapper(String optionValue){
             this.label = optionValue;
+            this.value = optionValue;
+        }
+        picklistOptionWrapper(String optionLabel, String optionValue){
+            this.label = optionLabel;
             this.value = optionValue;
         }
     }

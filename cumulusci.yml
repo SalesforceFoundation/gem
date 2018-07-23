@@ -27,26 +27,62 @@ tasks:
             path: dev_config/delete
 
     execute_install_apex:
-        description: Runs most of the install script methods from STG_InstallScript class
+        description: Runs most of the install script methods from Post_Install_Script class
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         options:
             apex: >
                 Post_Install_Script.giftSetup();
 
-    update_admin_profile:
-        class_path: tasks.salesforce.UpdateAdminProfile
+    npsp_default_settings:
+        description: Configure the default NPSP Settings including Membership RecordType
+        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        options:
+            path: scripts/configure_npsp_default_settings.cls
+            method: initializeNPSPSettings();
+
+    test_data_dev_org:
+        description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'
+        class_path: cumulusci.tasks.bulkdata.LoadData
+        options:
+            database_url: 'sqlite:///testdata/dev_org/test_data.db'
+            mapping: 'testdata/mapping.yml'
+
+    test_data_delete:
+        description: 'WARNING: Deletes all data in the objects specified in the objects option.'
+        class_path: cumulusci.tasks.bulkdata.DeleteData
+        options:
+            objects:
+                - Opportunity
+                - npe03__Recurring_Donation__c
+                - Case
+                - Contact
+                - Account
+                - npsp__Allocation__c
+                - npsp__General_Accounting_Unit__c
+                - Campaign
 
 flows:
     config_apextest:
         steps:
             3: 
                 task: deploy_dev_config
+
     config_dev:
         steps:
             3: 
                 task: deploy_dev_config
             4:
                 task: execute_install_apex
+
+    config_qa:
+        steps:
+            3: 
+                task: deploy_dev_config
+            4:
+                task: execute_install_apex
+            5:
+                flow: test_data_dev_org
+
     config_managed:
         steps:
             3: 
@@ -61,6 +97,14 @@ flows:
            options:
                managed: True
                namespace: hed
+
+    test_data_dev_org:
+        description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
+        steps:
+            1:
+                task: test_data_delete
+            2:
+                task: test_data_dev_org
                
 orgs:
     scratch:

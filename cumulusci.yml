@@ -33,13 +33,6 @@ tasks:
             apex: >
                 Post_Install_Script.giftSetup();
 
-    npsp_default_settings:
-        description: Configure the default NPSP Settings including Membership RecordType
-        class_path: tasks.anon_apex.AnonymousApexFromFileTask
-        options:
-            path: scripts/configure_npsp_default_settings.cls
-            method: initializeNPSPSettings();
-
     test_data_dev_org:
         description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'
         class_path: cumulusci.tasks.bulkdata.LoadData
@@ -61,6 +54,20 @@ tasks:
                 - npsp__General_Accounting_Unit__c
                 - Campaign
 
+    test_data_default_settings:
+        description: Configure the default NPSP Settings for ADV
+        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        options:
+            path: dev_config/scripts/configure_npsp_default_settings.cls
+            method: initializeNPSPSettingsForADV();
+
+    test_data_user_setup:
+        description: Sets up Gift Processing Users with correct Profiles
+        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        options:
+            path: dev_config/scripts/user_data_setup.cls
+            method: AddGiftProcessor();
+
 flows:
     config_apextest:
         steps:
@@ -72,15 +79,21 @@ flows:
             3: 
                 task: deploy_dev_config
             4:
-                task: execute_install_apex
+                task: test_data_default_settings
 
     config_qa:
         steps:
+            2:
+                task: None
             3: 
+                task: delete_dev_config
+            4: 
                 task: deploy_dev_config
-            4:
-                task: execute_install_apex
             5:
+                task: test_data_default_settings
+            6:
+                task: update_admin_profile
+            7:
                 flow: test_data_dev_org
 
     config_managed:
@@ -91,12 +104,12 @@ flows:
                     unmanaged: False
 
     ci_feature:
-      steps:
-        7.1:
-           task: run_tests
-           options:
-               managed: True
-               namespace: hed
+        steps:
+            7.1:
+                task: run_tests
+                options:
+                   managed: True
+                   namespace: hed
 
     test_data_dev_org:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
@@ -105,6 +118,8 @@ flows:
                 task: test_data_delete
             2:
                 task: test_data_dev_org
+            3:
+                task: test_data_user_setup
                
 orgs:
     scratch:

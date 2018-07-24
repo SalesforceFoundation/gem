@@ -5,7 +5,9 @@
 * @author Michael Smith
 * @date 2018-06-07
 */
-public static void initializeNPSPSettings() {
+public static void initializeNPSPSettingsForADV() {
+
+    insertGiftEntrySettings();
     npsp.UTIL_CustomSettings_API.getContactsSettings();
     npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
     npsp.UTIL_CustomSettings_API.getRecurringDonationsSettings();
@@ -14,7 +16,7 @@ public static void initializeNPSPSettings() {
     npsp.UTIL_CustomSettings_API.getHouseholdNamingSettings();
     npsp.UTIL_CustomSettings_API.getErrorSettings();
     //npsp.UTIL_CustomSettings_API.getAddressVerificationSettings(); // Not available to the global API
-    npsp.UTIL_CustomSettings_API.getBDESettings();
+    //npsp.UTIL_CustomSettings_API.getBDESettings(); // Handled by our own function
     npsp.UTIL_CustomSettings_API.getAllocationsSettings();
     npsp.UTIL_CustomSettings_API.getDataImportSettings();
 
@@ -29,6 +31,12 @@ public static void initializeNPSPSettings() {
     cos.npsp__Notification_Recipient_Opp_Contact_Role__c = 'Notification Contact';
     cos.npsp__Payments_Auto_Close_Stage_Name__c = getClosedWonStage();
     upsert cos;
+
+    // Setup default scheduled jobs
+    npsp.STG_InstallScript stg = new npsp.STG_InstallScript();
+    stg.runNewOrgScript();
+    // Not global, but might need for recurring donations?
+    //database.executeBatch(new RD_InstallScript_BATCH(), 10); 
 }
 
 private static String getClosedWonStage(){
@@ -37,3 +45,15 @@ private static String getClosedWonStage(){
     return closedWonStage.MasterLabel;
 }
 
+private static void insertGiftEntrySettings() {
+    List<npsp__Data_Import_Settings__c> diSettings = [select ID from npsp__Data_Import_Settings__c];
+    if(diSettings.size() == 0) {
+        diSettings.add(
+            new npsp__Data_Import_Settings__c(
+                npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate,
+                npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c'
+            )
+        );
+        insert diSettings;
+    }
+}

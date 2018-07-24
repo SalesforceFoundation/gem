@@ -12,5 +12,9 @@
         <members>*</members>
         <name>Profile</name>
     </types>
+    <types>
+        <members>ContactRole</members>
+        <name>StandardValueSet</name>
+    </types>
     <version>39.0</version>
 </Package>

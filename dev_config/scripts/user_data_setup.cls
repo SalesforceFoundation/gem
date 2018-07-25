@@ -1,7 +1,7 @@
 String adminEmail = 'testing@example.com';
 String namespace = getNamespace();
-String giftProfileName = 'Gift Officer';
-String majorGiftProfileName = 'Major Gift Officer';
+String giftProfileName = 'Gift Processor';
+String giftProfileName2 = 'Development Officer';
 
 public static String generateContactEmail(String adminEmail, String contactName) {
     List<String> emailParts = adminEmail.split('@');
@@ -25,16 +25,17 @@ public static void AddGiftProcessor() {
             WHERE Name =: giftProfileName
         ];
 
-        Profile majorGiftProfile = [
+        Profile giftProfile2 = [
             SELECT Id
             FROM Profile
-            WHERE Name =: majorGiftProfileName
+            WHERE Name =: giftProfileName2
         ];
 
-        // If users are found, leave and continue the flow
-        users = [SELECT Id FROM User WHERE isActive = true AND 
-            (ProfileId =: giftProfile.Id OR ProfileId =: majorGiftProfile.Id)];
-        if(!users.isEmpty()){
+        // If the user count is maxed out, leave and continue the flow
+        users = [SELECT Id 
+            FROM User 
+            WHERE Profile.UserLicense.LicenseDefinitionKey = 'SFDC' AND isActive = true];
+        if(users.size() >= 2){
             return;
         }
 
@@ -62,7 +63,7 @@ public static void AddGiftProcessor() {
         //    TimeZoneSidKey = 'America/Chicago',
         //    LocaleSidKey = 'en_US',
         //    EmailEncodingKey = 'utf-8',
-        //    ProfileId = majorGiftProfile.Id,
+        //    ProfileId = giftProfile2.Id,
         //    LanguageLocaleKey = 'en_US'
         //);
         //users.add(mjoUser);

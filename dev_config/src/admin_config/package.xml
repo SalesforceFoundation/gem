@@ -13,7 +13,7 @@
         <name>Profile</name>
     </types>
     <types>
-        <members>ContactRole</members>
+        <members>*</members>
         <name>StandardValueSet</name>
     </types>
     <version>39.0</version>

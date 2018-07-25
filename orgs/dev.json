@@ -7,6 +7,9 @@
       "ChatterEnabled",
       "S1DesktopEnabled",
       "Translation"
+    ],
+    "disabled": [
+      "S1EncryptedStoragePref2"
     ]
   }
 }

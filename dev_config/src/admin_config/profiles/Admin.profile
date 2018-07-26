@@ -113,6 +113,30 @@
         <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Donation</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Grant</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%In_Kind</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Major_Gift</recordType>
+    </layoutAssignments>
+        <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Matching</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Membership</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>npsp__DataImport__c-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
 

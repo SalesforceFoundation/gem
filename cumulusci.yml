@@ -20,18 +20,11 @@ tasks:
             path: dev_config/src
             unmanaged: True
 
-    delete_dev_config:
+    deploy_dev_config_delete:
         description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
             path: dev_config/delete
-
-    execute_install_apex:
-        description: Runs most of the install script methods from Post_Install_Script class
-        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
-        options:
-            apex: >
-                Post_Install_Script.giftSetup();
 
     test_data_dev_org:
         description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'
@@ -55,17 +48,17 @@ tasks:
                 - Campaign
 
     test_data_default_settings:
-        description: Configure the default NPSP Settings for ADV
+        description: Configure the default NPSP Settings for Gift Processing
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
         options:
-            path: dev_config/scripts/configure_npsp_default_settings.cls
+            path: dev_config/scripts/configure_default_settings.cls
             method: initializeNPSPSettingsForADV();
 
     test_data_user_setup:
         description: Sets up Gift Processing Users with correct Profiles
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
         options:
-            path: dev_config/scripts/user_data_setup.cls
+            path: dev_config/scripts/configure_default_settings.cls
             method: AddGiftProcessor();
 
 flows:
@@ -77,8 +70,10 @@ flows:
     config_dev:
         steps:
             3: 
+                task: deploy_dev_config_delete
+            4: 
                 task: deploy_dev_config
-            4:
+            5:
                 task: test_data_default_settings
 
     config_qa:
@@ -86,13 +81,13 @@ flows:
             2:
                 task: None
             3: 
-                task: delete_dev_config
+                task: deploy_dev_config_delete
             4: 
                 task: deploy_dev_config
             5:
-                task: test_data_default_settings
-            6:
                 task: update_admin_profile
+            6:
+                task: test_data_default_settings
             7:
                 flow: test_data_dev_org
 

@@ -2,9 +2,14 @@
 * @description Configure all default NPSP Custom Settings by calling each of the "get..." methods in the
 * CustomSettingsFacade. In addition, this retrieves the Opportunity.Membership record type Id and populates
 * that in the HouseholdSettings object.
-* @author Michael Smith
-* @date 2018-06-07
+* @author Michael Smith and Luke Parrott
+* @date 2018-07-26
 */
+String adminEmail = 'testing@example.com';
+String namespace = getNamespace();
+String giftProfileName = 'Gift Processor';
+String giftProfileName2 = 'Development Officer';
+
 public static void initializeNPSPSettingsForADV() {
 
     insertGiftEntrySettings();
@@ -32,11 +37,74 @@ public static void initializeNPSPSettingsForADV() {
     cos.npsp__Payments_Auto_Close_Stage_Name__c = getClosedWonStage();
     upsert cos;
 
-    // Setup default scheduled jobs
-    npsp.STG_InstallScript stg = new npsp.STG_InstallScript();
-    stg.runNewOrgScript();
-    // Not global, but might need for recurring donations?
+    // Setup default custom settings, might already be done on install?
+    //npsp.STG_InstallScript stg = new npsp.STG_InstallScript();
+    //stg.runNewOrgScript();
+
+    // Would setup scheduled jobs, but it's not global, go to NPSP Settings page to automatically run
+    // UTIL_MasterSchedulableHelper.setScheduledJobs();
+
+    // Not global, but might be needed for recurring donations?
     //database.executeBatch(new RD_InstallScript_BATCH(), 10); 
+}
+
+public static void AddGiftProcessor() {
+    Savepoint sp = Database.setSavepoint();
+
+    try {
+        List<User> users = new List<User>();
+
+        // If the user count is maxed out for Dev orgs, leave and continue the flow
+        users = [SELECT Id 
+            FROM User 
+            WHERE Profile.UserLicense.LicenseDefinitionKey = 'SFDC' AND isActive = true];
+        if(users.size() >= 2){
+            return;
+        }
+
+        users.clear();
+
+        Profile giftProfile = [
+            SELECT Id
+            FROM Profile
+            WHERE Name =: giftProfileName
+        ];
+
+        //Profile giftProfile2 = [
+        //    SELECT Id
+        //    FROM Profile
+        //    WHERE Name =: giftProfileName2
+        //];
+
+        User goUser = new User(
+            Username = generateContactEmail(adminEmail,'giftprocessor'+Datetime.now().millisecond()),
+            FirstName = 'Gary',
+            LastName = 'Gift-Officer',
+            Email = generateContactEmail(adminEmail,'giftprocessor'),
+            Alias = 'ggift',
+            TimeZoneSidKey = 'America/Chicago',
+            LocaleSidKey = 'en_US',
+            EmailEncodingKey = 'utf-8',
+            ProfileId = giftProfile.Id,
+            LanguageLocaleKey = 'en_US'
+        );
+        users.add(goUser);
+        insert users;
+
+    } catch (System.DmlException e) {
+        Database.rollback(sp);
+        throw new System.DmlException(e.getMessage());
+    }
+}
+
+private static String generateContactEmail(String adminEmail, String contactName) {
+    List<String> emailParts = adminEmail.split('@');
+    return emailParts[0]+'+'+contactName+'@'+emailParts[1];
+}
+
+private static String getNamespace() {
+    ApexClass ac = [SELECT NameSpacePrefix FROM ApexClass WHERE Name = 'TDTM_Glue'];
+    return ac.NameSpacePrefix;
 }
 
 private static String getClosedWonStage(){
@@ -57,3 +125,4 @@ private static void insertGiftEntrySettings() {
         insert diSettings;
     }
 }
+

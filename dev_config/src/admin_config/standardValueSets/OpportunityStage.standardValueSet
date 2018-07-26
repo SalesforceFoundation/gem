@@ -6,26 +6,26 @@
         <default>false</default>
         <label>Pledged</label>
         <closed>false</closed>
-        <forecastCategory>Pipeline</forecastCategory>
-        <probability>50</probability>
+        <forecastCategory>Omitted</forecastCategory>
+        <probability>10</probability>
         <won>false</won>
     </standardValue>
     <standardValue>
-        <fullName>Closed Won</fullName>
+        <fullName>Posted</fullName>
         <default>false</default>
-        <label>Closed Won</label>
+        <label>Posted</label>
         <closed>true</closed>
         <forecastCategory>Closed</forecastCategory>
         <probability>100</probability>
         <won>true</won>
     </standardValue>
     <standardValue>
-        <fullName>Closed Lost</fullName>
+        <fullName>Declined</fullName>
         <default>false</default>
-        <label>Closed Lost</label>
+        <label>Declined</label>
         <closed>true</closed>
         <forecastCategory>Omitted</forecastCategory>
-        <probability>0</probability>
+        <probability>100</probability>
         <won>false</won>
     </standardValue>
 </StandardValueSet>

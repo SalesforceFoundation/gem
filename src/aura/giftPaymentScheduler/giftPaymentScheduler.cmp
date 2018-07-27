@@ -13,6 +13,8 @@
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="rowCmpName" />
 
+    <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
+
     <aura:attribute name="singlePayment" 
         type="npe01__OppPayment__c" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
@@ -75,7 +77,7 @@
         </div>
         
         <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-            <lightning:button label="{!v.calculateButtonLabel}" 
+            <lightning:button aura:id="calcButton" label="{!v.calculateButtonLabel}" 
                 onclick="{!c.clickCalculate}" />
         </div>
     </div>

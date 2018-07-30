@@ -141,6 +141,16 @@
     </layoutAssignments>
 
     <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>Account.HH_Account</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>true</default>
+        <recordType>Account.Organization</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
         <default>true</default>
         <recordType>Opportunity.Donation</recordType>
         <visible>true</visible>

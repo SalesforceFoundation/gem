@@ -6,7 +6,6 @@
 * @date 2018-07-26
 */
 String adminEmail = 'testing@example.com';
-String namespace = getNamespace();
 String giftProfileName = 'Gift Processor';
 String giftProfileName2 = 'Development Officer';
 
@@ -70,12 +69,6 @@ public static void AddGiftProcessor() {
             WHERE Name =: giftProfileName
         ];
 
-        //Profile giftProfile2 = [
-        //    SELECT Id
-        //    FROM Profile
-        //    WHERE Name =: giftProfileName2
-        //];
-
         User goUser = new User(
             Username = generateContactEmail(adminEmail,'giftprocessor'+Datetime.now().millisecond()),
             FirstName = 'Gary',
@@ -100,11 +93,6 @@ public static void AddGiftProcessor() {
 private static String generateContactEmail(String adminEmail, String contactName) {
     List<String> emailParts = adminEmail.split('@');
     return emailParts[0]+'+'+contactName+'@'+emailParts[1];
-}
-
-private static String getNamespace() {
-    ApexClass ac = [SELECT NameSpacePrefix FROM ApexClass WHERE Name = 'TDTM_Glue'];
-    return ac.NameSpacePrefix;
 }
 
 private static String getClosedWonStage(){

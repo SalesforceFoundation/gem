@@ -64,5 +64,9 @@
 			var validAmount = (donationAmt > 0);
 			btn.set('v.disabled',!validAmount);
 		}
+	},
+	handleMethodChange: function(component, event, helper) {
+		var paymentMethod = component.get("v.paymentMethod");
+		component.set("v.selectedPaymentMethod", paymentMethod);
 	}
 })

@@ -263,6 +263,7 @@
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
                     picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}"
                     jsonObject="{!v.jsonObject}" 
+                    paymentMethod="{!v.selectedPaymentMethod}" 
                     donationAmt="{!v.donationAmount}" />
 
                 <c:giftFormRelated sectionTitle="Allocation"
@@ -272,7 +273,7 @@
                     fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
                     donationAmt="{!v.donationAmount}"
                     preventAmountSurplus="true"
-                    preventAmountDeficit="true"
+                    preventAmountDeficit="false"
                     picklistOptions="{!v.picklistOptions}"
                     jsonObj="{!v.jsonObject}" />
 

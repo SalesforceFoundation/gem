@@ -12,8 +12,10 @@
     <aura:attribute type="String" name="calculateButtonLabel" default="Calculate Payments" />
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="rowCmpName" />
+    <aura:attribute type="String" name="paymentMethod" />
 
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
+    <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
 
     <aura:attribute name="singlePayment" 
         type="npe01__OppPayment__c" 
@@ -90,6 +92,8 @@
             itemList="{!v.payments}"
             fieldList="npe01__Payment_Amount__c,npe01__Paid__c,npe01__Scheduled_Date__c,npe01__Payment_Date__c,npe01__Payment_Method__c,npe01__Check_Reference_Number__c"
             donationAmt="{!v.donationAmt}"
+            preventAmountSurplus="false"
+            preventAmountDeficit="true"
             jsonObj="{!v.jsonObject}" />
     </div>
 

@@ -1,8 +1,49 @@
 ({
     doInit: function(component, event, helper) {
+
+        // Get Object field labels for use in the form
+        var getLabelsAction = component.get("c.getObjNameToApiToLabel");
+        getLabelsAction.setCallback(this, function(response) {
+            
+            console.log(response.getReturnValue());
+
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                component.set("v.objectLabels", response.getReturnValue());
+            } else if (state === "ERROR") {
+                var errors = response.getError();
+                helper.handleError(component, response);
+            }
+        });
+        $A.enqueueAction(getLabelsAction); 
+
         var recordId = component.get('v.recordId');
         // Make changes based on mode
         if(recordId){
+            // Get data from Apex
+            var action = component.get("c.getDonationRecords");
+            action.setParams({
+                oppId: recordId
+            });
+
+            action.setCallback(this, function(response) {
+                var state = response.getState();
+                if (state === "SUCCESS") {
+
+                    var objMap = response.getReturnValue();
+
+                    console.log(objMap); 
+
+                    if(objMap && objMap.Opportunity){
+                        component.set("v.opp", objMap.Opportunity);
+                    }
+                    // component.set("v.acct", response.getReturnValue());
+                    // component.set("v.contact", response.getReturnValue());
+                }
+            });
+
+            $A.enqueueAction(action); 
+
             component.set('v.editMode', true);
             component.find('createButton').set('v.label', 'Update Gift');
         }

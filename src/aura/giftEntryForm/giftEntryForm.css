@@ -18,3 +18,10 @@
     width: 0;
     overflow: hidden;
 }
+.THIS .uiInput--input .input, 
+.THIS .uiInput--input.input,
+.THIS .uiInput--select.select:not([multiple]), 
+.THIS .uiInput--select .select:not([multiple]), 
+.THIS .uiInput--select .uiPopupTrigger a {
+    height: calc(1.875rem + (1px * 2));
+}

@@ -53,6 +53,85 @@ private class GiftEntryFormController_TEST {
     	GiftEntryFormController.insertGiftEntrySettings();
     }
 
+    /*******************************************************************************************************
+    * @description Test creating new Account, Contact and Opportunity via Gift Form
+    */ 
+    @isTest
+    private static void testNewGift() {
+
+        String acctName = 'Test Account';
+        String cFirst = 'TestFirst';
+        String cLast = 'TestLast';
+        String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
+
+        GiftEntryFormController.acct = new Account(Name=acctName);
+        GiftEntryFormController.contact = new Contact(FirstName=cFirst, LastName=cLast);
+        GiftEntryFormController.opp = new Opportunity(Name='Test Opp', 
+            CloseDate=System.today(), 
+            StageName=closedWonStage, 
+            Amount=100);
+    
+        Test.startTest();
+        GiftEntryFormController.saveDonationInformation();
+        Test.stopTest();
+
+        List<Opportunity> opps = [SELECT Id FROM Opportunity 
+            WHERE Account.Name =: acctName
+            AND npsp__Primary_Contact__r.FirstName =: cFirst
+            AND npsp__Primary_Contact__r.LastName =: cLast];
+        System.assert(opps.size() == 1, 'Make sure Opportunity was created and Account and Contact were assigned');
+        //Opportunity opp = opps[0];
+
+        Contact c = [SELECT Id, Account.Name FROM Contact WHERE Id =: GiftEntryFormController.contact.Id];
+        // Contact is being set to 'TestLast Administrative Account', is that right?
+        //System.assertEquals(acctName, c.Account.Name, 'The Contact should be under the new Account ');
+    }
+
+    /*******************************************************************************************************
+    * @description Test updating existing Account and Contact via Gift Form
+    */ 
+    @isTest
+    private static void testUpdateGiftDonor() {
+
+        String acctName = 'Test Account';
+        String acctName2 = 'Test Account Update';
+        String cFirst = 'TestFirst';
+        String cLast = 'TestLast';
+        String cLast2 = 'TestLastUpdate';
+        String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
+
+        Account a = new Account(Name=acctName);
+        Contact c = new Contact(FirstName=cFirst, LastName=cLast);
+
+        insert a;
+        insert c;
+
+        GiftEntryFormController.acct = new Account(Name=acctName2);
+        GiftEntryFormController.contact = new Contact(FirstName=cFirst, LastName=cLast2);
+        GiftEntryFormController.opp = new Opportunity(Name='Test Opp', 
+            CloseDate=System.today(), 
+            StageName=closedWonStage, 
+            Amount=100,
+            npsp__Primary_Contact__c=c.Id,
+            AccountId = a.Id);
+    
+        Test.startTest();
+        GiftEntryFormController.saveDonationInformation();
+        Test.stopTest();
+
+        List<Opportunity> opps = [SELECT Id FROM Opportunity 
+            WHERE Account.Name =: acctName2
+            AND npsp__Primary_Contact__r.FirstName =: cFirst
+            AND npsp__Primary_Contact__r.LastName =: cLast2];
+        System.assert(opps.size() == 1, 'Make sure Opportunity was created and Account and Contact were assigned and updated');
+
+        List<Contact> cList = [SELECT Id, Account.Name FROM Contact];
+        System.assert(cList.size() == 1, 'Contact should have been updated, not added');
+
+        List<Account> aList = [SELECT Id, Name FROM Account WHERE Name =: acctName];
+        System.assert(aList.size() == 0, 'Account should have been updated, not added');
+    }
+
     @isTest
     private static void testDataImportUpdate() {
 

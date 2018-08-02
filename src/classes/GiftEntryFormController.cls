@@ -36,9 +36,122 @@
 */
 public class GiftEntryFormController {
 
+    public static Opportunity opp {get;set;}
+    public static Account acct {get;set;}
+    public static Contact contact {get;set;}
+    public static List<npe01__OppPayment__c> payments {get;set;}
+    public static List<npsp__Allocation__c> allocs {get;set;}
+    public static Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
+    private static Savepoint sp {get;set;}
+
 	public Boolean hasPerm {get;set;} // Permission check
     public GiftEntryFormController(){
-        hasPerm = Schema.sObjectType.npsp__DataImport__c.isCreateable();
+        hasPerm = Schema.sObjectType.Opportunity.isCreateable();
+    }
+
+    /*******************************************************************************************************
+    * @description Return a Map of Object Name to Map<String,String> of field names to labels
+    * @return Map<String, Map<String,String>> which maps an object name to a map of fields
+    */
+    @AuraEnabled
+    public static Map<String, Map<String,String>> getObjNameToApiToLabel(){
+        if(objNameToApiToLabel == null){
+            objNameToApiToLabel = new Map<String, Map<String,String>>();
+            objNameToApiToLabel.put('Account', getFieldNameToLabelForObject('Account'));
+            objNameToApiToLabel.put('Contact', getFieldNameToLabelForObject('Contact'));
+            objNameToApiToLabel.put('Opportunity', getFieldNameToLabelForObject('Opportunity'));
+            objNameToApiToLabel.put('Payment', getFieldNameToLabelForObject('npe01__OppPayment__c'));
+        }
+        return objNameToApiToLabel;
+    }
+
+    /*******************************************************************************************************
+    * @description Return a Map<String,String> of field names to labels for a given object
+    * @param objName Name of object to return field map for
+    * @return Map<String,String> of field names to labels for a given object
+    */
+    private static Map<String,String> getFieldNameToLabelForObject(String objName){
+        Map<String,String> fieldNameToLabel = new Map<String,String>();
+        for(Schema.DescribeFieldResult df : hed.UTIL_Describe_API.getAllFieldsDescribe(objName).values()){
+            fieldNameToLabel.put(df.getLocalName(), df.getLabel());
+        }
+        return fieldNameToLabel;
+    }
+
+    /*******************************************************************************************************
+    * @description Return the Opportunity (Donation) and associated objects for editing 
+    * @param diObjId Id of DataImport object that created or matching this Opportunity
+    * @return Id of the Opportunity
+    */
+    @AuraEnabled
+    public static Map<String, sObject> getDonationRecords(Id oppId){
+        try {
+            Opportunity opp = [SELECT Id, Name, StageName
+                FROM Opportunity
+                WHERE Id =: oppId
+                LIMIT 1];
+
+            Map<String, sObject> objNameToObject = new Map<String, sObject>();
+
+            if(opp != null){
+                objNameToObject.put('Opportunity', opp);
+            }
+
+            return objNameToObject;
+        } catch(Exception e){
+            System.debug(e);
+            return null;
+        }
+    }
+
+    @AuraEnabled
+    public static Id saveDonationInformation(){
+         sp = Database.setSavepoint();
+        // Insert or Update the provided Donor and Donation information
+        try {
+            // Insert or Update the provided Donor information
+            if(acct != null){
+                if(opp.AccountId != null){
+                    acct.Id = opp.AccountId;
+                }
+                upsert acct;
+            }
+            if(contact != null){
+                if(opp.npsp__Primary_Contact__c != null){
+                    contact.Id = opp.npsp__Primary_Contact__c;
+                }
+                upsert contact;
+            }
+
+            // Insert or Update the provided Donation information
+            if(acct != null && acct.Id != null){
+                opp.AccountId = acct.Id;
+            }
+            if(contact != null && contact.Id != null){
+                opp.npsp__Primary_Contact__c = contact.Id;
+            }
+
+            upsert opp;
+            
+            if(payments != null && !payments.isEmpty()){
+                for(npe01__OppPayment__c p : payments){
+                    p.npe01__Opportunity__c = opp.Id;
+                }
+                upsert payments;
+            }
+            if(allocs != null && !allocs.isEmpty()){
+                for(npsp__Allocation__c a : allocs){
+                    a.npsp__Opportunity__c = opp.Id;
+                }
+                upsert allocs;
+            }
+
+            return opp.Id;
+
+        } catch(Exception e){
+            Database.rollback(sp);
+            throw e;
+        }
     }
 
     /*******************************************************************************************************
@@ -262,7 +375,7 @@ public class GiftEntryFormController {
     }
     
     /*******************************************************************************************************
-    * @description Holds the lable and value for a picklist option in the Gift Entry Form
+    * @description Holds the label and value for a picklist option in the Gift Entry Form
     * @attribute label String for the visible label
     * @attribute value String for the actual input
     */

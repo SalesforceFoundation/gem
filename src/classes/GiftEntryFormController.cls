@@ -111,13 +111,13 @@ public class GiftEntryFormController {
         try {
             // Insert or Update the provided Donor information
             if(acct != null){
-                if(opp.AccountId != null){
+                if(!String.isBlank(opp.AccountId)){
                     acct.Id = opp.AccountId;
                 }
                 upsert acct;
             }
             if(contact != null){
-                if(opp.npsp__Primary_Contact__c != null){
+                if(!String.isBlank(opp.npsp__Primary_Contact__c)){
                     contact.Id = opp.npsp__Primary_Contact__c;
                 }
                 upsert contact;
@@ -320,12 +320,65 @@ public class GiftEntryFormController {
     }
 
     /*******************************************************************************************************
+    * @description Given a list of objects in JSON, process them in the right order
+    * @param jsonObj A JSON object containing all objects related to a gift
+    * @return Id of the Opportunity created
+    */
+    public static Id processGiftJSON(String jsonObj){
+        try {
+            // First, attributes passed from Lightning that can't be deserialized
+            String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
+            String relatedObjectRegex = ',"((?!",").)+:\\{"[^}]+\\}';
+            jsonObj = jsonObj.replaceAll(sobjectTypeRegex, '');
+            jsonObj = jsonObj.replaceAll(relatedObjectRegex, '');
+
+            //System.debug(jsonObj); 
+
+            // Given a list of objects, break them out into actual sobjects to process
+            Map<String, Object> objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(jsonObj);
+            System.debug(objNameToObjList);
+            List<SObject> thisList;
+            // For each objet type included, set the controller's variable
+            for(String objName : objNameToObjList.keySet()){
+
+                Object objList = objNameToObjList.get(objName);
+                if(objList != null){
+                    String objListString = JSON.serialize(objList);
+
+                    Type listType = Type.forName('List<' + objName + '>');
+                    thisList = (List<SObject>)JSON.deserialize(objListString, listType);
+
+                    switch on objName {
+                        when 'Account' {
+                            acct = (Account)thisList[0];
+                        }
+                        when 'Opportunity' {
+                            opp = (Opportunity)thisList[0];
+                        }
+                        when 'Contact' {
+                            contact = (Contact)thisList[0];
+                        }
+                        when 'npsp__Allocation__c' {
+                            allocs = (List<npsp__Allocation__c>)thisList;
+                        }
+                    }
+                }
+            }
+
+            return saveDonationInformation();
+
+        } catch(Exception e){
+            throw e;
+        }
+    }
+
+    /*******************************************************************************************************
     * @description For a list of DataImport objects with Post Process JSON values filled in,
     * process those lists to add related objects
     * @param listDi List of DataImport objects that will have Post_Process_Object_JSON__c processed
     * @return void
     */
-    public static void processJSONList(List<npsp__DataImport__c> listDi){   
+    public static void processJSONList(List<npsp__DataImport__c> listDi){
         List<SObject> objsToUpsert = new List<SObject>();
 
         Set<Id> diIdSet = new Set<Id>();

@@ -4,9 +4,6 @@
         // Get Object field labels for use in the form
         var getLabelsAction = component.get("c.getObjNameToApiToLabel");
         getLabelsAction.setCallback(this, function(response) {
-            
-            console.log(response.getReturnValue());
-
             var state = response.getState();
             if (state === "SUCCESS") {
                 component.set("v.objectLabels", response.getReturnValue());
@@ -52,6 +49,26 @@
         if(namespace != "c"){
             component.set("v.namespaceFieldPrefix", namespace+'__');
         }
+
+        //console.log("Handle Load");
+        // In the case of a new gift, the recordId changes, which would trigger a second load event
+        // if(component.get("v.dataLoaded")){
+        //     helper.checkValidation(component);
+        //     return;
+        // }
+        // component.set("v.dataLoaded", true);
+
+        // Setup Picklists and any default form values
+        helper.setDefaults(component, helper);
+        
+        // Also set the amount in the payment scheduler
+        var amtField = component.find("amtField");
+        if(amtField){
+            var amt = amtField.get("v.value");
+            helper.updateAmountField(component, amt);
+        }
+        
+        helper.checkValidation(component);
     },
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
@@ -73,7 +90,8 @@
             // console.log(jsonIsValid); 
             if(jsonIsValid){
                 component.set("v.submitError", "");
-                component.find('giftEditForm').submit();
+                helper.processGiftJson(component);
+                //component.find('giftEditForm').submit();
             } else {
                 component.set('v.showSpinner', false);
                 component.set("v.submitError", "Error on form");
@@ -93,28 +111,6 @@
         component.set("v.showForm", true);
         component.set("v.showSuccess", false);
         helper.scrollToTop();
-    },
-    handleLoad: function(component, event, helper){
-        //console.log("Handle Load");
-        // In the case of a new gift, the recordId changes, which would trigger a second load event
-        if(component.get("v.dataLoaded")){
-            helper.checkValidation(component);
-            return;
-        }
-        component.set("v.dataLoaded", true);
-
-        // Setup Picklists and any default form values
-        helper.setDefaults(component, helper);
-        
-        // Also set the amount in the payment scheduler
-        var amtField = component.find("amtField");
-        if(amtField){
-            var amt = amtField.get("v.value");
-            helper.updateAmountField(component, amt);
-        }
-        
-        helper.checkValidation(component);
-
     },
     handleDateChange: function(component, event, helper){
         var newDate = event.getParam("value");

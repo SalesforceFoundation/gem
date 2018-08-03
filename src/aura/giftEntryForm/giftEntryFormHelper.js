@@ -100,20 +100,27 @@
     updateAmountField: function(component, amt){
         component.set("v.donationAmount", amt);
     },
-    redirectToDonation: function(component){
-        var oppId = component.get("v.oppId");
+    redirectToDonation: function(component, oppId){
+        
+        var event = $A.get("e.force:navigateToSObject");
+        event.setParams({
+            recordId: oppId
+        });
+        event.fire();
 
-        if(!oppId){
-            var recordId = component.get('v.returnedRecordId');
-            var redirectAfter = true;
-            this.getImportedDonationId(component, recordId, redirectAfter);
-        } else {
-            var event = $A.get("e.force:navigateToSObject");
-            event.setParams({
-                recordId: oppId
-            });
-            event.fire();
-        }
+        // var oppId = component.get("v.oppId");
+
+        // if(!oppId){
+        //     var recordId = component.get('v.returnedRecordId');
+        //     var redirectAfter = true;
+        //     this.getImportedDonationId(component, recordId, redirectAfter);
+        // } else {
+        //     var event = $A.get("e.force:navigateToSObject");
+        //     event.setParams({
+        //         recordId: oppId
+        //     });
+        //     event.fire();
+        // }
     },
     getImportedDonationId: function(component, dataImportObjId, redirectAfter){
         var action = component.get("c.getOpportunityIdFromImport");
@@ -128,7 +135,7 @@
                 component.set("v.oppId", oppId);
                 //console.log("New opp ID: " + oppId);
                 if(redirectAfter){
-                    this.redirectToDonation(component);
+                    this.redirectToDonation(component, oppId);
                 }
             } else if (state === "ERROR") {
                 this.handleError(component, response);
@@ -137,37 +144,67 @@
 
         $A.enqueueAction(action);
     },
-    processGift: function(component, dataImportObjId, dryRun) {
+    processGiftJson: function(component) {
         component.set("v.showSpinner", true);
 
+        var jsonString = component.get("v.jsonObj");
+
         // Now run the batch for this single gift
-        var action = component.get("c.runGiftProcess");
+        var action = component.get("c.processGiftJSON");
         action.setParams({
-            diObjId: dataImportObjId,
-            dryRunMode: dryRun
+            jsonObj: jsonString
         });
 
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                this.scrollToTop();
-                // Navigate to Opportunity page
-                if(!dryRun){
-                    this.redirectToDonation(component, dataImportObjId);
-                } else {
-                    // If dry run, show the results of data matching
-                    component.set("v.showForm", false);
-                    component.set("v.showSuccess", true);
-                    component.set("v.showSpinner", false);
-                }
+                //this.scrollToTop();
+                var oppId = response.getReturnValue();
+                this.redirectToDonation(component, oppId);
+                
+                component.set("v.showForm", false);
+                component.set("v.showSuccess", true);
+                component.set("v.showSpinner", false);
+                
             } else if (state === "ERROR") {
-                var errors = response.getError();
+                //var errors = response.getError();
                 this.handleError(component, response);
             }
         });
 
         $A.enqueueAction(action);        
     },
+    // processGift: function(component, dataImportObjId, dryRun) {
+    //     component.set("v.showSpinner", true);
+
+    //     // Now run the batch for this single gift
+    //     var action = component.get("c.runGiftProcess");
+    //     action.setParams({
+    //         diObjId: dataImportObjId,
+    //         dryRunMode: dryRun
+    //     });
+
+    //     action.setCallback(this, function(response) {
+    //         var state = response.getState();
+    //         if (state === "SUCCESS") {
+    //             this.scrollToTop();
+    //             // Navigate to Opportunity page
+    //             if(!dryRun){
+    //                 this.redirectToDonation(component, dataImportObjId);
+    //             } else {
+    //                 // If dry run, show the results of data matching
+    //                 component.set("v.showForm", false);
+    //                 component.set("v.showSuccess", true);
+    //                 component.set("v.showSpinner", false);
+    //             }
+    //         } else if (state === "ERROR") {
+    //             var errors = response.getError();
+    //             this.handleError(component, response);
+    //         }
+    //     });
+
+    //     $A.enqueueAction(action);        
+    // },
     checkValidation: function(component){
         var formValid = this.validateForm(component);
         var btn = component.find('createButton');
@@ -249,10 +286,26 @@
             allRowsValid = allRowsValid && jsonResp;
         }
 
-        // Need to prevent overwrite by undefined related objects!
-        var jsonField = component.find("postProcessJsonField");
         var jsonObj = component.get("v.jsonObject");
-        //console.log("All rows valid: " + allRowsValid); 
+        //console.log(jsonObj); 
+
+        // If related objects are valid, set the primary ones as well
+        if(allRowsValid){
+            var acct = this.proxyToObj(component.get("v.acct"));
+            var contact = this.proxyToObj(component.get("v.contact"));
+            var opp = this.proxyToObj(component.get("v.opp"));
+
+            // console.log(acct); 
+            // console.log(contact); 
+            // console.log(opp); 
+
+            jsonObj['Account'] = [acct];
+            jsonObj['Contact'] = [contact];
+            jsonObj['Opportunity'] = [opp];
+            component.set("v.jsonObj", jsonObj);
+        }
+
+        var jsonField = component.find("postProcessJsonField");
         if(jsonObj.npe01__OppPayment__c && jsonObj.npe01__OppPayment__c.length > 0){
             // Payments are being scheduled, do not create one for the full donation
             var autoPaymentField = component.find('doNotAutoCreatePayment');

@@ -13,6 +13,7 @@
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="rowCmpName" />
     <aura:attribute type="String" name="paymentMethod" />
+    <aura:attribute type="sObject[]" name="rowList" />
 
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
@@ -87,6 +88,7 @@
     <!-- Show a row for each payment -->
     <div class="{!v.showPayments ? 'slds-size_1-of-1' : 'slds-hidden'}">
         <c:giftFormRelated objectName="npe01__OppPayment__c"
+            rowList="{!v.rowList}"
             rowCmpName="{!v.rowCmpName}"
             oppField="npe01__Opportunity__c"
             itemList="{!v.payments}"

@@ -80,11 +80,16 @@ private class GiftEntryFormController_TEST {
             AND npsp__Primary_Contact__r.FirstName =: cFirst
             AND npsp__Primary_Contact__r.LastName =: cLast];
         System.assert(opps.size() == 1, 'Make sure Opportunity was created and Account and Contact were assigned');
-        //Opportunity opp = opps[0];
+        Opportunity opp = opps[0];
 
         Contact c = [SELECT Id, Account.Name FROM Contact WHERE Id =: GiftEntryFormController.contact.Id];
         // Contact is being set to 'TestLast Administrative Account', is that right?
         //System.assertEquals(acctName, c.Account.Name, 'The Contact should be under the new Account ');
+
+        List<npe01__OppPayment__c> payments = [SELECT Id FROM npe01__OppPayment__c 
+            WHERE npe01__Opportunity__c =: opp.Id];
+        System.assertEquals(1, payments.size(), 'There should be a payment for the closed donation');
+
     }
 
     /*******************************************************************************************************
@@ -200,6 +205,32 @@ private class GiftEntryFormController_TEST {
 
         //System.debug(oppList);
         System.assertEquals(1, oppList.size());
+    }
+
+    @isTest
+    private static void testJsonProcess() {
+
+        // Test stripping Lightning attributes from JSON, then processing it into a Donation
+
+        String testJson = '{"npsp__Allocation__c":[],"npe01__OppPayment__c":[],"npsp__Partial_Soft_Credit__c":[]'
+        + ',"Account":[{"Name":"New Account"}]'
+        + ',"Contact":[{"FirstName":"Firstname","LastName":"Lastname"}]'
+        + ',"Opportunity":[{"sobjectType":"Opportunity","AccountId":"","Account":{"sobjectType":"Account","Name":""},"npsp__Primary_Contact__c":"","npsp__Primary_Contact__r":{"sobjectType":"Contact","Name":""},"StageName":"Closed Won","Campaign":{"sobjectType":"Campaign","Name":""},"npsp__Tribute_Type__c":"","npsp__Acknowledgment_Status__c":"","npsp__Honoree_Contact__c":"","npsp__Honoree_Contact__r":{"sobjectType":"Contact","Name":""},"npsp__Matching_Gift_Account__c":"","npsp__Matching_Gift_Account__r":{"sobjectType":"Account","Name":""},"npsp__Matching_Gift__c":"","npsp__Matching_Gift__r":{"sobjectType":"Opportunity","Name":""},"npsp__Matching_Gift_Status__c":"","Name":"Test Opp","Amount":1000,"CloseDate":"2018-08-03"}]'
+        + '}';
+
+        Id oppId = GiftEntryFormController.processGiftJSON(testJson);
+
+        System.assert(oppId != null, 'The new Opportunity ID should be returned');
+
+        Contact c = GiftEntryFormController.contact;
+        Account a = GiftEntryFormController.acct;
+        Opportunity o = GiftEntryFormController.opp;
+        List<npsp__Allocation__c> allocs = GiftEntryFormController.allocs;
+
+        System.assertEquals('Firstname', c.FirstName, 'The Contact should be set on the controller');
+        System.assertEquals('New Account', a.Name, 'The Account should be set on the controller');
+        System.assertEquals('Test Opp', o.Name, 'The Opportunity should be set on the controller');
+
     }
     
     @isTest

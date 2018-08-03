@@ -31,7 +31,7 @@
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
     <aura:attribute type="Boolean" name="dataLoaded" default="false" />
     <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
-    <aura:attribute type="Decimal" name="donationAmount" />
+    <!-- <aura:attribute type="Decimal" name="donationAmount" /> -->
     <aura:attribute type="Date" name="paymentDate" />
     <aura:handler name="change" value="{!v.paymentDate}" action="{!c.handleDateChange}"/>
     <aura:handler name="change" value="{!v.donorType}" action="{!c.handleDonorTypeChange}"/>
@@ -52,7 +52,16 @@
     <aura:attribute name="contact" 
         type="Contact" 
         default="{sobjectType:'Contact'}"/>
-
+    
+    <aura:attribute name="allocs" 
+        type="npsp__Allocation__c[]" 
+        default="[]"/>
+    <aura:attribute name="payments" 
+        type="npe01__OppPayment__c[]" 
+        default="[]"/>
+    <aura:attribute name="partialCredits" 
+        type="npsp__Partial_Soft_Credit__c[]" 
+        default="[]"/>
 
     <aura:if isTrue="{!v.showSpinner}">
         <lightning:spinner />
@@ -69,284 +78,305 @@
         </aura:if>
 
         <div class="{!v.showForm ? '' : 'slds-hidden'}">
-            <lightning:recordEditForm aura:id="giftEditForm" 
-                onload="{!c.handleLoad}"  
-                onsuccess="{!c.handleSuccess}" 
-                objectApiName="npsp__DataImport__c">
 
-                <lightning:messages />
+            <div class="slds-grid slds-wrap" aura:id="formWrapper">
 
-                <div class="slds-grid slds-wrap" aura:id="formWrapper">
-
-                    <aura:if isTrue="{!v.oppClosed}">     
-                        <div class="slds-col slds-size_1-of-1">
-                            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-                                <h2>{!$Label.c.Gift_Donation_Locked}</h2>
-                            </div>
-                        </div>
-                    </aura:if>
-
+                <aura:if isTrue="{!v.oppClosed}">     
                     <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-page-header slds-page-header__title">
-                            Donor Information
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>{!$Label.c.Gift_Donation_Locked}</h2>
                         </div>
                     </div>
+                </aura:if>
 
-                    <div class="slds-col slds-size_1-of-1">
-                        <c:giftPicklist picklistValues="[{value:'Contact1',label:'Contact'},{value:'Account1',label:'Account'},{value:'',label:'Account with Contact'}]" 
-                            fieldLabel="Donor Type" 
-                            isDisabled="{!v.oppClosed == true}"
-                            selectedVal="{!v.donorType}" />
-                    </div>
+                <lightning:button label="Test JSON" 
+                    onclick="{!c.doJsonUpdate}" />
 
-                    <div class="{!v.donorType != 'Contact1' ? 'slds-wrap slds-grid slds-size_1-of-1' : 'slds-hidden'}">
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <label class="slds-form-element__label">
-                                {!v.objectLabels.Account.Name}
-                            </label>
-                            <force:inputField aura:id="requiredAccountField" 
-                                change="{!c.handleFieldChange}"
-                                value="{!v.acct.Name}" />
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <label class="slds-form-element__label">
-                                {!v.objectLabels.Opportunity.AccountId}
-                            </label>
-                            <force:inputField aura:id="requiredAccountField" 
-                                value="{!v.opp.AccountId}" />
-                        </div>
-                    </div>
-                    <div class="{!v.donorType != 'Account1' ? 'slds-wrap slds-grid slds-size_1-of-1' : 'slds-hidden'}">
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <label class="slds-form-element__label">
-                                {!v.objectLabels.Contact.FirstName}
-                            </label>
-                            <force:inputField aura:id="requiredContactField"
-                                change="{!c.handleFieldChange}"
-                                value="{!v.contact.FirstName}" />
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <label class="slds-form-element__label">
-                                {!v.objectLabels.Contact.LastName}
-                            </label>
-                            <force:inputField aura:id="requiredContactField"
-                                change="{!c.handleFieldChange}"
-                                value="{!v.contact.LastName}" />
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <label class="slds-form-element__label">
-                                {!v.objectLabels.Contact.Phone}
-                            </label>
-                            <force:inputField value="{!v.contact.Phone}" />
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <label class="slds-form-element__label">
-                                {!v.objectLabels.Contact.Email}
-                            </label>
-                            <force:inputField value="{!v.contact.Email}" />
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                            <label class="slds-form-element__label">
-                                {!v.objectLabels.Opportunity.npsp__Primary_Contact__c}
-                            </label>
-                            <force:inputField aura:id="requiredDonorField"
-                                value="{!v.opp.npsp__Primary_Contact__c}" />
-                        </div>
-                    </div>
+                <c:giftFormRelated sectionTitle="Allocation"
+                    rowList="{!v.allocs}"
+                    objectName="npsp__Allocation__c"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
+                    oppField="npsp__Opportunity__c"
+                    fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
+                    donationAmt="{!v.opp.Amount}"
+                    preventAmountSurplus="true"
+                    preventAmountDeficit="false"
+                    picklistOptions="{!v.picklistOptions}"
+                    jsonObj="{!v.jsonObject}" />
 
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-page-header slds-page-header__title">
-                            Donation Information
-                        </div>
-                    </div>
-
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <label class="show-required slds-form-element__label">
-                            {!v.objectLabels.Opportunity.Name}
-                        </label>
-                        <force:inputField aura:id="requiredField" 
-                            value="{!v.opp.Name}" />
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <label class="show-required slds-form-element__label">
-                            {!v.objectLabels.Opportunity.Amount}
-                        </label>
-                        <force:inputField aura:id="amtField"
-                            change="{!c.handleAmountChange}"
-                            value="{!v.opp.Amount}" />
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <label class="show-required slds-form-element__label">
-                            {!v.objectLabels.Opportunity.CloseDate}
-                        </label>
-                        <force:inputField aura:id="requiredField" 
-                            value="{!v.opp.CloseDate}" />
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <label class="show-required slds-form-element__label">
-                            {!v.objectLabels.Opportunity.StageName}
-                        </label>
-                        <force:inputField aura:id="requiredField" 
-                            value="{!v.opp.StageName}" />
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <label class="slds-form-element__label">
-                            {!v.objectLabels.Payment.npe01__Payment_Method__c}
-                        </label>
-                        <force:inputField value="{!v.payment.npe01__Payment_Method__c}" />
-                    </div>
-
-                    <!-- Only show for Payment method = Check -->
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <aura:if isTrue="{!v.payment.npe01__Payment_Method__c == 'Check'}">
-                            <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                                <label class="slds-form-element__label">
-                                    {!v.objectLabels.Payment.npe01__Check_Reference_Number__c}
-                                </label>
-                                <force:inputField value="{!v.payment.npe01__Check_Reference_Number__c}" />
-                            </div>
-                        </aura:if>
-                    </div>
-
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <label class="show-required slds-form-element__label">
-                            {!v.objectLabels.Opportunity.CampaignId}
-                        </label>
-                        <force:inputField aura:id="requiredField" 
-                            value="{!v.opp.CampaignId}" />
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <label class="show-required slds-form-element__label">
-                            {!v.objectLabels.Opportunity.Description}
-                        </label>
-                        <force:inputField aura:id="requiredField" 
-                            value="{!v.opp.Description}" />
-                    </div>
-
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-page-header slds-page-header__title">
-                            Tribute Information
-                        </div>
-                    </div>
-
-                    <c:giftPicklist picklistValues="{!v.picklistOptions.Donation_Tribute_Type__c}" 
-                        fieldLabel="Tribute Type" 
-                        inputFieldId="tributeTypeField"
-                        isDisabled="{!v.oppClosed == true}"
-                        selectedVal="{!v.tributeType}" />
-                    <lightning:inputField class="hidden-field" 
-                        aura:id="tributeTypeField"
-                        fieldName="{!v.namespaceFieldPrefix+'Donation_Tribute_Type__c'}" />
-
-                    <c:giftPicklist picklistValues="{!v.picklistOptions.Donation_Acknowledgment_Status__c}" 
-                        fieldLabel="Acknowledgement Preference" 
-                        inputFieldId="ackPrefField"
-                        isDisabled="{!v.oppClosed == true}"
-                        selectedVal="{!v.ackPrefStatus}"  />
-                    <lightning:inputField class="hidden-field" 
-                        aura:id="ackPrefField"
-                        fieldName="{!v.namespaceFieldPrefix+'Donation_Acknowledgment_Status__c'}" />
-                        
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!v.namespaceFieldPrefix+'Donation_Honoree_Name__c'}" /> 
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!v.namespaceFieldPrefix+'Notification_Recipient_Name__c'}" /> 
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!v.namespaceFieldPrefix+'Donation_Notification_Message__c'}" /> 
-                    </div>
-
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-page-header slds-page-header__title">
-                            Matching Gift
-                        </div>
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!v.namespaceFieldPrefix+'Donation_Matching_Gift_Employer__c'}" /> 
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!v.namespaceFieldPrefix+'Donation_Matching_Gift_Account__c'}" /> 
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                        <lightning:inputField fieldName="{!v.namespaceFieldPrefix+'Donation_Matching_Gift__c'}" /> 
-                    </div>
-
-                    <c:giftPicklist picklistValues="{!v.picklistOptions.Donation_Matching_Gift_Status__c}" 
-                        fieldLabel="Matching Gift Status" 
-                        inputFieldId="matchingStatusField"
-                        isDisabled="{!v.oppClosed == true}"
-                        selectedVal="{!v.matchingGiftStatus}"  />
-                    <lightning:inputField class="hidden-field" 
-                        aura:id="matchingStatusField"
-                        fieldName="{!v.namespaceFieldPrefix+'Donation_Matching_Gift_Status__c'}" />
-
-                    <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
-                        rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
-                        picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}"
-                        jsonObject="{!v.jsonObject}" 
-                        paymentMethod="{!v.selectedPaymentMethod}" 
-                        donationAmt="{!v.donationAmount}" />
-
-                    <c:giftFormRelated sectionTitle="Allocation"
-                        objectName="npsp__Allocation__c"
-                        rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
-                        oppField="npsp__Opportunity__c"
-                        fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
-                        donationAmt="{!v.donationAmount}"
-                        preventAmountSurplus="true"
-                        preventAmountDeficit="false"
-                        picklistOptions="{!v.picklistOptions}"
-                        jsonObj="{!v.jsonObject}" />
-
-                    <c:giftFormRelated sectionTitle="Soft Credits"
-                        objectName="npsp__Partial_Soft_Credit__c"
-                        rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
-                        oppField="npsp__Opportunity__c"
-                        fieldList="npsp__Amount__c,npsp__Contact__c,npsp__Role_Name__c"
-                        donationAmt="{!v.donationAmount}"
-                        preventAmountSurplus="true"
-                        preventAmountDeficit="false"
-                        picklistOptions="{!v.picklistOptions}"
-                        jsonObj="{!v.jsonObject}" />
-
-                    <aura:if isTrue="{!v.submitError}">   
-                        <div class="slds-col slds-size_1-of-1">
-                            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-                                <h2>{!v.submitError}</h2>
-                            </div>
-                        </div>
-                    </aura:if>
-
-                    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                        <lightning:input aura:id="doDryRun" type="checkbox" checked="true" class="slds-m-bottom_small"
-                            label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
-                        <lightning:button aura:id="createButton" 
-                            disabled="true" 
-                            label="Create Gift" 
-                            variant="brand" 
-                            onclick="{!c.clickCreate}" />
-                    </div>
-
-                    <!-- <lightning:button label="Test JSON" 
-                        onclick="{!c.doJsonUpdate}" /> -->
-
-                    <!-- Fields that are hidden from the user, set by code -->
-                    <div class="slds-hidden" style="height: 0">
-                        <lightning:inputField aura:id="doNotAutoCreatePayment" 
-                            fieldName="{!v.namespaceFieldPrefix+'Do_Not_Automatically_Create_Payment__c'}"  />
-                        <lightning:inputField aura:id="batchIdField" 
-                            fieldName="npsp__NPSP_Data_Import_Batch__c" />
-                        <lightning:inputField aura:id="recordTypeIdField" 
-                            fieldName="npsp__Donation_Record_Type_Name__c" />
-                        <lightning:inputField aura:id="postProcessJsonField" 
-                            fieldName="{!v.namespaceFieldPrefix+'Post_Process_Object_JSON__c'}" />
-                        <lightning:inputField aura:id="dateField" 
-                            fieldName="npsp__Donation_Date__c" />
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Donor Information
                     </div>
                 </div>
 
-            </lightning:recordEditForm>
+                <div class="slds-col slds-size_1-of-1">
+                    <c:giftPicklist picklistValues="[{value:'Contact1',label:'Contact'},{value:'Account1',label:'Account'},{value:'',label:'Account with Contact'}]" 
+                        fieldLabel="Donor Type" 
+                        selectedVal="{!v.donorType}" />
+                </div>
+
+                <div class="{!v.donorType != 'Contact1' ? 'slds-wrap slds-grid slds-size_1-of-1' : 'slds-hidden'}">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectLabels.Account.Name}
+                        </label>
+                        <force:inputField aura:id="requiredAccountField" 
+                            change="{!c.handleFieldChange}"
+                            value="{!v.acct.Name}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectLabels.Opportunity.AccountId}
+                        </label>
+                        <force:inputField aura:id="requiredAccountField" 
+                            value="{!v.opp.AccountId}" />
+                    </div>
+                </div>
+                <div class="{!v.donorType != 'Account1' ? 'slds-wrap slds-grid slds-size_1-of-1' : 'slds-hidden'}">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectLabels.Contact.FirstName}
+                        </label>
+                        <force:inputField aura:id="requiredContactField"
+                            change="{!c.handleFieldChange}"
+                            value="{!v.contact.FirstName}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectLabels.Contact.LastName}
+                        </label>
+                        <force:inputField aura:id="requiredContactField"
+                            change="{!c.handleFieldChange}"
+                            value="{!v.contact.LastName}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectLabels.Contact.Phone}
+                        </label>
+                        <force:inputField value="{!v.contact.Phone}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectLabels.Contact.Email}
+                        </label>
+                        <force:inputField value="{!v.contact.Email}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectLabels.Opportunity.npsp__Primary_Contact__c}
+                        </label>
+                        <force:inputField aura:id="requiredDonorField"
+                            value="{!v.opp.npsp__Primary_Contact__c}" />
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Donation Information
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="show-required slds-form-element__label">
+                        {!v.objectLabels.Opportunity.Name}
+                    </label>
+                    <force:inputField aura:id="requiredField" 
+                        value="{!v.opp.Name}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="show-required slds-form-element__label">
+                        {!v.objectLabels.Opportunity.Amount}
+                    </label>
+                    <force:inputField aura:id="amtField"
+                        change="{!c.handleAmountChange}"
+                        value="{!v.opp.Amount}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="show-required slds-form-element__label">
+                        {!v.objectLabels.Opportunity.CloseDate}
+                    </label>
+                    <force:inputField aura:id="requiredField" 
+                        value="{!v.opp.CloseDate}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="show-required slds-form-element__label">
+                        {!v.objectLabels.Opportunity.StageName}
+                    </label>
+                    <force:inputField aura:id="requiredField" 
+                        value="{!v.opp.StageName}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Payment.npe01__Payment_Method__c}
+                    </label>
+                    <force:inputField value="{!v.payment.npe01__Payment_Method__c}" />
+                </div>
+
+                <!-- Only show for Payment method = Check -->
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <aura:if isTrue="{!v.payment.npe01__Payment_Method__c == 'Check'}">
+                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                            <label class="slds-form-element__label">
+                                {!v.objectLabels.Payment.npe01__Check_Reference_Number__c}
+                            </label>
+                            <force:inputField value="{!v.payment.npe01__Check_Reference_Number__c}" />
+                        </div>
+                    </aura:if>
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.CampaignId}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.CampaignId}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.Description}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.Description}" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Tribute Information
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Tribute_Type__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Tribute_Type__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Acknowledgment_Status__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Honoree_Name__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Honoree_Name__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Honoree_Contact__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Honoree_Contact__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Notification_Recipient_Name__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Notification_Recipient_Name__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Notification_Message__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Notification_Message__c}" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-page-header slds-page-header__title">
+                        Matching Gift
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Matching_Gift_Employer__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Matching_Gift_Employer__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Matching_Gift_Account__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Matching_Gift_Account__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Matching_Gift__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Matching_Gift__c}" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="slds-form-element__label">
+                        {!v.objectLabels.Opportunity.npsp__Matching_Gift_Status__c}
+                    </label>
+                    <force:inputField 
+                        value="{!v.opp.npsp__Matching_Gift_Status__c}" />
+                </div>
+
+                <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
+                    rowList="{!v.payments}"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
+                    picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}"
+                    jsonObject="{!v.jsonObject}" 
+                    paymentMethod="{!v.payment.npe01__Payment_Method__c}"
+                    donationAmt="{!v.opp.Amount}" />
+
+                <c:giftFormRelated sectionTitle="Soft Credits"
+                    rowList="{!v.partialCredits}"
+                    objectName="npsp__Partial_Soft_Credit__c"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
+                    oppField="npsp__Opportunity__c"
+                    fieldList="npsp__Amount__c,npsp__Contact__c,npsp__Role_Name__c"
+                    donationAmt="{!v.opp.Amount}"
+                    preventAmountSurplus="true"
+                    preventAmountDeficit="false"
+                    picklistOptions="{!v.picklistOptions}"
+                    jsonObj="{!v.jsonObject}" />
+
+                <aura:if isTrue="{!v.submitError}">   
+                    <div class="slds-col slds-size_1-of-1">
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>{!v.submitError}</h2>
+                        </div>
+                    </div>
+                </aura:if>
+
+                <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                    <lightning:input aura:id="doDryRun" type="checkbox" checked="false" class="slds-m-bottom_small"
+                        label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
+                    <lightning:button aura:id="createButton" 
+                        disabled="true" 
+                        label="Create Gift" 
+                        variant="brand" 
+                        onclick="{!c.clickCreate}" />
+                </div>
+
+                <!-- Fields that are hidden from the user, set by code -->
+                 <div class="slds-hidden" style="height: 0">
+                    <lightning:input name="jsonInput" aura:id="postProcessJsonField" />
+                    <force:inputField aura:id="doNotAutoCreatePayment" 
+                        value="{!v.opp.npe01__Do_Not_Automatically_Create_Payment__c}" />
+                    <!-- <lightning:inputField aura:id="doNotAutoCreatePayment" 
+                        fieldName="{!v.namespaceFieldPrefix+'Do_Not_Automatically_Create_Payment__c'}"  />
+                    <lightning:inputField aura:id="batchIdField" 
+                        fieldName="npsp__NPSP_Data_Import_Batch__c" />
+                    <lightning:inputField aura:id="recordTypeIdField" 
+                        fieldName="npsp__Donation_Record_Type_Name__c" />
+                    <lightning:inputField aura:id="dateField" 
+                        fieldName="npsp__Donation_Date__c" /> -->
+                </div>
+            </div>
+
         </div>
 
         <aura:if isTrue="{!v.showSuccess}">

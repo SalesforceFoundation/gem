@@ -69,7 +69,7 @@ class UpdateAdminProfile(BaseUpdateAdminProfile):
             'namespaced_org': self.namespaced_org_prefix,
         }
         
-        # Set record type visibilities for Accounts
+        # Set record type visibilities for Account
         self._set_record_type(
             'Account.{namespaced_org}Administrative'.format(**namespace_args),
             'true',
@@ -97,6 +97,12 @@ class UpdateAdminProfile(BaseUpdateAdminProfile):
         self._set_record_type(
             'Account.{namespaced_org}University_Department'.format(**namespace_args),
             'false',
+        )
+
+        # Set record type visibilities for Opportunity
+        self._set_record_type(
+            'Opportunity.{namespaced_org}NPSP_Default'.format(**namespace_args),
+            'true'
         )
 
 

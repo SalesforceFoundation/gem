@@ -4,7 +4,8 @@
   "orgPreferences" : {
     "enabled": [
       "S1DesktopEnabled",
-      "ChatterEnabled"
+      "ChatterEnabled",
+      "DisableParallelApexTesting"
     ]
   }
 }

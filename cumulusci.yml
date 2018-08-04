@@ -53,7 +53,6 @@ flows:
                 task: deploy_dev_config
                 options:
                     unmanaged: False
-
     ci_feature:
       steps:
         7.1:
@@ -61,6 +60,11 @@ flows:
            options:
                managed: True
                namespace: hed
+        7.2:
+            task: run_tests
+            options:
+                managed: True
+                namespace: npsp
                
 orgs:
     scratch:

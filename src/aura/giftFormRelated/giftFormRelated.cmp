@@ -23,6 +23,7 @@
     <aura:attribute type="String" name="amountError" />
     <aura:attribute type="Boolean" name="checkAmountTotals" default="true" />
     <aura:attribute type="Boolean" name="preventAmountSurplus" default="false" />
+    <aura:attribute type="Boolean" name="preventAmountDeficit" default="false" />
     <aura:attribute type="Boolean" name="preventSubmit" default="false" />
     
     <aura:if isTrue="{!v.sectionTitle}">

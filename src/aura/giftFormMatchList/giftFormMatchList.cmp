@@ -1,0 +1,21 @@
+<aura:component>
+    <!-- <aura:attribute name="giftObjMap" type="Map" /> -->
+    <aura:attribute name="oppObj" type="sObject" />
+    <aura:attribute name="objectList" type="List" />
+    <aura:attribute name="optionList" type="List" default="[]" />
+    <aura:attribute name="selectedValue" type="String" />
+    <aura:attribute name="sectionLabel" type="String" />
+    <aura:attribute name="idField" type="String" />
+
+    <aura:handler name="change" value="{!v.objectList}" action="{!c.handleListChange}"/>
+    <aura:handler name="change" value="{!v.selectedValue}" action="{!c.handleSelectionChange}"/>
+
+    <div class="slds-col slds-size_1-of-1 slds-p-around_small radio-group">
+        <lightning:radioGroup name="{!v.sectionLabel}"
+            label="{!v.sectionLabel}"
+            options="{!v.optionList}"
+            value="{!v.selectedValue}"
+            type="radio"/>
+    </div>
+	
+</aura:component>

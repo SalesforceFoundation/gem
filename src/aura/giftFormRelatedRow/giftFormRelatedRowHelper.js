@@ -92,11 +92,13 @@
         return findResult;
     },
     validateField: function(component, inputCmp, validationInfo, checkDupes, helper){
+        console.log(inputCmp);
         var disabled = inputCmp.get("v.disabled");
         if(disabled){
             helper.removeError(inputCmp);
             return validationInfo.validSoFar;
         }
+
         var fieldVal = inputCmp.get("v.value");
         //console.log(fieldVal);
         var isValid = fieldVal || fieldVal === false;

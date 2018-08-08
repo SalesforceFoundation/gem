@@ -37,10 +37,12 @@
 @isTest
 private class GiftEntryFormController_TEST {
 
+    private static String acctName = 'Test Account';
     private static String cFirst = 'Testfirst';
     private static String cLast = 'Testlast';
     private static String c2First = 'Secondname';
     private static String c2Last = 'Secondlast';
+    private static String oppName = 'Test Opp';
     private static String openStage = 'Prospecting';
     private static String openStage2 = 'Qualification';
     private static String tributeName = 'Tribute Name';
@@ -48,9 +50,19 @@ private class GiftEntryFormController_TEST {
     private static String updateStringTest = 'New Text';
     private static String donationName = 'Test Donation';
     private static Decimal donationAmount = 100;
+    private static String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
     
     @testSetup static void setupGiftEntry() {
     	GiftEntryFormController.insertGiftEntrySettings();
+    }
+
+    private static void setupControllerData(){
+        GiftEntryFormController.acct = new Account(Name=acctName);
+        GiftEntryFormController.contact = new Contact(FirstName=cFirst, LastName=cLast);
+        GiftEntryFormController.opp = new Opportunity(Name=oppName, 
+            CloseDate=System.today(), 
+            StageName=closedWonStage, 
+            Amount=donationAmount);
     }
 
     /*******************************************************************************************************
@@ -59,17 +71,7 @@ private class GiftEntryFormController_TEST {
     @isTest
     private static void testNewGift() {
 
-        String acctName = 'Test Account';
-        String cFirst = 'TestFirst';
-        String cLast = 'TestLast';
-        String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
-
-        GiftEntryFormController.acct = new Account(Name=acctName);
-        GiftEntryFormController.contact = new Contact(FirstName=cFirst, LastName=cLast);
-        GiftEntryFormController.opp = new Opportunity(Name='Test Opp', 
-            CloseDate=System.today(), 
-            StageName=closedWonStage, 
-            Amount=100);
+        setupControllerData();
     
         Test.startTest();
         GiftEntryFormController.saveDonationInformation();
@@ -89,6 +91,39 @@ private class GiftEntryFormController_TEST {
         List<npe01__OppPayment__c> payments = [SELECT Id FROM npe01__OppPayment__c 
             WHERE npe01__Opportunity__c =: opp.Id];
         System.assertEquals(1, payments.size(), 'There should be a payment for the closed donation');
+
+    }
+
+    @isTest
+    private static void setDataMatches() {
+
+        Account a = new Account(Name=acctName + ' 2');
+        insert a;
+        insert new Contact(Firstname='NewFirst',Lastname=cLast);
+        insert new Opportunity(Name=oppName + ' 2', 
+            CloseDate=System.today().addDays(-10),
+            AccountId=a.Id, 
+            StageName=closedWonStage,
+            Amount=50);
+
+        setupControllerData();
+
+        //GiftEntryFormController.processGiftJSON(testJson, true);
+        Map<String, List<sObject>> matchMap = GiftEntryFormController.setDataMatches();
+
+        System.assertNotEquals(null, matchMap, 'The object map should have come back');
+
+        System.assertNotEquals(null, GiftEntryFormController.matchedAccts);
+        System.assertEquals(1, GiftEntryFormController.matchedAccts.size(), 
+            'One Account match should be found');
+
+        System.assertNotEquals(null, GiftEntryFormController.matchedContacts);
+        System.assertEquals(1, GiftEntryFormController.matchedContacts.size(), 
+            'One Contact match should be found');
+
+        System.assertNotEquals(null, GiftEntryFormController.matchedOpps);
+        System.assertEquals(1, GiftEntryFormController.matchedContacts.size(), 
+            'One Opportunity match should be found');
 
     }
 
@@ -135,6 +170,73 @@ private class GiftEntryFormController_TEST {
 
         List<Account> aList = [SELECT Id, Name FROM Account WHERE Name =: acctName];
         System.assert(aList.size() == 0, 'Account should have been updated, not added');
+    }
+
+    @isTest
+    private static void testJsonProcess() {
+
+        String gauAmt = '123';
+        String gauPerc = '12';
+        String gauName = 'Test2';
+        npsp__General_Accounting_Unit__c testGau = 
+            new npsp__General_Accounting_Unit__c(Name=gauName, npsp__Active__c=true);
+
+        insert testGau;
+        String gauId = (String)testGau.Id;
+
+        Contact scContact = new Contact(FirstName='Soft', LastName='Credit');
+        insert scContact;
+        Id scContactId = scContact.Id;
+
+        // Test stripping Lightning attributes from JSON, then processing it into a Donation
+        String testJson = '{"npsp__Allocation__c":[],"npe01__OppPayment__c":[],"npsp__Partial_Soft_Credit__c":[]'
+        + ',"Account":[{"Name":"New Account"}]'
+        + ',"Contact":[{"FirstName":"Firstname","LastName":"Lastname"}]'
+        + ',"Opportunity":[{"sobjectType":"Opportunity","AccountId":"","Account":{"sobjectType":"Account","Name":""},"npsp__Primary_Contact__c":"","npsp__Primary_Contact__r":{"sobjectType":"Contact","Name":""},"StageName":"Closed Won","Campaign":{"sobjectType":"Campaign","Name":""},"npsp__Tribute_Type__c":"","npsp__Acknowledgment_Status__c":"","npsp__Honoree_Contact__c":"","npsp__Honoree_Contact__r":{"sobjectType":"Contact","Name":""},"npsp__Matching_Gift_Account__c":"","npsp__Matching_Gift_Account__r":{"sobjectType":"Account","Name":""},"npsp__Matching_Gift__c":"","npsp__Matching_Gift__r":{"sobjectType":"Opportunity","Name":""},"npsp__Matching_Gift_Status__c":"","Name":"Test Opp","Amount":1000,"CloseDate":"2018-08-03"}]'
+        + ',"npsp__Allocation__c":['
+        + '{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"'+gauAmt+'","npsp__Percent__c":""}'
+        + ',{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"","npsp__Percent__c":"'+gauPerc+'"}'
+        + ']'
+        + ',"npe01__OppPayment__c":['
+        + '{"npe01__Payment_Amount__c":"'+gauAmt+'","npe01__Scheduled_Date__c":"2018-08-06","npe01__Payment_Method__c":"Cash","npe01__Opportunity__c":""}'
+        + ']'
+        + ',"npsp__Partial_Soft_Credit__c":[' 
+        + '{"npsp__Amount__c":"'+gauAmt+'","npsp__Contact__c":"' + scContactId + '"}]'
+        + '}';
+        
+        Id oppId = GiftEntryFormController.processGiftJSON(testJson, false);
+
+        System.assert(oppId != null, 'The new Opportunity ID should be returned');
+
+        Contact c = GiftEntryFormController.contact;
+        Account a = GiftEntryFormController.acct;
+        Opportunity o = GiftEntryFormController.opp;
+        List<npsp__Allocation__c> allocs = GiftEntryFormController.allocs;
+        List<npe01__OppPayment__c> payments = GiftEntryFormController.payments;
+
+        System.assertEquals('Firstname', c.FirstName, 'The Contact should be set on the controller');
+        System.assertEquals('New Account', a.Name, 'The Account should be set on the controller');
+        System.assertEquals('Test Opp', o.Name, 'The Opportunity should be set on the controller');
+
+        // Check that the allocations were created
+        List<npsp__Allocation__c> alloQuery = [Select Id from npsp__Allocation__c 
+            where npsp__General_Accounting_Unit__c =: gauId
+            and npsp__Opportunity__c =: oppId];
+        System.assertEquals(2, alloQuery.size());
+
+        // Check that the payments were created
+        Decimal payAmt = Decimal.ValueOf(gauAmt);
+        List<npe01__OppPayment__c> paymentQuery = [Select Id from npe01__OppPayment__c 
+            where npe01__Opportunity__c =: oppId
+            and npe01__Payment_Amount__c =: payAmt];
+        System.assertEquals(1, paymentQuery.size());
+        
+        // Check that partia soft credits were created
+        List<npsp__Partial_Soft_Credit__c> pscQuery = [Select Id from npsp__Partial_Soft_Credit__c 
+            where npsp__Contact__c =: scContactId
+            and npsp__Amount__c =: payAmt];
+        System.assertEquals(1, pscQuery.size());
+        
     }
 
     @isTest
@@ -205,32 +307,6 @@ private class GiftEntryFormController_TEST {
 
         //System.debug(oppList);
         System.assertEquals(1, oppList.size());
-    }
-
-    @isTest
-    private static void testJsonProcess() {
-
-        // Test stripping Lightning attributes from JSON, then processing it into a Donation
-
-        String testJson = '{"npsp__Allocation__c":[],"npe01__OppPayment__c":[],"npsp__Partial_Soft_Credit__c":[]'
-        + ',"Account":[{"Name":"New Account"}]'
-        + ',"Contact":[{"FirstName":"Firstname","LastName":"Lastname"}]'
-        + ',"Opportunity":[{"sobjectType":"Opportunity","AccountId":"","Account":{"sobjectType":"Account","Name":""},"npsp__Primary_Contact__c":"","npsp__Primary_Contact__r":{"sobjectType":"Contact","Name":""},"StageName":"Closed Won","Campaign":{"sobjectType":"Campaign","Name":""},"npsp__Tribute_Type__c":"","npsp__Acknowledgment_Status__c":"","npsp__Honoree_Contact__c":"","npsp__Honoree_Contact__r":{"sobjectType":"Contact","Name":""},"npsp__Matching_Gift_Account__c":"","npsp__Matching_Gift_Account__r":{"sobjectType":"Account","Name":""},"npsp__Matching_Gift__c":"","npsp__Matching_Gift__r":{"sobjectType":"Opportunity","Name":""},"npsp__Matching_Gift_Status__c":"","Name":"Test Opp","Amount":1000,"CloseDate":"2018-08-03"}]'
-        + '}';
-
-        Id oppId = GiftEntryFormController.processGiftJSON(testJson);
-
-        System.assert(oppId != null, 'The new Opportunity ID should be returned');
-
-        Contact c = GiftEntryFormController.contact;
-        Account a = GiftEntryFormController.acct;
-        Opportunity o = GiftEntryFormController.opp;
-        List<npsp__Allocation__c> allocs = GiftEntryFormController.allocs;
-
-        System.assertEquals('Firstname', c.FirstName, 'The Contact should be set on the controller');
-        System.assertEquals('New Account', a.Name, 'The Account should be set on the controller');
-        System.assertEquals('Test Opp', o.Name, 'The Opportunity should be set on the controller');
-
     }
     
     @isTest

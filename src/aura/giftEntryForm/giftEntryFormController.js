@@ -1,18 +1,22 @@
 ({
     doInit: function(component, event, helper) {
-
         // Get Object field labels for use in the form
-        var getLabelsAction = component.get("c.getObjNameToApiToLabel");
-        getLabelsAction.setCallback(this, function(response) {
+        var getClassAction = component.get("c.initClass");
+        getClassAction.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                component.set("v.objectLabels", response.getReturnValue());
+                var giftCtrl = response.getReturnValue();
+                component.set("v.giftClassController", giftCtrl);
+                component.set("v.objectLabels", giftCtrl.objNameToApiToLabel);
+                
+                // TODO: More init functions here? Check for existing record Id?
+
             } else if (state === "ERROR") {
-                var errors = response.getError();
                 helper.handleError(component, response);
             }
         });
-        $A.enqueueAction(getLabelsAction); 
+        $A.enqueueAction(getClassAction);
+
 
         var recordId = component.get('v.recordId');
         // Make changes based on mode
@@ -26,24 +30,29 @@
             action.setCallback(this, function(response) {
                 var state = response.getState();
                 if (state === "SUCCESS") {
-
                     var objMap = response.getReturnValue();
-
                     console.log(objMap); 
-
-                    if(objMap && objMap.Opportunity){
-                        component.set("v.opp", objMap.Opportunity);
+                    if(objMap){
+                        if(objMap.Opportunity){
+                            component.set("v.opp", objMap.Opportunity);
+                        }
+                        if(objMap.Account){
+                            component.set("v.acct", objMap.Account);
+                        }
+                        if(objMap.Contact){
+                            component.set("v.contact", objMap.Contact);
+                        }
                     }
-                    // component.set("v.acct", response.getReturnValue());
-                    // component.set("v.contact", response.getReturnValue());
                 }
             });
 
             $A.enqueueAction(action); 
 
             component.set('v.editMode', true);
-            component.find('createButton').set('v.label', 'Update Gift');
+            helper.changeSubmitText(component, 'Update Gift');
         }
+
+
         var namespace = component.getType().split(':')[0];
         component.set("v.namespacePrefix", namespace);
         if(namespace != "c"){
@@ -62,11 +71,13 @@
         helper.setDefaults(component, helper);
         
         // Also set the amount in the payment scheduler
-        var amtField = component.find("amtField");
-        if(amtField){
-            var amt = amtField.get("v.value");
-            helper.updateAmountField(component, amt);
-        }
+        // var amtField = component.find("amtField");
+        // if(amtField){
+        //     var amt = amtField.get("v.value");
+        //     helper.updateAmountField(component, amt);
+        // }
+
+        //helper.setGiftObjMap(component);
         
         helper.checkValidation(component);
     },
@@ -91,7 +102,6 @@
             if(jsonIsValid){
                 component.set("v.submitError", "");
                 helper.processGiftJson(component);
-                //component.find('giftEditForm').submit();
             } else {
                 component.set('v.showSpinner', false);
                 component.set("v.submitError", "Error on form");

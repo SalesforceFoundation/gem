@@ -38,7 +38,7 @@
                 <aura:iteration items="{!v.picklistOptions.npsp__Role_Name__c}" var="plWrapper">
                     <option value="{!plWrapper.value}"
                         text="{!plWrapper.label}"
-                        selected="{!plWrapper.value == v.selectedVal}">
+                        selected="{!plWrapper.value == v.item.npsp__Role_Name__c}">
                     </option>
                 </aura:iteration>
             </lightning:select>

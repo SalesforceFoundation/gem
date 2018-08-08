@@ -1,24 +1,22 @@
 ({
     setDefaults: function(component, helper){
         // If Updating and Stage is set to Closed, disable Donation fields
-        var stageField = component.find("stageField");
-        if(stageField){
-            var stage = stageField.get("v.value");
-            var closedStage = component.get("v.closedStage");
-            var oppClosed = stage == closedStage ? true : false;
-            component.set("v.oppClosed", oppClosed);
-        }
+        // var stageField = component.find("stageField");
+        // if(stageField){
+        //     var stage = stageField.get("v.value");
+        //     // TODO: Query this instead
+        //     var closedStage = component.get("v.closedStage");
+        //     var oppClosed = stage == closedStage ? true : false;
+        //     component.set("v.oppClosed", oppClosed);
+        // }
 
         // For new forms, set Date to Today, otherwise use existing value
-        var dateField = component.find("dateField");
-        if(dateField){
-            var closeDate = dateField.get("v.value");
-            if(!closeDate){
-                // Set Close Date to Today
-                closeDate = new Date();
-                closeDate = this.convertDateToString(closeDate);
-            }
-            component.set("v.paymentDate", closeDate);            
+        var curDate = component.get("v.opp.CloseDate");
+        if(!curDate){
+            // Set Close Date to Today
+            var closeDate = new Date();
+            closeDate = this.convertDateToString(closeDate);
+            component.set("v.opp.CloseDate", closeDate);
         }
 
         this.setPicklists(component, helper);
@@ -98,29 +96,15 @@
         }
     },
     updateAmountField: function(component, amt){
-        component.set("v.donationAmount", amt);
+        console.log("updateAmountField, not needed?"); 
+        //component.set("v.donationAmount", amt);
     },
     redirectToDonation: function(component, oppId){
-        
         var event = $A.get("e.force:navigateToSObject");
         event.setParams({
             recordId: oppId
         });
         event.fire();
-
-        // var oppId = component.get("v.oppId");
-
-        // if(!oppId){
-        //     var recordId = component.get('v.returnedRecordId');
-        //     var redirectAfter = true;
-        //     this.getImportedDonationId(component, recordId, redirectAfter);
-        // } else {
-        //     var event = $A.get("e.force:navigateToSObject");
-        //     event.setParams({
-        //         recordId: oppId
-        //     });
-        //     event.fire();
-        // }
     },
     getImportedDonationId: function(component, dataImportObjId, redirectAfter){
         var action = component.get("c.getOpportunityIdFromImport");
@@ -147,64 +131,74 @@
     processGiftJson: function(component) {
         component.set("v.showSpinner", true);
 
-        var jsonString = component.get("v.jsonObj");
+        var checkDataMatches = component.find("doDryRun").get("v.checked");
+        var jsonString = component.get("v.jsonObjectString");
 
-        // Now run the batch for this single gift
+        // Now process the JSON for this single gift
         var action = component.get("c.processGiftJSON");
         action.setParams({
-            jsonObj: jsonString
+            jsonObj: jsonString,
+            checkDataMatches: checkDataMatches
         });
 
         action.setCallback(this, function(response) {
             var state = response.getState();
+
             if (state === "SUCCESS") {
-                //this.scrollToTop();
-                var oppId = response.getReturnValue();
-                this.redirectToDonation(component, oppId);
-                
-                component.set("v.showForm", false);
-                component.set("v.showSuccess", true);
-                component.set("v.showSpinner", false);
-                
+                var giftCtrl = response.getReturnValue();
+                console.log(giftCtrl); 
+                component.set("v.giftClassController", giftCtrl);
+                var oppId = giftCtrl.oppId;
+
+                if(checkDataMatches){
+                    // component.set("v.showForm", false);
+                    // component.set("v.showSuccess", true);
+                    component.set("v.showSpinner", false);
+                    //this.scrollToTop();
+                } else {
+                    this.redirectToDonation(component, oppId);
+                }
             } else if (state === "ERROR") {
                 //var errors = response.getError();
                 this.handleError(component, response);
             }
         });
 
+        $A.enqueueAction(action);
+    },
+
+    processGift: function(component, dataImportObjId, dryRun) {
+        // No longer used in Single Gift Entry, could be useful for Batch Gift Entry
+        component.set("v.showSpinner", true);
+
+        // Now run the batch for this single gift
+        var action = component.get("c.runGiftProcess");
+        action.setParams({
+            diObjId: dataImportObjId,
+            dryRunMode: dryRun
+        });
+
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                this.scrollToTop();
+                // Navigate to Opportunity page
+                if(!dryRun){
+                    this.redirectToDonation(component, dataImportObjId);
+                } else {
+                    // If dry run, show the results of data matching
+                    component.set("v.showForm", false);
+                    component.set("v.showSuccess", true);
+                    component.set("v.showSpinner", false);
+                }
+            } else if (state === "ERROR") {
+                var errors = response.getError();
+                this.handleError(component, response);
+            }
+        });
+
         $A.enqueueAction(action);        
     },
-    // processGift: function(component, dataImportObjId, dryRun) {
-    //     component.set("v.showSpinner", true);
-
-    //     // Now run the batch for this single gift
-    //     var action = component.get("c.runGiftProcess");
-    //     action.setParams({
-    //         diObjId: dataImportObjId,
-    //         dryRunMode: dryRun
-    //     });
-
-    //     action.setCallback(this, function(response) {
-    //         var state = response.getState();
-    //         if (state === "SUCCESS") {
-    //             this.scrollToTop();
-    //             // Navigate to Opportunity page
-    //             if(!dryRun){
-    //                 this.redirectToDonation(component, dataImportObjId);
-    //             } else {
-    //                 // If dry run, show the results of data matching
-    //                 component.set("v.showForm", false);
-    //                 component.set("v.showSuccess", true);
-    //                 component.set("v.showSpinner", false);
-    //             }
-    //         } else if (state === "ERROR") {
-    //             var errors = response.getError();
-    //             this.handleError(component, response);
-    //         }
-    //     });
-
-    //     $A.enqueueAction(action);        
-    // },
     checkValidation: function(component){
         var formValid = this.validateForm(component);
         var btn = component.find('createButton');
@@ -245,10 +239,11 @@
         }
         findResult = this.singleInputToArray(findResult);
         var validationResult = findResult.reduce(function (validSoFar, inputCmp) {
-            var disabled = inputCmp.get("v.disabled");
-            if(disabled){
-                return validSoFar;
-            }
+            //TODO: How to check force:inputField for disabled?
+            // var disabled = inputCmp.get("v.disabled");
+            // if(disabled){
+            //     return validSoFar;
+            // }
             var fieldVal = inputCmp.get("v.value");
             var isValid = fieldVal || fieldVal === false;
             if(!allMustBeValid && (isValid || validSoFar)){
@@ -287,7 +282,6 @@
         }
 
         var jsonObj = component.get("v.jsonObject");
-        //console.log(jsonObj); 
 
         // If related objects are valid, set the primary ones as well
         if(allRowsValid){
@@ -295,17 +289,12 @@
             var contact = this.proxyToObj(component.get("v.contact"));
             var opp = this.proxyToObj(component.get("v.opp"));
 
-            // console.log(acct); 
-            // console.log(contact); 
-            // console.log(opp); 
-
             jsonObj['Account'] = [acct];
             jsonObj['Contact'] = [contact];
             jsonObj['Opportunity'] = [opp];
             component.set("v.jsonObj", jsonObj);
         }
 
-        var jsonField = component.find("postProcessJsonField");
         if(jsonObj.npe01__OppPayment__c && jsonObj.npe01__OppPayment__c.length > 0){
             // Payments are being scheduled, do not create one for the full donation
             var autoPaymentField = component.find('doNotAutoCreatePayment');
@@ -313,9 +302,9 @@
                 autoPaymentField.set("v.value", true);
             }
         }
-        jsonObj = JSON.stringify(jsonObj);
-        console.log(jsonObj);
-        jsonField.set("v.value", jsonObj);
+        var jsonObjString = JSON.stringify(jsonObj);
+        console.log(jsonObjString);
+        component.set("v.jsonObjectString", jsonObjString);
         return allRowsValid;
     },
     scrollToTop: function(){
@@ -337,5 +326,8 @@
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object
         return JSON.parse(JSON.stringify(attr));
+    },
+    changeSubmitText: function(component, newText){
+        component.find('createButton').set('v.label', newText);
     }
 })

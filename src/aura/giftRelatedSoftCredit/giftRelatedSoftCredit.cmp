@@ -31,6 +31,7 @@
                 <label class="show-required slds-form-element__label">Role Name</label>
             </aura:if>
             <lightning:select name="select" 
+                aura:id="requiredField"
                 label="Role Name"
                 variant="label-hidden"
                 value="{!v.item.npsp__Role_Name__c}">

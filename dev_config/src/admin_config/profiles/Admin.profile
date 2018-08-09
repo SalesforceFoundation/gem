@@ -2,6 +2,7 @@
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
 	<applicationVisibilities>
         <application>%%%NAMESPACE%%%Gift_Entry</application>
+        <default>true</default>
         <visible>true</visible>
     </applicationVisibilities>
 

@@ -45,6 +45,17 @@ public static void initializeNPSPSettingsForADV() {
 
     // Not global, but might be needed for recurring donations?
     //database.executeBatch(new RD_InstallScript_BATCH(), 10); 
+
+    initializeHEDASettingsForADV();
+}
+
+public static void initializeHEDASettingsForADV() {
+
+    hed__Hierarchy_Settings__c orgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
+    orgSettings.hed__Automatic_Household_Naming__c = true;
+    orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
+    update orgSettings;
+
 }
 
 public static void AddGiftProcessor() {

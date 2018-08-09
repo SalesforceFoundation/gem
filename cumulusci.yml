@@ -74,7 +74,7 @@ flows:
             4: 
                 task: deploy_dev_config
             5:
-                task: test_data_default_settings
+                flow: test_data_setup
 
     config_qa:
         steps:
@@ -87,7 +87,7 @@ flows:
             5:
                 task: update_admin_profile
             6:
-                task: test_data_default_settings
+                flow: test_data_setup
             7:
                 flow: test_data_dev_org
 
@@ -110,6 +110,14 @@ flows:
                     managed: True
                     namespace: npsp
 
+    test_data_setup:
+        description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
+        steps:
+            1:
+                task: test_data_default_settings
+            2:
+                task: test_data_user_setup
+
     test_data_dev_org:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
         steps:
@@ -117,8 +125,6 @@ flows:
                 task: test_data_delete
             2:
                 task: test_data_dev_org
-            3:
-                task: test_data_user_setup
 
 orgs:
     scratch:

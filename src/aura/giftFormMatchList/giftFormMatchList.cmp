@@ -1,16 +1,24 @@
 <aura:component>
-    <!-- <aura:attribute name="giftObjMap" type="Map" /> -->
-    <aura:attribute name="oppObj" type="sObject" />
+    
+    <aura:registerEvent name="giftMatchChangeEvent" type="c:giftMatchChangeEvent"/>
+
     <aura:attribute name="objectList" type="List" />
     <aura:attribute name="optionList" type="List" default="[]" />
     <aura:attribute name="selectedValue" type="String" />
     <aura:attribute name="sectionLabel" type="String" />
     <aura:attribute name="idField" type="String" />
+    <aura:attribute name="objectType" type="String" />
+    <aura:attribute name="inputAuraId" type="String" />
+    <aura:attribute name="showSpinner" type="Boolean" />
+    <aura:attribute name="enableChangeEvent" type="Boolean" default="false" />
 
     <aura:handler name="change" value="{!v.objectList}" action="{!c.handleListChange}"/>
     <aura:handler name="change" value="{!v.selectedValue}" action="{!c.handleSelectionChange}"/>
 
     <div class="slds-col slds-size_1-of-1 slds-p-around_small radio-group">
+        <aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner />
+        </aura:if>
         <lightning:radioGroup name="{!v.sectionLabel}"
             label="{!v.sectionLabel}"
             options="{!v.optionList}"

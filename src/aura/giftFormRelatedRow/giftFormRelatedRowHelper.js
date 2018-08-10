@@ -92,7 +92,7 @@
         return findResult;
     },
     validateField: function(component, inputCmp, validationInfo, checkDupes, helper){
-        console.log(inputCmp);
+        //console.log(inputCmp);
         var disabled = inputCmp.get("v.disabled");
         if(disabled){
             helper.removeError(inputCmp);

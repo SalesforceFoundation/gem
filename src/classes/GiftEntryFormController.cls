@@ -380,6 +380,9 @@ public class GiftEntryFormController {
     public static GiftEntryFormController processGiftJSON(String jsonObj, Boolean checkDataMatches){
         try {
             GiftEntryFormController giftCtrl = new GiftEntryFormController();
+            if(jsonObj == null){
+                return giftCtrl;
+            }
             // First, attributes passed from Lightning that can't be deserialized
             String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
             String relatedObjectRegex = ',"((?!",").)+:\\{"[^}]+\\}';

@@ -1,0 +1,6 @@
+<aura:event type="COMPONENT" description="Match Change Event">
+	<aura:attribute name="selectedObject" type="sObject"/>
+    <aura:attribute name="objectType" type="String"/>
+    <aura:attribute name="inputAuraId" type="String"/>
+    <aura:attribute name="oppLookupField" type="String"/>
+</aura:event>

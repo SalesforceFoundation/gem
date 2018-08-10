@@ -128,10 +128,14 @@
 
         $A.enqueueAction(action);
     },
-    processGiftJson: function(component) {
-        component.set("v.showSpinner", true);
-
-        var checkDataMatches = component.find("doDryRun").get("v.checked");
+    processGiftJson: function(component, checkDataMatches) {
+        
+        if(checkDataMatches){
+            component.set("v.showMatchSpinner", true);
+        } else {
+            component.set("v.showSpinner", true);
+        }
+        
         var jsonString = component.get("v.jsonObjectString");
 
         // Now process the JSON for this single gift
@@ -151,22 +155,17 @@
                 var oppId = giftCtrl.oppId;
 
                 if(checkDataMatches){
-                    // component.set("v.showForm", false);
-                    // component.set("v.showSuccess", true);
-                    component.set("v.showSpinner", false);
-                    //this.scrollToTop();
+                    component.set("v.showMatchSpinner", false);
                 } else {
                     this.redirectToDonation(component, oppId);
                 }
             } else if (state === "ERROR") {
-                //var errors = response.getError();
                 this.handleError(component, response);
             }
         });
 
         $A.enqueueAction(action);
     },
-
     processGift: function(component, dataImportObjId, dryRun) {
         // No longer used in Single Gift Entry, could be useful for Batch Gift Entry
         component.set("v.showSpinner", true);
@@ -222,6 +221,8 @@
             donorExists = donorExists || this.checkFields(component, 'requiredDonorField', false);
         }
 
+        component.set("v.donorExists", donorExists);
+
         if(!donorExists){
             // Show error if no Donors have been entered
             component.set("v.submitError", "Donor information is required.");
@@ -276,24 +277,28 @@
         var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
         var allRowsValid = true;
 
+        var jsonObj = component.get("v.jsonObject");
+
+        if(jsonObj == null){
+            // If json has not been set yet, set to empty object
+            jsonObj = {};
+            component.set("v.jsonObj", jsonObj);
+        }
+
+        // First process the related objects
         for(var i=0; i < relatedCmp.length; i++){
             var jsonResp = relatedCmp[i].handleJsonUpdate();
             allRowsValid = allRowsValid && jsonResp;
         }
 
-        var jsonObj = component.get("v.jsonObject");
-
-        // If related objects are valid, set the primary ones as well
-        if(allRowsValid){
-            var acct = this.proxyToObj(component.get("v.acct"));
-            var contact = this.proxyToObj(component.get("v.contact"));
-            var opp = this.proxyToObj(component.get("v.opp"));
-
-            jsonObj['Account'] = [acct];
-            jsonObj['Contact'] = [contact];
-            jsonObj['Opportunity'] = [opp];
-            component.set("v.jsonObj", jsonObj);
-        }
+        // Now set the "primary" gift fields
+        var acct = this.proxyToObj(component.get("v.acct"));
+        var contact = this.proxyToObj(component.get("v.contact"));
+        var opp = this.proxyToObj(component.get("v.opp"));
+        jsonObj['Account'] = [acct];
+        jsonObj['Contact'] = [contact];
+        jsonObj['Opportunity'] = [opp];
+        component.set("v.jsonObj", jsonObj);
 
         if(jsonObj.npe01__OppPayment__c && jsonObj.npe01__OppPayment__c.length > 0){
             // Payments are being scheduled, do not create one for the full donation
@@ -306,6 +311,42 @@
         console.log(jsonObjString);
         component.set("v.jsonObjectString", jsonObjString);
         return allRowsValid;
+    },
+    setLookupField: function(component, objectType, selectedObject, inputAuraId, oppLookupField){
+        var newValue = [{}];
+        var newId = null;
+        //console.log(selectedObject);
+        if(selectedObject){
+            selectedObject = this.proxyToObj(selectedObject);
+            newId = selectedObject.Id;
+            newValue[0] = {
+                id: newId,
+                type: objectType,
+                label: selectedObject.Name
+            };
+        }
+
+        // Not needed? Setting via field value?
+        var oppObj = component.get("v.opp");
+        oppObj = this.proxyToObj(oppObj);
+        oppObj[oppLookupField] = newId;
+        component.set("v.opp", oppObj);
+        //console.log(oppObj);
+
+        if(objectType == 'Account'){
+            //inputAuraId = 'accountLookup';
+            component.set("v.acct", selectedObject);
+        } else if(objectType == 'Contact'){
+            //inputAuraId = 'contactLookup';
+            component.set("v.contact", selectedObject);  
+        }
+		
+		var field = component.find(inputAuraId);
+		if(field){
+            var lookupInput = field.get("v.body")[0];
+            lookupInput.updateValues();
+            lookupInput.set("v.values", this.proxyToObj(newValue));
+        }
     },
     scrollToTop: function(){
         window.scrollTo(0, 0);
@@ -324,6 +365,9 @@
 		return dateObj.toISOString().split('T')[0];
     },
     proxyToObj: function(attr){
+        if(!attr){
+            return null;
+        }
         // Used to convert a Proxy object to an actual Javascript object
         return JSON.parse(JSON.stringify(attr));
     },

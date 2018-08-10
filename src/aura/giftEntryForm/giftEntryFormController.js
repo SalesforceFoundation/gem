@@ -101,7 +101,8 @@
             // console.log(jsonIsValid); 
             if(jsonIsValid){
                 component.set("v.submitError", "");
-                helper.processGiftJson(component);
+                var checkDataMatches = component.find("doDryRun").get("v.checked");
+                helper.processGiftJson(component, checkDataMatches);
             } else {
                 component.set('v.showSpinner', false);
                 component.set("v.submitError", "Error on form");
@@ -109,6 +110,11 @@
         } else {
             component.set('v.showSpinner', false);
         }
+    },
+    checkMatches: function(component, event, helper) {
+        console.log("Check matches"); 
+        helper.fillJsonField(component);
+        helper.processGiftJson(component, true);
     },
     clickGoToDonation: function(component, event, helper){
         helper.redirectToDonation(component);
@@ -139,20 +145,6 @@
         
         helper.checkValidation(component);
     },
-    handleSuccess: function(component, event, helper) {
-        //console.log("Handle Success");
-        var response = event.getParam('response');
-        
-        var returnedId = response.id;
-        component.set('v.returnedRecordId', returnedId);
-        var curId = component.get('v.recordId');
-        if(!curId){
-            component.set('v.recordId', returnedId);
-        }
-        // Process the gift as a dry run, see how object matching would turn out
-        var doDryRun = component.find("doDryRun").get("v.checked");
-        helper.processGift(component, returnedId, doDryRun);
-    },
     handlePicklistChange: function(component, event, helper) {
         var newVal = event.getParam("newValue");
         var fieldId = event.getParam("fieldId");
@@ -161,19 +153,12 @@
             helper.setHiddenField(component, fieldId, newVal);
         }
     },
-    handleDryRunLoad: function(component, event, helper) {
-        //console.log("Handle dry run load");
-        // Hide and show messages based on results of the dry run import
-        var donationImportStatusField = component.find("donationImportStatus");
-        if(donationImportStatusField){
-            var donationImportStatus = donationImportStatusField.get("v.value");
-            var importFailureString = $A.get("$Label.npsp.bdiErrorDonationLookupMatch");
-            if(donationImportStatus == importFailureString){
-                component.set("v.showDonationImportError", true);
-            }
-        }
-    },
-    doJsonUpdate: function(component, event, helper) {
-        helper.fillJsonField(component);
+    handleMatchChange: function(component, event, helper) {
+        var selectedObject = event.getParam("selectedObject");
+        var objectType = event.getParam("objectType");
+        var inputAuraId = event.getParam("inputAuraId");
+        var oppLookupField = event.getParam("oppLookupField");
+
+        helper.setLookupField(component, objectType, selectedObject, inputAuraId, oppLookupField);
     }
 })

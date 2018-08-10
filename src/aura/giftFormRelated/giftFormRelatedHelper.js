@@ -60,6 +60,8 @@
         var oppField = component.get("v.oppField");
         var oppFieldName = component.get("v.oppField");
 
+        //console.log(jsonObj); 
+
         if(jsonObj == null){
             // If adding first row, set to empty object
             jsonObj = {};
@@ -68,6 +70,8 @@
             // If retrieved, turn the attribute into an actual Javascript object
             jsonObj = this.proxyToObj(jsonObj);
         }
+        // jsonObj = this.proxyToObj(jsonObj);
+        // console.log(jsonObj); 
 
         // Get the relevant fields from the list of objects    
         var newObjList = [];
@@ -114,7 +118,6 @@
         var relatedWrapper = component.find("relatedWrapper");
         var relatedRows = relatedWrapper.find({instancesOf:rowCmpName});
         var validRows = [];
-        var rowsAreValid = true;
         var invalidRow = false;
         for(var i=0; i < relatedRows.length; i++){
             var thisRow = relatedRows[i];

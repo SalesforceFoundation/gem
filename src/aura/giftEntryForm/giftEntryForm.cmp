@@ -2,6 +2,7 @@
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:handler name="giftPicklistChangeEvent" action="{!c.handlePicklistChange}" event="c:giftPicklistChangeEvent" />
+    <aura:handler name="giftMatchChangeEvent" action="{!c.handleMatchChange}" event="c:giftMatchChangeEvent" />
     <aura:dependency resource="markup://force:*" type="EVENT" />
 
     <aura:attribute name="giftClassController" type="GiftEntryFormController"/>
@@ -27,13 +28,16 @@
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disabled" default="true" />
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
+    <aura:attribute type="Boolean" name="showMatchSpinner" default="false" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
     <aura:attribute type="Boolean" name="dataLoaded" default="false" />
     <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
+    <aura:attribute type="Boolean" name="donorExists" default="false" />
     <aura:attribute type="Date" name="paymentDate" />
     <aura:handler name="change" value="{!v.paymentDate}" action="{!c.handleDateChange}"/>
     <aura:handler name="change" value="{!v.donorType}" action="{!c.handleDonorTypeChange}"/>
+    <aura:handler name="change" value="{!v.donorExists}" action="{!c.checkMatches}"/>
 
     <!-- Work around for change event on lookups -->
     <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.handleFieldChange}"/>
@@ -97,22 +101,27 @@
                     </div>
                 </div>
                 
-                <!-- idField="AccountId" -->
                 <c:giftFormMatchList
                     idField="AccountId"
-                    oppObj="{!v.opp}"
+                    inputAuraId="accountLookup"
+                    objectType="Account"
+                    showSpinner="{!v.showMatchSpinner}"
                     objectList="{!v.giftClassController.matchedAccts}"
                     sectionLabel="Account Matches" />
 
                 <c:giftFormMatchList
                     idField="npsp__Primary_Contact__c"
-                    oppObj="{!v.opp}"
+                    inputAuraId="contactLookup"
+                    objectType="Contact"
+                    showSpinner="{!v.showMatchSpinner}"
                     objectList="{!v.giftClassController.matchedContacts}"
                     sectionLabel="Contact Matches" />
 
                 <c:giftFormMatchList
                     idField="Id"
-                    oppObj="{!v.opp}"
+                    inputAuraId="oppLookup"
+                    objectType="Opportunity"
+                    showSpinner="{!v.showMatchSpinner}"
                     objectList="{!v.giftClassController.matchedOpps}"
                     sectionLabel="Donation Matches" />
 
@@ -135,7 +144,7 @@
                         <label class="slds-form-element__label">
                             {!v.objectLabels.Opportunity.AccountId}
                         </label>
-                        <force:inputField aura:id="requiredAccountField" 
+                        <force:inputField aura:id="accountLookup" 
                             value="{!v.opp.AccountId}" />
                     </div>
                 </div>
@@ -172,7 +181,7 @@
                         <label class="slds-form-element__label">
                             {!v.objectLabels.Opportunity.npsp__Primary_Contact__c}
                         </label>
-                        <force:inputField aura:id="requiredDonorField"
+                        <force:inputField aura:id="contactLookup"
                             value="{!v.opp.npsp__Primary_Contact__c}" />
                     </div>
                 </div>
@@ -395,40 +404,6 @@
             </div>
 
         </div>
-
-        <aura:if isTrue="{!v.showSuccess}">
-        <lightning:recordEditForm aura:id="giftViewForm" 
-            onload="{!c.handleDryRunLoad}" 
-            recordId="{!v.returnedRecordId}"
-            objectApiName="npsp__DataImport__c">
-
-            <div class="slds-grid slds-wrap">
-                <div class="slds-col slds-size_1-of-1">
-                    <aura:if isTrue="{!v.showDonationImportError}">
-                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-                            <h2>{!$Label.c.Gift_Donation_Locked}</h2>
-                        </div>
-                    </aura:if>
-                </div>
-
-                <div class="slds-col slds-size_1-of-1">
-                    <div class="slds-page-header slds-page-header__title">
-                        {!$Label.c.Gift_Saved_Message}
-                    </div>
-                </div>
-              
-                <div class="slds-hidden">
-                    <lightning:inputField aura:id="donationImportStatus" fieldName="npsp__DonationImportStatus__c" />                    
-                </div>
-
-                <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                    <lightning:button class="slds-m-right_medium" label="Back to form" onclick="{!c.clickBackToForm}" />
-                    <lightning:button label="Create Gift" variant="brand" onclick="{!c.clickRunProcess}" />
-                </div>
-
-            </div>
-        </lightning:recordEditForm>
-        </aura:if>
 
     </div>
 

@@ -22,8 +22,10 @@
     </types>
     <types>
         <members>giftEntryForm</members>
+        <members>giftFormMatchList</members>
         <members>giftFormRelated</members>
         <members>giftFormRelatedRow</members>
+        <members>giftMatchChangeEvent</members>
         <members>giftPaymentScheduler</members>
         <members>giftPicklist</members>
         <members>giftPicklistChangeEvent</members>

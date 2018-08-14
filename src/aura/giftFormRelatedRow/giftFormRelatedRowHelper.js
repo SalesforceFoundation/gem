@@ -2,31 +2,19 @@
 	addRowHelper: function(component){
         this.addToObjectArray(component, "v.rowList", "v.item");
     },
-    amountCheck: function(component, event, helper){
+    amountCheck: function(component){
         component.set("v.checkAmountTotals", true);
-    },
-    amountChanged: function(component, event, helper){
-        component.set("v.checkAmountTotals", false);
-		var newAmt = this.checkUndefined(event.getParam("value"));
-        var oldAmt = this.checkUndefined(event.getParam("oldValue"));
-        //var total = this.checkUndefined(component.get("v.amountTotal"));
-        var total = component.get("v.amountTotal");
-        if(total === undefined){
-            // If the total was undefined, set it to the old amount
-            total = oldAmt;
-        }
-        //console.log(newAmt + ", " + oldAmt + ", " + total);
-        total += (newAmt - oldAmt);
-        total = Math.round(total * 100) / 100;
-        component.set("v.amountTotal", total);
-        //console.log(total);
     },
     addToObjectArray: function(component, vArray, vObj){
         // Now, create the component that contains the fields and pass it the list of data
         // The parent list needs an actual reference to the item, 
 		// so that it gets updated as fields are filled in
         var objList = component.get(vArray);
-		var obj = component.get(vObj);
+        var obj = component.get(vObj);
+        
+        console.log(objList); 
+        console.log(obj); 
+
         objList.push(obj);
         component.set(vArray, objList);
         //console.log(objList);
@@ -129,18 +117,29 @@
 
         return isValid && validationInfo.validSoFar;
     },
+    setRowAmt: function(component, newAmt){
+        var amtField = component.get("v.amtField");
+		var item = this.proxyToObj(component.get("v.item"));
+		if(item && amtField && item[amtField]){
+			item[amtField] = newAmt;
+        }
+        component.set("v.item", item);
+        this.amountCheck(component);
+    },
+    getRowAmt: function(component){
+        var amtField = component.get("v.amtField");
+		var item = this.proxyToObj(component.get("v.item"));
+        var rowAmt = null;
+		if(item && amtField && item[amtField]){
+			rowAmt = item[amtField];
+        }
+        return rowAmt;
+    },
     addError: function(inputCmp){
         $A.util.addClass(inputCmp, 'slds-has-error');
     },
     removeError: function(inputCmp){
         $A.util.removeClass(inputCmp, 'slds-has-error');
-    },
-    checkUndefined: function(num){
-        if(num === undefined){
-            return 0;
-        } else {
-            return +num; // Convert string to number, just in case
-        }
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

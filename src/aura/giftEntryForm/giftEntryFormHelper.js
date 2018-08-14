@@ -99,10 +99,12 @@
         console.log("updateAmountField, not needed?"); 
         //component.set("v.donationAmount", amt);
     },
-    redirectToDonation: function(component, oppId){
+    redirectToDonation: function(component, objId){
+        console.log('Redirect to:'); 
+        console.log(objId); 
         var event = $A.get("e.force:navigateToSObject");
         event.setParams({
-            recordId: oppId
+            recordId: objId
         });
         event.fire();
     },
@@ -150,9 +152,9 @@
 
             if (state === "SUCCESS") {
                 var giftCtrl = response.getReturnValue();
-                console.log(giftCtrl); 
                 component.set("v.giftClassController", giftCtrl);
-                var oppId = giftCtrl.oppId;
+                var oppId = component.find("oppId").get("v.value");
+                console.log(oppId); 
 
                 if(checkDataMatches){
                     component.set("v.showMatchSpinner", false);
@@ -191,7 +193,6 @@
                     component.set("v.showSpinner", false);
                 }
             } else if (state === "ERROR") {
-                var errors = response.getError();
                 this.handleError(component, response);
             }
         });
@@ -212,14 +213,24 @@
         // First check if an Account field is filled in
         var donorType = component.get("v.donorType");
         var donorExists = false;
+
         if(donorType == "Account1"){
             donorExists = this.checkFields(component, 'requiredAccountField', false);
+            donorExists = donorExists || this.checkFields(component, 'accountLookup', false);
         } else {
             // Check if Contact1 Firstname and Lastname are filled in
-            donorExists = this.checkFields(component, 'requiredContactField', true);        
+            donorExists = this.checkFields(component, 'requiredContactField', true);
             // Check any other donor fields we could use
-            donorExists = donorExists || this.checkFields(component, 'requiredDonorField', false);
+            donorExists = donorExists || this.checkFields(component, 'contactLookup', false);
         }
+
+        if(donorExists){
+            //donorExists = true;
+        }
+
+        // console.log( 'Donor Exists attr: ');
+        // console.log( component.get("v.donorExists") );
+        // console.log( donorExists );
 
         component.set("v.donorExists", donorExists);
 
@@ -246,6 +257,9 @@
             //     return validSoFar;
             // }
             var fieldVal = inputCmp.get("v.value");
+            // if(fieldId == 'requiredContactField'){
+            //     console.log(fieldVal); 
+            // }
             var isValid = fieldVal || fieldVal === false;
             if(!allMustBeValid && (isValid || validSoFar)){
                 // We only need one of these fields filled in

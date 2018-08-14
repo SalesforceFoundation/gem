@@ -34,13 +34,22 @@
                     console.log(objMap); 
                     if(objMap){
                         if(objMap.Opportunity){
-                            component.set("v.opp", objMap.Opportunity);
+                            component.set("v.opp", objMap.Opportunity[0]);
                         }
                         if(objMap.Account){
-                            component.set("v.acct", objMap.Account);
+                            component.set("v.acct", objMap.Account[0]);
                         }
                         if(objMap.Contact){
-                            component.set("v.contact", objMap.Contact);
+                            component.set("v.contact", objMap.Contact[0]);
+                        }
+                        if(objMap.Payments){
+                            component.set("v.payments", objMap.Payments);
+                        }
+                        if(objMap.Allocations){
+                            component.set("v.allocs", objMap.Allocations);
+                        }
+                        if(objMap.PartialCredits){
+                            component.set("v.partialCredits", objMap.PartialCredits);
                         }
                     }
                 }
@@ -84,11 +93,11 @@
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
     },
-    handleAmountChange: function(component, event, helper){
-        var newAmt = event.getParam("value");
-        helper.updateAmountField(component, newAmt);
-        helper.checkValidation(component);
-    },
+    // handleAmountChange: function(component, event, helper){
+    //     var newAmt = event.getParam("value");
+    //     helper.updateAmountField(component, newAmt);
+    //     helper.checkValidation(component);
+    // },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
         var validForm = helper.validateForm(component);
@@ -112,7 +121,19 @@
         }
     },
     checkMatches: function(component, event, helper) {
-        console.log("Check matches"); 
+
+        // TODO: Fix this in edit mode...
+        var isEditMode = component.get("v.editMode");
+
+        // console.log("Check matches"); 
+        // console.log( event.getParam("oldValue") );
+        // console.log( event.getParam("value") );
+
+        var newVal = event.getParam("value");
+        if(!newVal || isEditMode){
+            return;
+        }
+        
         helper.fillJsonField(component);
         helper.processGiftJson(component, true);
     },

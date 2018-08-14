@@ -1,19 +1,26 @@
 ({
-    handleAddRow: function(component, item, index){
+    handleAddRow: function(component, helper, item, index){
         // Now, create the component that contains the fields and pass it the list of data
         var rowList = component.getReference("v.rowList");
         var rowListArray = component.get("v.rowList");
-        var newRowNum = rowListArray.length;
+        
+        console.log(rowList); 
+        console.log(rowListArray); 
+
+        var newRowNum = index ? index : rowListArray.length;
+        //var newRowNum = rowListArray ? rowListArray.length : 0;
         var rowCmpName = component.get("v.rowCmpName");
         var picklistOptions = component.get("v.picklistOptions");
-        var amountTotal = component.getReference("v.amountTotal");
+        var amtField = component.getReference("v.amtField");
         var donationAmt = component.getReference("v.donationAmt");
         var checkAmountTotals = component.getReference("v.checkAmountTotals");
         var noDuplicateValueList = component.getReference("v.noDuplicateValueList");
-        //var oppField = component.get("v.oppField");
-        var showLabels = true;
-        if(newRowNum > 0 || index && index > 0){
-            showLabels = false;
+        var showLabels = false;
+
+        console.log(newRowNum);
+        
+        if(newRowNum == 0){
+            showLabels = true;
         }
 
         $A.createComponent(
@@ -23,18 +30,23 @@
                 "picklistOptions": picklistOptions,
                 "rowNum": newRowNum,
                 "item": item,
-                "amountTotal": amountTotal,
                 "donationAmt": donationAmt,
                 "checkAmountTotals": checkAmountTotals,
                 "noDuplicateValueList": noDuplicateValueList,
+                "amtField": amtField,
                 "showLabels": showLabels
             },
             function(relatedCmp, status, errorMessage){
                 if (status === "SUCCESS") {
                     // Add the component to the page
                     var body = component.get("v.body");
+                    console.log(body); 
                     body.push(relatedCmp);
                     component.set("v.body", body);
+
+                    // Could clean this up by only calling after final item is added
+                    helper.getAmtTotal(component);
+
                 }
                 else if (status === "INCOMPLETE") {
                     console.log("No response from server or client is offline.")
@@ -140,11 +152,24 @@
             return validRows;
         }
     },
-    getAmountTotal: function(component){
+    getAmtTotal: function(component){
         // Returns valid items or false if there is a validation issue
+        var rowCmpName = component.get("v.rowCmpName");
         var relatedWrapper = component.find("relatedWrapper");
-        var relatedRows = relatedWrapper.find("v.amountNumber");
-        //console.log(relatedRows); 
+        var relatedRows = relatedWrapper.find({instancesOf:rowCmpName});
+        var totalOfAllRows = 0;
+        for(var i=0; i < relatedRows.length; i++){
+            var thisRow = relatedRows[i];
+            var rowAmt = thisRow.returnRowAmount();
+            console.log(rowAmt); 
+            if(rowAmt){
+                totalOfAllRows += rowAmt;
+            }
+        }
+        console.log('totalOfAllRows'); 
+        console.log(totalOfAllRows); 
+        component.set("v.amountTotal", totalOfAllRows);
+        return totalOfAllRows;
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

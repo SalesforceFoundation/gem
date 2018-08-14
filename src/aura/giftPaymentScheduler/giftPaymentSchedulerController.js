@@ -53,7 +53,11 @@
 			singlePayment.npe01__Payment_Method__c = paymentMethod;
 			paymentList.push(singlePayment);
 		}
-		component.set("v.payments", paymentList);
+		
+		console.log('paymentList:'); 
+		console.log(paymentList); 
+
+		component.set("v.itemList", paymentList);
 		component.set("v.showPayments", true);
 	},
 	handleAmtChange: function(component, event, helper) {

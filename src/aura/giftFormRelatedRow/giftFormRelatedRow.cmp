@@ -4,11 +4,12 @@
     <aura:attribute type="sObject[]" name="rowList" />
     <aura:attribute type="Integer" name="rowNum" />
     <aura:attribute type="Boolean" name="showLabels" default="true" />
-    <aura:attribute type="Decimal" name="amountTotal" />
     <aura:attribute type="Decimal" name="donationAmt" />
+    <aura:attribute type="String" name="amtField" />
     <aura:attribute type="Boolean" name="checkAmountTotals" />
     <aura:attribute type="String[]" name="noDuplicateValueList" />
     <aura:method name="checkValidation" />
+    <aura:method name="returnRowAmount" />
 
     <aura:attribute type="Boolean" name="showError" default="false" />
     <aura:attribute type="String" name="errorMessage" />

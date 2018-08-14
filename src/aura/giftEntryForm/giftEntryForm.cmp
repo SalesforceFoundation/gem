@@ -339,8 +339,8 @@
                         value="{!v.opp.npsp__Matching_Gift_Status__c}" />
                 </div>
 
-                <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
-                    rowList="{!v.payments}"
+                <!-- <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
+                    itemList="{!v.payments}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
                     picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}"
                     jsonObject="{!v.jsonObject}" 
@@ -348,7 +348,7 @@
                     donationAmt="{!v.opp.Amount}" />
 
                 <c:giftFormRelated sectionTitle="Soft Credits"
-                    rowList="{!v.partialCredits}"
+                    itemList="{!v.partialCredits}"
                     objectName="npsp__Partial_Soft_Credit__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
                     oppField="npsp__Opportunity__c"
@@ -357,13 +357,14 @@
                     preventAmountSurplus="true"
                     preventAmountDeficit="false"
                     picklistOptions="{!v.picklistOptions}"
-                    jsonObj="{!v.jsonObject}" />
+                    jsonObj="{!v.jsonObject}" /> -->
 
                 <c:giftFormRelated sectionTitle="Allocation"
-                    rowList="{!v.allocs}"
+                    itemList="{!v.allocs}"
                     objectName="npsp__Allocation__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
                     oppField="npsp__Opportunity__c"
+                    amtField="npsp__Amount__c"
                     fieldList="npsp__General_Accounting_Unit__c,npsp__Amount__c,npsp__Percent__c"
                     donationAmt="{!v.opp.Amount}"
                     preventAmountSurplus="true"
@@ -371,7 +372,7 @@
                     picklistOptions="{!v.picklistOptions}"
                     jsonObj="{!v.jsonObject}" />
 
-                <aura:if isTrue="{!v.submitError}">   
+                <aura:if isTrue="{!v.submitError}">
                     <div class="slds-col slds-size_1-of-1">
                         <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
                             <h2>{!v.submitError}</h2>
@@ -380,7 +381,7 @@
                 </aura:if>
 
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                    <lightning:input aura:id="doDryRun" type="checkbox" checked="true" class="slds-m-bottom_small"
+                    <lightning:input aura:id="doDryRun" type="checkbox" checked="false" class="slds-m-bottom_small"
                         label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
                     <lightning:button aura:id="createButton" 
                         disabled="true" 
@@ -393,7 +394,8 @@
                  <div class="slds-hidden" style="height: 0">
                     
                     <!-- <lightning:input name="jsonInput" aura:id="postProcessJsonField" /> -->
-
+                    <lightning:input aura:id="oppId" 
+                        value="{!v.giftClassController.oppId}" />
                     <force:inputField aura:id="doNotAutoCreatePayment" 
                         value="{!v.opp.npe01__Do_Not_Automatically_Create_Payment__c}" />
                     <!-- 

@@ -35,7 +35,7 @@
 * @description Base Class for Gift Entry Components with Aura Enabled Methods
 */
 public class GiftEntryFormController {
-
+    @AuraEnabled 
     public Id oppId {get;set;}
     public Opportunity opp {get;set;}
     public Account acct {get;set;}
@@ -59,7 +59,7 @@ public class GiftEntryFormController {
 
     private Savepoint sp {get;set;}
 
-	public Boolean hasPerm {get;set;} // Permission check
+	public Boolean hasPerm {get;set;}
     public GiftEntryFormController(){
         hasPerm = Schema.sObjectType.Opportunity.isCreateable();
     }
@@ -107,41 +107,84 @@ public class GiftEntryFormController {
     * @return Id of the Opportunity
     */
     @AuraEnabled
-    public static Map<String, sObject> getDonationRecords(Id oppId){
+    public static Map<String, List<sObject>> getDonationRecords(Id oppId){
         try {
             String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
             String allAccountFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Account');
             String allContactFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Contact');
-            Opportunity opp = 
-                Database.query('SELECT '+ allOppFields +' FROM Opportunity WHERE Id = :oppId LIMIT 1');
+            List<Opportunity> opps = 
+                Database.query('SELECT '+ allOppFields +' FROM Opportunity WHERE Id = :oppId');
 
-            Map<String, sObject> objNameToObject = new Map<String, sObject>();
+            Map<String, List<sObject>> objNameToObjects = new Map<String, List<sObject>>();
 
-            if(opp != null){
-                objNameToObject.put('Opportunity', opp);
+            if(!opps.isEmpty()){
+                objNameToObjects.put('Opportunity', opps);
             } else {
                 return null;
             }
 
+            Opportunity opp = opps[0];
+
             if(opp.AccountId != null){
                 Id aId = opp.AccountId;
-                Account account = 
-                    Database.query('SELECT '+ allAccountFields +' FROM Account WHERE Id = :aId LIMIT 1');
-                if(account != null){
-                    objNameToObject.put('Account', account);
+                List<Account> accounts = 
+                    Database.query('SELECT '+ allAccountFields +' FROM Account WHERE Id = :aId');
+                if(!accounts.isEmpty()){
+                    objNameToObjects.put('Account', accounts);
                 }
             }
 
             if(opp.npsp__Primary_Contact__c != null){
                 Id cId = opp.npsp__Primary_Contact__c;
-                Contact contact = 
-                    Database.query('SELECT '+ allContactFields +' FROM Contact WHERE Id = :cId LIMIT 1');
-                if(contact != null){
-                    objNameToObject.put('Contact', contact);
+                List<Contact> contacts = 
+                    Database.query('SELECT '+ allContactFields +' FROM Contact WHERE Id = :cId');
+                if(!contacts.isEmpty()){
+                    objNameToObjects.put('Contact', contacts);
                 }
             }
 
-            return objNameToObject;
+            // Now check for related objects
+            if(opp.npe01__Number_of_Payments__c > 0){
+                List<npe01__OppPayment__c> payments = [SELECT Id, 
+                        npe01__Payment_Amount__c,
+                        npe01__Scheduled_Date__c,
+                        npe01__Payment_Date__c,
+                        npe01__Payment_Method__c,
+                        npe01__Check_Reference_Number__c,
+                        npe01__Paid__c,
+                        npe01__Opportunity__c
+                    FROM npe01__OppPayment__c 
+                    WHERE npe01__Opportunity__c =: oppId];
+                if(!payments.isEmpty()){
+                    objNameToObjects.put('Payments', payments);
+                }
+            }
+
+            List<npsp__Allocation__c> allocations = [SELECT Id, 
+                    npsp__Amount__c,
+                    npsp__General_Accounting_Unit__c,
+                    npsp__Percent__c,
+                    npsp__Recurring_Donation__c,
+                    npsp__Opportunity__c
+                FROM npsp__Allocation__c 
+                WHERE npsp__Opportunity__c =: oppId];
+            if(!allocations.isEmpty()){
+                objNameToObjects.put('Allocations', allocations);
+            }
+
+            List<npsp__Partial_Soft_Credit__c> partialCredits = [SELECT Id, 
+                    npsp__Amount__c,
+                    npsp__Contact__c,
+                    npsp__Contact_Name__c,
+                    npsp__Role_Name__c,
+                    npsp__Opportunity__c
+                FROM npsp__Partial_Soft_Credit__c 
+                WHERE npsp__Opportunity__c =: oppId];
+            if(!partialCredits.isEmpty()){
+                objNameToObjects.put('PartialCredits', partialCredits);
+            }
+
+            return objNameToObjects;
 
         } catch(Exception e){
             System.debug(e);
@@ -149,7 +192,7 @@ public class GiftEntryFormController {
         }
     }
 
-    public static GiftEntryFormController saveDonationInformation(GiftEntryFormController giftCtrl){
+    private static GiftEntryFormController saveDonationInformation(GiftEntryFormController giftCtrl){
         giftCtrl.sp = Database.setSavepoint();
         // Insert or Update the provided Donor and Donation information
         try {
@@ -196,7 +239,9 @@ public class GiftEntryFormController {
                 upsert giftCtrl.partialCredits;
             }
 
-            giftCtrl.oppId = giftCtrl.opp.Id; 
+            giftCtrl.oppId = giftCtrl.opp.Id;
+
+            System.debug(giftCtrl);
 
             return giftCtrl;
 
@@ -429,15 +474,15 @@ public class GiftEntryFormController {
                 }
             }
 
-            System.debug(giftCtrl.acct);
-            System.debug(giftCtrl.contact);
-            System.debug(giftCtrl.opp);
-
             if(checkDataMatches){
                 giftCtrl = setDataMatches(giftCtrl);
             } else {
                 giftCtrl = saveDonationInformation(giftCtrl);
             }
+
+            System.debug(giftCtrl.acct);
+            System.debug(giftCtrl.contact);
+            System.debug(giftCtrl.opp);
 
             System.debug('matchedAccts'); 
             System.debug(giftCtrl.matchedAccts); 
@@ -484,7 +529,7 @@ public class GiftEntryFormController {
 
             System.debug(cLName); 
 
-            String query = 'SELECT Id, Name, Phone, Email FROM Contact WHERE';
+            String query = 'SELECT Id, Name, FirstName, LastName, Phone, Email FROM Contact WHERE';
             String whereClause = '';
             if(cFName != null){
                 whereClause += ' FirstName LIKE :cFName ';

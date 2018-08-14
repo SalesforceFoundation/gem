@@ -2,7 +2,7 @@
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
     <aura:attribute type="Decimal" name="donationAmt" />
-    <aura:attribute type="Boolean" name="showPayments" default="false" />
+    <aura:attribute type="Boolean" name="showPayments" default="true" />
     <aura:attribute type="String[]" name="picklistValues" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String" name="intervalFreq" />
@@ -13,7 +13,8 @@
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="rowCmpName" />
     <aura:attribute type="String" name="paymentMethod" />
-    <aura:attribute type="sObject[]" name="rowList" />
+    <aura:attribute type="sObject[]" name="itemList" />
+    <aura:attribute type="sObject[]" name="rowList" default="[]" />
 
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
@@ -21,7 +22,6 @@
     <aura:attribute name="singlePayment" 
         type="npe01__OppPayment__c" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
-    <aura:attribute type="npe01__OppPayment__c[]" name="payments" />
 
     <aura:attribute type="Object" name="jsonObject" />
 
@@ -67,9 +67,9 @@
             <lightning:select name="frequency" 
                 label="Frequency" 
                 value="{!v.intervalFreq}">
-                <option value="Week">Week</option>
                 <option value="Month">Month</option>
                 <option value="Year">Year</option>
+                <option value="Week">Week</option>
             </lightning:select>
         </div>
         <div class="slds-col slds-size_2-of-8">
@@ -80,18 +80,18 @@
         </div>
         
         <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-            <lightning:button aura:id="calcButton" label="{!v.calculateButtonLabel}" 
+            <lightning:button aura:id="calcButton" disabled="true" label="{!v.calculateButtonLabel}" 
                 onclick="{!c.clickCalculate}" />
         </div>
     </div>
-
+    
     <!-- Show a row for each payment -->
     <div class="{!v.showPayments ? 'slds-size_1-of-1' : 'slds-hidden'}">
         <c:giftFormRelated objectName="npe01__OppPayment__c"
             rowList="{!v.rowList}"
             rowCmpName="{!v.rowCmpName}"
             oppField="npe01__Opportunity__c"
-            itemList="{!v.payments}"
+            itemList="{!v.itemList}"
             fieldList="npe01__Payment_Amount__c,npe01__Paid__c,npe01__Scheduled_Date__c,npe01__Payment_Date__c,npe01__Payment_Method__c,npe01__Check_Reference_Number__c"
             donationAmt="{!v.donationAmt}"
             preventAmountSurplus="false"

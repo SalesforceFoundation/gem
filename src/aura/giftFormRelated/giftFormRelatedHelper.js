@@ -3,22 +3,15 @@
         // Now, create the component that contains the fields and pass it the list of data
         var rowList = component.getReference("v.rowList");
         var rowListArray = component.get("v.rowList");
-        
-        console.log(rowList); 
-        console.log(rowListArray); 
-
         var newRowNum = index ? index : rowListArray.length;
-        //var newRowNum = rowListArray ? rowListArray.length : 0;
         var rowCmpName = component.get("v.rowCmpName");
         var picklistOptions = component.get("v.picklistOptions");
         var amtField = component.getReference("v.amtField");
         var donationAmt = component.getReference("v.donationAmt");
         var checkAmountTotals = component.getReference("v.checkAmountTotals");
         var noDuplicateValueList = component.getReference("v.noDuplicateValueList");
+    
         var showLabels = false;
-
-        console.log(newRowNum);
-        
         if(newRowNum == 0){
             showLabels = true;
         }
@@ -40,13 +33,11 @@
                 if (status === "SUCCESS") {
                     // Add the component to the page
                     var body = component.get("v.body");
-                    console.log(body); 
                     body.push(relatedCmp);
                     component.set("v.body", body);
 
                     // Could clean this up by only calling after final item is added
                     helper.getAmtTotal(component);
-
                 }
                 else if (status === "INCOMPLETE") {
                     console.log("No response from server or client is offline.")
@@ -56,6 +47,24 @@
                 }
             }
         );
+    },
+    createRowsFromItemList: function(component, helper){
+        // Called when the item list is completely overwritten
+        // Ex. Calculating Payment schedule, or loading existing data
+
+        // First, clear the existing rows
+        component.set("v.body", []);
+        component.set("v.rowList", []);
+        
+        // Now add the passed in objects to the rowList
+        //var itemList = event.getParam("value");
+        var itemList = component.get("v.itemList");
+        itemList = this.proxyToObj(itemList);
+
+        for(var i=0; i<itemList.length; i++){
+            this.handleAddRow(component, helper, itemList[i], i);
+        }
+        component.set("v.showAmountError", false);
     },
     setOppIdPlaceholder: function(component, itemObj, oppFieldName){
         // Set the opportunity field to a placeholder, which gets replaced in Apex
@@ -68,7 +77,7 @@
     updateJsonObject: function(component, arrayList){
         var jsonObj = component.get("v.jsonObj");
         var objectName = component.get("v.objectName");
-        var fieldList = component.get("v.fieldList");
+        // var fieldList = component.get("v.fieldList");
         var oppField = component.get("v.oppField");
         var oppFieldName = component.get("v.oppField");
 
@@ -89,36 +98,36 @@
         var newObjList = [];
         arrayList = this.proxyToObj(arrayList);
         //console.log(arrayList);
-        fieldList = this.proxyToObj(fieldList);
+        // fieldList = this.proxyToObj(fieldList);
         // Add the Opportunity field so it gets included
-        fieldList.push(oppField);
+        //fieldList.push(oppField);
         for(var i=0; i < arrayList.length; i++){
             var oldObj = arrayList[i];
             // If this row was deleted, skip it
             if(!oldObj){
                 continue;
             }
-            var newObj = {};
+            //var newObj = {};
             // For each object, only save the fields we want
-            for(var j=0; j < fieldList.length; j++){
-                var fieldName = fieldList[j];
-                var fieldVal = oldObj[fieldName];
-                newObj[fieldName] = fieldVal;
-            }
-            this.setOppIdPlaceholder(component, newObj, oppFieldName);
-            newObjList.push(newObj);
+            // for(var j=0; j < fieldList.length; j++){
+            //     var fieldName = fieldList[j];
+            //     var fieldVal = oldObj[fieldName];
+            //     newObj[fieldName] = fieldVal;
+            // }
+            this.setOppIdPlaceholder(component, oldObj, oppFieldName);
+            newObjList.push(oldObj);
         }
         // console.log(objectName);
-        // console.log(arrayList);
+        // console.log(newObjList);
         //jsonObj[objectName] = newObjList;
 
         // Can't set entire object, async calls overwrite each other
         // Should overwrite with blank array if no list is passed!
         component.set("v.jsonObj."+objectName, newObjList);
         
-        // console.log('JSON set:');
-        // jsonObj = component.get("v.jsonObj");
-        // console.log(JSON.stringify(jsonObj));
+        console.log('JSON set:');
+        jsonObj = component.get("v.jsonObj");
+        console.log(JSON.stringify(jsonObj));
     },
     validateRows: function(component){
         var preventSubmit = component.get("v.preventSubmit");
@@ -126,9 +135,7 @@
             return false;
         }
         // Returns valid items or false if there is a validation issue
-        var rowCmpName = component.get("v.rowCmpName");
-        var relatedWrapper = component.find("relatedWrapper");
-        var relatedRows = relatedWrapper.find({instancesOf:rowCmpName});
+        var relatedRows = this.getRelatedRows(component);
         var validRows = [];
         var invalidRow = false;
         for(var i=0; i < relatedRows.length; i++){
@@ -154,22 +161,27 @@
     },
     getAmtTotal: function(component){
         // Returns valid items or false if there is a validation issue
+        var relatedRows = this.getRelatedRows(component);
         var rowCmpName = component.get("v.rowCmpName");
         var relatedWrapper = component.find("relatedWrapper");
         var relatedRows = relatedWrapper.find({instancesOf:rowCmpName});
         var totalOfAllRows = 0;
         for(var i=0; i < relatedRows.length; i++){
             var thisRow = relatedRows[i];
-            var rowAmt = thisRow.returnRowAmount();
-            console.log(rowAmt); 
+            // Make sure the return is a number
+            var rowAmt = +thisRow.returnRowAmount();
             if(rowAmt){
                 totalOfAllRows += rowAmt;
             }
         }
-        console.log('totalOfAllRows'); 
-        console.log(totalOfAllRows); 
+        totalOfAllRows = Math.round(totalOfAllRows * 100) / 100;
         component.set("v.amountTotal", totalOfAllRows);
         return totalOfAllRows;
+    },
+    getRelatedRows: function(component){
+        var rowCmpName = component.get("v.rowCmpName");
+        var relatedWrapper = component.find("relatedWrapper");
+        return relatedWrapper.find({instancesOf:rowCmpName});
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

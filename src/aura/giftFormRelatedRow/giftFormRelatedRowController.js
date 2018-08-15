@@ -4,12 +4,10 @@
 		helper.addRowHelper(component);
 	},
 	clickDeleteRow: function(component, event, helper) {
-        // Can't fully remove because array index numbers after this one would be wrong
-		var rowIdentifier = component.get("v.rowNum");
-		var rowList = component.get("v.rowList");
-		rowList[rowIdentifier] = null;
-		helper.setRowAmt(component, 0);
-		component.destroy();
+		component.set("v.markedForDelete", true);
+		// Call delete event, handled by the parent
+		var cmpEvent = component.getEvent("giftDeleteRowEvent");
+		cmpEvent.fire();
 	},
 	checkValidation: function(component, event, helper) {
 		var isValid = helper.validateRow(component, helper);

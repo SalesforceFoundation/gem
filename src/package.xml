@@ -21,6 +21,7 @@
         <name>ApexClass</name>
     </types>
     <types>
+        <members>giftDeleteRowEvent</members>
         <members>giftEntryForm</members>
         <members>giftFormMatchList</members>
         <members>giftFormRelated</members>

@@ -21,6 +21,7 @@
                 type="number" 
                 label="Amount" variant="label-hidden"
                 formatter="currency"
+                step="any"
                 value="{!v.item.npsp__Amount__c}" />
         </div>
         <div class="slds-col slds-size_2-of-5 slds-p-around_small">

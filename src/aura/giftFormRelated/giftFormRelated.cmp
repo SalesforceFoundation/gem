@@ -1,13 +1,15 @@
 <aura:component access="global"
     implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
 
+    <aura:handler name="giftDeleteRowEvent" action="{!c.handleRowDelete}" event="c:giftDeleteRowEvent" />
     <aura:method name="handleJsonUpdate" />
+    <aura:attribute type="sObject[]" name="objsToDelete" />
     <aura:attribute type="sObject[]" name="itemList" />
     <aura:attribute type="sObject[]" name="rowList" default="[]" />
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.checkAmountTotals}" action="{!c.handleAmtChange}"/>
-    <aura:handler name="change" value="{!v.picklistOptions}" action="{!c.clickAddRow}"/>
+    <aura:handler name="change" value="{!v.picklistOptions}" action="{!c.handleInitRows}"/>
 
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="String" name="sectionTitle" />
@@ -22,6 +24,7 @@
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="Decimal" name="amountTotal" />
     <aura:attribute type="String" name="amountError" />
+    <aura:attribute type="Boolean" name="initFinished" default="false" />
     <aura:attribute type="Boolean" name="checkAmountTotals" default="false" />
     <aura:attribute type="Boolean" name="preventAmountSurplus" default="false" />
     <aura:attribute type="Boolean" name="preventAmountDeficit" default="false" />

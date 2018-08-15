@@ -56,13 +56,15 @@ private class GiftEntryFormController_TEST {
     	GiftEntryFormController.insertGiftEntrySettings();
     }
 
-    private static void setupControllerData(){
-        GiftEntryFormController.acct = new Account(Name=acctName);
-        GiftEntryFormController.contact = new Contact(FirstName=cFirst, LastName=cLast);
-        GiftEntryFormController.opp = new Opportunity(Name=oppName, 
+    private static GiftEntryFormController setupControllerData(){
+        GiftEntryFormController giftCtrl = new GiftEntryFormController();
+        giftCtrl.acct = new Account(Name=acctName);
+        giftCtrl.contact = new Contact(FirstName=cFirst, LastName=cLast);
+        giftCtrl.opp = new Opportunity(Name=oppName, 
             CloseDate=System.today(), 
             StageName=closedWonStage, 
             Amount=donationAmount);
+        return giftCtrl;
     }
 
     /*******************************************************************************************************
@@ -71,10 +73,10 @@ private class GiftEntryFormController_TEST {
     @isTest
     private static void testNewGift() {
 
-        setupControllerData();
+        GiftEntryFormController giftCtrl = setupControllerData();
     
         Test.startTest();
-        GiftEntryFormController.saveDonationInformation();
+        giftCtrl = GiftEntryFormController.saveDonationInformation(giftCtrl);
         Test.stopTest();
 
         List<Opportunity> opps = [SELECT Id FROM Opportunity 
@@ -84,7 +86,7 @@ private class GiftEntryFormController_TEST {
         System.assert(opps.size() == 1, 'Make sure Opportunity was created and Account and Contact were assigned');
         Opportunity opp = opps[0];
 
-        Contact c = [SELECT Id, Account.Name FROM Contact WHERE Id =: GiftEntryFormController.contact.Id];
+        Contact c = [SELECT Id, Account.Name FROM Contact WHERE Id =: giftCtrl.contact.Id];
         // Contact is being set to 'TestLast Administrative Account', is that right?
         //System.assertEquals(acctName, c.Account.Name, 'The Contact should be under the new Account ');
 
@@ -106,23 +108,21 @@ private class GiftEntryFormController_TEST {
             StageName=closedWonStage,
             Amount=50);
 
-        setupControllerData();
+        GiftEntryFormController giftCtrl = setupControllerData();
 
         //GiftEntryFormController.processGiftJSON(testJson, true);
-        Map<String, List<sObject>> matchMap = GiftEntryFormController.setDataMatches();
+        giftCtrl = GiftEntryFormController.setDataMatches(giftCtrl);
 
-        System.assertNotEquals(null, matchMap, 'The object map should have come back');
-
-        System.assertNotEquals(null, GiftEntryFormController.matchedAccts);
-        System.assertEquals(1, GiftEntryFormController.matchedAccts.size(), 
+        System.assertNotEquals(null, giftCtrl.matchedAccts);
+        System.assertEquals(1, giftCtrl.matchedAccts.size(), 
             'One Account match should be found');
 
-        System.assertNotEquals(null, GiftEntryFormController.matchedContacts);
-        System.assertEquals(1, GiftEntryFormController.matchedContacts.size(), 
+        System.assertNotEquals(null, giftCtrl.matchedContacts);
+        System.assertEquals(1, giftCtrl.matchedContacts.size(), 
             'One Contact match should be found');
 
-        System.assertNotEquals(null, GiftEntryFormController.matchedOpps);
-        System.assertEquals(1, GiftEntryFormController.matchedContacts.size(), 
+        System.assertNotEquals(null, giftCtrl.matchedOpps);
+        System.assertEquals(1, giftCtrl.matchedContacts.size(), 
             'One Opportunity match should be found');
 
     }
@@ -146,9 +146,10 @@ private class GiftEntryFormController_TEST {
         insert a;
         insert c;
 
-        GiftEntryFormController.acct = new Account(Name=acctName2);
-        GiftEntryFormController.contact = new Contact(FirstName=cFirst, LastName=cLast2);
-        GiftEntryFormController.opp = new Opportunity(Name='Test Opp', 
+        GiftEntryFormController giftCtrl = new GiftEntryFormController();
+        giftCtrl.acct = new Account(Name=acctName2);
+        giftCtrl.contact = new Contact(FirstName=cFirst, LastName=cLast2);
+        giftCtrl.opp = new Opportunity(Name='Test Opp', 
             CloseDate=System.today(), 
             StageName=closedWonStage, 
             Amount=100,
@@ -156,7 +157,7 @@ private class GiftEntryFormController_TEST {
             AccountId = a.Id);
     
         Test.startTest();
-        GiftEntryFormController.saveDonationInformation();
+        giftCtrl = GiftEntryFormController.saveDonationInformation(giftCtrl);
         Test.stopTest();
 
         List<Opportunity> opps = [SELECT Id FROM Opportunity 
@@ -204,15 +205,17 @@ private class GiftEntryFormController_TEST {
         + '{"npsp__Amount__c":"'+gauAmt+'","npsp__Contact__c":"' + scContactId + '"}]'
         + '}';
         
-        Id oppId = GiftEntryFormController.processGiftJSON(testJson, false);
+        GiftEntryFormController giftCtrl = new GiftEntryFormController();
+        giftCtrl = GiftEntryFormController.processGiftJSON(testJson, false);
 
-        System.assert(oppId != null, 'The new Opportunity ID should be returned');
+        Id oppId = giftCtrl.oppId;
+        System.assert(giftCtrl.oppId != null, 'The new Opportunity ID should be returned');
 
-        Contact c = GiftEntryFormController.contact;
-        Account a = GiftEntryFormController.acct;
-        Opportunity o = GiftEntryFormController.opp;
-        List<npsp__Allocation__c> allocs = GiftEntryFormController.allocs;
-        List<npe01__OppPayment__c> payments = GiftEntryFormController.payments;
+        Contact c = giftCtrl.contact;
+        Account a = giftCtrl.acct;
+        Opportunity o = giftCtrl.opp;
+        List<npsp__Allocation__c> allocs = giftCtrl.allocs;
+        List<npe01__OppPayment__c> payments = giftCtrl.payments;
 
         System.assertEquals('Firstname', c.FirstName, 'The Contact should be set on the controller');
         System.assertEquals('New Account', a.Name, 'The Account should be set on the controller');
@@ -231,11 +234,37 @@ private class GiftEntryFormController_TEST {
             and npe01__Payment_Amount__c =: payAmt];
         System.assertEquals(1, paymentQuery.size());
         
-        // Check that partia soft credits were created
+        // Check that partial soft credits were created
         List<npsp__Partial_Soft_Credit__c> pscQuery = [Select Id from npsp__Partial_Soft_Credit__c 
             where npsp__Contact__c =: scContactId
             and npsp__Amount__c =: payAmt];
         System.assertEquals(1, pscQuery.size());
+
+        // Now test deletion of related objects
+        List<SObject> objToDelete = new List<SObject>();
+
+        objToDelete.addAll((List<SObject>)alloQuery);
+        objToDelete.addAll((List<SObject>)paymentQuery);
+        objToDelete.addAll((List<SObject>)pscQuery);
+
+        giftCtrl.objsToDelete = objToDelete;
+
+        GiftEntryFormController.deleteObjList(giftCtrl.objsToDelete);
+
+        alloQuery = [Select Id from npsp__Allocation__c 
+            where npsp__General_Accounting_Unit__c =: gauId
+            and npsp__Opportunity__c =: oppId];
+        System.assertEquals(0, alloQuery.size());
+
+        paymentQuery = [Select Id from npe01__OppPayment__c 
+            where npe01__Opportunity__c =: oppId
+            and npe01__Payment_Amount__c =: payAmt];
+        System.assertEquals(0, paymentQuery.size());
+
+        pscQuery = [Select Id from npsp__Partial_Soft_Credit__c 
+            where npsp__Contact__c =: scContactId
+            and npsp__Amount__c =: payAmt];
+        System.assertEquals(0, pscQuery.size());
         
     }
 

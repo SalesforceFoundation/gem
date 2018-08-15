@@ -6,18 +6,14 @@
         component.set("v.checkAmountTotals", true);
     },
     addToObjectArray: function(component, vArray, vObj){
-        // Now, create the component that contains the fields and pass it the list of data
+        // Pass the component that contains the fields to the list of data
         // The parent list needs an actual reference to the item, 
 		// so that it gets updated as fields are filled in
         var objList = component.get(vArray);
         var obj = component.get(vObj);
-        
-        console.log(objList); 
-        console.log(obj); 
 
         objList.push(obj);
         component.set(vArray, objList);
-        //console.log(objList);
     },
     validateRow: function(component, helper) {
         component.set("v.showError", false);

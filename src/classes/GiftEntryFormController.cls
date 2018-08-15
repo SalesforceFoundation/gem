@@ -43,6 +43,7 @@ public class GiftEntryFormController {
     public List<npe01__OppPayment__c> payments {get;set;}
     public List<npsp__Allocation__c> allocs {get;set;}
     public List<npsp__Partial_Soft_Credit__c> partialCredits {get;set;}
+    public List<sObject> objsToDelete {get;set;}
     @AuraEnabled 
     public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
 
@@ -192,10 +193,35 @@ public class GiftEntryFormController {
         }
     }
 
+    @TestVisible
+    private static void deleteObjList(List<SObject> objsToDelete){
+        List<Id> idsToDelete = new List<Id>();
+        for(SObject so : objsToDelete){
+            idsToDelete.add(so.Id);
+        }
+        Database.DeleteResult[] deleteResults = Database.delete(idsToDelete, true);
+        for(Database.DeleteResult dr : deleteResults) {
+            if (!dr.isSuccess()) {
+                for(Database.Error err : dr.getErrors()) {
+                    System.debug(LoggingLevel.Error, 'The following error has occurred.'
+                        + '\n' + err.getStatusCode() + ': ' + err.getMessage()
+                        + '\n fields that affected this error: ' + err.getFields());
+                }
+            }
+        }
+    }
+
+    @TestVisible
     private static GiftEntryFormController saveDonationInformation(GiftEntryFormController giftCtrl){
         giftCtrl.sp = Database.setSavepoint();
-        // Insert or Update the provided Donor and Donation information
+        // Upsert or Delete the provided Donor and Donation information
         try {
+
+            // First, delete any objects that were removed from the form
+            if(giftCtrl.objsToDelete != null && !giftCtrl.objsToDelete.isEmpty()){
+                deleteObjList(giftCtrl.objsToDelete);
+            }
+
             // Insert or Update the provided Donor information
             if(giftCtrl.acct != null && !String.isBlank(giftCtrl.acct.Name)){
                 if(!String.isBlank(giftCtrl.opp.AccountId)){
@@ -263,18 +289,6 @@ public class GiftEntryFormController {
         List<Schema.PicklistEntry> picklistValues = 
             npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe().getPicklistValues();
         picklistMap.put('npsp__Payment_Method__c', returnPicklistValuesList(picklistValues));
-
-        // picklistValues = Opportunity.StageName.getDescribe().getPicklistValues();
-        // picklistMap.put('npsp__Donation_Stage__c', returnPicklistValuesList(picklistValues));
-        
-        // picklistValues = Opportunity.npsp__Matching_Gift_Status__c.getDescribe().getPicklistValues();
-        // picklistMap.put('Donation_Matching_Gift_Status__c', returnPicklistValuesList(picklistValues));
-        
-        // picklistValues = Opportunity.npsp__Acknowledgment_Status__c.getDescribe().getPicklistValues();
-        // picklistMap.put('Donation_Acknowledgment_Status__c', returnPicklistValuesList(picklistValues));
-        
-        // picklistValues = Opportunity.npsp__Tribute_Type__c.getDescribe().getPicklistValues();
-        // picklistMap.put('Donation_Tribute_Type__c', returnPicklistValuesList(picklistValues));
 
         picklistValues = OpportunityContactRole.Role.getDescribe().getPicklistValues();
         picklistMap.put('npsp__Role_Name__c', returnSoftCreditRoleList(picklistValues));
@@ -430,14 +444,14 @@ public class GiftEntryFormController {
             }
             // First, attributes passed from Lightning that can't be deserialized
             String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
-            String relatedObjectRegex = ',"((?!",").)+:\\{"[^}]+\\}';
+            String relatedObjectRegex = ',"((?!",")(?!attributes).)+:\\{"[^}]+\\}';
             jsonObj = jsonObj.replaceAll(sobjectTypeRegex, '');
             jsonObj = jsonObj.replaceAll(relatedObjectRegex, '');
 
             System.debug('****** jsonObj:'); 
             System.debug(jsonObj); 
 
-            // Given a list of objects, break them out into actual sobjects to process
+            // Given a map of json objects, break them out into actual sobjects to process
             Map<String, Object> objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(jsonObj);
             System.debug(objNameToObjList);
             List<SObject> thisList;
@@ -447,6 +461,9 @@ public class GiftEntryFormController {
                 Object objList = objNameToObjList.get(objName);
                 if(objList != null){
                     String objListString = JSON.serialize(objList);
+
+                    System.debug(objName); 
+                    System.debug(objListString); 
 
                     Type listType = Type.forName('List<' + objName + '>');
                     thisList = (List<SObject>)JSON.deserialize(objListString, listType);
@@ -469,6 +486,9 @@ public class GiftEntryFormController {
                         }
                         when 'npsp__Partial_Soft_Credit__c' {
                             giftCtrl.partialCredits = (List<npsp__Partial_Soft_Credit__c>)thisList;
+                        }
+                        when 'SObject' {
+                            giftCtrl.objsToDelete = thisList;
                         }
                     }
                 }
@@ -499,6 +519,7 @@ public class GiftEntryFormController {
     * @return Map<String, List<String>> of Object to List<String> with information about the
     * potential matches
     */
+    @TestVisible
     private static GiftEntryFormController setDataMatches(GiftEntryFormController giftCtrl){
 
         // Break names into parts and check "like" on each part?

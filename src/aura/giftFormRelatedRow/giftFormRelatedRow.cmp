@@ -7,9 +7,11 @@
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="String" name="amtField" />
     <aura:attribute type="Boolean" name="checkAmountTotals" />
+    <aura:attribute type="Boolean" name="markedForDelete" default="false" />
     <aura:attribute type="String[]" name="noDuplicateValueList" />
     <aura:method name="checkValidation" />
     <aura:method name="returnRowAmount" />
+    <aura:registerEvent name="giftDeleteRowEvent" type="c:giftDeleteRowEvent"/>
 
     <aura:attribute type="Boolean" name="showError" default="false" />
     <aura:attribute type="String" name="errorMessage" />

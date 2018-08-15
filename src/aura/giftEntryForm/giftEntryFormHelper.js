@@ -157,6 +157,7 @@
                 console.log(oppId); 
 
                 if(checkDataMatches){
+                    component.set('v.showSpinner', false);
                     component.set("v.showMatchSpinner", false);
                 } else {
                     this.redirectToDonation(component, oppId);
@@ -291,6 +292,12 @@
         var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
         var allRowsValid = true;
 
+        // First process the related objects
+        for(var i=0; i < relatedCmp.length; i++){
+            var jsonResp = relatedCmp[i].handleJsonUpdate();
+            allRowsValid = allRowsValid && jsonResp;
+        }
+
         var jsonObj = component.get("v.jsonObject");
 
         if(jsonObj == null){
@@ -299,19 +306,16 @@
             component.set("v.jsonObj", jsonObj);
         }
 
-        // First process the related objects
-        for(var i=0; i < relatedCmp.length; i++){
-            var jsonResp = relatedCmp[i].handleJsonUpdate();
-            allRowsValid = allRowsValid && jsonResp;
-        }
-
         // Now set the "primary" gift fields
         var acct = this.proxyToObj(component.get("v.acct"));
         var contact = this.proxyToObj(component.get("v.contact"));
         var opp = this.proxyToObj(component.get("v.opp"));
+        var objsToDelete = this.proxyToObj(component.get("v.objsToDelete"));
         jsonObj['Account'] = [acct];
         jsonObj['Contact'] = [contact];
         jsonObj['Opportunity'] = [opp];
+        jsonObj['SObject'] = objsToDelete;
+
         component.set("v.jsonObj", jsonObj);
 
         if(jsonObj.npe01__OppPayment__c && jsonObj.npe01__OppPayment__c.length > 0){

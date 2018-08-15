@@ -1,11 +1,18 @@
 ({
     clickAddRow: function(component, event, helper) {
+        helper.handleAddRow(component, helper);
+    },
+    handleInitRows: function(component, event, helper) {
         var wasLoadEvent = event.getParam("value");
         var itemList = component.get("v.itemList");
         // Only add a row on init if we aren't loading existing data
         if(!wasLoadEvent || wasLoadEvent && itemList && itemList.length == 0){
             helper.handleAddRow(component, helper);
+        } else {
+            // If an itemList was provided on load, add it now that picklist values are available
+            helper.createRowsFromItemList(component, helper);
         }
+        component.set("v.initFinished", true);
     },
     handleJsonUpdate: function(component, event, helper) {
         // Reset the duplicate checking array
@@ -17,26 +24,62 @@
         return isValid;
     },
     handleItemListChange: function(component, event, helper){
-        // Called when the item list is completely overwritten
-        // Ex. Calculating Payment schedule, or loading existing data
+        // On load, since the itemlist comes in before the picklist values are set,
+        // we need to wait for the picklists before processing the rows
+        if(component.get("v.initFinished")){
+            helper.createRowsFromItemList(component, helper);
+        }
+    },
+    handleRowDelete: function(component, event, helper){
+        // var rowIdentifier = event.getParam("deletedIndex");
+        var relatedRows = helper.getRelatedRows(component);
 
-        // First, clear the existing rows
-        component.set("v.body", []);
-        component.set("v.rowList", []);
-        
-        // Now add the passed in objects to the rowList
-        var itemList = event.getParam("value");
-        itemList = helper.proxyToObj(itemList);
-        console.log('itemList'); 
-        console.log(itemList); 
-        if(!itemList){
-            return;
+        //console.log(rowIdentifier); 
+        var rowList = component.get("v.rowList");
+        var objsToDelete = component.get("v.objsToDelete");
+        var body = component.get("v.body");
+        var nextRowShowLabels = false;
+        rowList = helper.proxyToObj(rowList);
+
+        // console.log(rowList); 
+
+        for(var i=0; i < relatedRows.length; i++){
+            // For each remaining row, reset its index and set the first to show labels
+            var thisRow = relatedRows[i];
+            // console.log('thisRow'); 
+            // console.log(thisRow); 
+
+            var thisRowIndex = thisRow.get("v.rowNum");
+
+            if(nextRowShowLabels){
+                thisRow.set("v.showLabels", true);
+                nextRowShowLabels = false;
+            }
+
+            if(thisRow.get("v.markedForDelete")){
+                var objName = component.get("v.objectName");
+                var thisItem = thisRow.get("v.item");
+                thisItem = helper.proxyToObj(thisItem);
+                // Needed to delete a generic in a list
+                thisItem["attributes"] = {"type":objName};
+
+                objsToDelete.push(thisItem);
+                if(thisRow.get("v.showLabels")){
+                    nextRowShowLabels = true;
+                }
+                body.splice(i,1);
+                rowList.splice(i,1);
+                thisRow.destroy();
+            }
         }
 
-        for(var i=0; i<itemList.length; i++){
-            helper.handleAddRow(component, helper, itemList[i], i);
-        }
-        component.set("v.showAmountError", false);
+        console.log(objsToDelete); 
+
+        component.set("v.objsToDelete", objsToDelete);
+        component.set("v.rowList", rowList);
+        component.set("v.body", body);
+
+        helper.getAmtTotal(component);
     },
     handleAmtChange: function(component, event, helper){
         var checkAmountTotals = component.get("v.checkAmountTotals");

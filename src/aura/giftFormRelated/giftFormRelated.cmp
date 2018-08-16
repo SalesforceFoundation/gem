@@ -1,7 +1,6 @@
 <aura:component access="global"
     implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
 
-    <aura:handler name="giftDeleteRowEvent" action="{!c.handleRowDelete}" event="c:giftDeleteRowEvent" />
     <aura:method name="handleJsonUpdate" />
     <aura:attribute type="sObject[]" name="objsToDelete" />
     <aura:attribute type="sObject[]" name="itemList" />
@@ -10,6 +9,7 @@
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.checkAmountTotals}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.picklistOptions}" action="{!c.handleInitRows}"/>
+    <aura:handler name="giftDeleteRowEvent" action="{!c.handleRowDelete}" event="c:giftDeleteRowEvent" />
 
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="String" name="sectionTitle" />
@@ -29,7 +29,8 @@
     <aura:attribute type="Boolean" name="preventAmountSurplus" default="false" />
     <aura:attribute type="Boolean" name="preventAmountDeficit" default="false" />
     <aura:attribute type="Boolean" name="preventSubmit" default="false" />
-    
+    <aura:attribute type="Boolean" name="blockItemChangeEvent" />
+
     <aura:if isTrue="{!v.sectionTitle}">
     <div class="slds-col slds-size_1-of-1">
         <div class="slds-page-header slds-page-header__title">

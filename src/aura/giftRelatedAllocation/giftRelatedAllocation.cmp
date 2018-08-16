@@ -20,6 +20,7 @@
                 name="allocationAmt" 
                 type="number" 
                 label="Amount" variant="label-hidden"
+                step="0.01"
                 formatter="currency"
                 disabled="{!v.item.npsp__Percent__c ? true : false}"
                 value="{!v.item.npsp__Amount__c}" />

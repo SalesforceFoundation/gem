@@ -152,8 +152,7 @@ public class GiftEntryFormController {
                         npe01__Payment_Date__c,
                         npe01__Payment_Method__c,
                         npe01__Check_Reference_Number__c,
-                        npe01__Paid__c,
-                        npe01__Opportunity__c
+                        npe01__Paid__c
                     FROM npe01__OppPayment__c 
                     WHERE npe01__Opportunity__c =: oppId];
                 if(!payments.isEmpty()){
@@ -248,7 +247,9 @@ public class GiftEntryFormController {
             
             if(giftCtrl.payments != null && !giftCtrl.payments.isEmpty()){
                 for(npe01__OppPayment__c p : giftCtrl.payments){
-                    p.npe01__Opportunity__c = giftCtrl.opp.Id;
+                    if(p.Id == null){
+                        p.npe01__Opportunity__c = giftCtrl.opp.Id;
+                    }
                 }
                 upsert giftCtrl.payments;
             }
@@ -260,7 +261,9 @@ public class GiftEntryFormController {
             }
             if(giftCtrl.partialCredits != null && !giftCtrl.partialCredits.isEmpty()){
                 for(npsp__Partial_Soft_Credit__c c : giftCtrl.partialCredits){
-                    c.npsp__Opportunity__c = giftCtrl.opp.Id;
+                    if(c.Id == null){
+                        c.npsp__Opportunity__c = giftCtrl.opp.Id;
+                    }
                 }
                 upsert giftCtrl.partialCredits;
             }
@@ -500,10 +503,14 @@ public class GiftEntryFormController {
                 giftCtrl = saveDonationInformation(giftCtrl);
             }
 
-            System.debug(giftCtrl.acct);
-            System.debug(giftCtrl.contact);
-            System.debug(giftCtrl.opp);
+            // System.debug(giftCtrl.acct);
+            // System.debug(giftCtrl.contact);
+            // System.debug(giftCtrl.opp);
 
+            System.debug('matchedOpps'); 
+            System.debug(giftCtrl.matchedOpps); 
+            System.debug('matchedContacts'); 
+            System.debug(giftCtrl.matchedContacts); 
             System.debug('matchedAccts'); 
             System.debug(giftCtrl.matchedAccts); 
 
@@ -539,7 +546,6 @@ public class GiftEntryFormController {
                 FROM Account 
                 WHERE Name LIKE :aName 
                 LIMIT 5];
-            System.debug(giftCtrl.matchedAccts); 
             //matchMap.put('Account', matchedAccts);
         }
 
@@ -547,8 +553,6 @@ public class GiftEntryFormController {
         if(giftCtrl.contact != null && !String.isEmpty(giftCtrl.contact.Lastname)){
             String cFName = addWildcards(giftCtrl.contact.FirstName);
             String cLName = addWildcards(giftCtrl.contact.LastName);
-
-            System.debug(cLName); 
 
             String query = 'SELECT Id, Name, FirstName, LastName, Phone, Email FROM Contact WHERE';
             String whereClause = '';
@@ -564,30 +568,38 @@ public class GiftEntryFormController {
             whereClause += ' LIMIT 8';
 
             giftCtrl.matchedContacts = Database.query(query + whereClause);
-            System.debug(giftCtrl.matchedContacts); 
+            // System.debug(giftCtrl.matchedContacts); 
             //matchMap.put('Contact', matchedContacts);
         }
 
-        // Match Opportunity
-        if(giftCtrl.opp != null && !String.isEmpty(giftCtrl.opp.Name)){
+        // Find potential Opportunities if an existing donor has been set
+        if(giftCtrl.opp != null && 
+            (!String.isEmpty(giftCtrl.opp.AccountId) 
+            || !String.isEmpty(giftCtrl.opp.npsp__Primary_Contact__c)) ){
 
-            System.debug(giftCtrl.opp); 
+            String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
 
-            String oName = addWildcards(giftCtrl.opp.Name);
-            String oAccountId = addWildcards(giftCtrl.opp.AccountId);
-            String oContactId = addWildcards(giftCtrl.opp.npsp__Primary_Contact__c);
-
-            String query = 'SELECT Id, Name, StageName, AccountId, npsp__Primary_Contact__c FROM Opportunity WHERE';
+            //String oName = addWildcards(giftCtrl.opp.Name);
+            String oAccountId = giftCtrl.opp.AccountId;
+            String oContactId = giftCtrl.opp.npsp__Primary_Contact__c;
+            String query = 'SELECT ' + allOppFields + ' FROM Opportunity WHERE ';
             String whereClause = '';
-            whereClause += ' Name LIKE :oName ';
+            //whereClause += ' Name LIKE :oName ';
             
             if(oAccountId != null){
-                whereClause += ' AND AccountId =: oAccountId ';
+                whereClause += ' AccountId = :oAccountId ';
             }
             if(oContactId != null){
-                whereClause += ' AND npsp__Primary_Contact__c =: oContactId ';
+                if(!String.isBlank(whereClause)){
+                    whereClause += ' OR ';
+                }
+                whereClause += ' npsp__Primary_Contact__c = :oContactId ';
             }
-            whereClause += ' LIMIT 5';
+            whereClause += ' LIMIT 10';
+
+            System.debug(' ** Opp Query:'); 
+            System.debug(oContactId); 
+            System.debug(query + whereClause); 
 
             giftCtrl.matchedOpps = Database.query(query + whereClause);
             System.debug(giftCtrl.matchedOpps); 

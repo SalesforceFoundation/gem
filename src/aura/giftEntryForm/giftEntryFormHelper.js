@@ -154,7 +154,7 @@
                 var giftCtrl = response.getReturnValue();
                 component.set("v.giftClassController", giftCtrl);
                 var oppId = component.find("oppId").get("v.value");
-                console.log(oppId); 
+                // console.log(oppId); 
 
                 if(checkDataMatches){
                     component.set('v.showSpinner', false);
@@ -310,6 +310,8 @@
         var acct = this.proxyToObj(component.get("v.acct"));
         var contact = this.proxyToObj(component.get("v.contact"));
         var opp = this.proxyToObj(component.get("v.opp"));
+        console.log(' *** opp'); 
+        console.log(opp); 
         var objsToDelete = this.proxyToObj(component.get("v.objsToDelete"));
         jsonObj['Account'] = [acct];
         jsonObj['Contact'] = [contact];
@@ -344,27 +346,54 @@
             };
         }
 
-        // Not needed? Setting via field value?
-        var oppObj = component.get("v.opp");
-        oppObj = this.proxyToObj(oppObj);
-        oppObj[oppLookupField] = newId;
-        component.set("v.opp", oppObj);
-        //console.log(oppObj);
-
-        if(objectType == 'Account'){
+        if(objectType == 'Opportunity'){
+            component.set("v.opp", selectedObject);
+        } else if(objectType == 'Account'){
             //inputAuraId = 'accountLookup';
             component.set("v.acct", selectedObject);
         } else if(objectType == 'Contact'){
             //inputAuraId = 'contactLookup';
             component.set("v.contact", selectedObject);  
         }
+
+        var oppObj = component.get("v.opp");
+        oppObj = this.proxyToObj(oppObj);
+        oppObj[oppLookupField] = newId;
 		
 		var field = component.find(inputAuraId);
 		if(field){
             var lookupInput = field.get("v.body")[0];
             lookupInput.updateValues();
             lookupInput.set("v.values", this.proxyToObj(newValue));
+
+            component.set("v.opp", oppObj);
+            console.log(' ** setLookupField');
+            console.log(oppObj);
         }
+    },
+    checkMatches: function(component, objToMatch){
+
+        var matchListCmps = this.getMatchListComponents(component);
+
+        for(var i=0; i<matchListCmps.length; i++){
+            var thisCmp = matchListCmps[i];
+            var objType = thisCmp.get("v.objectType");
+            console.log(objType); 
+
+            // Don't fire the change event if we aren't checking matches for this object
+            if(objToMatch != null && objType != objToMatch){
+                thisCmp.set("v.enableChangeEvent", false);
+            }
+        }
+
+        this.fillJsonField(component);
+        this.processGiftJson(component, true);
+    },
+    getMatchListComponents: function(component){
+        var namespace = component.get("v.namespacePrefix");
+        var rowCmpName = namespace + ":giftFormMatchList";
+        var formWrapper = component.find("formWrapper");
+        return formWrapper.find({instancesOf:rowCmpName});
     },
     scrollToTop: function(){
         window.scrollTo(0, 0);

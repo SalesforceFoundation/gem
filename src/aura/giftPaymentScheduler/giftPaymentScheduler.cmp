@@ -1,9 +1,10 @@
 <aura:component >
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="Decimal" name="donationAmt" />
-    <aura:attribute type="Boolean" name="showPayments" default="true" />
-    <aura:attribute type="String[]" name="picklistValues" />
+    <aura:attribute type="Boolean" name="showPayments" default="false" />
+    <aura:attribute type="Boolean" name="blockItemChangeEvent" default="true" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String" name="intervalFreq" />
     <aura:attribute type="Integer" name="intervalNum" />
@@ -13,17 +14,16 @@
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="rowCmpName" />
     <aura:attribute type="String" name="paymentMethod" />
-    <aura:attribute type="sObject[]" name="itemList" />
-    <aura:attribute type="sObject[]" name="rowList" default="[]" />
+    <aura:attribute type="npe01__OppPayment__c[]" name="paymentList" />
+    <aura:attribute type="sObject[]" name="objsToDelete" />
+    <aura:attribute type="Object" name="jsonObject" />
+    <aura:attribute type="npe01__OppPayment__c" name="singlePayment" 
+        default="{sobjectType:'npe01__OppPayment__c'}" />
 
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
+    <aura:handler name="change" value="{!v.paymentList}" action="{!c.handlePaymentsChange}"/>
 
-    <aura:attribute name="singlePayment" 
-        type="npe01__OppPayment__c" 
-        default="{sobjectType:'npe01__OppPayment__c'}" />
-
-    <aura:attribute type="Object" name="jsonObject" />
 
     <div class="slds-col slds-size_1-of-1">
         <div class="slds-page-header slds-page-header__title">
@@ -73,7 +73,7 @@
             </lightning:select>
         </div>
         <div class="slds-col slds-size_2-of-8">
-            <c:giftPicklist picklistValues="{!v.picklistValues}" 
+            <c:giftPicklist picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}" 
                 fieldLabel="Payment Method"
                 inputFieldId="schedulerPaymentMethod"
                 selectedVal="{!v.selectedPaymentMethod}" />
@@ -88,16 +88,16 @@
     <!-- Show a row for each payment -->
     <div class="{!v.showPayments ? 'slds-size_1-of-1' : 'slds-hidden'}">
         <c:giftFormRelated objectName="npe01__OppPayment__c"
-            rowList="{!v.rowList}"
+            itemList="{!v.paymentList}"
+            objsToDelete="{!v.objsToDelete}"
+            blockItemChangeEvent="{!v.blockItemChangeEvent}"
             rowCmpName="{!v.rowCmpName}"
             oppField="npe01__Opportunity__c"
             amtField="npe01__Payment_Amount__c"
-            objsToDelete="{!v.objsToDelete}"
-            itemList="{!v.itemList}"
-            fieldList="npe01__Payment_Amount__c,npe01__Paid__c,npe01__Scheduled_Date__c,npe01__Payment_Date__c,npe01__Payment_Method__c,npe01__Check_Reference_Number__c"
             donationAmt="{!v.donationAmt}"
             preventAmountSurplus="false"
             preventAmountDeficit="true"
+            picklistOptions="{!v.picklistOptions}"
             jsonObj="{!v.jsonObject}" />
     </div>
 

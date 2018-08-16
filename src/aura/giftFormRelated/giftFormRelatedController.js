@@ -24,9 +24,11 @@
         return isValid;
     },
     handleItemListChange: function(component, event, helper){
+        // In the payment scheduler, this event gets called twice so we prevent it one time
+        var blockChange = component.get("v.blockItemChangeEvent");
         // On load, since the itemlist comes in before the picklist values are set,
         // we need to wait for the picklists before processing the rows
-        if(component.get("v.initFinished")){
+        if(component.get("v.initFinished") && !blockChange){
             helper.createRowsFromItemList(component, helper);
         }
     },
@@ -73,7 +75,7 @@
             }
         }
 
-        console.log(objsToDelete); 
+        // console.log(objsToDelete); 
 
         component.set("v.objsToDelete", objsToDelete);
         component.set("v.rowList", rowList);

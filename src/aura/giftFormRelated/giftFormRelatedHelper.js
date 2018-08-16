@@ -60,11 +60,13 @@
         //var itemList = event.getParam("value");
         var itemList = component.get("v.itemList");
         itemList = this.proxyToObj(itemList);
+        console.log(itemList); 
 
         for(var i=0; i<itemList.length; i++){
             this.handleAddRow(component, helper, itemList[i], i);
         }
         component.set("v.showAmountError", false);
+        //component.set("v.blockItemChangeEvent", false);
     },
     setOppIdPlaceholder: function(component, itemObj, oppFieldName){
         // Set the opportunity field to a placeholder, which gets replaced in Apex
@@ -114,7 +116,9 @@
             //     var fieldVal = oldObj[fieldName];
             //     newObj[fieldName] = fieldVal;
             // }
-            this.setOppIdPlaceholder(component, oldObj, oppFieldName);
+            // if(oldObj.Id == null){
+            //     this.setOppIdPlaceholder(component, oldObj, oppFieldName);
+            // }
             newObjList.push(oldObj);
         }
         // console.log(objectName);
@@ -125,9 +129,9 @@
         // Should overwrite with blank array if no list is passed!
         component.set("v.jsonObj."+objectName, newObjList);
         
-        console.log('JSON set:');
+        // console.log('JSON set:');
         jsonObj = component.get("v.jsonObj");
-        console.log(JSON.stringify(jsonObj));
+        // console.log(JSON.stringify(jsonObj));
     },
     validateRows: function(component){
         var preventSubmit = component.get("v.preventSubmit");

@@ -13,7 +13,7 @@
     <aura:attribute type="Map" name="objToMatchLists" />
     <aura:attribute type="Object" name="jsonObject" />
     <aura:attribute type="String" name="jsonObjectString" />
-    <aura:attribute type="String" name="donorType" />
+    <aura:attribute type="String" name="donorType" default="Contact1" />
     <aura:attribute type="String" name="namespacePrefix" />
     <aura:attribute type="String" name="namespaceFieldPrefix" default="" />
     <aura:attribute type="sObject[]" name="objsToDelete" />
@@ -38,7 +38,7 @@
     <aura:attribute type="Date" name="paymentDate" />
     <aura:handler name="change" value="{!v.paymentDate}" action="{!c.handleDateChange}"/>
     <aura:handler name="change" value="{!v.donorType}" action="{!c.handleDonorTypeChange}"/>
-    <aura:handler name="change" value="{!v.donorExists}" action="{!c.checkMatches}"/>
+    <aura:handler name="change" value="{!v.donorExists}" action="{!c.handleCheckMatches}"/>
 
     <!-- Work around for change event on lookups -->
     <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.handleFieldChange}"/>
@@ -52,10 +52,10 @@
         default="{sobjectType:'npe01__OppPayment__c'}"/>
     <aura:attribute name="acct" 
         type="Account" 
-        default="{sobjectType:'Account'}"/>
+        default="{sobjectType:'Account',Name:''}"/>
     <aura:attribute name="contact" 
         type="Contact" 
-        default="{sobjectType:'Contact'}"/>
+        default="{sobjectType:'Contact',FirstName:''}"/>
     
     <aura:attribute name="allocs" 
         type="npsp__Allocation__c[]" 
@@ -101,30 +101,6 @@
                         Donor Information
                     </div>
                 </div>
-                
-                <c:giftFormMatchList
-                    idField="AccountId"
-                    inputAuraId="accountLookup"
-                    objectType="Account"
-                    showSpinner="{!v.showMatchSpinner}"
-                    objectList="{!v.giftClassController.matchedAccts}"
-                    sectionLabel="Account Matches" />
-
-                <c:giftFormMatchList
-                    idField="npsp__Primary_Contact__c"
-                    inputAuraId="contactLookup"
-                    objectType="Contact"
-                    showSpinner="{!v.showMatchSpinner}"
-                    objectList="{!v.giftClassController.matchedContacts}"
-                    sectionLabel="Contact Matches" />
-
-                <c:giftFormMatchList
-                    idField="Id"
-                    inputAuraId="oppLookup"
-                    objectType="Opportunity"
-                    showSpinner="{!v.showMatchSpinner}"
-                    objectList="{!v.giftClassController.matchedOpps}"
-                    sectionLabel="Donation Matches" />
 
                 <div class="slds-col slds-size_1-of-1">
                     <c:giftPicklist picklistValues="[{value:'Account1',label:'Account'},{value:'Contact1',label:'Contact'},{value:'',label:'Account with Contact'}]" 
@@ -187,11 +163,34 @@
                     </div>
                 </div>
 
+                <c:giftFormMatchList
+                    idField="AccountId"
+                    inputAuraId="accountLookup"
+                    objectType="Account"
+                    showMatchSpinner="{!v.showMatchSpinner}"
+                    objectList="{!v.giftClassController.matchedAccts}"
+                    sectionLabel="Account Matches" />
+
+                <c:giftFormMatchList
+                    idField="npsp__Primary_Contact__c"
+                    inputAuraId="contactLookup"
+                    objectType="Contact"
+                    showMatchSpinner="{!v.showMatchSpinner}"
+                    objectList="{!v.giftClassController.matchedContacts}"
+                    sectionLabel="Contact Matches" />
+
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">
                         Donation Information
                     </div>
                 </div>
+
+                <c:giftFormMatchList
+                    idField="Id"
+                    objectType="Opportunity"
+                    showMatchSpinner="{!v.showMatchSpinner}"
+                    objectList="{!v.giftClassController.matchedOpps}"
+                    sectionLabel="Donation Matches" />
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                     <label class="show-required slds-form-element__label">
@@ -340,14 +339,14 @@
                         value="{!v.opp.npsp__Matching_Gift_Status__c}" />
                 </div>
 
-                <!-- <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
-                    itemList="{!v.payments}"
+                <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
+                    paymentList="{!v.payments}"
                     objsToDelete="{!v.objsToDelete}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
-                    picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}"
-                    jsonObject="{!v.jsonObject}" 
+                    donationAmt="{!v.opp.Amount}"
                     paymentMethod="{!v.payment.npe01__Payment_Method__c}"
-                    donationAmt="{!v.opp.Amount}" /> -->
+                    picklistOptions="{!v.picklistOptions}"
+                    jsonObject="{!v.jsonObject}" />
 
                 <c:giftFormRelated sectionTitle="Soft Credits"
                     itemList="{!v.partialCredits}"

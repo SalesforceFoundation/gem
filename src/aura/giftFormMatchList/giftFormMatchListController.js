@@ -1,5 +1,9 @@
 ({
 	handleListChange : function(component, event, helper) {
+		var objectType = component.get("v.objectType");
+		var curVal = component.get("v.selectedValue");
+		console.log('curVal for ' + objectType); 
+		console.log(curVal); 
 		var objList = component.get("v.objectList");
 		if(!objList){
 			component.set("v.optionList", []);
@@ -14,7 +18,13 @@
 			newList[i+1] = {'label': thisItem.Name, 'value': i};
 		}
 
-		component.set("v.selectedValue", createNewVal);
+		console.log(' ** newList'); 
+		console.log(newList); 
+
+		if(!curVal){
+			curVal = createNewVal;
+		}
+		component.set("v.selectedValue", curVal);
 		component.set("v.optionList", newList);
 		component.set("v.enableChangeEvent", true);
 	},
@@ -22,11 +32,15 @@
 		if(!component.get("v.enableChangeEvent")){
 			return;
 		}
+
+		var objectType = component.get("v.objectType");
+		console.log(' ** SELECTION CHANGE for: '); 
+		console.log(objectType); 
+
 		var newIndex = event.getParam("value");
 		var objList = component.get("v.objectList");
 
 		// If undefined, pass an empty object instead? Just grab type?
-		console.log(newIndex);
 		var selectedObject = objList[newIndex];
 		console.log(selectedObject);
 

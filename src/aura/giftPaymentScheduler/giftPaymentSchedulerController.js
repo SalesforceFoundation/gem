@@ -2,6 +2,12 @@
 	doInit: function(component, event, helper) {
         var today = new Date();
         component.set('v.startDate', helper.convertDateToString(today));
+	},
+	handlePaymentsChange: function(component, event, helper){
+		// Gets called twice, we only want to event to fire once
+		var blockChange = component.get("v.blockItemChangeEvent");
+		component.set("v.blockItemChangeEvent", !blockChange);
+		component.set("v.showPayments", true);
     },
 	clickCalculate: function(component, event, helper) {
 		component.set("v.calculateButtonLabel", "Clear and Calculate New Payments");
@@ -54,11 +60,10 @@
 			paymentList.push(singlePayment);
 		}
 		
-		console.log('paymentList:'); 
-		console.log(paymentList); 
+		// console.log('paymentList:'); 
+		// console.log(paymentList); 
 
-		component.set("v.itemList", paymentList);
-		component.set("v.showPayments", true);
+		component.set("v.paymentList", paymentList);
 	},
 	handleAmtChange: function(component, event, helper) {
 		var donationAmt = component.get("v.donationAmt");

@@ -93,11 +93,6 @@
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
     },
-    // handleAmountChange: function(component, event, helper){
-    //     var newAmt = event.getParam("value");
-    //     helper.updateAmountField(component, newAmt);
-    //     helper.checkValidation(component);
-    // },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
         var validForm = helper.validateForm(component);
@@ -120,7 +115,7 @@
             component.set('v.showSpinner', false);
         }
     },
-    checkMatches: function(component, event, helper) {
+    handleCheckMatches: function(component, event, helper) {
 
         // TODO: Fix this in edit mode...
         var isEditMode = component.get("v.editMode");
@@ -134,8 +129,7 @@
             return;
         }
         
-        helper.fillJsonField(component);
-        helper.processGiftJson(component, true);
+        helper.checkMatches(component);
     },
     clickGoToDonation: function(component, event, helper){
         helper.redirectToDonation(component);
@@ -181,5 +175,10 @@
         var oppLookupField = event.getParam("oppLookupField");
 
         helper.setLookupField(component, objectType, selectedObject, inputAuraId, oppLookupField);
+
+        // If the donor changed, check for matches again
+        if(objectType == "Contact" || objectType == "Account"){
+            helper.checkMatches(component, "Opportunity");
+        }
     }
 })

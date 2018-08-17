@@ -1,66 +1,53 @@
 ({
     doInit: function(component, event, helper) {
-        // Get Object field labels for use in the form
-        var getClassAction = component.get("c.initClass");
-        getClassAction.setCallback(this, function(response) {
+        var recordId = component.get('v.recordId');
+        // Get the data model class for the form
+        // Includes picklist options, field labels, and objects if loading an existing record
+        var getModelAction = component.get("c.initClass");
+        getModelAction.setParams({
+            oppId: recordId
+        });
+        getModelAction.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                var giftCtrl = response.getReturnValue();
-                component.set("v.giftClassController", giftCtrl);
-                component.set("v.objectLabels", giftCtrl.objNameToApiToLabel);
+                var giftModel = response.getReturnValue();
                 
-                // TODO: More init functions here? Check for existing record Id?
+                console.log('From init'); 
+                console.log(giftModel); 
+
+                component.set("v.giftModel", giftModel);
+                component.set("v.objectLabels", giftModel.objNameToApiToLabel);
+
+                if(giftModel.opp){
+                    component.set("v.opp", giftModel.opp);
+                }
+                if(giftModel.acct){
+                    component.set("v.acct", giftModel.acct);
+                }
+                if(giftModel.contact){
+                    component.set("v.contact", giftModel.contact);
+                }
+                if(giftModel.payments){
+                    component.set("v.payments", giftModel.payments);
+                }
+                if(giftModel.allocs){
+                    component.set("v.allocs", giftModel.allocs);
+                }
+                if(giftModel.partialCredits){
+                    component.set("v.partialCredits", giftModel.partialCredits);
+                }
 
             } else if (state === "ERROR") {
                 helper.handleError(component, response);
             }
         });
-        $A.enqueueAction(getClassAction);
+        $A.enqueueAction(getModelAction);
 
-
-        var recordId = component.get('v.recordId');
-        // Make changes based on mode
+        // Changes if there is already a recordId (Edit mode)
         if(recordId){
-            // Get data from Apex
-            var action = component.get("c.getDonationRecords");
-            action.setParams({
-                oppId: recordId
-            });
-
-            action.setCallback(this, function(response) {
-                var state = response.getState();
-                if (state === "SUCCESS") {
-                    var objMap = response.getReturnValue();
-                    console.log(objMap); 
-                    if(objMap){
-                        if(objMap.Opportunity){
-                            component.set("v.opp", objMap.Opportunity[0]);
-                        }
-                        if(objMap.Account){
-                            component.set("v.acct", objMap.Account[0]);
-                        }
-                        if(objMap.Contact){
-                            component.set("v.contact", objMap.Contact[0]);
-                        }
-                        if(objMap.Payments){
-                            component.set("v.payments", objMap.Payments);
-                        }
-                        if(objMap.Allocations){
-                            component.set("v.allocs", objMap.Allocations);
-                        }
-                        if(objMap.PartialCredits){
-                            component.set("v.partialCredits", objMap.PartialCredits);
-                        }
-                    }
-                }
-            });
-
-            $A.enqueueAction(action); 
-
+            helper.changeSubmitText(component, 'Update Gift');            
             component.set('v.editMode', true);
-            helper.changeSubmitText(component, 'Update Gift');
         }
-
 
         var namespace = component.getType().split(':')[0];
         component.set("v.namespacePrefix", namespace);
@@ -68,26 +55,8 @@
             component.set("v.namespaceFieldPrefix", namespace+'__');
         }
 
-        //console.log("Handle Load");
-        // In the case of a new gift, the recordId changes, which would trigger a second load event
-        // if(component.get("v.dataLoaded")){
-        //     helper.checkValidation(component);
-        //     return;
-        // }
-        // component.set("v.dataLoaded", true);
-
         // Setup Picklists and any default form values
-        helper.setDefaults(component, helper);
-        
-        // Also set the amount in the payment scheduler
-        // var amtField = component.find("amtField");
-        // if(amtField){
-        //     var amt = amtField.get("v.value");
-        //     helper.updateAmountField(component, amt);
-        // }
-
-        //helper.setGiftObjMap(component);
-        
+        helper.setDefaults(component, helper);        
         helper.checkValidation(component);
     },
     handleFieldChange: function(component, event, helper){
@@ -119,6 +88,8 @@
 
         // TODO: Fix this in edit mode...
         var isEditMode = component.get("v.editMode");
+        console.log('isEditMode: '); 
+        console.log(isEditMode); 
 
         // console.log("Check matches"); 
         // console.log( event.getParam("oldValue") );

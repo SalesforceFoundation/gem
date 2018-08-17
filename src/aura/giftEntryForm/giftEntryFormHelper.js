@@ -139,20 +139,26 @@
         }
         
         var jsonString = component.get("v.jsonObjectString");
+        var giftModelString = component.get("v.giftModelString");
+
+        console.log(giftModelString); 
 
         // Now process the JSON for this single gift
         var action = component.get("c.processGiftJSON");
         action.setParams({
-            jsonObj: jsonString,
+            giftModelString: giftModelString,
             checkDataMatches: checkDataMatches
         });
 
         action.setCallback(this, function(response) {
             var state = response.getState();
 
+            console.log(state); 
+            console.log(response.getReturnValue()); 
+
             if (state === "SUCCESS") {
-                var giftCtrl = response.getReturnValue();
-                component.set("v.giftClassController", giftCtrl);
+                var giftModel = response.getReturnValue();
+                component.set("v.giftModel", giftModel);
                 var oppId = component.find("oppId").get("v.value");
                 // console.log(oppId); 
 
@@ -289,16 +295,25 @@
         }
     },
     fillJsonField: function(component) {
+
+        // TODO: Update this to create a giftModel object instead!
+
         var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
         var allRowsValid = true;
 
+        var jsonObj = component.get("v.jsonObject");
+        var giftModel = component.get("v.giftModel");
+
         // First process the related objects
         for(var i=0; i < relatedCmp.length; i++){
+
+            // Need to get variable name for each of these to know where to map the return
             var jsonResp = relatedCmp[i].handleJsonUpdate();
             allRowsValid = allRowsValid && jsonResp;
+
         }
 
-        var jsonObj = component.get("v.jsonObject");
+        console.log(giftModel); 
 
         if(jsonObj == null){
             // If json has not been set yet, set to empty object
@@ -310,17 +325,25 @@
         var acct = this.proxyToObj(component.get("v.acct"));
         var contact = this.proxyToObj(component.get("v.contact"));
         var opp = this.proxyToObj(component.get("v.opp"));
-        console.log(' *** opp'); 
-        console.log(opp); 
+        // console.log(' *** opp'); 
+        // console.log(opp); 
         var objsToDelete = this.proxyToObj(component.get("v.objsToDelete"));
-        jsonObj['Account'] = [acct];
-        jsonObj['Contact'] = [contact];
-        jsonObj['Opportunity'] = [opp];
-        jsonObj['SObject'] = objsToDelete;
+        giftModel['acct'] = acct;
+        giftModel['contact'] = contact;
+        giftModel['opp'] = opp;
+        giftModel['objsToDelete'] = objsToDelete;
+
+        // Clear unneeded variables
+        giftModel['objNameToApiToLabel'] = {};
+        giftModel['picklistValues'] = {};
+
+        console.log('giftModel:'); 
+        console.log(giftModel); 
 
         component.set("v.jsonObj", jsonObj);
+        component.set("v.giftModel", giftModel);
 
-        if(jsonObj.npe01__OppPayment__c && jsonObj.npe01__OppPayment__c.length > 0){
+        if(giftModel.payments && giftModel.payments.length > 0){
             // Payments are being scheduled, do not create one for the full donation
             var autoPaymentField = component.find('doNotAutoCreatePayment');
             if(autoPaymentField){
@@ -329,7 +352,12 @@
         }
         var jsonObjString = JSON.stringify(jsonObj);
         console.log(jsonObjString);
+
+        var giftModelString = JSON.stringify(giftModel);
+        console.log(giftModelString);
+
         component.set("v.jsonObjectString", jsonObjString);
+        component.set("v.giftModelString", giftModelString);
         return allRowsValid;
     },
     setLookupField: function(component, objectType, selectedObject, inputAuraId, oppLookupField){

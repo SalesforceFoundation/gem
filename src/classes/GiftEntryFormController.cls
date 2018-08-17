@@ -35,51 +35,51 @@
 * @description Base Class for Gift Entry Components with Aura Enabled Methods
 */
 public class GiftEntryFormController {
-    @AuraEnabled 
-    public Id oppId {get;set;}
-    public Opportunity opp {get;set;}
-    public Account acct {get;set;}
-    public Contact contact {get;set;}
-    public List<npe01__OppPayment__c> payments {get;set;}
-    public List<npsp__Allocation__c> allocs {get;set;}
-    public List<npsp__Partial_Soft_Credit__c> partialCredits {get;set;}
-    public List<sObject> objsToDelete {get;set;}
-    @AuraEnabled 
-    public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
 
-    public Map<String, List<sObject>> objToMatchLists = new Map<String, List<sObject>>();
-    
-    @AuraEnabled
-    public List<Opportunity> matchedOpps {get;set;}
-    @AuraEnabled
-    public List<Account> matchedAccts {get;set;}
-    @AuraEnabled
-    public List<Contact> matchedContacts {get;set;}
-    @AuraEnabled
-    public List<npe01__OppPayment__c> matchedPayments {get;set;}
-
-    private Savepoint sp {get;set;}
-
-	public Boolean hasPerm {get;set;}
+    public Boolean hasPerm {get;set;}
     public GiftEntryFormController(){
         hasPerm = Schema.sObjectType.Opportunity.isCreateable();
     }
 
+    public class GiftFormModel{
+        @AuraEnabled public Id oppId {get;set;}
+        @AuraEnabled public Opportunity opp {get;set;}
+        @AuraEnabled public Account acct {get;set;}
+        @AuraEnabled public Contact contact {get;set;}
+        @AuraEnabled public List<npe01__OppPayment__c> payments {get;set;}
+        @AuraEnabled public List<npsp__Allocation__c> allocs {get;set;}
+        @AuraEnabled public List<npsp__Partial_Soft_Credit__c> partialCredits {get;set;}
+        @AuraEnabled public List<sObject> objsToDelete {get;set;}
+
+        @AuraEnabled public List<Opportunity> matchedOpps {get;set;}
+        @AuraEnabled public List<Account> matchedAccts {get;set;}
+        @AuraEnabled public List<Contact> matchedContacts {get;set;}
+        @AuraEnabled public List<npe01__OppPayment__c> matchedPayments {get;set;}
+
+        @AuraEnabled public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
+
+        @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
+
+        public GiftFormModel(Id oppId){
+            this.oppId = oppId;
+            this.objNameToApiToLabel = getObjNameToApiToLabel();
+            this.picklistValues = getPickListValues();
+        }
+    }
+
     @AuraEnabled
-    public static GiftEntryFormController initClass(){
-        GiftEntryFormController giftCtrl = new GiftEntryFormController();
-        giftCtrl.objNameToApiToLabel = getObjNameToApiToLabel();
-        return giftCtrl;
+    public static GiftFormModel initClass(Id oppId){
+        GiftFormModel giftModel = new GiftFormModel(oppId);
+        giftModel = getDonationRecords(giftModel);
+        return giftModel;
     }
 
     /*******************************************************************************************************
     * @description Return a Map of Object Name to Map<String,String> of field names to labels
     * @return Map<String, Map<String,String>> which maps an object name to a map of fields
     */
+    @AuraEnabled
     public static Map<String, Map<String,String>> getObjNameToApiToLabel(){
-        // if(objNameToApiToLabel != null){
-        //     return null;
-        // }
         Map<String, Map<String,String>> objLabelMap = new Map<String, Map<String,String>>();
         objLabelMap = new Map<String, Map<String,String>>();
         objLabelMap.put('Account', getFieldNameToLabelForObject('Account'));
@@ -107,31 +107,35 @@ public class GiftEntryFormController {
     * @param diObjId Id of DataImport object that created or matching this Opportunity
     * @return Id of the Opportunity
     */
-    @AuraEnabled
-    public static Map<String, List<sObject>> getDonationRecords(Id oppId){
+    private static GiftFormModel getDonationRecords(GiftFormModel giftModel){
         try {
+            Id oppId = giftModel.oppId;
+            if(oppId == null){
+                return giftModel;
+            }
+
             String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
             String allAccountFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Account');
             String allContactFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Contact');
             List<Opportunity> opps = 
                 Database.query('SELECT '+ allOppFields +' FROM Opportunity WHERE Id = :oppId');
-
+            
             Map<String, List<sObject>> objNameToObjects = new Map<String, List<sObject>>();
 
             if(!opps.isEmpty()){
-                objNameToObjects.put('Opportunity', opps);
+                giftModel.opp = opps[0];
             } else {
-                return null;
+                return giftModel;
             }
 
-            Opportunity opp = opps[0];
+            Opportunity opp = giftModel.opp;
 
             if(opp.AccountId != null){
                 Id aId = opp.AccountId;
                 List<Account> accounts = 
                     Database.query('SELECT '+ allAccountFields +' FROM Account WHERE Id = :aId');
                 if(!accounts.isEmpty()){
-                    objNameToObjects.put('Account', accounts);
+                    giftModel.acct = accounts[0];
                 }
             }
 
@@ -140,7 +144,7 @@ public class GiftEntryFormController {
                 List<Contact> contacts = 
                     Database.query('SELECT '+ allContactFields +' FROM Contact WHERE Id = :cId');
                 if(!contacts.isEmpty()){
-                    objNameToObjects.put('Contact', contacts);
+                    giftModel.contact = contacts[0];
                 }
             }
 
@@ -156,7 +160,7 @@ public class GiftEntryFormController {
                     FROM npe01__OppPayment__c 
                     WHERE npe01__Opportunity__c =: oppId];
                 if(!payments.isEmpty()){
-                    objNameToObjects.put('Payments', payments);
+                    giftModel.payments = payments;
                 }
             }
 
@@ -169,7 +173,7 @@ public class GiftEntryFormController {
                 FROM npsp__Allocation__c 
                 WHERE npsp__Opportunity__c =: oppId];
             if(!allocations.isEmpty()){
-                objNameToObjects.put('Allocations', allocations);
+                giftModel.allocs = allocations;
             }
 
             List<npsp__Partial_Soft_Credit__c> partialCredits = [SELECT Id, 
@@ -181,10 +185,13 @@ public class GiftEntryFormController {
                 FROM npsp__Partial_Soft_Credit__c 
                 WHERE npsp__Opportunity__c =: oppId];
             if(!partialCredits.isEmpty()){
-                objNameToObjects.put('PartialCredits', partialCredits);
+                giftModel.partialCredits = partialCredits;
             }
 
-            return objNameToObjects;
+            System.debug('giftModel from init:'); 
+            System.debug(giftModel); 
+
+            return giftModel;
 
         } catch(Exception e){
             System.debug(e);
@@ -211,71 +218,71 @@ public class GiftEntryFormController {
     }
 
     @TestVisible
-    private static GiftEntryFormController saveDonationInformation(GiftEntryFormController giftCtrl){
-        giftCtrl.sp = Database.setSavepoint();
+    private static GiftFormModel saveDonationInformation(GiftFormModel giftModel){
+        Savepoint sp = Database.setSavepoint();
         // Upsert or Delete the provided Donor and Donation information
         try {
 
             // First, delete any objects that were removed from the form
-            if(giftCtrl.objsToDelete != null && !giftCtrl.objsToDelete.isEmpty()){
-                deleteObjList(giftCtrl.objsToDelete);
+            if(giftModel.objsToDelete != null && !giftModel.objsToDelete.isEmpty()){
+                deleteObjList(giftModel.objsToDelete);
             }
 
             // Insert or Update the provided Donor information
-            if(giftCtrl.acct != null && !String.isBlank(giftCtrl.acct.Name)){
-                if(!String.isBlank(giftCtrl.opp.AccountId)){
-                    giftCtrl.acct.Id = giftCtrl.opp.AccountId;
+            if(giftModel.acct != null && !String.isBlank(giftModel.acct.Name)){
+                if(!String.isBlank(giftModel.opp.AccountId)){
+                    giftModel.acct.Id = giftModel.opp.AccountId;
                 }
-                upsert giftCtrl.acct;
+                upsert giftModel.acct;
             }
-            if(giftCtrl.contact != null && !String.isBlank(giftCtrl.contact.LastName)){
-                if(!String.isBlank(giftCtrl.opp.npsp__Primary_Contact__c)){
-                    giftCtrl.contact.Id = giftCtrl.opp.npsp__Primary_Contact__c;
+            if(giftModel.contact != null && !String.isBlank(giftModel.contact.LastName)){
+                if(!String.isBlank(giftModel.opp.npsp__Primary_Contact__c)){
+                    giftModel.contact.Id = giftModel.opp.npsp__Primary_Contact__c;
                 }
-                upsert giftCtrl.contact;
+                upsert giftModel.contact;
             }
 
             // Insert or Update the provided Donation information
-            if(giftCtrl.acct != null && giftCtrl.acct.Id != null){
-                giftCtrl.opp.AccountId = giftCtrl.acct.Id;
+            if(giftModel.acct != null && giftModel.acct.Id != null){
+                giftModel.opp.AccountId = giftModel.acct.Id;
             }
-            if(giftCtrl.contact != null && giftCtrl.contact.Id != null){
-                giftCtrl.opp.npsp__Primary_Contact__c = giftCtrl.contact.Id;
+            if(giftModel.contact != null && giftModel.contact.Id != null){
+                giftModel.opp.npsp__Primary_Contact__c = giftModel.contact.Id;
             }
 
-            upsert giftCtrl.opp;
+            upsert giftModel.opp;
             
-            if(giftCtrl.payments != null && !giftCtrl.payments.isEmpty()){
-                for(npe01__OppPayment__c p : giftCtrl.payments){
+            if(giftModel.payments != null && !giftModel.payments.isEmpty()){
+                for(npe01__OppPayment__c p : giftModel.payments){
                     if(p.Id == null){
-                        p.npe01__Opportunity__c = giftCtrl.opp.Id;
+                        p.npe01__Opportunity__c = giftModel.opp.Id;
                     }
                 }
-                upsert giftCtrl.payments;
+                upsert giftModel.payments;
             }
-            if(giftCtrl.allocs != null && !giftCtrl.allocs.isEmpty()){
-                for(npsp__Allocation__c a : giftCtrl.allocs){
-                    a.npsp__Opportunity__c = giftCtrl.opp.Id;
+            if(giftModel.allocs != null && !giftModel.allocs.isEmpty()){
+                for(npsp__Allocation__c a : giftModel.allocs){
+                    a.npsp__Opportunity__c = giftModel.opp.Id;
                 }
-                upsert giftCtrl.allocs;
+                upsert giftModel.allocs;
             }
-            if(giftCtrl.partialCredits != null && !giftCtrl.partialCredits.isEmpty()){
-                for(npsp__Partial_Soft_Credit__c c : giftCtrl.partialCredits){
+            if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()){
+                for(npsp__Partial_Soft_Credit__c c : giftModel.partialCredits){
                     if(c.Id == null){
-                        c.npsp__Opportunity__c = giftCtrl.opp.Id;
+                        c.npsp__Opportunity__c = giftModel.opp.Id;
                     }
                 }
-                upsert giftCtrl.partialCredits;
+                upsert giftModel.partialCredits;
             }
 
-            giftCtrl.oppId = giftCtrl.opp.Id;
+            giftModel.oppId = giftModel.opp.Id;
 
-            System.debug(giftCtrl);
+            System.debug(giftModel);
 
-            return giftCtrl;
+            return giftModel;
 
         } catch(Exception e){
-            Database.rollback(giftCtrl.sp);
+            Database.rollback(sp);
             throw e;
         }
     }
@@ -439,68 +446,72 @@ public class GiftEntryFormController {
     * @return Id of the Opportunity created
     */
     @AuraEnabled
-    public static GiftEntryFormController processGiftJSON(String jsonObj, Boolean checkDataMatches){
+    public static GiftFormModel processGiftJSON(String giftModelString, Boolean checkDataMatches){
         try {
-            GiftEntryFormController giftCtrl = new GiftEntryFormController();
-            if(jsonObj == null){
-                return giftCtrl;
+            //GiftFormModel giftModel = new GiftFormModel(null);
+            if(giftModelString == null){
+                return new GiftFormModel(null);
             }
             // First, attributes passed from Lightning that can't be deserialized
             String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
             String relatedObjectRegex = ',"((?!",")(?!attributes).)+:\\{"[^}]+\\}';
-            jsonObj = jsonObj.replaceAll(sobjectTypeRegex, '');
-            jsonObj = jsonObj.replaceAll(relatedObjectRegex, '');
+            giftModelString = giftModelString.replaceAll(sobjectTypeRegex, '');
+            //giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
 
-            System.debug('****** jsonObj:'); 
-            System.debug(jsonObj); 
+            System.debug(giftModelString); 
+
+            GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
+
+            System.debug('****** giftModel:'); 
+            System.debug(giftModel); 
 
             // Given a map of json objects, break them out into actual sobjects to process
-            Map<String, Object> objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(jsonObj);
-            System.debug(objNameToObjList);
-            List<SObject> thisList;
-            // For each objet type included, set the controller's variable
-            for(String objName : objNameToObjList.keySet()){
+            // Map<String, Object> objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(jsonObj);
+            // System.debug(objNameToObjList);
+            // List<SObject> thisList;
+            // // For each objet type included, set the controller's variable
+            // for(String objName : objNameToObjList.keySet()){
 
-                Object objList = objNameToObjList.get(objName);
-                if(objList != null){
-                    String objListString = JSON.serialize(objList);
+            //     Object objList = objNameToObjList.get(objName);
+            //     if(objList != null){
+            //         String objListString = JSON.serialize(objList);
 
-                    System.debug(objName); 
-                    System.debug(objListString); 
+            //         System.debug(objName); 
+            //         System.debug(objListString); 
 
-                    Type listType = Type.forName('List<' + objName + '>');
-                    thisList = (List<SObject>)JSON.deserialize(objListString, listType);
+            //         Type listType = Type.forName('List<' + objName + '>');
+            //         thisList = (List<SObject>)JSON.deserialize(objListString, listType);
 
-                    switch on objName {
-                        when 'Account' {
-                            giftCtrl.acct = (Account)thisList[0];
-                        }
-                        when 'Opportunity' {
-                            giftCtrl.opp = (Opportunity)thisList[0];
-                        }
-                        when 'Contact' {
-                            giftCtrl.contact = (Contact)thisList[0];
-                        }
-                        when 'npsp__Allocation__c' {
-                            giftCtrl.allocs = (List<npsp__Allocation__c>)thisList;
-                        }
-                        when 'npe01__OppPayment__c' {
-                            giftCtrl.payments = (List<npe01__OppPayment__c>)thisList;
-                        }
-                        when 'npsp__Partial_Soft_Credit__c' {
-                            giftCtrl.partialCredits = (List<npsp__Partial_Soft_Credit__c>)thisList;
-                        }
-                        when 'SObject' {
-                            giftCtrl.objsToDelete = thisList;
-                        }
-                    }
-                }
-            }
+            //         switch on objName {
+            //             when 'Account' {
+            //                 giftModel.acct = (Account)thisList[0];
+            //             }
+            //             when 'Opportunity' {
+            //                 giftModel.opp = (Opportunity)thisList[0];
+            //             }
+            //             when 'Contact' {
+            //                 giftModel.contact = (Contact)thisList[0];
+            //             }
+            //             when 'npsp__Allocation__c' {
+            //                 giftModel.allocs = (List<npsp__Allocation__c>)thisList;
+            //             }
+            //             when 'npe01__OppPayment__c' {
+            //                 giftModel.payments = (List<npe01__OppPayment__c>)thisList;
+            //             }
+            //             when 'npsp__Partial_Soft_Credit__c' {
+            //                 giftModel.partialCredits = (List<npsp__Partial_Soft_Credit__c>)thisList;
+            //             }
+            //             when 'SObject' {
+            //                 giftModel.objsToDelete = thisList;
+            //             }
+            //         }
+            //     }
+            // }
 
             if(checkDataMatches){
-                giftCtrl = setDataMatches(giftCtrl);
+                giftModel = setDataMatches(giftModel);
             } else {
-                giftCtrl = saveDonationInformation(giftCtrl);
+                giftModel = saveDonationInformation(giftModel);
             }
 
             // System.debug(giftCtrl.acct);
@@ -508,13 +519,13 @@ public class GiftEntryFormController {
             // System.debug(giftCtrl.opp);
 
             System.debug('matchedOpps'); 
-            System.debug(giftCtrl.matchedOpps); 
+            System.debug(giftModel.matchedOpps); 
             System.debug('matchedContacts'); 
-            System.debug(giftCtrl.matchedContacts); 
+            System.debug(giftModel.matchedContacts); 
             System.debug('matchedAccts'); 
-            System.debug(giftCtrl.matchedAccts); 
+            System.debug(giftModel.matchedAccts); 
 
-            return giftCtrl;
+            return giftModel;
 
         } catch(Exception e){
             throw e;
@@ -527,22 +538,22 @@ public class GiftEntryFormController {
     * potential matches
     */
     @TestVisible
-    private static GiftEntryFormController setDataMatches(GiftEntryFormController giftCtrl){
+    private static GiftFormModel setDataMatches(GiftFormModel giftModel){
 
         // Break names into parts and check "like" on each part?
         // Query for object similar to what was entered, then set lists for the user to choose from
 
-        System.debug(giftCtrl.acct); 
-        System.debug(giftCtrl.contact); 
-        System.debug(giftCtrl.opp); 
+        System.debug(giftModel.acct); 
+        System.debug(giftModel.contact); 
+        System.debug(giftModel.opp); 
 
         Map<String, List<sObject>> matchMap = new Map<String, List<sObject>>();
 
         // Match Accounts
-        if(giftCtrl.acct != null && !String.isEmpty(giftCtrl.acct.Name)){
-            String aName = addWildcards(giftCtrl.acct.Name);
+        if(giftModel.acct != null && !String.isEmpty(giftModel.acct.Name)){
+            String aName = addWildcards(giftModel.acct.Name);
             System.debug(aName); 
-            giftCtrl.matchedAccts = [SELECT Id, Name 
+            giftModel.matchedAccts = [SELECT Id, Name 
                 FROM Account 
                 WHERE Name LIKE :aName 
                 LIMIT 5];
@@ -550,9 +561,9 @@ public class GiftEntryFormController {
         }
 
         // Match Contacts
-        if(giftCtrl.contact != null && !String.isEmpty(giftCtrl.contact.Lastname)){
-            String cFName = addWildcards(giftCtrl.contact.FirstName);
-            String cLName = addWildcards(giftCtrl.contact.LastName);
+        if(giftModel.contact != null && !String.isEmpty(giftModel.contact.Lastname)){
+            String cFName = addWildcards(giftModel.contact.FirstName);
+            String cLName = addWildcards(giftModel.contact.LastName);
 
             String query = 'SELECT Id, Name, FirstName, LastName, Phone, Email FROM Contact WHERE';
             String whereClause = '';
@@ -567,21 +578,21 @@ public class GiftEntryFormController {
             }
             whereClause += ' LIMIT 8';
 
-            giftCtrl.matchedContacts = Database.query(query + whereClause);
-            // System.debug(giftCtrl.matchedContacts); 
+            giftModel.matchedContacts = Database.query(query + whereClause);
+            // System.debug(giftModel.matchedContacts); 
             //matchMap.put('Contact', matchedContacts);
         }
 
         // Find potential Opportunities if an existing donor has been set
-        if(giftCtrl.opp != null && 
-            (!String.isEmpty(giftCtrl.opp.AccountId) 
-            || !String.isEmpty(giftCtrl.opp.npsp__Primary_Contact__c)) ){
+        if(giftModel.opp != null && 
+            (!String.isEmpty(giftModel.opp.AccountId) 
+            || !String.isEmpty(giftModel.opp.npsp__Primary_Contact__c)) ){
 
             String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
 
-            //String oName = addWildcards(giftCtrl.opp.Name);
-            String oAccountId = giftCtrl.opp.AccountId;
-            String oContactId = giftCtrl.opp.npsp__Primary_Contact__c;
+            //String oName = addWildcards(giftModel.opp.Name);
+            String oAccountId = giftModel.opp.AccountId;
+            String oContactId = giftModel.opp.npsp__Primary_Contact__c;
             String query = 'SELECT ' + allOppFields + ' FROM Opportunity WHERE ';
             String whereClause = '';
             //whereClause += ' Name LIKE :oName ';
@@ -601,8 +612,8 @@ public class GiftEntryFormController {
             System.debug(oContactId); 
             System.debug(query + whereClause); 
 
-            giftCtrl.matchedOpps = Database.query(query + whereClause);
-            System.debug(giftCtrl.matchedOpps); 
+            giftModel.matchedOpps = Database.query(query + whereClause);
+            System.debug(giftModel.matchedOpps); 
             //matchMap.put('Opportunity', matchedOpps);
         }
 
@@ -619,11 +630,7 @@ public class GiftEntryFormController {
         //     // List<npe01__OppPayment__c> matchedPayments
         // }
 
-        return giftCtrl;
-    }
-
-    private static String buildWhereClause(){
-        return null;
+        return giftModel;
     }
 
     private static String addWildcards(String str){

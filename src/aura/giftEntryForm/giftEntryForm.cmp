@@ -5,14 +5,16 @@
     <aura:handler name="giftMatchChangeEvent" action="{!c.handleMatchChange}" event="c:giftMatchChangeEvent" />
     <aura:dependency resource="markup://force:*" type="EVENT" />
 
-    <aura:attribute name="giftClassController" type="GiftEntryFormController"/>
-
+    <aura:attribute name="giftModel" type="GiftEntryFormController.GiftFormModel"/>
+    <aura:attribute type="String" name="giftModelString" />
+    
     <aura:attribute type="Map" name="giftObjectMap" default="{}" />
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="Map" name="objectLabels" />
     <aura:attribute type="Map" name="objToMatchLists" />
     <aura:attribute type="Object" name="jsonObject" />
     <aura:attribute type="String" name="jsonObjectString" />
+    
     <aura:attribute type="String" name="donorType" default="Contact1" />
     <aura:attribute type="String" name="namespacePrefix" />
     <aura:attribute type="String" name="namespaceFieldPrefix" default="" />
@@ -168,7 +170,7 @@
                     inputAuraId="accountLookup"
                     objectType="Account"
                     showMatchSpinner="{!v.showMatchSpinner}"
-                    objectList="{!v.giftClassController.matchedAccts}"
+                    objectList="{!v.giftModel.matchedAccts}"
                     sectionLabel="Account Matches" />
 
                 <c:giftFormMatchList
@@ -176,7 +178,7 @@
                     inputAuraId="contactLookup"
                     objectType="Contact"
                     showMatchSpinner="{!v.showMatchSpinner}"
-                    objectList="{!v.giftClassController.matchedContacts}"
+                    objectList="{!v.giftModel.matchedContacts}"
                     sectionLabel="Contact Matches" />
 
                 <div class="slds-col slds-size_1-of-1">
@@ -189,7 +191,7 @@
                     idField="Id"
                     objectType="Opportunity"
                     showMatchSpinner="{!v.showMatchSpinner}"
-                    objectList="{!v.giftClassController.matchedOpps}"
+                    objectList="{!v.giftModel.matchedOpps}"
                     sectionLabel="Donation Matches" />
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
@@ -397,7 +399,7 @@
                     
                     <!-- <lightning:input name="jsonInput" aura:id="postProcessJsonField" /> -->
                     <lightning:input aura:id="oppId" 
-                        value="{!v.giftClassController.oppId}" />
+                        value="{!v.giftModel.oppId}" />
                     <force:inputField aura:id="doNotAutoCreatePayment" 
                         value="{!v.opp.npe01__Do_Not_Automatically_Create_Payment__c}" />
                     <!-- 

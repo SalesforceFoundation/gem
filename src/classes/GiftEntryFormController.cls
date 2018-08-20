@@ -65,6 +65,11 @@ public class GiftEntryFormController {
             this.objNameToApiToLabel = getObjNameToApiToLabel();
             this.picklistValues = getPickListValues();
         }
+
+        public GiftFormModel(){
+            this.objNameToApiToLabel = getObjNameToApiToLabel();
+            this.picklistValues = getPickListValues();
+        }
     }
 
     @AuraEnabled
@@ -448,65 +453,32 @@ public class GiftEntryFormController {
     @AuraEnabled
     public static GiftFormModel processGiftJSON(String giftModelString, Boolean checkDataMatches){
         try {
-            //GiftFormModel giftModel = new GiftFormModel(null);
             if(giftModelString == null){
                 return new GiftFormModel(null);
             }
-            // First, attributes passed from Lightning that can't be deserialized
-            String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
-            String relatedObjectRegex = ',"((?!",")(?!attributes).)+:\\{"[^}]+\\}';
-            giftModelString = giftModelString.replaceAll(sobjectTypeRegex, '');
-            //giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
 
+            System.debug('BEFORE Regex: '); 
+            System.debug(giftModelString); 
+
+            // First, remove attributes passed from Lightning that can't be deserialized
+            String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
+            // Now remove related lookup object attributes, we can't upsert with the Id AND the object
+            // ,"((?!",")(?!\[)(?!attributes)(?!\}).)+\{((?!",")(?!\}).)+\}
+            String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
+            // String relatedObjectRegex = ',"((?!",")(?!attributes).)+:\\{"[^}]+\\}';
+
+            giftModelString = giftModelString.replaceAll(sobjectTypeRegex, '');
+            giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
+            
+            System.debug('AFTER Regex: '); 
             System.debug(giftModelString); 
 
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
 
+            // TODO: Loop through objects and strip out related objects instead of using regex
+
             System.debug('****** giftModel:'); 
             System.debug(giftModel); 
-
-            // Given a map of json objects, break them out into actual sobjects to process
-            // Map<String, Object> objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(jsonObj);
-            // System.debug(objNameToObjList);
-            // List<SObject> thisList;
-            // // For each objet type included, set the controller's variable
-            // for(String objName : objNameToObjList.keySet()){
-
-            //     Object objList = objNameToObjList.get(objName);
-            //     if(objList != null){
-            //         String objListString = JSON.serialize(objList);
-
-            //         System.debug(objName); 
-            //         System.debug(objListString); 
-
-            //         Type listType = Type.forName('List<' + objName + '>');
-            //         thisList = (List<SObject>)JSON.deserialize(objListString, listType);
-
-            //         switch on objName {
-            //             when 'Account' {
-            //                 giftModel.acct = (Account)thisList[0];
-            //             }
-            //             when 'Opportunity' {
-            //                 giftModel.opp = (Opportunity)thisList[0];
-            //             }
-            //             when 'Contact' {
-            //                 giftModel.contact = (Contact)thisList[0];
-            //             }
-            //             when 'npsp__Allocation__c' {
-            //                 giftModel.allocs = (List<npsp__Allocation__c>)thisList;
-            //             }
-            //             when 'npe01__OppPayment__c' {
-            //                 giftModel.payments = (List<npe01__OppPayment__c>)thisList;
-            //             }
-            //             when 'npsp__Partial_Soft_Credit__c' {
-            //                 giftModel.partialCredits = (List<npsp__Partial_Soft_Credit__c>)thisList;
-            //             }
-            //             when 'SObject' {
-            //                 giftModel.objsToDelete = thisList;
-            //             }
-            //         }
-            //     }
-            // }
 
             if(checkDataMatches){
                 giftModel = setDataMatches(giftModel);
@@ -552,12 +524,10 @@ public class GiftEntryFormController {
         // Match Accounts
         if(giftModel.acct != null && !String.isEmpty(giftModel.acct.Name)){
             String aName = addWildcards(giftModel.acct.Name);
-            System.debug(aName); 
             giftModel.matchedAccts = [SELECT Id, Name 
                 FROM Account 
                 WHERE Name LIKE :aName 
                 LIMIT 5];
-            //matchMap.put('Account', matchedAccts);
         }
 
         // Match Contacts
@@ -579,8 +549,6 @@ public class GiftEntryFormController {
             whereClause += ' LIMIT 8';
 
             giftModel.matchedContacts = Database.query(query + whereClause);
-            // System.debug(giftModel.matchedContacts); 
-            //matchMap.put('Contact', matchedContacts);
         }
 
         // Find potential Opportunities if an existing donor has been set

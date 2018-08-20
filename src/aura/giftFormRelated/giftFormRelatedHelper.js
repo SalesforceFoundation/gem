@@ -60,6 +60,7 @@
         //var itemList = event.getParam("value");
         var itemList = component.get("v.itemList");
         itemList = this.proxyToObj(itemList);
+        console.log('createRowsFromItemList:'); 
         console.log(itemList); 
 
         for(var i=0; i<itemList.length; i++){
@@ -76,61 +77,15 @@
             itemObj[oppFieldName] = oppPlaceholder;
         }
     },
-    updateJsonObject: function(component, arrayList){
-        var jsonObj = component.get("v.jsonObj");
-        var objectName = component.get("v.objectName");
-        // var fieldList = component.get("v.fieldList");
-        var oppField = component.get("v.oppField");
-        var oppFieldName = component.get("v.oppField");
-
-        //console.log(jsonObj); 
-
-        if(jsonObj == null){
-            // If adding first row, set to empty object
-            jsonObj = {};
-            component.set("v.jsonObj", jsonObj);
-        } else {
-            // If retrieved, turn the attribute into an actual Javascript object
-            jsonObj = this.proxyToObj(jsonObj);
-        }
-        // jsonObj = this.proxyToObj(jsonObj);
-        // console.log(jsonObj); 
-
-        // Get the relevant fields from the list of objects    
-        var newObjList = [];
+    updateModelObject: function(component, arrayList){
+        var attrName = component.get("v.modelAttribute");
         arrayList = this.proxyToObj(arrayList);
-        //console.log(arrayList);
-        // fieldList = this.proxyToObj(fieldList);
-        // Add the Opportunity field so it gets included
-        //fieldList.push(oppField);
-        for(var i=0; i < arrayList.length; i++){
-            var oldObj = arrayList[i];
-            // If this row was deleted, skip it
-            if(!oldObj){
-                continue;
-            }
-            //var newObj = {};
-            // For each object, only save the fields we want
-            // for(var j=0; j < fieldList.length; j++){
-            //     var fieldName = fieldList[j];
-            //     var fieldVal = oldObj[fieldName];
-            //     newObj[fieldName] = fieldVal;
-            // }
-            // if(oldObj.Id == null){
-            //     this.setOppIdPlaceholder(component, oldObj, oppFieldName);
-            // }
-            newObjList.push(oldObj);
+        if(!arrayList){
+            arrayList = null;
         }
-        // console.log(objectName);
-        // console.log(newObjList);
-        //jsonObj[objectName] = newObjList;
-
-        // Can't set entire object, async calls overwrite each other
-        // Should overwrite with blank array if no list is passed!
-        component.set("v.jsonObj."+objectName, newObjList);
-        
+        component.set("v.giftModel."+attrName, arrayList);
         // console.log('JSON set:');
-        jsonObj = component.get("v.jsonObj");
+        // jsonObj = component.get("v.jsonObj");
         // console.log(JSON.stringify(jsonObj));
     },
     validateRows: function(component){

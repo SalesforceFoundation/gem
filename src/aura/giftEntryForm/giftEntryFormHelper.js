@@ -1,5 +1,5 @@
 ({
-    setDefaults: function(component, helper){
+    setDefaults: function(component, helper, opp){
         // If Updating and Stage is set to Closed, disable Donation fields
         // var stageField = component.find("stageField");
         // if(stageField){
@@ -19,42 +19,37 @@
             component.set("v.opp.CloseDate", closeDate);
         }
 
-        this.setPicklists(component, helper);
+        // Also check if the Contact or Account information should be shown
+        if(opp && opp.AccountId && !opp.npsp__Primary_Contact__c){
+            component.set("v.donorType", 'Account1');
+        } else if(opp && opp.AccountId){
+            component.set("v.donorType", '');
+        }
+
+        //this.setPicklists(component, helper);
     },
-    setPicklists: function(component, helper) {
-        var action = component.get("c.getPickListValues");
+    handlePicklistSetup: function(component, picklistOptions, helper){
+        // var picklistOptions = response.getReturnValue();
+        // Add "None" option to start of each picklist
+        var noneOption = component.get("v.picklistNoneText");
+        var noneObj = {value:'', label:noneOption};
 
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === "SUCCESS") {
-                // Return value is a map of string arrays for our picklists
-                var picklistOptions = response.getReturnValue();
-                // Add "None" option to start of each picklist
-                var noneOption = component.get("v.picklistNoneText");
-                var noneObj = {value:'', label:noneOption};
-
-                for(var field in picklistOptions){
-                    var optionList = picklistOptions[field];
-                    var convertedList = [];
-                    convertedList.push(noneObj);
-                    for(var i in optionList){
-                        // The values come into Javascript as JSON strings, need to parse
-                        var option = JSON.parse(optionList[i]);
-                        convertedList.push(option);
-                    }
-                    picklistOptions[field] = convertedList;
-                }
-                // Setting this map will update all of the picklists
-                component.set("v.picklistOptions", picklistOptions);
-
-                // Check to see if values were already set for picklists
-                helper.setupPicklistValues(component, helper);
-            } else if (state === "ERROR") {
-                this.handleError(component, response);
+        for(var field in picklistOptions){
+            var optionList = picklistOptions[field];
+            var convertedList = [];
+            convertedList.push(noneObj);
+            for(var i in optionList){
+                // The values come into Javascript as JSON strings, need to parse
+                var option = JSON.parse(optionList[i]);
+                convertedList.push(option);
             }
-        });
+            picklistOptions[field] = convertedList;
+        }
+        // Setting this map will update all of the picklists
+        component.set("v.picklistOptions", picklistOptions);
 
-        $A.enqueueAction(action);
+        // Check to see if values were already set for picklists
+        //helper.setupPicklistValues(component, helper);
     },
     setupPicklistValues: function(component, helper){
         var picklistCmp = component.find("formWrapper").find({instancesOf:"c:giftPicklist"});
@@ -295,24 +290,19 @@
         }
     },
     fillJsonField: function(component) {
-
-        // TODO: Update this to create a giftModel object instead!
-
         var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
         var allRowsValid = true;
 
-        var jsonObj = component.get("v.jsonObject");
-        var giftModel = component.get("v.giftModel");
-
         // First process the related objects
         for(var i=0; i < relatedCmp.length; i++){
-
             // Need to get variable name for each of these to know where to map the return
             var jsonResp = relatedCmp[i].handleJsonUpdate();
             allRowsValid = allRowsValid && jsonResp;
-
         }
 
+        var giftModel = component.get("v.giftModel");
+        var jsonObj = component.get("v.jsonObject");
+        console.log('giftModel after related rows:'); 
         console.log(giftModel); 
 
         if(jsonObj == null){
@@ -350,13 +340,13 @@
                 autoPaymentField.set("v.value", true);
             }
         }
-        var jsonObjString = JSON.stringify(jsonObj);
-        console.log(jsonObjString);
+        // var jsonObjString = JSON.stringify(jsonObj);
+        // console.log(jsonObjString);
 
         var giftModelString = JSON.stringify(giftModel);
         console.log(giftModelString);
 
-        component.set("v.jsonObjectString", jsonObjString);
+        // component.set("v.jsonObjectString", jsonObjString);
         component.set("v.giftModelString", giftModelString);
         return allRowsValid;
     },
@@ -376,6 +366,8 @@
 
         if(objectType == 'Opportunity'){
             component.set("v.opp", selectedObject);
+            // Instead of filling every field, just redirect to that Opportunity?
+            this.redirectToDonation(component, newId);
         } else if(objectType == 'Account'){
             //inputAuraId = 'accountLookup';
             component.set("v.acct", selectedObject);
@@ -390,6 +382,7 @@
 		
 		var field = component.find(inputAuraId);
 		if(field){
+            // If updating a donor via match, make sure the UI reflects the change
             var lookupInput = field.get("v.body")[0];
             lookupInput.updateValues();
             lookupInput.set("v.values", this.proxyToObj(newValue));

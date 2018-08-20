@@ -16,7 +16,7 @@
     <aura:attribute type="String" name="paymentMethod" />
     <aura:attribute type="npe01__OppPayment__c[]" name="paymentList" />
     <aura:attribute type="sObject[]" name="objsToDelete" />
-    <aura:attribute type="Object" name="jsonObject" />
+    <aura:attribute type="GiftEntryFormController.GiftFormModel" name="giftModel" />
     <aura:attribute type="npe01__OppPayment__c" name="singlePayment" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
 
@@ -98,7 +98,8 @@
             preventAmountSurplus="false"
             preventAmountDeficit="true"
             picklistOptions="{!v.picklistOptions}"
-            jsonObj="{!v.jsonObject}" />
+            modelAttribute="payments"
+            giftModel="{!v.giftModel}" />
     </div>
 
 </aura:component>

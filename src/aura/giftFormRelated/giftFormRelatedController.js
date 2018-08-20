@@ -3,10 +3,13 @@
         helper.handleAddRow(component, helper);
     },
     handleInitRows: function(component, event, helper) {
-        var wasLoadEvent = event.getParam("value");
         var itemList = component.get("v.itemList");
+
+        // console.log(wasLoadEvent); 
+        // helper.handleAddRow(component, helper);
+
         // Only add a row on init if we aren't loading existing data
-        if(!wasLoadEvent || wasLoadEvent && itemList && itemList.length == 0){
+        if(itemList && itemList.length == 0){
             helper.handleAddRow(component, helper);
         } else {
             // If an itemList was provided on load, add it now that picklist values are available
@@ -20,12 +23,13 @@
         var validRows = helper.validateRows(component);
         var isValid = validRows;
         // If there are no rows, the JSON gets overwritten
-        helper.updateJsonObject(component, validRows);
+        helper.updateModelObject(component, validRows);
         return isValid;
     },
     handleItemListChange: function(component, event, helper){
         // In the payment scheduler, this event gets called twice so we prevent it one time
         var blockChange = component.get("v.blockItemChangeEvent");
+
         // On load, since the itemlist comes in before the picklist values are set,
         // we need to wait for the picklists before processing the rows
         if(component.get("v.initFinished") && !blockChange){

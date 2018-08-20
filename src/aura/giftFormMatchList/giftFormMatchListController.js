@@ -2,8 +2,8 @@
 	handleListChange : function(component, event, helper) {
 		var objectType = component.get("v.objectType");
 		var curVal = component.get("v.selectedValue");
-		console.log('curVal for ' + objectType); 
-		console.log(curVal); 
+		// console.log('curVal for ' + objectType); 
+		// console.log(curVal); 
 		var objList = component.get("v.objectList");
 		if(!objList){
 			component.set("v.optionList", []);
@@ -18,8 +18,8 @@
 			newList[i+1] = {'label': thisItem.Name, 'value': i};
 		}
 
-		console.log(' ** newList'); 
-		console.log(newList); 
+		// console.log(' ** newList'); 
+		// console.log(newList); 
 
 		if(!curVal){
 			curVal = createNewVal;

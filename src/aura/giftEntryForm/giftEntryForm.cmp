@@ -37,8 +37,6 @@
     <aura:attribute type="Boolean" name="dataLoaded" default="false" />
     <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
     <aura:attribute type="Boolean" name="donorExists" default="false" />
-    <aura:attribute type="Date" name="paymentDate" />
-    <aura:handler name="change" value="{!v.paymentDate}" action="{!c.handleDateChange}"/>
     <aura:handler name="change" value="{!v.donorType}" action="{!c.handleDonorTypeChange}"/>
     <aura:handler name="change" value="{!v.donorExists}" action="{!c.handleCheckMatches}"/>
 
@@ -348,7 +346,7 @@
                     donationAmt="{!v.opp.Amount}"
                     paymentMethod="{!v.payment.npe01__Payment_Method__c}"
                     picklistOptions="{!v.picklistOptions}"
-                    jsonObject="{!v.jsonObject}" />
+                    giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="Soft Credits"
                     itemList="{!v.partialCredits}"
@@ -361,7 +359,8 @@
                     preventAmountSurplus="true"
                     preventAmountDeficit="false"
                     picklistOptions="{!v.picklistOptions}"
-                    jsonObj="{!v.jsonObject}" />
+                    modelAttribute="partialCredits"
+                    giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="Allocation"
                     itemList="{!v.allocs}"
@@ -374,7 +373,8 @@
                     preventAmountSurplus="true"
                     preventAmountDeficit="false"
                     picklistOptions="{!v.picklistOptions}"
-                    jsonObj="{!v.jsonObject}" />
+                    modelAttribute="allocs"
+                    giftModel="{!v.giftModel}" />
 
                 <aura:if isTrue="{!v.submitError}">
                     <div class="slds-col slds-size_1-of-1">
@@ -385,7 +385,7 @@
                 </aura:if>
 
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                    <lightning:input aura:id="doDryRun" type="checkbox" checked="true" class="slds-m-bottom_small"
+                    <lightning:input aura:id="doDryRun" type="checkbox" checked="false" class="slds-m-bottom_small"
                         label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
                     <lightning:button aura:id="createButton" 
                         disabled="true" 
@@ -396,16 +396,11 @@
 
                 <!-- Fields that are hidden from the user, set by code -->
                  <div class="slds-hidden" style="height: 0">
-                    
                     <!-- <lightning:input name="jsonInput" aura:id="postProcessJsonField" /> -->
                     <lightning:input aura:id="oppId" 
                         value="{!v.giftModel.oppId}" />
                     <force:inputField aura:id="doNotAutoCreatePayment" 
                         value="{!v.opp.npe01__Do_Not_Automatically_Create_Payment__c}" />
-                    <!-- 
-                    <lightning:inputField aura:id="dateField" 
-                        fieldName="npsp__Donation_Date__c" /> 
-                    -->
                 </div>
             </div>
 

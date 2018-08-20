@@ -56,15 +56,15 @@ private class GiftEntryFormController_TEST {
     	GiftEntryFormController.insertGiftEntrySettings();
     }
 
-    private static GiftEntryFormController setupControllerData(){
-        GiftEntryFormController giftCtrl = new GiftEntryFormController();
-        giftCtrl.acct = new Account(Name=acctName);
-        giftCtrl.contact = new Contact(FirstName=cFirst, LastName=cLast);
-        giftCtrl.opp = new Opportunity(Name=oppName, 
+    private static GiftEntryFormController.GiftFormModel setupModelData(){
+        GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
+        giftModel.acct = new Account(Name=acctName);
+        giftModel.contact = new Contact(FirstName=cFirst, LastName=cLast);
+        giftModel.opp = new Opportunity(Name=oppName, 
             CloseDate=System.today(), 
             StageName=closedWonStage, 
             Amount=donationAmount);
-        return giftCtrl;
+        return giftModel;
     }
 
     /*******************************************************************************************************
@@ -73,10 +73,10 @@ private class GiftEntryFormController_TEST {
     @isTest
     private static void testNewGift() {
 
-        GiftEntryFormController giftCtrl = setupControllerData();
+        GiftEntryFormController.GiftFormModel giftModel = setupModelData();
     
         Test.startTest();
-        giftCtrl = GiftEntryFormController.saveDonationInformation(giftCtrl);
+        giftModel = GiftEntryFormController.GiftFormModel.saveDonationInformation(giftModel);
         Test.stopTest();
 
         List<Opportunity> opps = [SELECT Id FROM Opportunity 
@@ -86,7 +86,7 @@ private class GiftEntryFormController_TEST {
         System.assert(opps.size() == 1, 'Make sure Opportunity was created and Account and Contact were assigned');
         Opportunity opp = opps[0];
 
-        Contact c = [SELECT Id, Account.Name FROM Contact WHERE Id =: giftCtrl.contact.Id];
+        Contact c = [SELECT Id, Account.Name FROM Contact WHERE Id =: giftModel.contact.Id];
         // Contact is being set to 'TestLast Administrative Account', is that right?
         //System.assertEquals(acctName, c.Account.Name, 'The Contact should be under the new Account ');
 
@@ -108,21 +108,21 @@ private class GiftEntryFormController_TEST {
             StageName=closedWonStage,
             Amount=50);
 
-        GiftEntryFormController giftCtrl = setupControllerData();
+        GiftEntryFormController.GiftFormModel giftModel = setupModelData();
+        giftModel.opp.AccountId = a.Id;
 
-        //GiftEntryFormController.processGiftJSON(testJson, true);
-        giftCtrl = GiftEntryFormController.setDataMatches(giftCtrl);
+        giftModel = GiftEntryFormController.GiftFormModel.setDataMatches(giftModel);
 
-        System.assertNotEquals(null, giftCtrl.matchedAccts);
-        System.assertEquals(1, giftCtrl.matchedAccts.size(), 
+        System.assertNotEquals(null, giftModel.matchedAccts);
+        System.assertEquals(1, giftModel.matchedAccts.size(), 
             'One Account match should be found');
 
-        System.assertNotEquals(null, giftCtrl.matchedContacts);
-        System.assertEquals(1, giftCtrl.matchedContacts.size(), 
+        System.assertNotEquals(null, giftModel.matchedContacts);
+        System.assertEquals(1, giftModel.matchedContacts.size(), 
             'One Contact match should be found');
 
-        System.assertNotEquals(null, giftCtrl.matchedOpps);
-        System.assertEquals(1, giftCtrl.matchedContacts.size(), 
+        System.assertNotEquals(null, giftModel.matchedOpps);
+        System.assertEquals(1, giftModel.matchedContacts.size(), 
             'One Opportunity match should be found');
 
     }
@@ -146,10 +146,10 @@ private class GiftEntryFormController_TEST {
         insert a;
         insert c;
 
-        GiftEntryFormController giftCtrl = new GiftEntryFormController();
-        giftCtrl.acct = new Account(Name=acctName2);
-        giftCtrl.contact = new Contact(FirstName=cFirst, LastName=cLast2);
-        giftCtrl.opp = new Opportunity(Name='Test Opp', 
+        GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
+        giftModel.acct = new Account(Name=acctName2);
+        giftModel.contact = new Contact(FirstName=cFirst, LastName=cLast2);
+        giftModel.opp = new Opportunity(Name='Test Opp', 
             CloseDate=System.today(), 
             StageName=closedWonStage, 
             Amount=100,
@@ -157,7 +157,7 @@ private class GiftEntryFormController_TEST {
             AccountId = a.Id);
     
         Test.startTest();
-        giftCtrl = GiftEntryFormController.saveDonationInformation(giftCtrl);
+        giftModel = GiftEntryFormController.GiftFormModel.saveDonationInformation(giftModel);
         Test.stopTest();
 
         List<Opportunity> opps = [SELECT Id FROM Opportunity 
@@ -190,32 +190,31 @@ private class GiftEntryFormController_TEST {
         Id scContactId = scContact.Id;
 
         // Test stripping Lightning attributes from JSON, then processing it into a Donation
-        String testJson = '{"npsp__Allocation__c":[],"npe01__OppPayment__c":[],"npsp__Partial_Soft_Credit__c":[]'
-        + ',"Account":[{"Name":"New Account"}]'
-        + ',"Contact":[{"FirstName":"Firstname","LastName":"Lastname"}]'
-        + ',"Opportunity":[{"sobjectType":"Opportunity","AccountId":"","Account":{"sobjectType":"Account","Name":""},"npsp__Primary_Contact__c":"","npsp__Primary_Contact__r":{"sobjectType":"Contact","Name":""},"StageName":"Closed Won","Campaign":{"sobjectType":"Campaign","Name":""},"npsp__Tribute_Type__c":"","npsp__Acknowledgment_Status__c":"","npsp__Honoree_Contact__c":"","npsp__Honoree_Contact__r":{"sobjectType":"Contact","Name":""},"npsp__Matching_Gift_Account__c":"","npsp__Matching_Gift_Account__r":{"sobjectType":"Account","Name":""},"npsp__Matching_Gift__c":"","npsp__Matching_Gift__r":{"sobjectType":"Opportunity","Name":""},"npsp__Matching_Gift_Status__c":"","Name":"Test Opp","Amount":1000,"CloseDate":"2018-08-03"}]'
-        + ',"npsp__Allocation__c":['
+        String testJson = '{"acct":{"Name":"New Account"}'
+        + ',"contact":{"FirstName":"Firstname","LastName":"Lastname"}'
+        + ',"opp":{"sobjectType":"Opportunity","AccountId":"","Account":{"sobjectType":"Account","Name":""},"npsp__Primary_Contact__c":"","npsp__Primary_Contact__r":{"sobjectType":"Contact","Name":""},"StageName":"Closed Won","Campaign":{"sobjectType":"Campaign","Name":""},"npsp__Tribute_Type__c":"","npsp__Acknowledgment_Status__c":"","npsp__Honoree_Contact__c":"","npsp__Honoree_Contact__r":{"sobjectType":"Contact","Name":""},"npsp__Matching_Gift_Account__c":"","npsp__Matching_Gift_Account__r":{"sobjectType":"Account","Name":""},"npsp__Matching_Gift__c":"","npsp__Matching_Gift__r":{"sobjectType":"Opportunity","Name":""},"npsp__Matching_Gift_Status__c":"","Name":"Test Opp","Amount":1000,"CloseDate":"2018-08-03"}'
+        + ',"allocs":['
         + '{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"'+gauAmt+'","npsp__Percent__c":""}'
         + ',{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"","npsp__Percent__c":"'+gauPerc+'"}'
         + ']'
-        + ',"npe01__OppPayment__c":['
+        + ',"payments":['
         + '{"npe01__Payment_Amount__c":"'+gauAmt+'","npe01__Scheduled_Date__c":"2018-08-06","npe01__Payment_Method__c":"Cash","npe01__Opportunity__c":""}'
         + ']'
-        + ',"npsp__Partial_Soft_Credit__c":[' 
+        + ',"partialCredits":[' 
         + '{"npsp__Amount__c":"'+gauAmt+'","npsp__Contact__c":"' + scContactId + '"}]'
         + '}';
         
-        GiftEntryFormController giftCtrl = new GiftEntryFormController();
-        giftCtrl = GiftEntryFormController.processGiftJSON(testJson, false);
+        GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
+        giftModel = GiftEntryFormController.GiftFormModel.processGiftJSON(testJson, false);
 
-        Id oppId = giftCtrl.oppId;
-        System.assert(giftCtrl.oppId != null, 'The new Opportunity ID should be returned');
+        Id oppId = giftModel.oppId;
+        System.assert(giftModel.oppId != null, 'The new Opportunity ID should be returned');
 
-        Contact c = giftCtrl.contact;
-        Account a = giftCtrl.acct;
-        Opportunity o = giftCtrl.opp;
-        List<npsp__Allocation__c> allocs = giftCtrl.allocs;
-        List<npe01__OppPayment__c> payments = giftCtrl.payments;
+        Contact c = giftModel.contact;
+        Account a = giftModel.acct;
+        Opportunity o = giftModel.opp;
+        List<npsp__Allocation__c> allocs = giftModel.allocs;
+        List<npe01__OppPayment__c> payments = giftModel.payments;
 
         System.assertEquals('Firstname', c.FirstName, 'The Contact should be set on the controller');
         System.assertEquals('New Account', a.Name, 'The Account should be set on the controller');
@@ -247,9 +246,9 @@ private class GiftEntryFormController_TEST {
         objToDelete.addAll((List<SObject>)paymentQuery);
         objToDelete.addAll((List<SObject>)pscQuery);
 
-        giftCtrl.objsToDelete = objToDelete;
+        giftModel.objsToDelete = objToDelete;
 
-        GiftEntryFormController.deleteObjList(giftCtrl.objsToDelete);
+        GiftEntryFormController.deleteObjList(giftModel.objsToDelete);
 
         alloQuery = [Select Id from npsp__Allocation__c 
             where npsp__General_Accounting_Unit__c =: gauId

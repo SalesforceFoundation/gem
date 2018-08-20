@@ -37,6 +37,12 @@
                     component.set("v.partialCredits", giftModel.partialCredits);
                 }
 
+                helper.handlePicklistSetup(component, giftModel.picklistValues);
+
+                // Setup any default form values
+                helper.setDefaults(component, helper, giftModel.opp);
+                helper.checkValidation(component);
+
             } else if (state === "ERROR") {
                 helper.handleError(component, response);
             }
@@ -54,10 +60,6 @@
         if(namespace != "c"){
             component.set("v.namespaceFieldPrefix", namespace+'__');
         }
-
-        // Setup Picklists and any default form values
-        helper.setDefaults(component, helper);        
-        helper.checkValidation(component);
     },
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
@@ -113,11 +115,6 @@
         component.set("v.showForm", true);
         component.set("v.showSuccess", false);
         helper.scrollToTop();
-    },
-    handleDateChange: function(component, event, helper){
-        var newDate = event.getParam("value");
-        helper.setHiddenField(component, "dateField", newDate);
-        helper.checkValidation(component);
     },
     handleDonorTypeChange: function(component, event, helper){
         var donorType = event.getParam("value");

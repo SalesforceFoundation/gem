@@ -1,61 +1,53 @@
 ({
 	handleListChange : function(component, event, helper) {
+		var createNewVal = '';
+		component.set("v.enableChangeEvent", false);
+		component.set("v.selectedValue", createNewVal);
 		var objectType = component.get("v.objectType");
 		var curVal = component.get("v.selectedValue");
-		// console.log('curVal for ' + objectType); 
-		// console.log(curVal); 
+		var selectedObject = component.get("v.selectedObject");
+		var currentLookupValue = component.get("v.currentLookupValue");
+
 		var objList = component.get("v.objectList");
-		if(!objList){
+		if(!objList || objList.length == 0){
 			component.set("v.optionList", []);
 			return;
 		}
-		var createNewVal = '';
 		objList = helper.proxyToObj(objList);
 		var newList = [{'label':'Create New','value':createNewVal}];
 		// Parse the object list into the label/value list that we need
 		for(var i=0; i < objList.length; i++){
 			var thisItem = objList[i];
+			// If the returned item matches the lookup selection, update field values
+			if(currentLookupValue == thisItem.Id){
+				component.set("v.selectedValue", i);
+				if(!selectedObject || selectedObject.Id != thisItem.Id){
+					// component.set("v.searchForOpps", true);
+					helper.selectionChange(component, i);
+				}
+			}
 			newList[i+1] = {'label': thisItem.Name, 'value': i};
 		}
 
 		// console.log(' ** newList'); 
 		// console.log(newList); 
 
-		if(!curVal){
-			curVal = createNewVal;
-		}
-		component.set("v.selectedValue", curVal);
+		// component.set("v.selectedValue", curVal);
 		component.set("v.optionList", newList);
 		component.set("v.enableChangeEvent", true);
 	},
 	handleSelectionChange : function(component, event, helper) {
-		if(!component.get("v.enableChangeEvent")){
+		var enableChangeEvent = component.get("v.enableChangeEvent");
+		// console.log("handleSelectionChange: " + enableChangeEvent); 		
+
+		if(!enableChangeEvent){
 			return;
 		}
 
 		var objectType = component.get("v.objectType");
-		console.log(' ** SELECTION CHANGE for: '); 
-		console.log(objectType); 
+		// console.log(" ** Select changed via input "); 
 
 		var newIndex = event.getParam("value");
-		var objList = component.get("v.objectList");
-
-		// If undefined, pass an empty object instead? Just grab type?
-		var selectedObject = objList[newIndex];
-		console.log(selectedObject);
-
-		var objectType = component.get("v.objectType");
-		var idField = component.get("v.idField");
-		var inputAuraId = component.get("v.inputAuraId");
-
-		var cmpEvent = component.getEvent("giftMatchChangeEvent");
-		cmpEvent.setParams({
-			"selectedObject" : selectedObject,
-			"objectType" : objectType,
-			"inputAuraId" : inputAuraId,
-			"oppLookupField" : idField
-		});
-		cmpEvent.fire();
-
+		helper.selectionChange(component, newIndex);
 	}
 })

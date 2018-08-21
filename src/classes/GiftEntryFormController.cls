@@ -505,9 +505,9 @@ public class GiftEntryFormController {
     }
 
     /*******************************************************************************************************
-    * @description Return a map with Ids and information about potential matching objects
-    * @return Map<String, List<String>> of Object to List<String> with information about the
-    * potential matches
+    * @description Return the provided GiftFormModel with Ids and information about potential 
+    * matching objects
+    * @return GiftFormModel with information about the potential matches filled in
     */
     @TestVisible
     private static GiftFormModel setDataMatches(GiftFormModel giftModel){
@@ -515,29 +515,47 @@ public class GiftEntryFormController {
         // Break names into parts and check "like" on each part?
         // Query for object similar to what was entered, then set lists for the user to choose from
 
+        // TODO: If a lookup value is set on the Opp, ONLY return information about that object?
+
         System.debug(giftModel.acct); 
         System.debug(giftModel.contact); 
         System.debug(giftModel.opp); 
+        Id contactId = null;
+        Id accountId = null;
+        if(giftModel.opp != null){
+            contactId = giftModel.opp.npsp__Primary_Contact__c;
+            accountId = giftModel.opp.AccountId;
+        }
 
         Map<String, List<sObject>> matchMap = new Map<String, List<sObject>>();
 
         // Match Accounts
-        if(giftModel.acct != null && !String.isEmpty(giftModel.acct.Name)){
+        if(giftModel.acct != null && !String.isEmpty(giftModel.acct.Name) || accountId != null){
             String aName = addWildcards(giftModel.acct.Name);
             giftModel.matchedAccts = [SELECT Id, Name 
                 FROM Account 
-                WHERE Name LIKE :aName 
+                WHERE Name LIKE :aName OR Id = :accountId
                 LIMIT 5];
+        } else {
+            giftModel.matchedAccts = null;
         }
 
         // Match Contacts
-        if(giftModel.contact != null && !String.isEmpty(giftModel.contact.Lastname)){
+        if(giftModel.contact != null && !String.isEmpty(giftModel.contact.Lastname) ||
+            contactId != null){
+
             String cFName = addWildcards(giftModel.contact.FirstName);
             String cLName = addWildcards(giftModel.contact.LastName);
 
             String query = 'SELECT Id, Name, FirstName, LastName, Phone, Email FROM Contact WHERE';
             String whereClause = '';
+            if(contactId != null){
+                whereClause += ' Id = :contactId ';
+            }
             if(cFName != null){
+                if(!String.isBlank(whereClause)){
+                    whereClause += ' OR ';
+                }
                 whereClause += ' FirstName LIKE :cFName ';
             }
             if(cLName != null){
@@ -549,6 +567,8 @@ public class GiftEntryFormController {
             whereClause += ' LIMIT 8';
 
             giftModel.matchedContacts = Database.query(query + whereClause);
+        } else {
+            giftModel.matchedContacts = null;
         }
 
         // Find potential Opportunities if an existing donor has been set
@@ -583,6 +603,8 @@ public class GiftEntryFormController {
             giftModel.matchedOpps = Database.query(query + whereClause);
             System.debug(giftModel.matchedOpps); 
             //matchMap.put('Opportunity', matchedOpps);
+        } else {
+            giftModel.matchedOpps = null;
         }
 
         // TODO: How to match Payments, sometimes they are a list, other times

@@ -64,6 +64,21 @@
     handleFieldChange: function(component, event, helper){
         helper.checkValidation(component);
     },
+    handleLookupChange: function(component, event, helper){
+        var newVal = event.getParam("value");
+        var oldVal = event.getParam("oldValue");
+        
+        // console.log('New Lookup: ');
+        // console.log(newVal + " was: " + oldVal);
+
+        // If a new lookup was set, re-run matching
+        if(!oldVal && newVal){
+            component.set("v.donorExists", false);
+            component.set("v.donorExists", true);
+        }
+        
+        helper.checkValidation(component);
+    },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
         var validForm = helper.validateForm(component);
@@ -87,21 +102,15 @@
         }
     },
     handleCheckMatches: function(component, event, helper) {
-
         // TODO: Fix this in edit mode...
         var isEditMode = component.get("v.editMode");
-        console.log('isEditMode: '); 
-        console.log(isEditMode); 
-
-        // console.log("Check matches"); 
-        // console.log( event.getParam("oldValue") );
-        // console.log( event.getParam("value") );
 
         var newVal = event.getParam("value");
         if(!newVal || isEditMode){
             return;
         }
-        
+
+        // console.log("Checking Matches"); 
         helper.checkMatches(component);
     },
     clickGoToDonation: function(component, event, helper){
@@ -142,10 +151,17 @@
         var inputAuraId = event.getParam("inputAuraId");
         var oppLookupField = event.getParam("oppLookupField");
 
+        // console.log(' ** setLookup via handleMatchChange: '); 
+        // console.log(setLookup); 
+
         helper.setLookupField(component, objectType, selectedObject, inputAuraId, oppLookupField);
 
+        console.log(' ** handleMatchChange for : '); 
+        console.log(objectType);
+
         // If the donor changed, check for matches again
-        if(objectType == "Contact" || objectType == "Account"){
+        if(objectType != "Opportunity"){
+            console.log("Search for opps!"); 
             helper.checkMatches(component, "Opportunity");
         }
     }

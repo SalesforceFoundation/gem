@@ -31,18 +31,17 @@
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disabled" default="true" />
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
-    <aura:attribute type="Boolean" name="showMatchSpinner" default="false" />
+    <aura:attribute type="Boolean" name="showMatchSpinner" default="true" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
-    <aura:attribute type="Boolean" name="dataLoaded" default="false" />
     <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
     <aura:attribute type="Boolean" name="donorExists" default="false" />
     <aura:handler name="change" value="{!v.donorType}" action="{!c.handleDonorTypeChange}"/>
     <aura:handler name="change" value="{!v.donorExists}" action="{!c.handleCheckMatches}"/>
 
     <!-- Work around for change event on lookups -->
-    <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.handleFieldChange}"/>
-    <aura:handler name="change" value="{!v.opp.npsp__Primary_Contact__c}" action="{!c.handleFieldChange}"/>
+    <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.handleLookupChange}"/>
+    <aura:handler name="change" value="{!v.opp.npsp__Primary_Contact__c}" action="{!c.handleLookupChange}"/>
 
     <aura:attribute name="opp" 
         type="Opportunity" 
@@ -165,6 +164,7 @@
 
                 <c:giftFormMatchList
                     idField="AccountId"
+                    currentLookupValue="{!v.giftModel.opp.AccountId}"
                     inputAuraId="accountLookup"
                     objectType="Account"
                     showMatchSpinner="{!v.showMatchSpinner}"
@@ -173,6 +173,7 @@
 
                 <c:giftFormMatchList
                     idField="npsp__Primary_Contact__c"
+                    currentLookupValue="{!v.giftModel.opp.npsp__Primary_Contact__c}"
                     inputAuraId="contactLookup"
                     objectType="Contact"
                     showMatchSpinner="{!v.showMatchSpinner}"

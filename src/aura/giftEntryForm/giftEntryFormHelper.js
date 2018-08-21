@@ -90,10 +90,6 @@
             field.set("v.value", newVal);
         }
     },
-    updateAmountField: function(component, amt){
-        console.log("updateAmountField, not needed?"); 
-        //component.set("v.donationAmount", amt);
-    },
     redirectToDonation: function(component, objId){
         console.log('Redirect to:'); 
         console.log(objId); 
@@ -136,7 +132,7 @@
         var jsonString = component.get("v.jsonObjectString");
         var giftModelString = component.get("v.giftModelString");
 
-        console.log(giftModelString); 
+        // console.log(giftModelString); 
 
         // Now process the JSON for this single gift
         var action = component.get("c.processGiftJSON");
@@ -148,11 +144,14 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
 
-            console.log(state); 
-            console.log(response.getReturnValue()); 
+            // console.log(state); 
+            // console.log(response.getReturnValue()); 
 
             if (state === "SUCCESS") {
                 var giftModel = response.getReturnValue();
+                
+                console.log("Gift Model about to be overwritten by processGiftJSON"); 
+
                 component.set("v.giftModel", giftModel);
                 var oppId = component.find("oppId").get("v.value");
                 // console.log(oppId); 
@@ -302,8 +301,8 @@
 
         var giftModel = component.get("v.giftModel");
         var jsonObj = component.get("v.jsonObject");
-        console.log('giftModel after related rows:'); 
-        console.log(giftModel); 
+        // console.log('giftModel after related rows:'); 
+        // console.log(giftModel); 
 
         if(jsonObj == null){
             // If json has not been set yet, set to empty object
@@ -327,11 +326,9 @@
         giftModel['objNameToApiToLabel'] = {};
         giftModel['picklistValues'] = {};
 
-        console.log('giftModel:'); 
-        console.log(giftModel); 
-
+        // console.log("Gift Model about to be overwritten by fillJsonField"); 
         component.set("v.jsonObj", jsonObj);
-        component.set("v.giftModel", giftModel);
+        // component.set("v.giftModel", giftModel);
 
         if(giftModel.payments && giftModel.payments.length > 0){
             // Payments are being scheduled, do not create one for the full donation
@@ -340,11 +337,9 @@
                 autoPaymentField.set("v.value", true);
             }
         }
-        // var jsonObjString = JSON.stringify(jsonObj);
-        // console.log(jsonObjString);
 
         var giftModelString = JSON.stringify(giftModel);
-        console.log(giftModelString);
+        // console.log(giftModelString);
 
         // component.set("v.jsonObjectString", jsonObjString);
         component.set("v.giftModelString", giftModelString);
@@ -369,11 +364,17 @@
             // Instead of filling every field, just redirect to that Opportunity?
             this.redirectToDonation(component, newId);
         } else if(objectType == 'Account'){
-            //inputAuraId = 'accountLookup';
+            component.set("v.acct", null);
             component.set("v.acct", selectedObject);
         } else if(objectType == 'Contact'){
-            //inputAuraId = 'contactLookup';
-            component.set("v.contact", selectedObject);  
+            // this.clearInputs(component, '');
+            component.set("v.contact", null);
+            // console.log(selectedObject); 
+            component.set("v.contact", selectedObject);
+            // Value updates, but UI does not
+            var contact = this.proxyToObj(component.get("v.contact"));
+            console.log(contact); 
+            // this.updateInputUI(component);
         }
 
         var oppObj = component.get("v.opp");
@@ -388,22 +389,23 @@
             lookupInput.set("v.values", this.proxyToObj(newValue));
 
             component.set("v.opp", oppObj);
-            console.log(' ** setLookupField');
-            console.log(oppObj);
+            // console.log(' ** setLookupField');
+            // console.log(oppObj);
         }
     },
     checkMatches: function(component, objToMatch){
 
         var matchListCmps = this.getMatchListComponents(component);
+        console.log("Check matches for: " + objToMatch); 
 
         for(var i=0; i<matchListCmps.length; i++){
             var thisCmp = matchListCmps[i];
             var objType = thisCmp.get("v.objectType");
-            console.log(objType); 
+            // console.log(objType); 
 
             // Don't fire the change event if we aren't checking matches for this object
-            if(objToMatch != null && objType != objToMatch){
-                thisCmp.set("v.enableChangeEvent", false);
+            if(objToMatch && objType != objToMatch){
+                //thisCmp.set("v.enableChangeEvent", false);
             }
         }
 
@@ -415,6 +417,24 @@
         var rowCmpName = namespace + ":giftFormMatchList";
         var formWrapper = component.find("formWrapper");
         return formWrapper.find({instancesOf:rowCmpName});
+    },
+    updateInputUI: function(component){
+        var inputArray = this.getAllForceInputs(component);
+        
+        console.log('inputArray'); 
+        console.log(inputArray); 
+
+        for(var i=0; i<inputArray.length; i++){
+            var field = this.proxyToObj( inputArray[i] );
+            // console.log(field); 
+            // var inputBody = field.get("v.body")[0];
+            // inputBody.updateValues();
+        }
+    },
+    getAllForceInputs: function(component){
+        var cmpName = "force:inputField";
+        var formWrapper = component.find("formWrapper");
+        return formWrapper.find({instancesOf:cmpName});
     },
     scrollToTop: function(){
         window.scrollTo(0, 0);

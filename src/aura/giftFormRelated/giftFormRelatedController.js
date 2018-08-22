@@ -3,15 +3,22 @@
         helper.handleAddRow(component, helper);
     },
     handleInitRows: function(component, event, helper) {
+        var thisObj = component.get("v.objectName");
         var itemList = component.get("v.itemList");
+        var rowList = component.get("v.rowList");
 
-        // console.log(wasLoadEvent); 
+        console.log('handleInitRows for ' + thisObj); 
+        console.log(itemList); 
+        console.log(rowList); 
         // helper.handleAddRow(component, helper);
 
         // Only add a row on init if we aren't loading existing data
         if(itemList && itemList.length == 0){
-            helper.handleAddRow(component, helper);
+            if(rowList.length == 0){
+                helper.handleAddRow(component, helper);
+            }
         } else {
+            console.log("createRowsFromItemList from handleInitRows for " + thisObj); 
             // If an itemList was provided on load, add it now that picklist values are available
             helper.createRowsFromItemList(component, helper);
         }
@@ -29,10 +36,18 @@
     handleItemListChange: function(component, event, helper){
         // In the payment scheduler, this event gets called twice so we prevent it one time
         var blockChange = component.get("v.blockItemChangeEvent");
+        var thisObj = component.get("v.objectName");
+        var rowList = component.get("v.rowList");
+
+        // If Payments are being overwritten, call delete on each of them first
+        if(thisObj == 'npe01__OppPayment__c' && rowList.length > 0){
+            helper.deleteAll(component);
+        }
 
         // On load, since the itemlist comes in before the picklist values are set,
         // we need to wait for the picklists before processing the rows
         if(component.get("v.initFinished") && !blockChange){
+            console.log("createRowsFromItemList from handleItemListChange for " + thisObj); 
             helper.createRowsFromItemList(component, helper);
         }
     },
@@ -55,8 +70,6 @@
             // console.log('thisRow'); 
             // console.log(thisRow); 
 
-            var thisRowIndex = thisRow.get("v.rowNum");
-
             if(nextRowShowLabels){
                 thisRow.set("v.showLabels", true);
                 nextRowShowLabels = false;
@@ -66,10 +79,12 @@
                 var objName = component.get("v.objectName");
                 var thisItem = thisRow.get("v.item");
                 thisItem = helper.proxyToObj(thisItem);
-                // Needed to delete a generic in a list
-                thisItem["attributes"] = {"type":objName};
-
-                objsToDelete.push(thisItem);
+                // console.log(thisItem); 
+                if(thisItem.Id != null){
+                    // Required attribute to delete a list of generic sobjects
+                    thisItem["attributes"] = {"type":objName};
+                    objsToDelete.push(thisItem);
+                }
                 if(thisRow.get("v.showLabels")){
                     nextRowShowLabels = true;
                 }

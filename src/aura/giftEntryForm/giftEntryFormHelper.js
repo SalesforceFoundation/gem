@@ -1,4 +1,63 @@
 ({
+    getDonationInformation: function(component, helper, oppId){
+        // Changes if there is already a recordId (Edit mode)
+        if(oppId){
+            this.changeSubmitText(component, 'Update Gift');
+            component.set('v.editMode', true);
+        }
+
+        var getModelAction = component.get("c.initClass");
+        getModelAction.setParams({
+            oppId: oppId
+        });
+        getModelAction.setCallback(this, function(response) {
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                var giftModel = response.getReturnValue();
+                
+                console.log('From init'); 
+                console.log(giftModel); 
+
+                component.set("v.giftModel", giftModel);
+                component.set("v.objectLabels", giftModel.objNameToApiToLabel);
+
+                if(giftModel.opp){
+                    component.set("v.opp", giftModel.opp);
+                }
+                if(giftModel.acct){
+                    component.set("v.acct", giftModel.acct);
+                    // Make sure the lookup field UI gets updated
+                    var selectedObject = this.proxyToObj(giftModel.acct);
+                    helper.updateLookupUI(component, 'accountLookup', 'Account', selectedObject);
+                }
+                if(giftModel.contact){
+                    component.set("v.contact", giftModel.contact);
+                    // Make sure the lookup field UI gets updated
+                    var selectedObject = this.proxyToObj(giftModel.contact);
+                    helper.updateLookupUI(component, 'contactLookup', 'Contact', selectedObject);
+                }
+                if(giftModel.payments){
+                    component.set("v.payments", giftModel.payments);
+                }
+                if(giftModel.allocs){
+                    component.set("v.allocs", giftModel.allocs);
+                }
+                if(giftModel.partialCredits){
+                    component.set("v.partialCredits", giftModel.partialCredits);
+                }
+
+                helper.handlePicklistSetup(component, giftModel.picklistValues);
+
+                // Setup any default form values
+                helper.setDefaults(component, helper, giftModel.opp);
+                helper.checkValidation(component);
+
+            } else if (state === "ERROR") {
+                helper.handleError(component, response);
+            }
+        });
+        $A.enqueueAction(getModelAction);
+    },
     setDefaults: function(component, helper, opp){
         // If Updating and Stage is set to Closed, disable Donation fields
         // var stageField = component.find("stageField");
@@ -26,6 +85,8 @@
             component.set("v.donorType", '');
         }
 
+        component.set("v.initFinished", true);
+
         //this.setPicklists(component, helper);
     },
     handlePicklistSetup: function(component, picklistOptions, helper){
@@ -52,7 +113,8 @@
         //helper.setupPicklistValues(component, helper);
     },
     setupPicklistValues: function(component, helper){
-        var picklistCmp = component.find("formWrapper").find({instancesOf:"c:giftPicklist"});
+        var namespacePrefix = component.get("v.namespacePrefix");
+        var picklistCmp = component.find("formWrapper").find({instancesOf:namespacePrefix+":giftPicklist"});
         // For each picklist, check for existing field values, otherwise set the first option
         for(var i=0; i < picklistCmp.length; i++){
             helper.setStartingPicklistValue(component, picklistCmp[i]);
@@ -129,7 +191,7 @@
             component.set("v.showSpinner", true);
         }
         
-        var jsonString = component.get("v.jsonObjectString");
+        // var jsonString = component.get("v.jsonObjectString");
         var giftModelString = component.get("v.giftModelString");
 
         // console.log(giftModelString); 
@@ -157,6 +219,17 @@
                 // console.log(oppId); 
 
                 if(checkDataMatches){
+
+                    // Do we want this? Should it be done elsewhere?
+                    if(giftModel.contact){
+                        console.log(" *** Overwrite contact fields"); 
+                        component.set("v.contact", giftModel.contact);
+                    }
+                    if(giftModel.acct){
+                        console.log(" *** Overwrite account fields");
+                        component.set("v.acct", giftModel.acct);
+                    }
+
                     component.set('v.showSpinner', false);
                     component.set("v.showMatchSpinner", false);
                 } else {
@@ -215,18 +288,15 @@
         var donorType = component.get("v.donorType");
         var donorExists = false;
 
-        if(donorType == "Account1"){
-            donorExists = this.checkFields(component, 'requiredAccountField', false);
+        if(donorType == "Account1" || !donorType){
+            donorExists = donorExists || this.checkFields(component, 'requiredAccountField', false);
             donorExists = donorExists || this.checkFields(component, 'accountLookup', false);
-        } else {
+        } 
+        if(donorType == "Contact1" || !donorType) {
             // Check if Contact1 Firstname and Lastname are filled in
-            donorExists = this.checkFields(component, 'requiredContactField', true);
+            donorExists = donorExists || this.checkFields(component, 'requiredContactField', true);
             // Check any other donor fields we could use
             donorExists = donorExists || this.checkFields(component, 'contactLookup', false);
-        }
-
-        if(donorExists){
-            //donorExists = true;
         }
 
         // console.log( 'Donor Exists attr: ');
@@ -289,7 +359,7 @@
         }
     },
     fillJsonField: function(component) {
-        var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
+        var relatedCmp = this.getRelatedComponents(component);
         var allRowsValid = true;
 
         // First process the related objects
@@ -332,10 +402,7 @@
 
         if(giftModel.payments && giftModel.payments.length > 0){
             // Payments are being scheduled, do not create one for the full donation
-            var autoPaymentField = component.find('doNotAutoCreatePayment');
-            if(autoPaymentField){
-                autoPaymentField.set("v.value", true);
-            }
+            giftModel['opp'].npe01__Do_Not_Automatically_Create_Payment__c = true;
         }
 
         var giftModelString = JSON.stringify(giftModel);
@@ -346,71 +413,93 @@
         return allRowsValid;
     },
     setLookupField: function(component, objectType, selectedObject, inputAuraId, oppLookupField){
-        var newValue = [{}];
         var newId = null;
         //console.log(selectedObject);
         if(selectedObject){
             selectedObject = this.proxyToObj(selectedObject);
             newId = selectedObject.Id;
-            newValue[0] = {
-                id: newId,
-                type: objectType,
-                label: selectedObject.Name
-            };
         }
 
+        console.log("setLookupField for: " + objectType); 
+
         if(objectType == 'Opportunity'){
-            component.set("v.opp", selectedObject);
+            // component.set("v.opp", null);
+            // component.set("v.opp", selectedObject);
             // Instead of filling every field, just redirect to that Opportunity?
-            this.redirectToDonation(component, newId);
+            // this.redirectToDonation(component, newId);
+            var relatedCmp = this.getRelatedComponents(component);
+            for(var i=0; i < relatedCmp.length; i++){
+                relatedCmp[i].set("v.initFinished", false);
+            }
+            this.getDonationInformation(component, this, newId);
+            return;
+
         } else if(objectType == 'Account'){
             component.set("v.acct", null);
             component.set("v.acct", selectedObject);
         } else if(objectType == 'Contact'){
-            // this.clearInputs(component, '');
-            component.set("v.contact", null);
-            // console.log(selectedObject); 
+            // component.set("v.contact", null);
+            component.set("v.contact.Email", null);
+            component.set("v.contact.Phone", null);
             component.set("v.contact", selectedObject);
             // Value updates, but UI does not
-            var contact = this.proxyToObj(component.get("v.contact"));
-            console.log(contact); 
-            // this.updateInputUI(component);
+            // var contact = this.proxyToObj(component.get("v.contact"));
+            // console.log(contact); 
+            this.updateInputUI(component);
         }
 
         var oppObj = component.get("v.opp");
         oppObj = this.proxyToObj(oppObj);
-        oppObj[oppLookupField] = newId;
+        if(oppLookupField){
+            oppObj[oppLookupField] = newId;
+            component.set("v.opp", oppObj);
+        }
 		
-		var field = component.find(inputAuraId);
-		if(field){
-            // If updating a donor via match, make sure the UI reflects the change
+		if(inputAuraId){
+            this.updateLookupUI(component, inputAuraId, objectType, selectedObject);
+        }
+    },
+    updateLookupUI: function(component, inputAuraId, objectType, selectedObject){
+        var newValue = [{}];
+        // If updating a lookup field, make sure the UI reflects the change
+        newValue[0] = {
+            id: selectedObject.Id,
+            type: objectType,
+            label: selectedObject.Name
+        };
+        // console.log(newValue); 
+        var field = component.find(inputAuraId);
+        if(field){
             var lookupInput = field.get("v.body")[0];
+            // console.log(lookupInput); 
             lookupInput.updateValues();
             lookupInput.set("v.values", this.proxyToObj(newValue));
-
-            component.set("v.opp", oppObj);
-            // console.log(' ** setLookupField');
-            // console.log(oppObj);
         }
     },
     checkMatches: function(component, objToMatch){
-
+        var isEditMode = component.get("v.editMode");
         var matchListCmps = this.getMatchListComponents(component);
         console.log("Check matches for: " + objToMatch); 
 
         for(var i=0; i<matchListCmps.length; i++){
             var thisCmp = matchListCmps[i];
             var objType = thisCmp.get("v.objectType");
-            // console.log(objType); 
+            // console.log('isEditMode: ' + isEditMode); 
 
             // Don't fire the change event if we aren't checking matches for this object
-            if(objToMatch && objType != objToMatch){
-                //thisCmp.set("v.enableChangeEvent", false);
+            if( (objToMatch && objType != objToMatch) || isEditMode){
+                thisCmp.set("v.enableChangeEvent", false);
             }
         }
 
         this.fillJsonField(component);
         this.processGiftJson(component, true);
+    },
+    getRelatedComponents: function(component){
+        var namespace = component.get("v.namespacePrefix");
+        var rowCmpName = namespace + ":giftFormRelated";
+        var formWrapper = component.find("formWrapper");
+        return formWrapper.find({instancesOf:rowCmpName});
     },
     getMatchListComponents: function(component){
         var namespace = component.get("v.namespacePrefix");
@@ -418,23 +507,25 @@
         var formWrapper = component.find("formWrapper");
         return formWrapper.find({instancesOf:rowCmpName});
     },
+    getAllForceInputs: function(component){
+        var formWrapper = component.find("formWrapper");
+        return formWrapper.find({instancesOf:"force:inputField"});
+    },
     updateInputUI: function(component){
         var inputArray = this.getAllForceInputs(component);
-        
-        console.log('inputArray'); 
-        console.log(inputArray); 
-
         for(var i=0; i<inputArray.length; i++){
-            var field = this.proxyToObj( inputArray[i] );
+            var field = inputArray[i];
             // console.log(field); 
-            // var inputBody = field.get("v.body")[0];
-            // inputBody.updateValues();
+            var inputBody = field.get("v.body")[0];
+            // console.log(inputBody); 
+            if(inputBody.updateValues){
+                console.log("Update input!"); 
+                inputBody.updateValues();
+            }
         }
-    },
-    getAllForceInputs: function(component){
-        var cmpName = "force:inputField";
-        var formWrapper = component.find("formWrapper");
-        return formWrapper.find({instancesOf:cmpName});
+
+        // Refreshes the whole page
+        //$A.get('e.force:refreshView').fire();
     },
     scrollToTop: function(){
         window.scrollTo(0, 0);
@@ -443,7 +534,7 @@
         var findResult = component.find(fieldId);
         findResult = this.singleInputToArray(findResult);
         for(var i in findResult){
-            var inputCmp = findResult[i].set("v.value", '');
+            findResult[i].set("v.value", '');
         }
     },
     setErrorMessage: function(component, errorMsg){

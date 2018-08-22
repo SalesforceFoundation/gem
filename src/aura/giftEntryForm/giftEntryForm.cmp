@@ -15,7 +15,7 @@
     <aura:attribute type="Object" name="jsonObject" />
     <aura:attribute type="String" name="jsonObjectString" />
     
-    <aura:attribute type="String" name="donorType" default="Contact1" />
+    <aura:attribute type="String" name="donorType" default="" />
     <aura:attribute type="String" name="namespacePrefix" />
     <aura:attribute type="String" name="namespaceFieldPrefix" default="" />
     <aura:attribute type="sObject[]" name="objsToDelete" />
@@ -36,6 +36,7 @@
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
     <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
     <aura:attribute type="Boolean" name="donorExists" default="false" />
+    <aura:attribute type="Boolean" name="initFinished" default="false" />
     <aura:handler name="change" value="{!v.donorType}" action="{!c.handleDonorTypeChange}"/>
     <aura:handler name="change" value="{!v.donorExists}" action="{!c.handleCheckMatches}"/>
 
@@ -45,16 +46,16 @@
 
     <aura:attribute name="opp" 
         type="Opportunity" 
-        default="{sobjectType:'Opportunity',CloseDate:null}"/>
+        default="{sobjectType:'Opportunity',CloseDate:null,npe01__Do_Not_Automatically_Create_Payment__c:false}"/>
     <aura:attribute name="payment" 
         type="npe01__OppPayment__c" 
         default="{sobjectType:'npe01__OppPayment__c'}"/>
     <aura:attribute name="acct" 
         type="Account" 
-        default="{sobjectType:'Account',Name:''}"/>
+        default="{sobjectType:'Account',Name:'',Phone:''}"/>
     <aura:attribute name="contact" 
         type="Contact" 
-        default="{sobjectType:'Contact',FirstName:''}"/>
+        default="{sobjectType:'Contact',FirstName:'',LastName:''}"/>
     
     <aura:attribute name="allocs" 
         type="npsp__Allocation__c[]" 
@@ -92,8 +93,8 @@
                     </div>
                 </aura:if>
 
-                <lightning:button label="Test JSON" 
-                    onclick="{!c.clickCreate}" />
+                <!-- <lightning:button label="Test JSON" 
+                    onclick="{!c.clickCreate}" /> -->
 
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">
@@ -188,10 +189,19 @@
 
                 <c:giftFormMatchList
                     idField="Id"
+                    currentLookupValue="{!v.giftModel.opp.Id}"
                     objectType="Opportunity"
                     showMatchSpinner="{!v.showMatchSpinner}"
                     objectList="{!v.giftModel.matchedOpps}"
                     sectionLabel="Donation Matches" />
+
+                <c:giftFormMatchList
+                    currentLookupValue="{!v.payment.Id}"
+                    fieldsToShow="['npe01__Scheduled_Date__c','npe01__Payment_Amount__c']"
+                    objectType="npe01__OppPayment__c"
+                    showMatchSpinner="{!v.showMatchSpinner}"
+                    objectList="{!v.giftModel.matchedPayments}"
+                    sectionLabel="Unpaid Payment Matches" />
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                     <label class="show-required slds-form-element__label">
@@ -361,6 +371,7 @@
                     preventAmountDeficit="false"
                     picklistOptions="{!v.picklistOptions}"
                     modelAttribute="partialCredits"
+                    buttonTitle="Add New Soft Credit"
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="Allocation"
@@ -375,6 +386,7 @@
                     preventAmountDeficit="false"
                     picklistOptions="{!v.picklistOptions}"
                     modelAttribute="allocs"
+                    buttonTitle="Add New Allocation"
                     giftModel="{!v.giftModel}" />
 
                 <aura:if isTrue="{!v.submitError}">
@@ -386,8 +398,6 @@
                 </aura:if>
 
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                    <lightning:input aura:id="doDryRun" type="checkbox" checked="false" class="slds-m-bottom_small"
-                        label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
                     <lightning:button aura:id="createButton" 
                         disabled="true" 
                         label="Create Gift" 
@@ -398,10 +408,10 @@
                 <!-- Fields that are hidden from the user, set by code -->
                  <div class="slds-hidden" style="height: 0">
                     <!-- <lightning:input name="jsonInput" aura:id="postProcessJsonField" /> -->
+                    <lightning:input aura:id="doDryRun" type="checkbox" checked="false" class="slds-m-bottom_small"
+                        label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
                     <lightning:input aura:id="oppId" 
                         value="{!v.giftModel.oppId}" />
-                    <force:inputField aura:id="doNotAutoCreatePayment" 
-                        value="{!v.opp.npe01__Do_Not_Automatically_Create_Payment__c}" />
                 </div>
             </div>
 

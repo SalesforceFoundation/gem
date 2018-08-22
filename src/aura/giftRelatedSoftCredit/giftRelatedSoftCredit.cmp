@@ -8,6 +8,7 @@
         {'label': 'Partial', 'value': 'Partial'}
         ]" />
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleDonationChange}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.handleAmountCheck}" />
 
     <div class="slds-grid slds-wrap">
         <div class="slds-col slds-size_2-of-5 slds-p-around_small">

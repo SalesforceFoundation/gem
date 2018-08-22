@@ -60,15 +60,21 @@ public class GiftEntryFormController {
 
         @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
 
-        public GiftFormModel(Id oppId){
-            this.oppId = oppId;
-            this.objNameToApiToLabel = getObjNameToApiToLabel();
-            this.picklistValues = getPickListValues();
-        }
-
         public GiftFormModel(){
             this.objNameToApiToLabel = getObjNameToApiToLabel();
             this.picklistValues = getPickListValues();
+            this.matchedOpps = new List<Opportunity>();
+            this.matchedContacts = new List<Contact>();
+            this.matchedAccts = new List<Account>();
+            this.matchedPayments = new List<npe01__OppPayment__c>();
+            this.payments = new List<npe01__OppPayment__c>();
+            this.partialCredits = new List<npsp__Partial_Soft_Credit__c>();
+            this.allocs = new List<npsp__Allocation__c>();
+        }
+
+        public GiftFormModel(Id oppId){
+            this();
+            this.oppId = oppId;
         }
     }
 
@@ -204,6 +210,10 @@ public class GiftEntryFormController {
         }
     }
 
+    /*******************************************************************************************************
+    * @description Delete a list of SObjects passed in by the Gift Entry form
+    * @param objsToDelete List<SObject> to be deleted
+    */
     @TestVisible
     private static void deleteObjList(List<SObject> objsToDelete){
         List<Id> idsToDelete = new List<Id>();
@@ -222,12 +232,16 @@ public class GiftEntryFormController {
         }
     }
 
+    /*******************************************************************************************************
+    * @description Add the objects in a giftModel to the database, passing back the new Ids
+    * @param giftModel GiftFormModel which holds the information to be committed to the database
+    * @return GiftFormModel with new Ids included
+    */
     @TestVisible
     private static GiftFormModel saveDonationInformation(GiftFormModel giftModel){
         Savepoint sp = Database.setSavepoint();
         // Upsert or Delete the provided Donor and Donation information
         try {
-
             // First, delete any objects that were removed from the form
             if(giftModel.objsToDelete != null && !giftModel.objsToDelete.isEmpty()){
                 deleteObjList(giftModel.objsToDelete);
@@ -463,9 +477,9 @@ public class GiftEntryFormController {
             // First, remove attributes passed from Lightning that can't be deserialized
             String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
             // Now remove related lookup object attributes, we can't upsert with the Id AND the object
-            // ,"((?!",")(?!\[)(?!attributes)(?!\}).)+\{((?!",")(?!\}).)+\}
+            // NOTE: If this stops working, it may be best to loop through the object and remove
+            // any objects at a certain "depth"
             String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
-            // String relatedObjectRegex = ',"((?!",")(?!attributes).)+:\\{"[^}]+\\}';
 
             giftModelString = giftModelString.replaceAll(sobjectTypeRegex, '');
             giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
@@ -474,8 +488,6 @@ public class GiftEntryFormController {
             System.debug(giftModelString); 
 
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
-
-            // TODO: Loop through objects and strip out related objects instead of using regex
 
             System.debug('****** giftModel:'); 
             System.debug(giftModel); 
@@ -522,9 +534,11 @@ public class GiftEntryFormController {
         System.debug(giftModel.opp); 
         Id contactId = null;
         Id accountId = null;
+        Id oppId = null;
         if(giftModel.opp != null){
             contactId = giftModel.opp.npsp__Primary_Contact__c;
             accountId = giftModel.opp.AccountId;
+            oppId = giftModel.opp.Id;
         }
 
         Map<String, List<sObject>> matchMap = new Map<String, List<sObject>>();
@@ -536,8 +550,14 @@ public class GiftEntryFormController {
                 FROM Account 
                 WHERE Name LIKE :aName OR Id = :accountId
                 LIMIT 5];
-        } else {
-            giftModel.matchedAccts = null;
+        }
+        if(accountId != null){
+            // Override the current account based on the selected lookup
+            for(Account a : giftModel.matchedAccts){
+                if(a.Id == accountId){
+                    giftModel.acct = a;
+                }
+            }
         }
 
         // Match Contacts
@@ -567,58 +587,53 @@ public class GiftEntryFormController {
             whereClause += ' LIMIT 8';
 
             giftModel.matchedContacts = Database.query(query + whereClause);
-        } else {
-            giftModel.matchedContacts = null;
+        }
+        if(contactId != null){
+            // Override the current contact based on the selected lookup
+            for(Contact c : giftModel.matchedContacts){
+                if(c.Id == contactId){
+                    giftModel.contact = c;
+                }
+            }
         }
 
         // Find potential Opportunities if an existing donor has been set
         if(giftModel.opp != null && 
-            (!String.isEmpty(giftModel.opp.AccountId) 
-            || !String.isEmpty(giftModel.opp.npsp__Primary_Contact__c)) ){
+            (!String.isEmpty(accountId) || !String.isEmpty(contactId)) ){
 
             String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
 
             //String oName = addWildcards(giftModel.opp.Name);
-            String oAccountId = giftModel.opp.AccountId;
-            String oContactId = giftModel.opp.npsp__Primary_Contact__c;
             String query = 'SELECT ' + allOppFields + ' FROM Opportunity WHERE ';
             String whereClause = '';
             //whereClause += ' Name LIKE :oName ';
             
-            if(oAccountId != null){
-                whereClause += ' AccountId = :oAccountId ';
+            if(!String.isEmpty(accountId)){
+                whereClause += ' AccountId = :accountId ';
             }
-            if(oContactId != null){
+            if(!String.isEmpty(contactId)){
                 if(!String.isBlank(whereClause)){
                     whereClause += ' OR ';
                 }
-                whereClause += ' npsp__Primary_Contact__c = :oContactId ';
+                whereClause += ' npsp__Primary_Contact__c = :contactId ';
             }
             whereClause += ' LIMIT 10';
 
             System.debug(' ** Opp Query:'); 
-            System.debug(oContactId); 
             System.debug(query + whereClause); 
 
             giftModel.matchedOpps = Database.query(query + whereClause);
             System.debug(giftModel.matchedOpps); 
             //matchMap.put('Opportunity', matchedOpps);
-        } else {
-            giftModel.matchedOpps = null;
         }
 
-        // TODO: How to match Payments, sometimes they are a list, other times
-        // the info is on the Opportunity?
-
-        // IF there is a list of Payments do not try to match
-
-        // ELSE there is information on the Opportunity to match, use that
-
-        // Use the Opportunity and/or Donor to find a potential payment match if a payment 
-        // schedule is not provided
-        // if(payments == null || ( payments != null && payments.isEmpty())){
-        //     // List<npe01__OppPayment__c> matchedPayments
-        // }
+        if(giftModel.opp != null && oppId != null){
+            giftModel.matchedPayments = [SELECT Id, npe01__Payment_Amount__c, npe01__Scheduled_Date__c 
+                FROM npe01__OppPayment__c 
+                WHERE npe01__Opportunity__c = :oppId AND npe01__Paid__c = false
+                ORDER BY npe01__Scheduled_Date__c DESC
+                LIMIT 5];
+        }
 
         return giftModel;
     }

@@ -21,7 +21,6 @@
                 "rowList": rowList,
                 "rowComponent": rowCmpName,
                 "picklistOptions": picklistOptions,
-                "rowNum": newRowNum,
                 "item": item,
                 "donationAmt": donationAmt,
                 "checkAmountTotals": checkAmountTotals,
@@ -118,12 +117,16 @@
             return validRows;
         }
     },
+    deleteAll: function(component){
+        var relatedRows = this.getRelatedRows(component);
+        for(var i=0; i < relatedRows.length; i++){
+            var thisRow = relatedRows[i];
+            thisRow.clickDeleteRow();
+        }
+    },
     getAmtTotal: function(component){
         // Returns valid items or false if there is a validation issue
         var relatedRows = this.getRelatedRows(component);
-        var rowCmpName = component.get("v.rowCmpName");
-        var relatedWrapper = component.find("relatedWrapper");
-        var relatedRows = relatedWrapper.find({instancesOf:rowCmpName});
         var totalOfAllRows = 0;
         for(var i=0; i < relatedRows.length; i++){
             var thisRow = relatedRows[i];

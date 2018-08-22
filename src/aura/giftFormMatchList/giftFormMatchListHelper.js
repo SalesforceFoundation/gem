@@ -4,6 +4,12 @@
 		return JSON.parse(JSON.stringify(attr));
 	},
 	selectionChange : function(component, newIndex) {
+		var enableChangeEvent = component.get("v.enableChangeEvent");
+		// console.log("handleSelectionChange: " + enableChangeEvent);
+		if(!enableChangeEvent){
+			return;
+		}
+
 		var objectType = component.get("v.objectType");
 		console.log(' ** SELECTION CHANGE for: '); 
 		console.log(objectType); 

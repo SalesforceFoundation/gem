@@ -4,6 +4,7 @@
 
     <aura:attribute name="objectList" type="List" />
     <aura:attribute name="optionList" type="List" default="[]" />
+    <aura:attribute name="fieldsToShow" type="List" default="['Name']" />
     <aura:attribute name="selectedValue" type="String" />
     <aura:attribute name="selectedObject" type="Object" />
     <aura:attribute name="sectionLabel" type="String" />

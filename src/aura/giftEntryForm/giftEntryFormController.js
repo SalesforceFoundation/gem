@@ -3,57 +3,7 @@
         var recordId = component.get('v.recordId');
         // Get the data model class for the form
         // Includes picklist options, field labels, and objects if loading an existing record
-        var getModelAction = component.get("c.initClass");
-        getModelAction.setParams({
-            oppId: recordId
-        });
-        getModelAction.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === "SUCCESS") {
-                var giftModel = response.getReturnValue();
-                
-                console.log('From init'); 
-                console.log(giftModel); 
-
-                component.set("v.giftModel", giftModel);
-                component.set("v.objectLabels", giftModel.objNameToApiToLabel);
-
-                if(giftModel.opp){
-                    component.set("v.opp", giftModel.opp);
-                }
-                if(giftModel.acct){
-                    component.set("v.acct", giftModel.acct);
-                }
-                if(giftModel.contact){
-                    component.set("v.contact", giftModel.contact);
-                }
-                if(giftModel.payments){
-                    component.set("v.payments", giftModel.payments);
-                }
-                if(giftModel.allocs){
-                    component.set("v.allocs", giftModel.allocs);
-                }
-                if(giftModel.partialCredits){
-                    component.set("v.partialCredits", giftModel.partialCredits);
-                }
-
-                helper.handlePicklistSetup(component, giftModel.picklistValues);
-
-                // Setup any default form values
-                helper.setDefaults(component, helper, giftModel.opp);
-                helper.checkValidation(component);
-
-            } else if (state === "ERROR") {
-                helper.handleError(component, response);
-            }
-        });
-        $A.enqueueAction(getModelAction);
-
-        // Changes if there is already a recordId (Edit mode)
-        if(recordId){
-            helper.changeSubmitText(component, 'Update Gift');            
-            component.set('v.editMode', true);
-        }
+        helper.getDonationInformation(component, helper, recordId);
 
         var namespace = component.getType().split(':')[0];
         component.set("v.namespacePrefix", namespace);
@@ -65,19 +15,28 @@
         helper.checkValidation(component);
     },
     handleLookupChange: function(component, event, helper){
+        // This doesn't work, because the event is handled after initFinished is set to true
+        // var initFinished = component.get("v.initFinished");
+        // if(!initFinished){
+        //     return;
+        // }
+
         var newVal = event.getParam("value");
         var oldVal = event.getParam("oldValue");
+        var donorExists = component.get("v.donorExists");
         
         // console.log('New Lookup: ');
-        // console.log(newVal + " was: " + oldVal);
+        console.log(newVal + " was: " + oldVal);
 
-        // If a new lookup was set, re-run matching
+        // If a new lookup was set and donor already exists, re-run matching
         if(!oldVal && newVal){
-            component.set("v.donorExists", false);
-            component.set("v.donorExists", true);
+            console.log("Force Match Check"); 
+            // component.set("v.donorExists", false);
+            // component.set("v.donorExists", true);
+            helper.checkMatches(component);
         }
         
-        helper.checkValidation(component);
+        //helper.checkValidation(component);
     },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
@@ -102,10 +61,10 @@
         }
     },
     handleCheckMatches: function(component, event, helper) {
-        // TODO: Fix this in edit mode...
         var isEditMode = component.get("v.editMode");
 
         var newVal = event.getParam("value");
+        // console.log(newVal); 
         if(!newVal || isEditMode){
             return;
         }
@@ -146,6 +105,7 @@
         }
     },
     handleMatchChange: function(component, event, helper) {
+        var isEditMode = component.get("v.editMode");
         var selectedObject = event.getParam("selectedObject");
         var objectType = event.getParam("objectType");
         var inputAuraId = event.getParam("inputAuraId");
@@ -156,13 +116,19 @@
 
         helper.setLookupField(component, objectType, selectedObject, inputAuraId, oppLookupField);
 
-        console.log(' ** handleMatchChange for : '); 
-        console.log(objectType);
+        console.log(' ** handleMatchChange for : ' + objectType); 
+
+        if(isEditMode){
+            return;
+        }
 
         // If the donor changed, check for matches again
-        if(objectType != "Opportunity"){
+        if(objectType == "Contact" || objectType == "Account"){
             console.log("Search for opps!"); 
             helper.checkMatches(component, "Opportunity");
+        } else if(objectType == "Opportunity"){
+            console.log("Search for payments!"); 
+            helper.checkMatches(component, "npe01__OppPayment__c");
         }
     }
 })

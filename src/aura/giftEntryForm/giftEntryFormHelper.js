@@ -1,8 +1,8 @@
 ({
     getDonationInformation: function(component, helper, oppId){
-        // Changes if there is already a recordId (Edit mode)
+        // Make changes if a recordId was provided (Edit mode)
         if(oppId){
-            this.changeSubmitText(component, 'Update Gift');
+            this.changeSubmitText(component, $A.get("$Label.c.Gift_Update"));
             component.set('v.editMode', true);
         }
 
@@ -85,8 +85,6 @@
             component.set("v.donorType", '');
         }
 
-        component.set("v.initFinished", true);
-
         //this.setPicklists(component, helper);
     },
     handlePicklistSetup: function(component, picklistOptions, helper){
@@ -112,40 +110,40 @@
         // Check to see if values were already set for picklists
         //helper.setupPicklistValues(component, helper);
     },
-    setupPicklistValues: function(component, helper){
-        var namespacePrefix = component.get("v.namespacePrefix");
-        var picklistCmp = component.find("formWrapper").find({instancesOf:namespacePrefix+":giftPicklist"});
-        // For each picklist, check for existing field values, otherwise set the first option
-        for(var i=0; i < picklistCmp.length; i++){
-            helper.setStartingPicklistValue(component, picklistCmp[i]);
-        }
-    },
-    setStartingPicklistValue: function(component, picklistCmp){
-        var fieldId = picklistCmp.get("v.inputFieldId");
-        // For nested picklist components (e.g. Payment Method in the Scheduler),
-        // we will not find it in the current component, so just return
-        var field = component.find(fieldId);
-        if(!field){
-            //var errorMsg = 'Picklist ' + fieldId + ' was not found';
-            //this.setErrorMessage(component, errorMsg);
-            //console.log(errorMsg); 
-            return;
-        }
+    // setupPicklistValues: function(component, helper){
+    //     var namespacePrefix = component.get("v.namespacePrefix");
+    //     var picklistCmp = component.find("formWrapper").find({instancesOf:namespacePrefix+":giftPicklist"});
+    //     // For each picklist, check for existing field values, otherwise set the first option
+    //     for(var i=0; i < picklistCmp.length; i++){
+    //         helper.setStartingPicklistValue(component, picklistCmp[i]);
+    //     }
+    // },
+    // setStartingPicklistValue: function(component, picklistCmp){
+    //     var fieldId = picklistCmp.get("v.inputFieldId");
+    //     // For nested picklist components (e.g. Payment Method in the Scheduler),
+    //     // we will not find it in the current component, so just return
+    //     var field = component.find(fieldId);
+    //     if(!field){
+    //         //var errorMsg = 'Picklist ' + fieldId + ' was not found';
+    //         //this.setErrorMessage(component, errorMsg);
+    //         //console.log(errorMsg); 
+    //         return;
+    //     }
 
-        var curValue = field.get("v.value");
-        // If a value does not exist, set the picklist to the first option
-        if(!curValue){
-            var options = this.proxyToObj(picklistCmp.get("v.picklistValues"));
-            curValue = options[0].value;
-            this.setHiddenField(component, fieldId, curValue);
-        }
-        //console.log(curValue); 
-        picklistCmp.set("v.selectedVal", curValue);
+    //     var curValue = field.get("v.value");
+    //     // If a value does not exist, set the picklist to the first option
+    //     if(!curValue){
+    //         var options = this.proxyToObj(picklistCmp.get("v.picklistValues"));
+    //         curValue = options[0].value;
+    //         this.setHiddenField(component, fieldId, curValue);
+    //     }
+    //     //console.log(curValue); 
+    //     picklistCmp.set("v.selectedVal", curValue);
 
-        // Allow the picklist change event to fire
-        // Without this, the default picklist value overwrites existing object values
-        picklistCmp.set("v.callEvent", true);
-    },
+    //     // Allow the picklist change event to fire
+    //     // Without this, the default picklist value overwrites existing object values
+    //     picklistCmp.set("v.callEvent", true);
+    // },
     setHiddenField: function(component, fieldId, newVal){
         var field = component.find(fieldId);
         if(field){
@@ -193,7 +191,6 @@
         
         // var jsonString = component.get("v.jsonObjectString");
         var giftModelString = component.get("v.giftModelString");
-
         // console.log(giftModelString); 
 
         // Now process the JSON for this single gift
@@ -205,10 +202,6 @@
 
         action.setCallback(this, function(response) {
             var state = response.getState();
-
-            // console.log(state); 
-            // console.log(response.getReturnValue()); 
-
             if (state === "SUCCESS") {
                 var giftModel = response.getReturnValue();
                 
@@ -219,8 +212,8 @@
                 // console.log(oppId); 
 
                 if(checkDataMatches){
-
-                    // Do we want this? Should it be done elsewhere?
+                    // After a lookup change, we have to query the fields and update
+                    // the UI to reflect that change
                     if(giftModel.contact){
                         console.log(" *** Overwrite contact fields"); 
                         component.set("v.contact", giftModel.contact);
@@ -242,37 +235,37 @@
 
         $A.enqueueAction(action);
     },
-    processGift: function(component, dataImportObjId, dryRun) {
-        // No longer used in Single Gift Entry, could be useful for Batch Gift Entry
-        component.set("v.showSpinner", true);
+    // processGift: function(component, dataImportObjId, dryRun) {
+    //     // No longer used in Single Gift Entry, could be useful for Batch Gift Entry
+    //     component.set("v.showSpinner", true);
 
-        // Now run the batch for this single gift
-        var action = component.get("c.runGiftProcess");
-        action.setParams({
-            diObjId: dataImportObjId,
-            dryRunMode: dryRun
-        });
+    //     // Now run the batch for this single gift
+    //     var action = component.get("c.runGiftProcess");
+    //     action.setParams({
+    //         diObjId: dataImportObjId,
+    //         dryRunMode: dryRun
+    //     });
 
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === "SUCCESS") {
-                this.scrollToTop();
-                // Navigate to Opportunity page
-                if(!dryRun){
-                    this.redirectToDonation(component, dataImportObjId);
-                } else {
-                    // If dry run, show the results of data matching
-                    component.set("v.showForm", false);
-                    component.set("v.showSuccess", true);
-                    component.set("v.showSpinner", false);
-                }
-            } else if (state === "ERROR") {
-                this.handleError(component, response);
-            }
-        });
+    //     action.setCallback(this, function(response) {
+    //         var state = response.getState();
+    //         if (state === "SUCCESS") {
+    //             this.scrollToTop();
+    //             // Navigate to Opportunity page
+    //             if(!dryRun){
+    //                 this.redirectToDonation(component, dataImportObjId);
+    //             } else {
+    //                 // If dry run, show the results of data matching
+    //                 component.set("v.showForm", false);
+    //                 component.set("v.showSuccess", true);
+    //                 component.set("v.showSpinner", false);
+    //             }
+    //         } else if (state === "ERROR") {
+    //             this.handleError(component, response);
+    //         }
+    //     });
 
-        $A.enqueueAction(action);        
-    },
+    //     $A.enqueueAction(action);        
+    // },
     checkValidation: function(component){
         var formValid = this.validateForm(component);
         var btn = component.find('createButton');
@@ -299,15 +292,11 @@
             donorExists = donorExists || this.checkFields(component, 'contactLookup', false);
         }
 
-        // console.log( 'Donor Exists attr: ');
-        // console.log( component.get("v.donorExists") );
-        // console.log( donorExists );
-
         component.set("v.donorExists", donorExists);
 
         if(!donorExists){
             // Show error if no Donors have been entered
-            component.set("v.submitError", "Donor information is required.");
+            component.set("v.submitError", $A.get("$Label.c.Gift_Donor_Required"));
             return false;
         } else {
             component.set("v.submitError", "");
@@ -472,9 +461,32 @@
         if(field){
             var lookupInput = field.get("v.body")[0];
             // console.log(lookupInput); 
-            lookupInput.updateValues();
-            lookupInput.set("v.values", this.proxyToObj(newValue));
+            if(lookupInput){
+                lookupInput.updateValues();
+                lookupInput.set("v.values", this.proxyToObj(newValue));
+            }
         }
+    },
+    setPaymentPaid: function(component, paymentId){
+        component.set("v.showSpinner", true);
+        var action = component.get("c.markPaymentPaid");
+        action.setParams({
+            paymentId: paymentId
+        });
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                var wasPaymentUpdated = response.getReturnValue();
+                if(wasPaymentUpdated){
+                    component.set("v.payment.Id", null);
+                    this.checkMatches(component);
+                }
+                component.set("v.showSpinner", false);
+            } else if (state === "ERROR") {
+                helper.handleError(component, response);
+            }
+        });
+        $A.enqueueAction(action);
     },
     checkMatches: function(component, objToMatch){
         var isEditMode = component.get("v.editMode");
@@ -519,7 +531,7 @@
             var inputBody = field.get("v.body")[0];
             // console.log(inputBody); 
             if(inputBody.updateValues){
-                console.log("Update input!"); 
+                console.log("Update input!");
                 inputBody.updateValues();
             }
         }

@@ -22,6 +22,13 @@
         <value>Amount total is greater than donation amount</value>
     </labels>
     <labels>
+        <fullName>Gift_Create</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Create</shortDescription>
+        <value>Create Gift</value>
+    </labels>
+    <labels>
         <fullName>Gift_Donation_ID_Placeholder</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -36,6 +43,13 @@
         <value>The matched donation is locked, changes can only be made on the record itself.</value>
     </labels>
     <labels>
+        <fullName>Gift_Donor_Required</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Donor Required</shortDescription>
+        <value>Donor information is required.</value>
+    </labels>
+    <labels>
         <fullName>Gift_Saved_Message</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -48,6 +62,13 @@
         <protected>true</protected>
         <shortDescription>Gift Show Matching</shortDescription>
         <value>Show data matching results before submitting?</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Update</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Update</shortDescription>
+        <value>Update Gift</value>
     </labels>
     <labels>
         <fullName>Warning</fullName>

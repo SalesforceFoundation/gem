@@ -427,6 +427,26 @@ public class GiftEntryFormController {
         }
     }
 
+    /*******************************************************************************************************
+    * @description Given a paymentId, mark it as paid and return true on success
+    * @param paymentId Id of Payment to be marked paid
+    * @return Boolean true on success, false if not
+    */
+    @AuraEnabled
+    public static Boolean markPaymentPaid(Id paymentId){
+        try {
+            npe01__OppPayment__c payment = new npe01__OppPayment__c(
+                Id = paymentId, 
+                npe01__Paid__c = true
+            );
+            update payment;
+            return true;
+        } catch(Exception e){
+            System.debug(e);
+            return false; 
+        }
+    }
+
     // Not currently used, but useful for processing a large number of DataImport objects
     @AuraEnabled
     public static Id runGiftBatch(Id batchId){
@@ -631,7 +651,7 @@ public class GiftEntryFormController {
             giftModel.matchedPayments = [SELECT Id, npe01__Payment_Amount__c, npe01__Scheduled_Date__c 
                 FROM npe01__OppPayment__c 
                 WHERE npe01__Opportunity__c = :oppId AND npe01__Paid__c = false
-                ORDER BY npe01__Scheduled_Date__c DESC
+                ORDER BY npe01__Scheduled_Date__c ASC
                 LIMIT 5];
         }
 

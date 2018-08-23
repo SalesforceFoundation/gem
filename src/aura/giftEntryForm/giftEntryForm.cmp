@@ -11,14 +11,12 @@
     <aura:attribute type="Map" name="giftObjectMap" default="{}" />
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="Map" name="objectLabels" />
-    <aura:attribute type="Map" name="objToMatchLists" />
     <aura:attribute type="Object" name="jsonObject" />
     <aura:attribute type="String" name="jsonObjectString" />
     
     <aura:attribute type="String" name="donorType" default="" />
     <aura:attribute type="String" name="namespacePrefix" />
     <aura:attribute type="String" name="namespaceFieldPrefix" default="" />
-    <aura:attribute type="sObject[]" name="objsToDelete" />
 
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
@@ -34,9 +32,7 @@
     <aura:attribute type="Boolean" name="showMatchSpinner" default="true" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
-    <aura:attribute type="Boolean" name="showDonationImportError" default="false" />
     <aura:attribute type="Boolean" name="donorExists" default="false" />
-    <aura:attribute type="Boolean" name="initFinished" default="false" />
     <aura:handler name="change" value="{!v.donorType}" action="{!c.handleDonorTypeChange}"/>
     <aura:handler name="change" value="{!v.donorExists}" action="{!c.handleCheckMatches}"/>
 
@@ -66,6 +62,9 @@
     <aura:attribute name="partialCredits" 
         type="npsp__Partial_Soft_Credit__c[]" 
         default="[]"/>
+     <aura:attribute name="objsToDelete" 
+        type="sObject[]"/>
+    
 
     <aura:if isTrue="{!v.showSpinner}">
         <lightning:spinner />
@@ -197,11 +196,25 @@
 
                 <c:giftFormMatchList
                     currentLookupValue="{!v.payment.Id}"
+                    inputAuraId="paymentLookup"
                     fieldsToShow="['npe01__Scheduled_Date__c','npe01__Payment_Amount__c']"
                     objectType="npe01__OppPayment__c"
                     showMatchSpinner="{!v.showMatchSpinner}"
                     objectList="{!v.giftModel.matchedPayments}"
                     sectionLabel="Unpaid Payment Matches" />
+
+                <aura:if isTrue="{!v.payment.Id != null}">
+                    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                        <lightning:button aura:id="paymentButton" 
+                            label="Mark as Paid"
+                            variant="brand" 
+                            onclick="{!c.clickMarkPaymentPaid}" />
+                    </div>
+                </aura:if>
+
+                <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                    Payment Id: {!v.payment.Id}
+                </div>
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                     <label class="show-required slds-form-element__label">
@@ -400,7 +413,7 @@
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
                     <lightning:button aura:id="createButton" 
                         disabled="true" 
-                        label="Create Gift" 
+                        label="{!$Label.c.Gift_Create}"
                         variant="brand" 
                         onclick="{!c.clickCreate}" />
                 </div>
@@ -412,6 +425,8 @@
                         label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
                     <lightning:input aura:id="oppId" 
                         value="{!v.giftModel.oppId}" />
+                    <lightning:input aura:id="paymentLookup" 
+                        value="{!v.payment.Id}" />
                 </div>
             </div>
 

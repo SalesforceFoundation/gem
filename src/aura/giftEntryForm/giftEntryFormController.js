@@ -5,6 +5,7 @@
         // Includes picklist options, field labels, and objects if loading an existing record
         helper.getDonationInformation(component, helper, recordId);
 
+        // Set the namespace var so components load in managed package
         var namespace = component.getType().split(':')[0];
         component.set("v.namespacePrefix", namespace);
         if(namespace != "c"){
@@ -12,15 +13,11 @@
         }
     },
     handleFieldChange: function(component, event, helper){
+        // Each time a required input changes, check validation
         helper.checkValidation(component);
     },
     handleLookupChange: function(component, event, helper){
-        // This doesn't work, because the event is handled after initFinished is set to true
-        // var initFinished = component.get("v.initFinished");
-        // if(!initFinished){
-        //     return;
-        // }
-
+        // When a lookup field change, we may need to check for data matches using that value
         var newVal = event.getParam("value");
         var oldVal = event.getParam("oldValue");
         var donorExists = component.get("v.donorExists");
@@ -61,6 +58,7 @@
         }
     },
     handleCheckMatches: function(component, event, helper) {
+        // The form should send its current information and check for data matches
         var isEditMode = component.get("v.editMode");
 
         var newVal = event.getParam("value");
@@ -105,6 +103,7 @@
         }
     },
     handleMatchChange: function(component, event, helper) {
+        // A new selection was made on a data match list
         var isEditMode = component.get("v.editMode");
         var selectedObject = event.getParam("selectedObject");
         var objectType = event.getParam("objectType");
@@ -113,10 +112,20 @@
 
         // console.log(' ** setLookup via handleMatchChange: '); 
         // console.log(setLookup); 
-
-        helper.setLookupField(component, objectType, selectedObject, inputAuraId, oppLookupField);
-
         console.log(' ** handleMatchChange for : ' + objectType); 
+
+        // Could be an option on the component instead, lookup vs. normal input?
+        if(objectType == "npe01__OppPayment__c"){
+            // Since this isn't a lookup field, just set the value
+            var field = component.find(inputAuraId);
+            if(field){
+                var newVal = (selectedObject && selectedObject.Id) ? selectedObject.Id : null;
+                field.set("v.value", newVal);
+            }
+        } else {
+            // Lookup fields take extra steps to show correctly in the UI
+            helper.setLookupField(component, objectType, selectedObject, inputAuraId, oppLookupField);
+        }
 
         if(isEditMode){
             return;
@@ -130,5 +139,9 @@
             console.log("Search for payments!"); 
             helper.checkMatches(component, "npe01__OppPayment__c");
         }
+    },
+    clickMarkPaymentPaid: function(component, event, helper) {
+        var paymentId = component.get("v.payment.Id");
+        helper.setPaymentPaid(component, paymentId);
     }
 })

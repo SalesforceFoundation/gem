@@ -11,13 +11,13 @@
     <aura:handler name="change" value="{!v.picklistOptions}" action="{!c.handleInitRows}"/>
     <aura:handler name="giftDeleteRowEvent" action="{!c.handleRowDelete}" event="c:giftDeleteRowEvent" />
 
+    <aura:attribute type="GiftEntryFormController.GiftFormModel" name="giftModel" />
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="buttonTitle" default="Add New" />
     <aura:attribute type="String" name="objectName" default="npsp__Allocation__c" />
     <aura:attribute type="String" name="modelAttribute" default="allocs" />
     <aura:attribute type="String" name="rowCmpName" default="c:giftRelatedAllocation" />
-    <aura:attribute type="GiftEntryFormController.GiftFormModel" name="giftModel" />
     <aura:attribute type="String[]" name="fieldList" />
     <aura:attribute type="String[]" name="noDuplicateValueList" />
     <aura:attribute type="String" name="oppField" />

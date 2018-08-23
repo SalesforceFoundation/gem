@@ -30,6 +30,13 @@
     </flexiPageRegions>
     <flexiPageRegions>
         <componentInstances>
+            <componentName>giftEntryForm</componentName>
+        </componentInstances>
+        <name>Facet-e8c7cf7d-e241-432d-a511-a3cea1cd4311</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <componentInstances>
             <componentInstanceProperties>
                 <name>active</name>
                 <value>true</value>
@@ -67,6 +74,17 @@
             <componentInstanceProperties>
                 <name>title</name>
                 <value>Standard.Tab.collaborate</value>
+            </componentInstanceProperties>
+            <componentName>flexipage:tab</componentName>
+        </componentInstances>
+        <componentInstances>
+            <componentInstanceProperties>
+                <name>body</name>
+                <value>Facet-e8c7cf7d-e241-432d-a511-a3cea1cd4311</value>
+            </componentInstanceProperties>
+            <componentInstanceProperties>
+                <name>title</name>
+                <value>Gift Entry</value>
             </componentInstanceProperties>
             <componentName>flexipage:tab</componentName>
         </componentInstances>

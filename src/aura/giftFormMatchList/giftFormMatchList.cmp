@@ -13,7 +13,6 @@
     <aura:attribute name="objectType" type="String" />
     <aura:attribute name="inputAuraId" type="String" />
     <aura:attribute name="showMatchSpinner" type="Boolean" />
-    <aura:attribute name="searchForOpps" type="Boolean" default="false" />
     <aura:attribute name="enableChangeEvent" type="Boolean" default="false" />
 
     <aura:handler name="change" value="{!v.objectList}" action="{!c.handleListChange}"/>
@@ -28,7 +27,7 @@
             options="{!v.optionList}"
             value="{!v.selectedValue}"
             onchange="{!c.handleSelectionChange}"
-            type="radio"/>
+            type="button" />
     </div>
     </aura:if>
 	

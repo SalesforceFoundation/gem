@@ -1,19 +1,15 @@
 ({
 	handleListChange : function(component, event, helper) {
-		// var enableChangeEvent = component.get("v.enableChangeEvent");
-		// // console.log("handleSelectionChange: " + enableChangeEvent);
-		// if(!enableChangeEvent){
-		// 	return;
-		// }
-
 		var createNewVal = '';
 		var objectType = component.get("v.objectType");
 		var curVal = component.get("v.selectedValue");
 		// console.log("curval for " + objectType + ": " + curVal);
 		component.set("v.enableChangeEvent", false);
-		if(curVal === undefined){
-			component.set("v.selectedValue", createNewVal);
-		}
+
+		// When payments are deleted, we want this to reset, otherwise we do not!
+		// if(curVal === undefined){
+		component.set("v.selectedValue", createNewVal);
+		// }
 		
 		var objList = component.get("v.objectList");
 		console.log(objectType); 
@@ -28,7 +24,7 @@
 		var fieldsToShow = component.get("v.fieldsToShow");
 
 		objList = helper.proxyToObj(objList);
-		var newList = [{'label':'Create New','value':createNewVal}];
+		var newList = [{'label':'Do Not Match','value':createNewVal}];
 		// Parse the object list into the label/value list that we need
 		for(var i=0; i < objList.length; i++){
 			var optionLabel = '';

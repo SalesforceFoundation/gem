@@ -1,8 +1,4 @@
 ({
-	proxyToObj: function(attr){
-		// Used to convert a Proxy object to an actual Javascript object
-		return JSON.parse(JSON.stringify(attr));
-	},
 	selectionChange : function(component, newIndex) {
 		var enableChangeEvent = component.get("v.enableChangeEvent");
 		// console.log("handleSelectionChange: " + enableChangeEvent);
@@ -35,5 +31,9 @@
 		});
 		cmpEvent.fire();
 
+	},
+	proxyToObj: function(attr){
+		// Used to convert a Proxy object to an actual Javascript object
+		return JSON.parse(JSON.stringify(attr));
 	}
 })

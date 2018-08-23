@@ -7,18 +7,13 @@
         var itemList = component.get("v.itemList");
         var rowList = component.get("v.rowList");
 
-        console.log('handleInitRows for ' + thisObj); 
-        console.log(itemList); 
-        console.log(rowList); 
-        // helper.handleAddRow(component, helper);
-
         // Only add a row on init if we aren't loading existing data
         if(itemList && itemList.length == 0){
+            // If a row has already been added, don't add a new one
             if(rowList.length == 0){
                 helper.handleAddRow(component, helper);
             }
         } else {
-            console.log("createRowsFromItemList from handleInitRows for " + thisObj); 
             // If an itemList was provided on load, add it now that picklist values are available
             helper.createRowsFromItemList(component, helper);
         }
@@ -47,7 +42,6 @@
         // On load, since the itemlist comes in before the picklist values are set,
         // we need to wait for the picklists before processing the rows
         if(component.get("v.initFinished") && !blockChange){
-            console.log("createRowsFromItemList from handleItemListChange for " + thisObj); 
             helper.createRowsFromItemList(component, helper);
         }
     },

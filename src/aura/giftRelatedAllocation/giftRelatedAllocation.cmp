@@ -6,14 +6,14 @@
     <div class="slds-grid slds-wrap">
         <div class="slds-col slds-size_2-of-4 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">General Accounting Unit</label>
+                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Allocation.npsp__General_Accounting_Unit__c}</label>
             </aura:if>
             <force:inputField aura:id="noDuplicates"
                 value="{!v.item.npsp__General_Accounting_Unit__c}" />
         </div>
         <div class="slds-col slds-size_1-of-4 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">Amount</label>
+                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Allocation.npsp__Amount__c}</label>
             </aura:if>
             <lightning:input aura:id="requiredField"
                 onblur="{!c.handleAmountCheck}"
@@ -27,7 +27,7 @@
         </div>
         <div class="slds-col slds-size_1-of-4 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">Percent</label>
+                <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Allocation.npsp__Percent__c}</label>
             </aura:if>
             <lightning:input onblur="{!c.handlePercentChange}"
                 name="allocationPerc" 

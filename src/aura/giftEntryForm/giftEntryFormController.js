@@ -74,8 +74,9 @@
         helper.redirectToDonation(component);
     },
     clickRunProcess: function(component, event, helper){
-        var diId = component.get('v.returnedRecordId');
-        helper.processGift(component, diId, false);
+        var diId = component.get('v.di.Id');
+        // helper.processGift(component, diId, false);
+        helper.processGiftJson(component, true);
     },
     clickBackToForm: function(component, event, helper){
         component.set("v.showForm", true);
@@ -86,10 +87,12 @@
         var donorType = event.getParam("value");
         // Need to clear the other donor fields
         if(donorType == 'Account1'){
-            helper.clearInputs(component, 'requiredContactField');
-            helper.clearInputs(component, 'requiredDonorField');
+            // helper.setLookupValue(component, 'contactLookup', '');
+            helper.clearInputs(component, 'contactLookup');
+            // helper.clearInputs(component, 'requiredDonorField');
         } else if(donorType == 'Contact1'){
-            helper.clearInputs(component, 'requiredAccountField');
+            // helper.setLookupValue(component, 'accountLookup', '');
+            helper.clearInputs(component, 'accountLookup');
         }
         
         helper.checkValidation(component);

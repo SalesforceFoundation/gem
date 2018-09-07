@@ -1,6 +1,6 @@
 <aura:component >
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
-    <aura:attribute type="Map" name="picklistOptions" />
+    <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="Boolean" name="showPayments" default="false" />
     <aura:attribute type="Boolean" name="blockItemChangeEvent" default="true" />
@@ -71,9 +71,9 @@
                 <option value="Week">Week</option>
             </lightning:select>
         </div>
-        <div class="slds-col slds-size_2-of-8">
-            <c:giftPicklist picklistValues="{!v.picklistOptions.npsp__Payment_Method__c}" 
-                fieldLabel="Payment Method"
+        <div class="slds-col slds-size_2-of-8 slds-p-around_small">
+            <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
+                fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
                 inputFieldId="schedulerPaymentMethod"
                 selectedVal="{!v.selectedPaymentMethod}" />
         </div>
@@ -96,7 +96,7 @@
             donationAmt="{!v.donationAmt}"
             preventAmountSurplus="false"
             preventAmountDeficit="true"
-            picklistOptions="{!v.picklistOptions}"
+            objectFieldData="{!v.objectFieldData}"
             modelAttribute="payments"
             buttonTitle="Add New Payment"
             giftModel="{!v.giftModel}" />

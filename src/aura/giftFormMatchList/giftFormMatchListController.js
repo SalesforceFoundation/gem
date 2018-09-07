@@ -12,8 +12,8 @@
 		// }
 		
 		var objList = component.get("v.objectList");
-		console.log(objectType); 
-		console.log(objList); 
+		// console.log(objectType); 
+		// console.log(objList); 
 		if(!objList || objList.length == 0){ // || curVal !== createNewVal
 			component.set("v.optionList", []);
 			return;

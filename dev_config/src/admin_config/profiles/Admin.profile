@@ -113,6 +113,10 @@
         <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <recordType>Opportunity.npsp__NPSP_Default</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>npsp__DataImport__c-%%%NAMESPACE%%%Advancement Gift Layout</layout>
     </layoutAssignments>
     

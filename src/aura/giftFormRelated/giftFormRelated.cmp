@@ -8,11 +8,11 @@
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.checkAmountTotals}" action="{!c.handleAmtChange}"/>
-    <aura:handler name="change" value="{!v.picklistOptions}" action="{!c.handleInitRows}"/>
+    <aura:handler name="change" value="{!v.objectFieldData}" action="{!c.handleInitRows}"/>
     <aura:handler name="giftDeleteRowEvent" action="{!c.handleRowDelete}" event="c:giftDeleteRowEvent" />
 
     <aura:attribute type="GiftEntryFormController.GiftFormModel" name="giftModel" />
-    <aura:attribute type="Map" name="picklistOptions" />
+    <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="buttonTitle" default="Add New" />
     <aura:attribute type="String" name="objectName" default="npsp__Allocation__c" />

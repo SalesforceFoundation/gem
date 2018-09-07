@@ -5,7 +5,7 @@
         var rowListArray = component.get("v.rowList");
         var newRowNum = index ? index : rowListArray.length;
         var rowCmpName = component.get("v.rowCmpName");
-        var picklistOptions = component.get("v.picklistOptions");
+        var objectFieldData = component.get("v.objectFieldData");
         var amtField = component.getReference("v.amtField");
         var donationAmt = component.getReference("v.donationAmt");
         var checkAmountTotals = component.getReference("v.checkAmountTotals");
@@ -20,7 +20,7 @@
             rowCmpName, {
                 "rowList": rowList,
                 "rowComponent": rowCmpName,
-                "picklistOptions": picklistOptions,
+                "objectFieldData": objectFieldData,
                 "item": item,
                 "donationAmt": donationAmt,
                 "checkAmountTotals": checkAmountTotals,
@@ -59,8 +59,6 @@
         //var itemList = event.getParam("value");
         var itemList = component.get("v.itemList");
         itemList = this.proxyToObj(itemList);
-        console.log('createRowsFromItemList:'); 
-        console.log(itemList); 
 
         for(var i=0; i<itemList.length; i++){
             this.handleAddRow(component, helper, itemList[i], i);

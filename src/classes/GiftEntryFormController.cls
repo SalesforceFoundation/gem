@@ -38,11 +38,12 @@ public class GiftEntryFormController {
 
     public Boolean hasPerm {get;set;}
     public GiftEntryFormController(){
-        hasPerm = Schema.sObjectType.Opportunity.isCreateable();
+        hasPerm = Schema.sObjectType.npsp__DataImport__c.isCreateable();
     }
 
     public class GiftFormModel{
         @AuraEnabled public Id oppId {get;set;}
+        @AuraEnabled public npsp__DataImport__c di {get;set;}
         @AuraEnabled public Opportunity opp {get;set;}
         @AuraEnabled public Account acct {get;set;}
         @AuraEnabled public Contact contact {get;set;}
@@ -97,6 +98,8 @@ public class GiftEntryFormController {
         objLabelMap.put('Contact', getFieldNameToLabelForObject('Contact'));
         objLabelMap.put('Opportunity', getFieldNameToLabelForObject('Opportunity'));
         objLabelMap.put('Payment', getFieldNameToLabelForObject('npe01__OppPayment__c'));
+        objLabelMap.put('PSC', getFieldNameToLabelForObject('npsp__Partial_Soft_Credit__c'));
+        objLabelMap.put('Allocation', getFieldNameToLabelForObject('npsp__Allocation__c'));
         return objLabelMap;
     }
 
@@ -247,6 +250,19 @@ public class GiftEntryFormController {
                 deleteObjList(giftModel.objsToDelete);
             }
 
+            // Insert or Update the provided Donation information
+            if(giftModel.di != null){
+                System.debug(' **** DI Before Upsert:'); 
+                System.debug(giftModel.di); 
+                upsert giftModel.di;
+            }
+
+            // After saving, need to process
+            runGiftProcess(giftModel.di.Id, false);
+
+            Id oppId = getOpportunityIdFromImport(giftModel.di.Id);
+
+            /*
             // Insert or Update the provided Donor information
             if(giftModel.acct != null && !String.isBlank(giftModel.acct.Name)){
                 if(!String.isBlank(giftModel.opp.AccountId)){
@@ -270,31 +286,32 @@ public class GiftEntryFormController {
             }
 
             upsert giftModel.opp;
+            */
             
             if(giftModel.payments != null && !giftModel.payments.isEmpty()){
                 for(npe01__OppPayment__c p : giftModel.payments){
                     if(p.Id == null){
-                        p.npe01__Opportunity__c = giftModel.opp.Id;
+                        p.npe01__Opportunity__c = oppId;
                     }
                 }
                 upsert giftModel.payments;
             }
             if(giftModel.allocs != null && !giftModel.allocs.isEmpty()){
                 for(npsp__Allocation__c a : giftModel.allocs){
-                    a.npsp__Opportunity__c = giftModel.opp.Id;
+                    a.npsp__Opportunity__c = oppId;
                 }
                 upsert giftModel.allocs;
             }
             if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()){
                 for(npsp__Partial_Soft_Credit__c c : giftModel.partialCredits){
                     if(c.Id == null){
-                        c.npsp__Opportunity__c = giftModel.opp.Id;
+                        c.npsp__Opportunity__c = oppId;
                     }
                 }
                 upsert giftModel.partialCredits;
             }
 
-            giftModel.oppId = giftModel.opp.Id;
+            giftModel.oppId = oppId;
 
             System.debug(giftModel);
 
@@ -318,6 +335,18 @@ public class GiftEntryFormController {
         List<Schema.PicklistEntry> picklistValues = 
             npe01__OppPayment__c.npe01__Payment_Method__c.getDescribe().getPicklistValues();
         picklistMap.put('npsp__Payment_Method__c', returnPicklistValuesList(picklistValues));
+
+        picklistValues = Opportunity.StageName.getDescribe().getPicklistValues();
+        picklistMap.put('npsp__Donation_Stage__c', returnPicklistValuesList(picklistValues));
+        
+        picklistValues = Opportunity.npsp__Matching_Gift_Status__c.getDescribe().getPicklistValues();
+        picklistMap.put('Donation_Matching_Gift_Status__c', returnPicklistValuesList(picklistValues));
+        
+        picklistValues = Opportunity.npsp__Acknowledgment_Status__c.getDescribe().getPicklistValues();
+        picklistMap.put('Donation_Acknowledgment_Status__c', returnPicklistValuesList(picklistValues));
+        
+        picklistValues = Opportunity.npsp__Tribute_Type__c.getDescribe().getPicklistValues();
+        picklistMap.put('Donation_Tribute_Type__c', returnPicklistValuesList(picklistValues));
 
         picklistValues = OpportunityContactRole.Role.getDescribe().getPicklistValues();
         picklistMap.put('npsp__Role_Name__c', returnSoftCreditRoleList(picklistValues));
@@ -423,7 +452,7 @@ public class GiftEntryFormController {
 
         npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
         if(!dryRunMode){
-            processJSONList(listDI);
+            //processJSONList(listDI);
         }
     }
 
@@ -485,13 +514,13 @@ public class GiftEntryFormController {
     * @return Id of the Opportunity created
     */
     @AuraEnabled
-    public static GiftFormModel processGiftJSON(String giftModelString, Boolean checkDataMatches){
+    public static GiftFormModel processGiftModelString(String giftModelString){
         try {
             if(giftModelString == null){
                 return new GiftFormModel(null);
             }
 
-            System.debug('BEFORE Regex: '); 
+            System.debug('BEFORE processing: '); 
             System.debug(giftModelString); 
 
             // First, remove attributes passed from Lightning that can't be deserialized
@@ -502,7 +531,7 @@ public class GiftEntryFormController {
             String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
 
             giftModelString = giftModelString.replaceAll(sobjectTypeRegex, '');
-            giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
+            // giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
             
             System.debug('AFTER Regex: '); 
             System.debug(giftModelString); 
@@ -510,24 +539,9 @@ public class GiftEntryFormController {
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
 
             System.debug('****** giftModel:'); 
-            System.debug(giftModel); 
+            System.debug(giftModel.di); 
 
-            if(checkDataMatches){
-                giftModel = setDataMatches(giftModel);
-            } else {
-                giftModel = saveDonationInformation(giftModel);
-            }
-
-            // System.debug(giftCtrl.acct);
-            // System.debug(giftCtrl.contact);
-            // System.debug(giftCtrl.opp);
-
-            System.debug('matchedOpps'); 
-            System.debug(giftModel.matchedOpps); 
-            System.debug('matchedContacts'); 
-            System.debug(giftModel.matchedContacts); 
-            System.debug('matchedAccts'); 
-            System.debug(giftModel.matchedAccts); 
+            // TODO: Loop through and remove objects of a certain depth
 
             return giftModel;
 

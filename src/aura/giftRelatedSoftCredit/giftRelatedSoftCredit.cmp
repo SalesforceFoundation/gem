@@ -13,14 +13,14 @@
     <div class="slds-grid slds-wrap">
         <div class="slds-col slds-size_2-of-5 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">Contact</label>
+                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Contact__c}</label>
             </aura:if>
             <force:inputField aura:id="noDuplicates"
                 value="{!v.item.npsp__Contact__c}" />
         </div>
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">Type</label>
+                <label class="slds-form-element__label">Credit Type</label>
             </aura:if>
             <lightning:radioGroup name="creditType"
                 value="{!v.creditType}"
@@ -30,7 +30,7 @@
         </div>
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">Amount</label>
+                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Amount__c}</label>
             </aura:if>
             <lightning:input aura:id="requiredField"
                 onblur="{!c.handleAmountCheck}"
@@ -44,14 +44,14 @@
         </div>
         <div class="slds-col slds-size_1-of-5 slds-p-around_small">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">Role Name</label>
+                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Role_Name__c}</label>
             </aura:if>
             <lightning:select name="select" 
                 aura:id="requiredField"
                 label="Role Name"
                 variant="label-hidden"
                 value="{!v.item.npsp__Role_Name__c}">
-                <aura:iteration items="{!v.picklistOptions.npsp__Role_Name__c}" var="plWrapper">
+                <aura:iteration items="{!v.objectFieldData.picklistOptions.npsp__Role_Name__c}" var="plWrapper">
                     <option value="{!plWrapper.value}"
                         text="{!plWrapper.label}"
                         selected="{!plWrapper.value == v.item.npsp__Role_Name__c}">

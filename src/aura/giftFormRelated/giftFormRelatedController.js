@@ -11,7 +11,8 @@
         if(itemList && itemList.length == 0){
             // If a row has already been added, don't add a new one
             if(rowList.length == 0){
-                helper.handleAddRow(component, helper);
+                // New change: start with no rows, user will add as needed
+                //helper.handleAddRow(component, helper);
             }
         } else {
             // If an itemList was provided on load, add it now that picklist values are available

@@ -19,7 +19,6 @@
                 console.log(giftModel); 
 
                 component.set("v.giftModel", giftModel);
-                component.set("v.objectLabels", giftModel.objNameToApiToLabel);
 
                 if(giftModel.opp){
                     component.set("v.opp", giftModel.opp);
@@ -46,6 +45,7 @@
                     component.set("v.partialCredits", giftModel.partialCredits);
                 }
 
+                component.set("v.objectFieldData.objectLabels", giftModel.objNameToApiToLabel);
                 helper.handlePicklistSetup(component, giftModel.picklistValues);
 
                 // Setup any default form values
@@ -70,19 +70,19 @@
         // }
 
         // For new forms, set Date to Today, otherwise use existing value
-        var curDate = component.get("v.opp.CloseDate");
+        var curDate = component.get("v.di.npsp__Donation_Date__c");
         if(!curDate){
             // Set Close Date to Today
             var closeDate = new Date();
             closeDate = this.convertDateToString(closeDate);
-            component.set("v.opp.CloseDate", closeDate);
+            component.set("v.di.npsp__Donation_Date__c", closeDate);
         }
 
-        // Also check if the Contact or Account information should be shown
+        // Also check whether the Contact or Account information should be shown
         if(opp && opp.AccountId && !opp.npsp__Primary_Contact__c){
-            component.set("v.donorType", 'Account1');
-        } else if(opp && opp.AccountId){
-            component.set("v.donorType", '');
+            component.set("v.di.npsp__Donation_Donor__c", 'Account1');
+        } else {
+            component.set("v.di.npsp__Donation_Donor__c", 'Contact1');
         }
 
         //this.setPicklists(component, helper);
@@ -105,7 +105,8 @@
             picklistOptions[field] = convertedList;
         }
         // Setting this map will update all of the picklists
-        component.set("v.picklistOptions", picklistOptions);
+        //component.set("v.picklistOptions", picklistOptions);
+        component.set("v.objectFieldData.picklistOptions", picklistOptions);
 
         // Check to see if values were already set for picklists
         //helper.setupPicklistValues(component, helper);
@@ -194,10 +195,9 @@
         // console.log(giftModelString); 
 
         // Now process the JSON for this single gift
-        var action = component.get("c.processGiftJSON");
+        var action = component.get("c.processGiftModelString");
         action.setParams({
-            giftModelString: giftModelString,
-            checkDataMatches: checkDataMatches
+            giftModelString: giftModelString
         });
 
         action.setCallback(this, function(response) {
@@ -206,22 +206,26 @@
                 var giftModel = response.getReturnValue();
                 
                 console.log("Gift Model about to be overwritten by processGiftJSON"); 
+                console.log(giftModel); 
 
                 component.set("v.giftModel", giftModel);
-                var oppId = component.find("oppId").get("v.value");
+                // var oppId = component.find("oppId").get("v.value");
                 // console.log(oppId); 
+
+                // TODO: Set this another way
+                var checkDataMatches = true;
 
                 if(checkDataMatches){
                     // After a lookup change, we have to query the fields and update
                     // the UI to reflect that change
-                    if(giftModel.contact){
-                        console.log(" *** Overwrite contact fields"); 
-                        component.set("v.contact", giftModel.contact);
-                    }
-                    if(giftModel.acct){
-                        console.log(" *** Overwrite account fields");
-                        component.set("v.acct", giftModel.acct);
-                    }
+                    // if(giftModel.contact){
+                    //     console.log(" *** Overwrite contact fields"); 
+                    //     component.set("v.contact", giftModel.contact);
+                    // }
+                    // if(giftModel.acct){
+                    //     console.log(" *** Overwrite account fields");
+                    //     component.set("v.acct", giftModel.acct);
+                    // }
 
                     component.set('v.showSpinner', false);
                     component.set("v.showMatchSpinner", false);
@@ -268,8 +272,8 @@
     // },
     checkValidation: function(component){
         var formValid = this.validateForm(component);
-        var btn = component.find('createButton');
-        btn.set('v.disabled',!formValid);
+        // var btn = component.find('createButton');
+        // btn.set('v.disabled',!formValid);
     },
     validateForm: function(component) {
         component.set("v.error", null);
@@ -278,25 +282,25 @@
         
         // Check that at least one combination of donor fields is valid, otherwise show error
         // First check if an Account field is filled in
-        var donorType = component.get("v.donorType");
+        var donorType = component.get("v.di.npsp__Donation_Donor__c");
         var donorExists = false;
 
         if(donorType == "Account1" || !donorType){
-            donorExists = donorExists || this.checkFields(component, 'requiredAccountField', false);
-            donorExists = donorExists || this.checkFields(component, 'accountLookup', false);
+            // donorExists = donorExists || this.checkFields(component, 'requiredAccountField', false);
+            donorExists = donorExists || this.checkFields(component, 'accountLookup', true);
         } 
         if(donorType == "Contact1" || !donorType) {
             // Check if Contact1 Firstname and Lastname are filled in
-            donorExists = donorExists || this.checkFields(component, 'requiredContactField', true);
+            // donorExists = donorExists || this.checkFields(component, 'requiredContactField', true);
             // Check any other donor fields we could use
-            donorExists = donorExists || this.checkFields(component, 'contactLookup', false);
+            donorExists = donorExists || this.checkFields(component, 'contactLookup', true);
         }
 
         component.set("v.donorExists", donorExists);
 
         if(!donorExists){
             // Show error if no Donors have been entered
-            component.set("v.submitError", $A.get("$Label.c.Gift_Donor_Required"));
+            // component.set("v.submitError", $A.get("$Label.c.Gift_Donor_Required"));
             return false;
         } else {
             component.set("v.submitError", "");
@@ -311,16 +315,21 @@
         }
         findResult = this.singleInputToArray(findResult);
         var validationResult = findResult.reduce(function (validSoFar, inputCmp) {
+            // lightning:inputField can use reportValidity
             //TODO: How to check force:inputField for disabled?
             // var disabled = inputCmp.get("v.disabled");
             // if(disabled){
             //     return validSoFar;
             // }
             var fieldVal = inputCmp.get("v.value");
-            // if(fieldId == 'requiredContactField'){
+            // if(fieldId == 'accountLookup'){
             //     console.log(fieldVal); 
             // }
             var isValid = fieldVal || fieldVal === false;
+            if(typeof inputCmp.reportValidity === "function"){
+                var validMsg = inputCmp.reportValidity();
+                //console.log(validMsg); 
+            }
             if(!allMustBeValid && (isValid || validSoFar)){
                 // We only need one of these fields filled in
                 return true;
@@ -359,26 +368,21 @@
         }
 
         var giftModel = component.get("v.giftModel");
-        var jsonObj = component.get("v.jsonObject");
-        // console.log('giftModel after related rows:'); 
-        // console.log(giftModel); 
 
-        if(jsonObj == null){
-            // If json has not been set yet, set to empty object
-            jsonObj = {};
-            component.set("v.jsonObj", jsonObj);
-        }
-
-        // Now set the "primary" gift fields
-        var acct = this.proxyToObj(component.get("v.acct"));
-        var contact = this.proxyToObj(component.get("v.contact"));
-        var opp = this.proxyToObj(component.get("v.opp"));
+        // Now set the "primary" gift field
+        var di = this.proxyToObj(component.get("v.di"));
+        // var acct = this.proxyToObj(component.get("v.acct"));
+        // var contact = this.proxyToObj(component.get("v.contact"));
+        // var opp = this.proxyToObj(component.get("v.opp"));
+        
         // console.log(' *** opp'); 
         // console.log(opp); 
+        
         var objsToDelete = this.proxyToObj(component.get("v.objsToDelete"));
-        giftModel['acct'] = acct;
-        giftModel['contact'] = contact;
-        giftModel['opp'] = opp;
+        giftModel['di'] = di;
+        // giftModel['acct'] = acct;
+        // giftModel['contact'] = contact;
+        // giftModel['opp'] = opp;
         giftModel['objsToDelete'] = objsToDelete;
 
         // Clear unneeded variables
@@ -386,12 +390,12 @@
         giftModel['picklistValues'] = {};
 
         // console.log("Gift Model about to be overwritten by fillJsonField"); 
-        component.set("v.jsonObj", jsonObj);
+        // component.set("v.jsonObj", jsonObj);
         // component.set("v.giftModel", giftModel);
 
         if(giftModel.payments && giftModel.payments.length > 0){
             // Payments are being scheduled, do not create one for the full donation
-            giftModel['opp'].npe01__Do_Not_Automatically_Create_Payment__c = true;
+            giftModel['di'].Do_Not_Automatically_Create_Payment__c = true;
         }
 
         var giftModelString = JSON.stringify(giftModel);
@@ -457,10 +461,13 @@
             label: selectedObject.Name
         };
         // console.log(newValue); 
+        this.setLookupValue(component, inputAuraId, newValue);
+    },
+    setLookupValue: function(component, inputAuraId, newValue){
         var field = component.find(inputAuraId);
         if(field){
+            // this.updateFieldUI(field);
             var lookupInput = field.get("v.body")[0];
-            // console.log(lookupInput); 
             if(lookupInput){
                 lookupInput.updateValues();
                 lookupInput.set("v.values", this.proxyToObj(newValue));
@@ -527,26 +534,27 @@
         var inputArray = this.getAllForceInputs(component);
         for(var i=0; i<inputArray.length; i++){
             var field = inputArray[i];
-            // console.log(field); 
-            var inputBody = field.get("v.body")[0];
-            // console.log(inputBody); 
-            if(inputBody.updateValues){
-                console.log("Update input!");
-                inputBody.updateValues();
-            }
+            this.updateFieldUI(field);
         }
-
         // Refreshes the whole page
         //$A.get('e.force:refreshView').fire();
     },
     scrollToTop: function(){
         window.scrollTo(0, 0);
     },
+    updateFieldUI: function(field){
+        var inputBody = field.get("v.body")[0];
+        // console.log(inputBody); 
+        if(inputBody.updateValues){
+            inputBody.updateValues();
+        }
+    },
     clearInputs: function(component, fieldId){
         var findResult = component.find(fieldId);
         findResult = this.singleInputToArray(findResult);
         for(var i in findResult){
             findResult[i].set("v.value", '');
+            this.updateFieldUI(findResult[i]);
         }
     },
     setErrorMessage: function(component, errorMsg){

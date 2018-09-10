@@ -134,5 +134,8 @@
         component.set("v.amountError", amtError);
 
         component.set("v.checkAmountTotals", false);
+    },
+    toggleRelatedSection: function(component, event, helper) {
+        component.set('v.expandSection', !component.get('v.expandSection'));
     }
 })

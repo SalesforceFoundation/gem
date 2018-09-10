@@ -31,13 +31,17 @@
     <aura:attribute type="Boolean" name="preventAmountDeficit" default="false" />
     <aura:attribute type="Boolean" name="preventSubmit" default="false" />
     <aura:attribute type="Boolean" name="blockItemChangeEvent" />
+    <aura:attribute type="Boolean" name="expandSection" default="true" />
 
     <aura:if isTrue="{!v.sectionTitle}">
-    <div class="slds-col slds-size_1-of-1">
-        <div class="slds-page-header slds-page-header__title">
-            {!v.sectionTitle}
-        </div>
-    </div>
+        <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
+            aria-expanded="{!v.expandSection}"
+            onclick="{!c.toggleRelatedSection}">
+            <lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
+                size="x-small"
+                alternativeText="Toggle Tribute Information" />
+                {!v.sectionTitle}
+        </button>
     </aura:if>
     
     <div class="{!v.amountError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
@@ -47,11 +51,13 @@
     </div>
 
     <div aura:id="relatedWrapper" class="slds-col slds-wrap slds-grid">
-        {!v.body}
-    </div>
-
-    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-        <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
+        <div class="{!v.expandSection == true ? 'slds-size_1-of-1 slds-grid' : 'slds-hidden'}">
+            {!v.body}
+        
+            <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
+            </div>
+        </div>
     </div>
     
 </aura:component>

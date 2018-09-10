@@ -7,7 +7,10 @@
 		// Gets called twice, we only want to event to fire once
 		var blockChange = component.get("v.blockItemChangeEvent");
 		component.set("v.blockItemChangeEvent", !blockChange);
-		component.set("v.showPayments", true);
+		var paymentList = component.get("v.paymentList");
+		if(paymentList.length > 0){
+			component.set("v.showPayments", true);
+		}
     },
 	clickCalculate: function(component, event, helper) {
 		component.set("v.calculateButtonLabel", "Clear and Calculate New Payments");
@@ -77,5 +80,8 @@
 	handleMethodChange: function(component, event, helper) {
 		var paymentMethod = component.get("v.paymentMethod");
 		component.set("v.selectedPaymentMethod", paymentMethod);
-	}
+	},
+	toggleRelatedSection: function(component, event, helper) {
+        component.set('v.expandSection', !component.get('v.expandSection'));
+    }
 })

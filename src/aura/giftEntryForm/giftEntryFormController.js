@@ -146,5 +146,11 @@
     clickMarkPaymentPaid: function(component, event, helper) {
         var paymentId = component.get("v.payment.Id");
         helper.setPaymentPaid(component, paymentId);
+    },
+    expandTributeSection: function(component, event, helper) {
+        helper.doToggleSection(component, 'expandTribute');
+    },
+    expandMatchingSection: function(component, event, helper) {
+        helper.doToggleSection(component, 'expandMatching');
     }
 })

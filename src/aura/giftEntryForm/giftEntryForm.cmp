@@ -32,6 +32,8 @@
     <aura:attribute type="Boolean" name="editMode" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
     <aura:attribute type="Boolean" name="donorExists" default="false" />
+    <aura:attribute type="Boolean" name="expandTribute" default="true" />
+    <aura:attribute type="Boolean" name="expandMatching" default="true" />
     <aura:handler name="change" value="{!v.di.npsp__Donation_Donor__c}" action="{!c.handleDonorTypeChange}"/>
     <aura:handler name="change" value="{!v.donorExists}" action="{!c.handleCheckMatches}"/>
 
@@ -112,7 +114,7 @@
 
                 <div class="{!v.di.npsp__Donation_Donor__c != 'Contact1' ? 'slds-wrap slds-grid slds-size_1-of-4' : 'slds-hidden'}">
                     <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                        <label class="slds-form-element__label">
+                        <label class="show-required slds-form-element__label">
                             {!v.objectFieldData.objectLabels.Opportunity.AccountId}
                         </label>
                         <force:inputField aura:id="accountLookup" 
@@ -121,7 +123,7 @@
                 </div>
                 <div class="{!v.di.npsp__Donation_Donor__c != 'Account1' ? 'slds-wrap slds-grid slds-size_1-of-4' : 'slds-hidden'}">
                     <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                        <label class="slds-form-element__label">
+                        <label class="show-required slds-form-element__label">
                             {!v.objectFieldData.objectLabels.Opportunity.npsp__Primary_Contact__c}
                         </label>
                         <force:inputField aura:id="contactLookup"
@@ -243,67 +245,85 @@
                     <label class="slds-form-element__label">
                         {!v.objectFieldData.objectLabels.Opportunity.Description}
                     </label>
-                    <force:inputField 
+                    <lightning:textarea
+                        variant="label-hidden"
                         value="{!v.di.npsp__Donation_Description__c}" />
                 </div>
 
-                <div class="slds-col slds-size_1-of-1">
-                    <div class="slds-page-header slds-page-header__title">
-                        Tribute Information
+
+                <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
+                    aria-expanded="true"
+                    onclick="{!c.expandTributeSection}">
+                    <lightning:icon iconName="utility:chevrondown" 
+                        size="x-small"
+                        alternativeText="Toggle Tribute Information" />Tribute Information
+                </button>
+
+                <div class="{!v.expandTribute == true ? 'slds-wrap slds-grid' : 'slds-hidden'}">
+
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Tribute_Type__c}" 
+                            fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.npsp__Tribute_Type__c}" 
+                            selectedVal="{!v.di.Donation_Tribute_Type__c}" />
                     </div>
-                </div>
 
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Tribute_Type__c}" 
-                        fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.npsp__Tribute_Type__c}" 
-                        selectedVal="{!v.di.Donation_Tribute_Type__c}" />
-                </div>
-
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Acknowledgment_Status__c}" 
-                        fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}" 
-                        selectedVal="{!v.di.Donation_Acknowledgment_Status__c}" />
-                </div>
-
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <label class="slds-form-element__label">
-                        {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Name__c}
-                    </label>
-                    <force:inputField 
-                        value="{!v.di.Donation_Honoree_Name__c}" />
-                </div>
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <label class="slds-form-element__label">
-                        {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Contact__c}
-                    </label>
-                    <force:inputField 
-                        value="{!v.di.Donation_Honoree_Contact__c}" />
-                </div>
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <label class="slds-form-element__label">
-                        {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Recipient_Name__c}
-                    </label>
-                    <force:inputField 
-                        value="{!v.di.Notification_Recipient_Name__c}" />
-                </div>
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <label class="slds-form-element__label">
-                        {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Message__c}
-                    </label>
-                    <force:inputField 
-                        value="{!v.di.Donation_Notification_Message__c}" />
-                </div>
-
-                <div class="slds-col slds-size_1-of-1">
-                    <div class="slds-page-header slds-page-header__title">
-                        Matching Gift
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Acknowledgment_Status__c}" 
+                            fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}" 
+                            selectedVal="{!v.di.Donation_Acknowledgment_Status__c}" />
                     </div>
+
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Name__c}
+                        </label>
+                        <lightning:input
+                            variant="label-hidden"
+                            value="{!v.di.Donation_Honoree_Name__c}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Contact__c}
+                        </label>
+                        <force:inputField
+                            value="{!v.di.Donation_Honoree_Contact__c}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Recipient_Name__c}
+                        </label>
+                        <lightning:input
+                            variant="label-hidden"
+                            value="{!v.di.Notification_Recipient_Name__c}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                        <label class="slds-form-element__label">
+                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Message__c}
+                        </label>
+                        <lightning:input
+                            variant="label-hidden"
+                            value="{!v.di.Donation_Notification_Message__c}" />
+                    </div>
+
                 </div>
+
+
+                <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
+                    aria-expanded="true"    
+                    onclick="{!c.expandMatchingSection}">
+                    <lightning:icon iconName="{!v.expandMatching == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
+                        size="x-small"
+                        alternativeText="Toggle Matching Gift Information" />Matching Gift
+                </button>
+
+                <div class="{!v.expandMatching == true ? 'slds-wrap slds-grid' : 'slds-hidden'}">
+
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                     <label class="slds-form-element__label">
                         {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Employer__c}
                     </label>
-                    <force:inputField 
+                    <lightning:input
+                        variant="label-hidden"
                         value="{!v.di.Donation_Matching_Gift_Employer__c}" />
                 </div>
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
@@ -325,6 +345,8 @@
                     <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Matching_Gift_Status__c}" 
                         fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Status__c}" 
                         selectedVal="{!v.di.Donation_Matching_Gift_Status__c}" />
+                </div>
+
                 </div>
 
                 <c:giftPaymentScheduler sectionTitle="Payment Scheduler"

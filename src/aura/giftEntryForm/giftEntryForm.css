@@ -25,3 +25,6 @@
 .THIS .uiInput--select .uiPopupTrigger a {
     height: calc(1.875rem + (1px * 2));
 }
+.THIS button.slds-page-header .slds-icon_container {
+    margin-right: 5px;
+}

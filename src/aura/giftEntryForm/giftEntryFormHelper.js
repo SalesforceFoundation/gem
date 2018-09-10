@@ -308,7 +308,7 @@
 
         return validForm;
     },
-    checkFields: function(component, fieldId, allMustBeValid){
+    checkFields: function(component, fieldId, allMustBeValid, showErrors){
         var findResult = component.find(fieldId); 
         if(!findResult){
             return allMustBeValid;
@@ -326,7 +326,7 @@
             //     console.log(fieldVal); 
             // }
             var isValid = fieldVal || fieldVal === false;
-            if(typeof inputCmp.reportValidity === "function"){
+            if(showErrors && typeof inputCmp.reportValidity === "function"){
                 var validMsg = inputCmp.reportValidity();
                 //console.log(validMsg); 
             }
@@ -572,5 +572,8 @@
     },
     changeSubmitText: function(component, newText){
         component.find('createButton').set('v.label', newText);
+    },
+    doToggleSection: function changeState (component, sectionBool){
+        component.set('v.' + sectionBool, !component.get('v.' + sectionBool));
     }
 })

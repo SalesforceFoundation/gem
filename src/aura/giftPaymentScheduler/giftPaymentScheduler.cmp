@@ -33,7 +33,7 @@
           {!v.sectionTitle}
     </button>
 
-    <div class="{!v.expandSection == true ? 'slds-size_1-of-1 slds-grid' : 'slds-hidden'}">
+    <div class="{!v.expandSection == true ? 'slds-size_1-of-1 slds-wrap slds-grid' : 'slds-hidden'}">
 
     <!-- First page, will auto-generate payment rows -->
     <div class="slds-grid slds-wrap slds-size_1-of-1">
@@ -90,7 +90,7 @@
     </div>
     
     <!-- Show a row for each payment -->
-    <div class="{!v.showPayments ? 'slds-size_1-of-1' : 'slds-hidden'}">
+    <div class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
         <c:giftFormRelated objectName="npe01__OppPayment__c"
             itemList="{!v.paymentList}"
             objsToDelete="{!v.objsToDelete}"

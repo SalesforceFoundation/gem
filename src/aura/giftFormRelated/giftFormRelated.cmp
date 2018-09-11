@@ -32,6 +32,7 @@
     <aura:attribute type="Boolean" name="preventSubmit" default="false" />
     <aura:attribute type="Boolean" name="blockItemChangeEvent" />
     <aura:attribute type="Boolean" name="expandSection" default="true" />
+    <aura:attribute type="Boolean" name="messageIsError" default="false" />
 
     <aura:if isTrue="{!v.sectionTitle}">
         <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
@@ -45,13 +46,24 @@
     </aura:if>
     
     <div class="{!v.amountError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
-        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+        <div class="{!v.messageIsError == true 
+            ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error' 
+            : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}" 
+            role="alert">
+            <span class="slds-assistive-text">Amount error</span>
+            <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+                <lightning:icon iconName="{!v.messageIsError == true 
+                    ? 'utility:error' 
+                    : 'utility:warning'}" 
+                    variant="inverse"
+                    size="x-small" />
+            </span>
             <h2>{!v.amountError}</h2>
         </div>
     </div>
 
     <div aura:id="relatedWrapper" class="slds-col slds-wrap slds-grid">
-        <div class="{!v.expandSection == true ? 'slds-size_1-of-1 slds-grid' : 'slds-hidden'}">
+        <div class="{!v.expandSection == true ? 'slds-size_1-of-1 slds-grid slds-wrap' : 'slds-hidden'}">
             {!v.body}
         
             <div class="slds-col slds-size_1-of-1 slds-p-around_small">

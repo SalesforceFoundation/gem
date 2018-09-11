@@ -184,18 +184,19 @@
     },
     processGiftJson: function(component, checkDataMatches) {
         
+        var action;
         if(checkDataMatches){
             component.set("v.showMatchSpinner", true);
+            action = component.get("c.returnDataMatches");
         } else {
             component.set("v.showSpinner", true);
+            action = component.get("c.saveGift");
         }
         
         // var jsonString = component.get("v.jsonObjectString");
         var giftModelString = component.get("v.giftModelString");
         // console.log(giftModelString); 
 
-        // Now process the JSON for this single gift
-        var action = component.get("c.processGiftModelString");
         action.setParams({
             giftModelString: giftModelString
         });
@@ -209,11 +210,7 @@
                 console.log(giftModel); 
 
                 component.set("v.giftModel", giftModel);
-                // var oppId = component.find("oppId").get("v.value");
-                // console.log(oppId); 
-
-                // TODO: Set this another way
-                var checkDataMatches = true;
+                var oppId = component.find("oppId").get("v.value");
 
                 if(checkDataMatches){
                     // After a lookup change, we have to query the fields and update
@@ -275,10 +272,10 @@
         // var btn = component.find('createButton');
         // btn.set('v.disabled',!formValid);
     },
-    validateForm: function(component) {
+    validateForm: function(component, showErrors) {
         component.set("v.error", null);
         // Show error messages if required fields are blank
-        var validForm = this.checkFields(component, 'requiredField', true);
+        var validForm = this.checkFields(component, 'requiredField', true, showErrors);
         
         // Check that at least one combination of donor fields is valid, otherwise show error
         // First check if an Account field is filled in
@@ -288,7 +285,7 @@
         if(donorType == "Account1" || !donorType){
             // donorExists = donorExists || this.checkFields(component, 'requiredAccountField', false);
             donorExists = donorExists || this.checkFields(component, 'accountLookup', true);
-        } 
+        }
         if(donorType == "Contact1" || !donorType) {
             // Check if Contact1 Firstname and Lastname are filled in
             // donorExists = donorExists || this.checkFields(component, 'requiredContactField', true);
@@ -299,14 +296,22 @@
         component.set("v.donorExists", donorExists);
 
         if(!donorExists){
-            // Show error if no Donors have been entered
-            // component.set("v.submitError", $A.get("$Label.c.Gift_Donor_Required"));
+            // Show error if no Donor has been entered
+            if(showErrors){
+                this.showErrorMessage(component, $A.get("$Label.c.Gift_Donor_Required"), true);
+            }
             return false;
         } else {
-            component.set("v.submitError", "");
+            // Clear the error
+            this.showErrorMessage(component, "", false);            
         }
 
         return validForm;
+    },
+    showErrorMessage: function(component, errorMsg, msgIsError){
+        component.set("v.messageIsError", msgIsError);
+        component.set("v.showSpinner", false);
+        component.set("v.submitError", errorMsg);
     },
     checkFields: function(component, fieldId, allMustBeValid, showErrors){
         var findResult = component.find(fieldId); 
@@ -328,7 +333,7 @@
             var isValid = fieldVal || fieldVal === false;
             if(showErrors && typeof inputCmp.reportValidity === "function"){
                 var validMsg = inputCmp.reportValidity();
-                //console.log(validMsg); 
+                // console.log(validMsg); 
             }
             if(!allMustBeValid && (isValid || validSoFar)){
                 // We only need one of these fields filled in
@@ -399,7 +404,7 @@
         }
 
         var giftModelString = JSON.stringify(giftModel);
-        // console.log(giftModelString);
+        console.log(giftModelString);
 
         // component.set("v.jsonObjectString", jsonObjString);
         component.set("v.giftModelString", giftModelString);

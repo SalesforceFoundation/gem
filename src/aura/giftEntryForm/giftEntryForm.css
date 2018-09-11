@@ -28,3 +28,8 @@
 .THIS button.slds-page-header .slds-icon_container {
     margin-right: 5px;
 }
+.THIS #submitError {
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+}

@@ -531,7 +531,7 @@ public class GiftEntryFormController {
             String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
 
             giftModelString = giftModelString.replaceAll(sobjectTypeRegex, '');
-            // giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
+            giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
             
             System.debug('AFTER Regex: '); 
             System.debug(giftModelString); 
@@ -548,6 +548,20 @@ public class GiftEntryFormController {
         } catch(Exception e){
             throw e;
         }
+    }
+
+    @AuraEnabled
+    public static GiftFormModel returnDataMatches(String giftModelString){
+        GiftFormModel giftModel = processGiftModelString(giftModelString);
+        giftModel = setDataMatches(giftModel);
+        return giftModel;
+    }
+
+    @AuraEnabled
+    public static GiftFormModel saveGift(String giftModelString){
+        GiftFormModel giftModel = processGiftModelString(giftModelString);
+        giftModel = saveDonationInformation(giftModel);
+        return giftModel;
     }
 
     /*******************************************************************************************************

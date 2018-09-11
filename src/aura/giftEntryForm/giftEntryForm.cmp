@@ -34,12 +34,13 @@
     <aura:attribute type="Boolean" name="donorExists" default="false" />
     <aura:attribute type="Boolean" name="expandTribute" default="true" />
     <aura:attribute type="Boolean" name="expandMatching" default="true" />
+    <aura:attribute type="Boolean" name="messageIsError" default="false" />
     <aura:handler name="change" value="{!v.di.npsp__Donation_Donor__c}" action="{!c.handleDonorTypeChange}"/>
     <aura:handler name="change" value="{!v.donorExists}" action="{!c.handleCheckMatches}"/>
 
     <!-- Work around for change event on lookups -->
-    <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.handleLookupChange}"/>
-    <aura:handler name="change" value="{!v.opp.npsp__Primary_Contact__c}" action="{!c.handleLookupChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.handleLookupChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.handleLookupChange}"/>
 
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 
@@ -188,18 +189,7 @@
                         onchange="{!c.handleFieldChange}"
                         value="{!v.di.npsp__Donation_Name__c}" />
                 </div>
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <label class="show-required slds-form-element__label">
-                        {!v.objectFieldData.objectLabels.Opportunity.Amount}
-                    </label>
-                    <lightning:input aura:id="amtField"
-                        required="true"
-                        variant="label-hidden"
-                        type="number"
-                        formatter="currency" step="0.01"
-                        onchange="{!c.handleFieldChange}"
-                        value="{!v.di.npsp__Donation_Amount__c}" />
-                </div>
+
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                     <label class="show-required slds-form-element__label">
                         {!v.objectFieldData.objectLabels.Opportunity.CloseDate}
@@ -213,15 +203,28 @@
                 </div>
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}" 
-                        fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}" 
-                        selectedVal="{!v.di.npsp__Donation_Stage__c}" />
-                </div>
-
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                     <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
                         fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}" 
                         selectedVal="{!v.di.npsp__Payment_Method__c}" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <label class="show-required slds-form-element__label">
+                        {!v.objectFieldData.objectLabels.Opportunity.Amount}
+                    </label>
+                    <lightning:input aura:id="requiredField"
+                        required="true"
+                        variant="label-hidden"
+                        type="number"
+                        formatter="currency" step="0.01"
+                        onchange="{!c.handleFieldChange}"
+                        value="{!v.di.npsp__Donation_Amount__c}" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}" 
+                        fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}" 
+                        selectedVal="{!v.di.npsp__Donation_Stage__c}" />
                 </div>
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
@@ -259,7 +262,7 @@
                         alternativeText="Toggle Tribute Information" />Tribute Information
                 </button>
 
-                <div class="{!v.expandTribute == true ? 'slds-wrap slds-grid' : 'slds-hidden'}">
+                <div class="{!v.expandTribute == true ? 'slds-wrap slds-grid slds-size_1-of-1' : 'slds-hidden'}">
 
                     <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                         <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Tribute_Type__c}" 
@@ -316,7 +319,7 @@
                         alternativeText="Toggle Matching Gift Information" />Matching Gift
                 </button>
 
-                <div class="{!v.expandMatching == true ? 'slds-wrap slds-grid' : 'slds-hidden'}">
+                <div class="{!v.expandMatching == true ? 'slds-wrap slds-grid slds-size_1-of-1' : 'slds-hidden'}">
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                     <label class="slds-form-element__label">
@@ -389,14 +392,27 @@
                     giftModel="{!v.giftModel}" />
 
                 <aura:if isTrue="{!v.submitError}">
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-                            <h2>{!v.submitError}</h2>
-                        </div>
+                    <div id="submitError"
+                    class="{!v.messageIsError == true 
+                        ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error' 
+                        : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}" 
+                        role="alert">
+                        <span class="slds-assistive-text">Submit error</span>
+                        <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+                            <lightning:icon iconName="{!v.messageIsError == true 
+                                ? 'utility:error' 
+                                : 'utility:warning'}" 
+                                variant="inverse"
+                                size="x-small" />
+                        </span>
+                        <h2>{!v.submitError}</h2>
                     </div>
                 </aura:if>
 
-                <div class="slds-col slds-size_1-of-1 slds-p-around_small">
+                <div class="slds-docked-form-footer" style="height: 50px;">
+                    <lightning:button aura:id="cancelButton" 
+                        label="{!$Label.c.Cancel}"
+                        onclick="{!c.clickCancel}" />
                     <lightning:button aura:id="createButton" 
                         label="{!$Label.c.Gift_Create}"
                         variant="brand" 

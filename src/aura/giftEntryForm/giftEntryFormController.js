@@ -37,25 +37,27 @@
     },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
-        var validForm = helper.validateForm(component);
+        var validForm = helper.validateForm(component, true);
 
         // If we pass validation, submit the form
         if(validForm){
             // Fill in the JSON data field
             var jsonIsValid = helper.fillJsonField(component);
-            // console.log('jsonIsValid:'); 
-            // console.log(jsonIsValid); 
             if(jsonIsValid){
                 component.set("v.submitError", "");
                 var checkDataMatches = component.find("doDryRun").get("v.checked");
                 helper.processGiftJson(component, checkDataMatches);
             } else {
-                component.set('v.showSpinner', false);
-                component.set("v.submitError", "Error on form");
+                helper.showErrorMessage(component, $A.get("$Label.c.Gift_Form_Error"), true);
             }
         } else {
-            component.set('v.showSpinner', false);
+            if(!component.get("v.submitError")){
+                helper.showErrorMessage(component, $A.get("$Label.c.Gift_Form_Error"), true);
+            }
         }
+    },
+    clickCancel: function(component, event, helper) {
+        console.log("Do Cancel"); 
     },
     handleCheckMatches: function(component, event, helper) {
         // The form should send its current information and check for data matches

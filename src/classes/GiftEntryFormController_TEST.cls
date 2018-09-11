@@ -206,8 +206,7 @@ private class GiftEntryFormController_TEST {
         + '}';
         
         GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
-        giftModel = GiftEntryFormController.processGiftModelString(testJson);
-        giftModel = GiftEntryFormController.saveDonationInformation(giftModel);
+        giftModel = GiftEntryFormController.saveGift(testJson);
 
         Id oppId = giftModel.oppId;
         System.assert(giftModel.oppId != null, 'The new Opportunity ID should be returned');

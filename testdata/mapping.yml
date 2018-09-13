@@ -251,6 +251,8 @@ Insert Campaigns:
     fields:
         Id: sf_id
         Name: name
+    static:
+        IsActive: true
 Insert CampaignMembers:
     sf_object: CampaignMember
     table: campaign_members

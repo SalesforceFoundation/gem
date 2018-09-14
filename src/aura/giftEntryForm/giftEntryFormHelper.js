@@ -227,6 +227,7 @@
                     component.set('v.showSpinner', false);
                     component.set("v.showMatchSpinner", false);
                 } else {
+                    this.showSaveToast("Details Saved", "Testing message");
                     this.redirectToDonation(component, oppId);
                 }
             } else if (state === "ERROR") {
@@ -518,6 +519,18 @@
 
         this.fillJsonField(component);
         this.processGiftJson(component, true);
+    },
+    showSaveToast: function(titleTxt, msgText){
+        var toastEvent = $A.get("e.force:showToast");
+        toastEvent.setParams({
+            title : titleTxt,
+            message: msgText,
+            duration:' 5000',
+            key: 'info_alt',
+            type: 'success',
+            mode: 'dismissible'
+        });
+        toastEvent.fire();
     },
     getRelatedComponents: function(component){
         var namespace = component.get("v.namespacePrefix");

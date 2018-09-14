@@ -111,7 +111,9 @@ public class GiftEntryFormController {
     private static Map<String,String> getFieldNameToLabelForObject(String objName){
         Map<String,String> fieldNameToLabel = new Map<String,String>();
         for(Schema.DescribeFieldResult df : hed.UTIL_Describe_API.getAllFieldsDescribe(objName).values()){
-            fieldNameToLabel.put(df.getLocalName(), df.getLabel());
+            String fieldLabel = df.getLabel();
+            fieldLabel = fieldLabel.replace(' ID', '');
+            fieldNameToLabel.put(df.getLocalName(), fieldLabel);
         }
         return fieldNameToLabel;
     }

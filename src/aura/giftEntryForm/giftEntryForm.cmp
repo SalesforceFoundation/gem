@@ -88,7 +88,7 @@
 
         <div class="{!v.showForm ? '' : 'slds-hidden'}">
 
-            <div class="slds-grid slds-wrap" aura:id="formWrapper">
+            <div class="slds-grid slds-wrap slds-m-bottom_large" aura:id="formWrapper">
             
                 <aura:if isTrue="{!v.oppClosed}">     
                     <div class="slds-col slds-size_1-of-1">
@@ -97,9 +97,6 @@
                         </div>
                     </div>
                 </aura:if>
-
-                <lightning:button label="Test JSON" 
-                    onclick="{!c.clickRunProcess}" />
 
                 <div class="slds-col slds-size_1-of-1">
                     <div class="slds-page-header slds-page-header__title">
@@ -203,12 +200,6 @@
                 </div>
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
-                    <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
-                        fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}" 
-                        selectedVal="{!v.di.npsp__Payment_Method__c}" />
-                </div>
-
-                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
                     <label class="show-required slds-form-element__label">
                         {!v.objectFieldData.objectLabels.Opportunity.Amount}
                     </label>
@@ -219,6 +210,12 @@
                         formatter="currency" step="0.01"
                         onchange="{!c.handleFieldChange}"
                         value="{!v.di.npsp__Donation_Amount__c}" />
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                    <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
+                        fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}" 
+                        selectedVal="{!v.di.npsp__Payment_Method__c}" />
                 </div>
 
                 <div class="slds-col slds-size_1-of-2 slds-p-around_small">
@@ -257,7 +254,7 @@
                 <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
                     aria-expanded="true"
                     onclick="{!c.expandTributeSection}">
-                    <lightning:icon iconName="utility:chevrondown" 
+                    <lightning:icon iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
                         size="x-small"
                         alternativeText="Toggle Tribute Information" />Tribute Information
                 </button>

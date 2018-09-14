@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>Cancel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Cancel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
         <fullName>Error</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -26,7 +33,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Gift Create</shortDescription>
-        <value>Create Gift</value>
+        <value>Save</value>
     </labels>
     <labels>
         <fullName>Gift_Donation_ID_Placeholder</fullName>
@@ -48,6 +55,13 @@
         <protected>true</protected>
         <shortDescription>Gift Donor Required</shortDescription>
         <value>Donor information is required.</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Form_Error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error on Form</shortDescription>
+        <value>Error on Form</value>
     </labels>
     <labels>
         <fullName>Gift_Saved_Message</fullName>

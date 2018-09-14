@@ -5,12 +5,12 @@
 	    <name>CustomObject</name>
 	</types>
     <types>
-	    <members>*</members>
-	    <name>Layout</name>
-	</types>
-    <types>
         <members>*</members>
         <name>Profile</name>
     </types>
-    <version>39.0</version>
+    <types>
+        <members>*</members>
+        <name>StandardValueSet</name>
+    </types>
+    <version>42.0</version>
 </Package>

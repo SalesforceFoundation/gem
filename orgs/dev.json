@@ -8,6 +8,9 @@
       "S1DesktopEnabled",
       "Translation",
       "DisableParallelApexTesting"
+    ],
+    "disabled": [
+      "S1EncryptedStoragePref2"
     ]
   }
 }

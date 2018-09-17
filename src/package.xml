@@ -40,10 +40,6 @@
         <members>Advancement_Setting__mdt.API_HEDA_Class__c</members>
         <members>Advancement_Setting__mdt.API_NPSP_Class__c</members>
         <members>Advancement_Setting__mdt.Use_Advancement__c</members>
-        <members>Donation_Tag__c.Donation_Opportunity__c</members>
-        <members>Donation_Tag__c.Tag_Name__c</members>
-        <members>Donation_Tag__c.Tag__c</members>
-        <members>Opportunity.Tags__c</members>
         <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
         <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
@@ -74,8 +70,6 @@
     </types>
     <types>
         <members>Advancement_Setting__mdt</members>
-        <members>Donation_Tag__c</members>
-        <members>Tag__c</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -93,15 +87,9 @@
         <members>Account-Advancement Organization Layout</members>
         <members>Advancement_Setting__mdt-Advancement Setting Layout</members>
         <members>Contact-Advancement Contact Layout</members>
-        <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
-        <members>Tag__c-All Layout</members>
         <members>npsp__DataImport__c-Advancement Gift Layout</members>
         <name>Layout</name>
-    </types>
-    <types>
-        <members>Donations_with_tags</members>
-        <name>ReportType</name>
     </types>
     <version>42.0</version>
 </Package>

@@ -55,5 +55,18 @@
 		}
 		component.set("v.payments", paymentList);
 		component.set("v.showPayments", true);
+	},
+	handleAmtChange: function(component, event, helper) {
+		var donationAmt = component.get("v.donationAmt");
+		var btn = component.find('calcButton');
+		// Enable the calculate button if valid amount is entered
+		if(btn){
+			var validAmount = (donationAmt > 0);
+			btn.set('v.disabled',!validAmount);
+		}
+	},
+	handleMethodChange: function(component, event, helper) {
+		var paymentMethod = component.get("v.paymentMethod");
+		component.set("v.selectedPaymentMethod", paymentMethod);
 	}
 })

@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>Error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error</shortDescription>
+        <value>Error</value>
+    </labels>
+    <labels>
         <fullName>Gift_Amounts_Do_Not_Match</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Gift Amounts Do Not Match</shortDescription>
-        <value>Note: Amounts do not match with Donation total</value>
+        <value>Amounts do not match with Donation total</value>
     </labels>
     <labels>
         <fullName>Gift_Amounts_Greater_than_Donation</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Gift Amounts Greater than Donation</shortDescription>
-        <value>Amount total cannot be greater than donation amount</value>
+        <value>Amount total is greater than donation amount</value>
     </labels>
     <labels>
         <fullName>Gift_Donation_ID_Placeholder</fullName>
@@ -41,5 +48,12 @@
         <protected>true</protected>
         <shortDescription>Gift Show Matching</shortDescription>
         <value>Show data matching results before submitting?</value>
+    </labels>
+    <labels>
+        <fullName>Warning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Warning</shortDescription>
+        <value>Warning</value>
     </labels>
 </CustomLabels>

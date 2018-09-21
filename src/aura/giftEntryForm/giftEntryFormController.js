@@ -26,14 +26,24 @@
         console.log(newVal + " was: " + oldVal);
 
         // If a new lookup was set and donor already exists, re-run matching
-        if(!oldVal && newVal){
-            console.log("Force Match Check"); 
-            // component.set("v.donorExists", false);
-            // component.set("v.donorExists", true);
-            helper.checkMatches(component);
-        }
+        // if(!oldVal && newVal){
+        console.log("Run Match Check"); 
+        // component.set("v.donorExists", false);
+        // component.set("v.donorExists", true);
+        helper.checkMatches(component);
+        // }
         
-        //helper.checkValidation(component);
+        helper.checkValidation(component);
+    },
+    clickEditDonor: function(component, event, helper) {
+        var donorType = component.get("v.di.npsp__Donation_Donor__c");
+        var donorId;
+        if(donorType == 'Account1'){
+            donorId = component.get("v.di.npsp__Account1Imported__c");
+        } else {
+            donorId = component.get("v.di.npsp__Contact1Imported__c");
+        }
+        helper.showEditRecordModal(component, donorId);
     },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
@@ -57,7 +67,8 @@
         }
     },
     clickCancel: function(component, event, helper) {
-        console.log("Do Cancel"); 
+        // TODO: Clear the form? Close a modal?
+        console.log("Do Cancel");
     },
     handleCheckMatches: function(component, event, helper) {
         // The form should send its current information and check for data matches
@@ -97,7 +108,8 @@
             helper.clearInputs(component, 'accountLookup');
         }
         
-        helper.checkValidation(component);
+        // console.log("Donor type change!"); 
+        //helper.checkValidation(component);
     },
     handlePicklistChange: function(component, event, helper) {
         var newVal = event.getParam("newValue");

@@ -88,14 +88,13 @@
                 thisRow.destroy();
             }
         }
-
         // console.log(objsToDelete); 
-
         component.set("v.objsToDelete", objsToDelete);
         component.set("v.rowList", rowList);
         component.set("v.body", body);
 
-        helper.getAmtTotal(component);
+        // Update error message
+        component.set("v.checkAmountTotals", true);
     },
     handleAmtChange: function(component, event, helper){
         var checkAmountTotals = component.get("v.checkAmountTotals");

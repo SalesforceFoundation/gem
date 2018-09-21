@@ -40,22 +40,29 @@
 			}
 			for(var j=0; j<fieldsToShow.length; j++){
 				var thisField = fieldsToShow[j];
-				optionLabel += thisItem[thisField] + " ";
+				var fieldArray = thisField.split(".");
+				if(j != 0){
+					optionLabel += ", ";
+				}
+				if(fieldArray.length > 1){
+					optionLabel += thisItem[fieldArray[0]][fieldArray[1]];
+				} else {
+					optionLabel += thisItem[fieldArray[0]];
+				}
 			}
-			newList[i+1] = {'label': optionLabel, 'value': i};
+			// Setting up the option list for the potential matches
+			var indexAsString = ""+i;
+			newList[i+1] = {'label': optionLabel, 'value': indexAsString};
 		}
 
-		// console.log(' ** newList'); 
-		// console.log(newList); 
-
-		// component.set("v.selectedValue", curVal);
 		console.log("SHOW MATCHES for " + objectType); 
 		component.set("v.optionList", newList);
 		component.set("v.enableChangeEvent", true);
 
 	},
 	handleSelectionChange : function(component, event, helper) {
-		var newIndex = event.getParam("value");
+		var newSelection = event.getParam("value");
+		var newIndex = +newSelection;
 		helper.selectionChange(component, newIndex);
 	}
 })

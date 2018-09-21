@@ -10,15 +10,15 @@
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleDonationChange}"/>
     <aura:handler name="init" value="{!this}" action="{!c.handleAmountCheck}" />
 
-    <div class="slds-grid slds-wrap">
-        <div class="slds-col slds-size_2-of-5 slds-p-around_small">
+    <lightning:layout multipleRows="true" horizontalAlign="spread">
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="4">
             <aura:if isTrue="{!v.showLabels}">
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Contact__c}</label>
             </aura:if>
             <force:inputField aura:id="noDuplicates"
                 value="{!v.item.npsp__Contact__c}" />
-        </div>
-        <div class="slds-col slds-size_1-of-5 slds-p-around_small">
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <aura:if isTrue="{!v.showLabels}">
                 <label class="slds-form-element__label">Credit Type</label>
             </aura:if>
@@ -27,8 +27,8 @@
                 options="{!v.typeOptions}"
                 type="button"
                 onchange="{!c.handleTypeChange}" />
-        </div>
-        <div class="slds-col slds-size_1-of-5 slds-p-around_small">
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <aura:if isTrue="{!v.showLabels}">
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Amount__c}</label>
             </aura:if>
@@ -41,8 +41,8 @@
                 formatter="currency"
                 step="0.01"
                 value="{!v.item.npsp__Amount__c}" />
-        </div>
-        <div class="slds-col slds-size_1-of-5 slds-p-around_small">
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="4">
             <aura:if isTrue="{!v.showLabels}">
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Role_Name__c}</label>
             </aura:if>
@@ -58,12 +58,12 @@
                     </option>
                 </aura:iteration>
             </lightning:select>
-        </div>
+        </lightning:layoutItem>
+    </lightning:layout>
 
-        <div class="slds-hidden">
-            <force:inputField value="{!v.item.npsp__Opportunity__c}" />
-            <force:inputField value="{!v.item.npsp__Role_Name__c}" />
-        </div>
+    <div class="slds-hidden">
+        <force:inputField value="{!v.item.npsp__Opportunity__c}" />
+        <force:inputField value="{!v.item.npsp__Role_Name__c}" />
     </div>
 
 </aura:component>

@@ -19,15 +19,12 @@
 
     <aura:if isTrue="{!v.optionList.length > 0}">
     <div class="slds-col slds-size_1-of-1 slds-p-around_small radio-group">
-        <!-- <aura:if isTrue="{!v.showMatchSpinner}">
-            <lightning:spinner />
-        </aura:if> -->
         <lightning:radioGroup name="{!v.sectionLabel}"
             label="{!v.sectionLabel}"
             options="{!v.optionList}"
             value="{!v.selectedValue}"
-            onchange="{!c.handleSelectionChange}"
-            type="button" />
+            onchange="{!c.handleSelectionChange}" />
+            <!-- type="button"  -->
     </div>
     </aura:if>
 	

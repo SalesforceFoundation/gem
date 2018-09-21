@@ -1,7 +1,7 @@
 ({
 	selectionChange : function(component, newIndex) {
 		var enableChangeEvent = component.get("v.enableChangeEvent");
-		// console.log("handleSelectionChange: " + enableChangeEvent);
+		console.log("handleSelectionChange: " + enableChangeEvent);
 		if(!enableChangeEvent){
 			return;
 		}

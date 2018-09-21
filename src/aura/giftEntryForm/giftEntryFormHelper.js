@@ -160,6 +160,13 @@
         });
         event.fire();
     },
+    showEditRecordModal: function(component, objId){
+        var event = $A.get("e.force:editRecord");
+        event.setParams({
+            recordId: objId
+        });
+        event.fire();
+    },
     getImportedDonationId: function(component, dataImportObjId, redirectAfter){
         var action = component.get("c.getOpportunityIdFromImport");
         action.setParams({
@@ -295,7 +302,7 @@
         }
 
         component.set("v.donorExists", donorExists);
-
+        
         if(!donorExists){
             // Show error if no Donor has been entered
             if(showErrors){

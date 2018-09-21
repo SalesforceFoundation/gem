@@ -34,42 +34,50 @@
     <aura:attribute type="Boolean" name="expandSection" default="true" />
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
 
-    <aura:if isTrue="{!v.sectionTitle}">
-        <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
-            aria-expanded="{!v.expandSection}"
-            onclick="{!c.toggleRelatedSection}">
-            <lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
-                size="x-small"
-                alternativeText="Toggle Tribute Information" />
-                {!v.sectionTitle}
-        </button>
-    </aura:if>
-    
-    <div class="{!v.amountError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
-        <div class="{!v.messageIsError == true 
-            ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error' 
-            : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}" 
-            role="alert">
-            <span class="slds-assistive-text">Amount error</span>
-            <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
-                <lightning:icon iconName="{!v.messageIsError == true 
-                    ? 'utility:error' 
-                    : 'utility:warning'}" 
-                    variant="inverse"
-                    size="x-small" />
-            </span>
-            <h2>{!v.amountError}</h2>
-        </div>
-    </div>
+    <lightning:layoutItem size="12">
+        <lightning:layout multipleRows="true">
 
-    <div aura:id="relatedWrapper" class="slds-col slds-wrap slds-grid">
-        <div class="{!v.expandSection == true ? 'slds-size_1-of-1 slds-grid slds-wrap' : 'slds-hidden'}">
-            {!v.body}
-        
-            <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
+            <aura:if isTrue="{!v.sectionTitle}">
+                <lightning:layoutItem size="12">
+                    <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
+                        aria-expanded="{!v.expandSection}"
+                        onclick="{!c.toggleRelatedSection}">
+                        <lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
+                            size="x-small"
+                            alternativeText="Toggle Section" />
+                            {!v.sectionTitle}
+                    </button>
+                </lightning:layoutItem>
+            </aura:if>
+            
+            <lightning:layoutItem size="12" class="{!v.amountError ? '' : 'slds-hidden'}">
+                <div class="{!v.messageIsError == true 
+                    ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error' 
+                    : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}" 
+                    role="alert">
+                    <span class="slds-assistive-text">Amount error</span>
+                    <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+                        <lightning:icon iconName="{!v.messageIsError == true 
+                            ? 'utility:error' 
+                            : 'utility:warning'}" 
+                            variant="inverse"
+                            size="x-small" />
+                    </span>
+                    <h2>{!v.amountError}</h2>
+                </div>
+            </lightning:layoutItem>
+
+            <div aura:id="relatedWrapper" class="{!v.expandSection == true ? '' : 'slds-hidden'}">
+                <lightning:layoutItem size="12">
+                    <lightning:layout multipleRows="true" horizontalAlign="spread">
+                        {!v.body}
+                        <lightning:layoutItem padding="around-small" size="12">
+                            <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </lightning:layoutItem>
             </div>
-        </div>
-    </div>
+        </lightning:layout>
+    </lightning:layoutItem>
     
 </aura:component>

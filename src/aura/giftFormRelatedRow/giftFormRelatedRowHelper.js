@@ -16,15 +16,15 @@
         component.set(vArray, objList);
     },
     validateRow: function(component, helper) {
-        component.set("v.showError", false);
         // Check if this row has all required inputs filled in
         // If none are filled in, assume this row should not be processed
-        // var needsError = [];
+        component.set("v.showError", false);
+        
+        // Small JS object to store info about current validation check
         var validationInfo = {needsError: [], allBlank: true, validSoFar: true, 
             noDuplicateValueList: []};
         validationInfo.noDuplicateValueList = 
             helper.proxyToObj(component.get('v.noDuplicateValueList'));
-        var validSoFar = true;
         var validForm = true;
         var duplicateCheck = true;
         
@@ -32,6 +32,7 @@
         var reqFields = component.find('requiredField');
         //console.log(reqFields); 
 
+        // The aura:id of "noDuplicates" is used to prevent duplicate values across rows
         var noDuplicatesList = component.find('noDuplicates');
         //console.log(noDuplicates); 
         
@@ -70,13 +71,13 @@
         return validForm && duplicateCheck;
     },
     singleInputToArray: function(findResult){
+        // Convert a single input to an array for use in reduce functions
         if(findResult && !findResult.length){
             findResult = [findResult];
         }
         return findResult;
     },
     validateField: function(component, inputCmp, validationInfo, checkDupes, helper){
-        //console.log(inputCmp);
         var disabled = inputCmp.get("v.disabled");
         if(disabled){
             helper.removeError(inputCmp);
@@ -90,7 +91,6 @@
         if(checkDupes){
             // Check for duplicate values
             if(validationInfo.noDuplicateValueList.indexOf(fieldVal) > -1){
-                //inputCmp.set("v.value", "Duplicate");
                 component.set("v.showError", true);
                 component.set("v.errorMessage", "Duplicate values are not allowed:");
                 isValid = false;

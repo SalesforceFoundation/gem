@@ -22,14 +22,14 @@
         </div>
     </div>
 
-    <div class="slds-col slds-size_7-of-8">
+    <lightning:layoutItem size="12" mediumDeviceSize="10">
         {!v.body}
-    </div>
-    <div class="slds-col slds-size_1-of-8 slds-p-around_small">
+    </lightning:layoutItem>
+    <lightning:layoutItem padding="around-small" size="12" mediumDeviceSize="2">
         <aura:if isTrue="{!v.showLabels}">
-            <label class="slds-form-element__label"></label><br/>
+            <label class="slds-form-element__label">&nbsp;</label><br/>
         </aura:if>
         <lightning:button label="Remove" onclick="{!c.clickDeleteRow}" />
-    </div>
+    </lightning:layoutItem>
     
 </aura:component>

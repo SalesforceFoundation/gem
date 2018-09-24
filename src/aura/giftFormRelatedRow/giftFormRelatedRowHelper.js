@@ -1,9 +1,9 @@
 ({
 	addRowHelper: function(component){
-        this.addToObjectArray(component, "v.rowList", "v.item");
+        this.addToObjectArray(component, 'v.rowList', 'v.item');
     },
     amountCheck: function(component){
-        component.set("v.checkAmountTotals", true);
+        component.set('v.checkAmountTotals', true);
     },
     addToObjectArray: function(component, vArray, vObj){
         // Pass the component that contains the fields to the list of data
@@ -18,7 +18,7 @@
     validateRow: function(component, helper) {
         // Check if this row has all required inputs filled in
         // If none are filled in, assume this row should not be processed
-        component.set("v.showError", false);
+        component.set('v.showError', false);
         
         // Small JS object to store info about current validation check
         var validationInfo = {needsError: [], allBlank: true, validSoFar: true, 
@@ -32,9 +32,8 @@
         var reqFields = component.find('requiredField');
         //console.log(reqFields); 
 
-        // The aura:id of "noDuplicates" is used to prevent duplicate values across rows
+        // The aura:id of 'noDuplicates' is used to prevent duplicate values across rows
         var noDuplicatesList = component.find('noDuplicates');
-        //console.log(noDuplicates); 
         
         if(!reqFields && !noDuplicatesList){
             return true;
@@ -78,21 +77,21 @@
         return findResult;
     },
     validateField: function(component, inputCmp, validationInfo, checkDupes, helper){
-        var disabled = inputCmp.get("v.disabled");
+        var disabled = inputCmp.get('v.disabled');
         if(disabled){
             helper.removeError(inputCmp);
             return validationInfo.validSoFar;
         }
 
-        var fieldVal = inputCmp.get("v.value");
+        var fieldVal = inputCmp.get('v.value');
         //console.log(fieldVal);
         var isValid = fieldVal || fieldVal === false;
 
         if(checkDupes){
             // Check for duplicate values
             if(validationInfo.noDuplicateValueList.indexOf(fieldVal) > -1){
-                component.set("v.showError", true);
-                component.set("v.errorMessage", "Duplicate values are not allowed:");
+                component.set('v.showError', true);
+                component.set('v.errorMessage', 'Duplicate values are not allowed:');
                 isValid = false;
                 // This value duplicates another field, prevent it
             } else {
@@ -114,17 +113,17 @@
         return isValid && validationInfo.validSoFar;
     },
     setRowAmt: function(component, newAmt){
-        var amtField = component.get("v.amtField");
-		var item = this.proxyToObj(component.get("v.item"));
+        var amtField = component.get('v.amtField');
+		var item = this.proxyToObj(component.get('v.item'));
 		if(item && amtField && item[amtField]){
 			item[amtField] = newAmt;
         }
-        component.set("v.item", item);
+        component.set('v.item', item);
         this.amountCheck(component);
     },
     getRowAmt: function(component){
-        var amtField = component.get("v.amtField");
-		var item = this.proxyToObj(component.get("v.item"));
+        var amtField = component.get('v.amtField');
+		var item = this.proxyToObj(component.get('v.item'));
         var rowAmt = null;
 		if(item && amtField && item[amtField]){
 			rowAmt = item[amtField];

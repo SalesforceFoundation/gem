@@ -1,16 +1,18 @@
 <aura:component access="global"
     implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
-
+    
     <aura:method name="handleJsonUpdate" />
-    <aura:attribute type="sObject[]" name="objsToDelete" />
-    <aura:attribute type="sObject[]" name="itemList" />
-    <aura:attribute type="sObject[]" name="rowList" default="[]" />
+    
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.checkAmountTotals}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.objectFieldData}" action="{!c.handleInitRows}"/>
-    <aura:handler name="giftDeleteRowEvent" action="{!c.handleRowDelete}" event="c:giftDeleteRowEvent" />
+    <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
 
+    <aura:attribute type="sObject[]" name="objsToDelete" />
+    <aura:attribute type="sObject[]" name="itemList" />
+    <aura:attribute type="sObject[]" name="rowList" default="[]" />
+    
     <aura:attribute type="GiftEntryFormController.GiftFormModel" name="giftModel" />
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="String" name="sectionTitle" />
@@ -67,16 +69,15 @@
                 </div>
             </lightning:layoutItem>
 
-            <div aura:id="relatedWrapper" class="{!v.expandSection == true ? '' : 'slds-hidden'}">
-                <lightning:layoutItem size="12">
-                    <lightning:layout multipleRows="true" horizontalAlign="spread">
-                        {!v.body}
-                        <lightning:layoutItem padding="around-small" size="12">
-                            <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
-                        </lightning:layoutItem>
-                    </lightning:layout>
-                </lightning:layoutItem>
-            </div>
+            <lightning:layoutItem size="12" class="{!v.expandSection == true ? '' : 'slds-hidden'}">
+                <lightning:layout multipleRows="true" horizontalAlign="spread">
+                    {!v.body}
+                    <lightning:layoutItem padding="around-small" size="12">
+                        <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:layoutItem>
+
         </lightning:layout>
     </lightning:layoutItem>
     

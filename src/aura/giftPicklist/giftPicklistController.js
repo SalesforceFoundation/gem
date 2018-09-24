@@ -9,11 +9,12 @@
 			return;
 		}
 		var newVal = event.getParam("value");
-		var cmpEvent = component.getEvent("giftPicklistChangeEvent");
-		cmpEvent.setParams({
-			"newValue" : newVal,
-			"fieldId" : fieldId
+		var message = {newVal: newVal, fieldId: fieldId};
+		var sendMsgEvent = $A.get("e.ltng:sendMessage");
+		sendMsgEvent.setParams({
+			"message": message,
+			"channel": "picklistChangeEvent"
 		});
-		cmpEvent.fire();
+		sendMsgEvent.fire();
 	}
 })

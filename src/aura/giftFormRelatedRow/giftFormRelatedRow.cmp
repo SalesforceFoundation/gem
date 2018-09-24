@@ -1,5 +1,11 @@
 <aura:component extensible="true">
+    
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:method name="checkValidation" />
+    <aura:method name="returnRowAmount" />
+    <aura:method name="clickDeleteRow" />
+
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="sObject[]" name="rowList" />
     <aura:attribute type="Boolean" name="showLabels" default="true" />
@@ -8,11 +14,6 @@
     <aura:attribute type="Boolean" name="checkAmountTotals" />
     <aura:attribute type="Boolean" name="markedForDelete" default="false" />
     <aura:attribute type="String[]" name="noDuplicateValueList" />
-    <aura:method name="checkValidation" />
-    <aura:method name="returnRowAmount" />
-    <aura:method name="clickDeleteRow" />
-    <aura:registerEvent name="giftDeleteRowEvent" type="c:giftDeleteRowEvent"/>
-
     <aura:attribute type="Boolean" name="showError" default="false" />
     <aura:attribute type="String" name="errorMessage" />
     

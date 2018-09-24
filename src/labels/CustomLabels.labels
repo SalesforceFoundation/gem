@@ -29,6 +29,20 @@
         <value>Amount total is greater than donation amount</value>
     </labels>
     <labels>
+        <fullName>Gift_Calculate_Payments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Calculate Payments</shortDescription>
+        <value>Calculate Payments</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Clear_Calculate_Payments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Clear Calculate Payments</shortDescription>
+        <value>Clear and Calculate New Payments</value>
+    </labels>
+    <labels>
         <fullName>Gift_Create</fullName>
         <language>en_US</language>
         <protected>true</protected>

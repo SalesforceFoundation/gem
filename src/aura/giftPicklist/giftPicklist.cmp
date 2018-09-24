@@ -1,5 +1,6 @@
 <aura:component>
-    <aura:registerEvent name="giftPicklistChangeEvent" type="c:giftPicklistChangeEvent"/>
+    
+    <aura:handler name="change" value="{!v.selectedVal}" action="{!c.handlePicklistChange}"/>
 
     <aura:attribute type="Object[]" name="picklistValues" />
     <aura:attribute type="String" name="inputFieldId" />
@@ -9,21 +10,18 @@
     <aura:attribute type="Boolean" name="isRequired" default="false" />
     <aura:attribute type="Boolean" name="callEvent" default="true" />
 
-    <aura:handler name="change" value="{!v.selectedVal}" action="{!c.handlePicklistChange}"/>
+    <lightning:select aura:id="{!v.isRequired == true ? 'requiredField' : 'selectInput'}" 
+        name="select" 
+        label="{!v.fieldLabel}" 
+        required="{!v.isRequired}"
+        disabled="{!v.isDisabled}"
+        value="{!v.selectedVal}">
+        <aura:iteration items="{!v.picklistValues}" var="plWrapper">
+            <option value="{!plWrapper.value}" 
+                text="{!plWrapper.label}" 
+                selected="{!plWrapper.value == v.selectedVal}">
+            </option>
+        </aura:iteration>
+    </lightning:select>
 
-    <!-- <div class="slds-col slds-size_1-of-1 slds-p-around_small"> -->
-        <lightning:select aura:id="{!v.isRequired == true ? 'requiredField' : 'selectInput'}" 
-            name="select" 
-            label="{!v.fieldLabel}" 
-            required="{!v.isRequired}"
-            disabled="{!v.isDisabled}"
-            value="{!v.selectedVal}">
-            <aura:iteration items="{!v.picklistValues}" var="plWrapper">
-                <option value="{!plWrapper.value}" 
-                    text="{!plWrapper.label}" 
-                    selected="{!plWrapper.value == v.selectedVal}">
-                </option>
-            </aura:iteration>
-        </lightning:select>
-    <!-- </div> -->
 </aura:component>

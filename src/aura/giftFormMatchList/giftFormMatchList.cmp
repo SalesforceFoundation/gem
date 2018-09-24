@@ -1,6 +1,6 @@
 <aura:component>
-    
-    <aura:registerEvent name="giftMatchChangeEvent" type="c:giftMatchChangeEvent"/>
+
+    <aura:handler name="change" value="{!v.objectList}" action="{!c.handleListChange}"/>
 
     <aura:attribute name="objectList" type="List" />
     <aura:attribute name="optionList" type="List" default="[]" />
@@ -14,8 +14,6 @@
     <aura:attribute name="inputAuraId" type="String" />
     <aura:attribute name="showMatchSpinner" type="Boolean" />
     <aura:attribute name="enableChangeEvent" type="Boolean" default="false" />
-
-    <aura:handler name="change" value="{!v.objectList}" action="{!c.handleListChange}"/>
 
     <aura:if isTrue="{!v.optionList.length > 0}">
     <div class="slds-col slds-size_1-of-1 slds-p-around_small radio-group">

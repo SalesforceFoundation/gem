@@ -3,24 +3,24 @@
 		// Add the new item to the related array
 		helper.addRowHelper(component);
 
-		// Comes through empty
-		// var eles = component.getElements();
-		// console.log("Elements: "); 
-		// console.log(eles); 
-
-		var inputs = component.find({ instancesOf : "lightning:input" });
+		var inputs = component.find({ instancesOf : 'lightning:input' });
 		if(inputs.length > 0){
 			var firstInput = inputs[0];
-			if(typeof firstInput.focus === "function"){
+			if(typeof firstInput.focus === 'function'){
+				// TODO: Trying to focus on first input, not working yet
 				firstInput.focus();
 			}
 		}
 	},
 	clickDeleteRow: function(component, event, helper) {
-		component.set("v.markedForDelete", true);
+		component.set('v.markedForDelete', true);
+
 		// Call delete event, handled by the parent
-		var cmpEvent = component.getEvent("giftDeleteRowEvent");
-		cmpEvent.fire();
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+			'channel': 'deleteRowEvent'
+		});
+		sendMsgEvent.fire();
 	},
 	checkValidation: function(component, event, helper) {
 		var isValid = helper.validateRow(component, helper);

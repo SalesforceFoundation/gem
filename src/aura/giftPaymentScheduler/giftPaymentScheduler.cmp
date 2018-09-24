@@ -1,5 +1,10 @@
-<aura:component >
+<aura:component>
+
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
+    <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
+    <aura:handler name="change" value="{!v.paymentList}" action="{!c.handlePaymentsChange}"/>
+    
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="Boolean" name="showPayments" default="false" />
@@ -10,7 +15,7 @@
     <aura:attribute type="Integer" name="intervalNum" />
     <aura:attribute type="Integer" name="paymentNum" default="1" />
     <aura:attribute type="Date" name="startDate" />
-    <aura:attribute type="String" name="calculateButtonLabel" default="Calculate Payments" />
+    <aura:attribute type="String" name="calculateButtonLabel" default="{!$Label.c.Gift_Calculate_Payments}" />
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="rowCmpName" />
     <aura:attribute type="String" name="paymentMethod" />
@@ -20,74 +25,71 @@
     <aura:attribute type="npe01__OppPayment__c" name="singlePayment" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
 
-    <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
-    <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
-    <aura:handler name="change" value="{!v.paymentList}" action="{!c.handlePaymentsChange}"/>
+    <lightning:layoutItem size="12">
+        <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
+            aria-expanded="{!v.expandSection}"
+            onclick="{!c.toggleRelatedSection}">
+            <lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
+                size="x-small"
+                alternativeText="Toggle Payment Information" />
+            {!v.sectionTitle}
+        </button>
+    </lightning:layoutItem>
 
-    <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
-        aria-expanded="{!v.expandSection}"
-        onclick="{!c.toggleRelatedSection}">
-        <lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
-            size="x-small"
-            alternativeText="Toggle Payment Information" />
-          {!v.sectionTitle}
-    </button>
+    <lightning:layoutItem size="12" class="{!v.expandSection == true ? '' : 'slds-hidden'}">
+        <lightning:layout multipleRows="true" horizontalAlign="spread">
 
-    <div class="{!v.expandSection == true ? 'slds-size_1-of-1 slds-wrap slds-grid' : 'slds-hidden'}">
-
-    <!-- First page, will auto-generate payment rows -->
-    <div class="slds-grid slds-wrap slds-size_1-of-1">
-        <div class="slds-col slds-size_1-of-8 slds-p-around_small">
-            Donation Amount: <ui:outputCurrency value="{!v.donationAmt}"/>
-        </div>
-        <div class="slds-col slds-size_1-of-8 slds-p-around_small">
-            <lightning:input type="number" value="{!v.paymentNum}" label="Number of Payments" step="1" />
-        </div>
-        <div class="slds-col slds-size_2-of-8 slds-p-around_small">
-            <ui:inputDate class="show-required"
-                label="Date of First Payment"
-                value="{!v.startDate}" 
-                displayDatePicker="true" />
-        </div>
-        <div class="slds-col slds-size_1-of-8 slds-p-top_small">
-            <lightning:select name="interval" 
-                label="Interval" 
-                value="{!v.intervalNum}">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-            </lightning:select>
-        </div>
-        <div class="slds-col slds-size_1-of-8 slds-p-top_small">
-            <lightning:select name="frequency" 
-                label="Frequency" 
-                value="{!v.intervalFreq}">
-                <option value="Month">Month</option>
-                <option value="Year">Year</option>
-                <option value="Week">Week</option>
-            </lightning:select>
-        </div>
-        <div class="slds-col slds-size_2-of-8 slds-p-around_small">
-            <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
-                fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
-                inputFieldId="schedulerPaymentMethod"
-                selectedVal="{!v.selectedPaymentMethod}" />
-        </div>
-        
-        <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-            <lightning:button aura:id="calcButton" disabled="true" label="{!v.calculateButtonLabel}" 
-                onclick="{!c.clickCalculate}" />
-        </div>
-    </div>
+            <lightning:layoutItem padding="around-small" size="2">
+                Donation Amount:<br/><ui:outputCurrency value="{!v.donationAmt}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="around-small" size="2">
+                <lightning:input type="number" value="{!v.paymentNum}" label="Number of Payments" step="1" />
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="around-small" size="3">
+                <ui:inputDate class="show-required"
+                    label="Date of First Payment"
+                    value="{!v.startDate}" 
+                    displayDatePicker="true" />
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="around-small" size="1">
+                <lightning:select name="interval" 
+                    label="Interval" 
+                    value="{!v.intervalNum}">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </lightning:select>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="around-small" size="2">
+                <lightning:select name="frequency" 
+                    label="Frequency" 
+                    value="{!v.intervalFreq}">
+                    <option value="Month">Month</option>
+                    <option value="Year">Year</option>
+                    <option value="Week">Week</option>
+                </lightning:select>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="around-small" size="2">
+                <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
+                    fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
+                    selectedVal="{!v.selectedPaymentMethod}" />
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem padding="around-small" size="12">
+                <lightning:button aura:id="calcButton" disabled="true" label="{!v.calculateButtonLabel}" 
+                    onclick="{!c.clickCalculate}" />
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:layoutItem>
     
     <!-- Show a row for each payment -->
     <div class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
@@ -105,8 +107,6 @@
             modelAttribute="payments"
             buttonTitle="Add New Payment"
             giftModel="{!v.giftModel}" />
-    </div>
-
     </div>
 
 </aura:component>

@@ -1,8 +1,9 @@
 <aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" controller="GiftEntryFormController">
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-    <aura:handler name="giftPicklistChangeEvent" action="{!c.handlePicklistChange}" event="c:giftPicklistChangeEvent" />
-    <aura:handler name="giftMatchChangeEvent" action="{!c.handleMatchChange}" event="c:giftMatchChangeEvent" />
+    <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
+    <aura:handler name="change" value="{!v.di.npsp__Donation_Donor__c}" action="{!c.handleDonorTypeChange}"/>
+    
     <aura:dependency resource="markup://force:*" type="EVENT" />
 
     <aura:attribute name="giftModel" type="GiftEntryFormController.GiftFormModel"/>
@@ -35,12 +36,10 @@
     <aura:attribute type="Boolean" name="expandTribute" default="true" />
     <aura:attribute type="Boolean" name="expandMatching" default="true" />
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
-    <aura:handler name="change" value="{!v.di.npsp__Donation_Donor__c}" action="{!c.handleDonorTypeChange}"/>
-    <!-- <aura:handler name="change" value="{!v.donorExists}" action="{!c.handleCheckMatches}"/> -->
 
     <!-- Work around for change event on lookups -->
-    <!-- <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.handleLookupChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.handleLookupChange}"/> -->
+    <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.handleLookupChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.handleLookupChange}"/>
 
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 
@@ -84,7 +83,6 @@
             </ui:message>
         </aura:if>
 
-        <!-- <div class="slds-grid slds-wrap slds-m-bottom_large" aura:id="formWrapper"> -->
         <lightning:layout class="{!v.showForm ? '' : 'slds-hidden'}" 
             multipleRows="true">
 
@@ -151,8 +149,8 @@
                 objectType="npe01__OppPayment__c"
                 showMatchSpinner="{!v.showMatchSpinner}"
                 objectList="{!v.giftModel.matchedPayments}"
-                sectionLabel="Unpaid Payment Matches" /> -->
-            <!-- <aura:if isTrue="{!v.payment.Id != null}">
+                sectionLabel="Unpaid Payment Matches" />
+            <aura:if isTrue="{!v.payment.Id != null}">
                 <div class="slds-col slds-size_1-of-1 slds-p-around_small">
                     <lightning:button aura:id="paymentButton" 
                         label="Mark as Paid"
@@ -406,8 +404,7 @@
             </div>
 
             <!-- Fields that are hidden from the user, set by code -->
-                <div class="slds-hidden" style="height: 0">
-                <!-- <lightning:input name="jsonInput" aura:id="postProcessJsonField" /> -->
+            <div class="slds-hidden" style="height: 0">
                 <lightning:input aura:id="doDryRun" type="checkbox" checked="false" class="slds-m-bottom_small"
                     label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
                 <lightning:input aura:id="oppId" 

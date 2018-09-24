@@ -1,4 +1,8 @@
 <aura:component extends="c:giftFormRelatedRow">
+    
+    <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleDonationChange}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.handleAmountCheck}" />
+
     <aura:attribute name="item" 
         type="npsp__Partial_Soft_Credit__c" 
         default="{sobjectType:'npsp__Partial_Soft_Credit__c'}" />
@@ -7,8 +11,6 @@
         {'label': 'Full', 'value': 'Full'},
         {'label': 'Partial', 'value': 'Partial'}
         ]" />
-    <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleDonationChange}"/>
-    <aura:handler name="init" value="{!this}" action="{!c.handleAmountCheck}" />
 
     <lightning:layout multipleRows="true" horizontalAlign="spread">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="4">

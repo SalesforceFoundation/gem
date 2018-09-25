@@ -60,6 +60,7 @@
         <name>CustomField</name>
     </types>
     <types>
+        <members>Cancel</members>
         <members>Error</members>
         <members>Gift_Amounts_Do_Not_Match</members>
         <members>Gift_Amounts_Greater_than_Donation</members>
@@ -69,6 +70,7 @@
         <members>Gift_Donation_ID_Placeholder</members>
         <members>Gift_Donation_Locked</members>
         <members>Gift_Donor_Required</members>
+        <members>Gift_Form_Error</members>
         <members>Gift_Saved_Message</members>
         <members>Gift_Show_Matching</members>
         <members>Gift_Update</members>

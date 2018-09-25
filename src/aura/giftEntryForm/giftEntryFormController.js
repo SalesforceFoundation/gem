@@ -17,13 +17,7 @@
         helper.checkValidation(component);
     },
     handleLookupChange: function(component, event, helper){
-        // When a lookup field change, we may need to check for data matches using that value
-        // var newVal = event.getParam('value');
-        // var oldVal = event.getParam('oldValue');
-        // console.log(newVal + ' was: ' + oldVal);
-        // console.log('Run Match Check');
-
-        helper.checkMatches(component);
+        // TODO: Add matching logic here
         helper.checkValidation(component);
     },
     clickEditDonor: function(component, event, helper) {
@@ -61,19 +55,6 @@
         // TODO: Clear the form? Close a modal?
         console.log('Do Cancel');
     },
-    handleCheckMatches: function(component, event, helper) {
-        // The form should send its current information and check for data matches
-        var isEditMode = component.get('v.editMode');
-
-        var newVal = event.getParam('value');
-        // console.log(newVal); 
-        if(!newVal || isEditMode){
-            return;
-        }
-
-        // console.log('Checking Matches'); 
-        helper.checkMatches(component);
-    },
     clickBackToForm: function(component, event, helper){
         component.set('v.showForm', true);
         component.set('v.showSuccess', false);
@@ -96,11 +77,9 @@
             helper.handlePicklistChange(component, message);
         } else if(channel == 'matchChangeEvent'){
             helper.handleMatchChange(component, message, helper);
+        } else if(channel == 'validateEvent'){
+            helper.validateForm(component, true);
         }
-    },
-    clickMarkPaymentPaid: function(component, event, helper) {
-        var paymentId = component.get('v.payment.Id');
-        helper.setPaymentPaid(component, paymentId);
     },
     expandTributeSection: function(component, event, helper) {
         helper.doToggleSection(component, 'expandTribute');

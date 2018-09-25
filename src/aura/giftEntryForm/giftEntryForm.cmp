@@ -37,7 +37,6 @@
     <aura:attribute type="Boolean" name="expandMatching" default="true" />
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
 
-    <!-- Work around for change event on lookups -->
     <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.handleLookupChange}"/>
     <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.handleLookupChange}"/>
 
@@ -140,24 +139,6 @@
                     Donation Information
                 </div>
             </lightning:layoutItem>
-
-            <!-- Matching is in progress, will add back after working with UX -->
-            <!-- <c:giftFormMatchList
-                currentLookupValue="{!v.payment.Id}"
-                inputAuraId="paymentLookup"
-                fieldsToShow="['npe01__Opportunity__r.Name','npe01__Scheduled_Date__c','npe01__Payment_Amount__c']"
-                objectType="npe01__OppPayment__c"
-                showMatchSpinner="{!v.showMatchSpinner}"
-                objectList="{!v.giftModel.matchedPayments}"
-                sectionLabel="Unpaid Payment Matches" />
-            <aura:if isTrue="{!v.payment.Id != null}">
-                <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-                    <lightning:button aura:id="paymentButton" 
-                        label="Mark as Paid"
-                        variant="brand" 
-                        onclick="{!c.clickMarkPaymentPaid}" />
-                </div>
-            </aura:if> -->
 
             <lightning:layoutItem size="12">
                 <lightning:layout multipleRows="true">

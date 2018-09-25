@@ -92,11 +92,26 @@
         } else {
             amtError = '';
         }
+        var prevSubmitStatus = component.get('v.preventSubmit');
         component.set('v.preventSubmit', preventSubmit);
         component.set('v.amountError', amtError);
 
+        // If amounts are now valid, check validation of the form
+        if(!preventSubmit && prevSubmitStatus){
+            this.sendValidateMessage();
+        }
+
+        // Setting to false will ensure totals get checked again if a change occurs
         component.set('v.checkAmountTotals', false);
     },
+    sendValidateMessage: function() {
+		// Call validate event, handled by the parent
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+			'channel': 'validateEvent'
+		});
+		sendMsgEvent.fire();
+	},
     handleRowDelete: function(component, helper){
         var relatedRows = helper.getRelatedRows(component);
 

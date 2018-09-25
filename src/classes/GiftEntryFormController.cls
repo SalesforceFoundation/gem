@@ -64,6 +64,7 @@ public class GiftEntryFormController {
         public GiftFormModel(){
             this.objNameToApiToLabel = getObjNameToApiToLabel();
             this.picklistValues = getPickListValues();
+            this.di = new npsp__DataImport__c();
             this.matchedOpps = new List<Opportunity>();
             this.matchedContacts = new List<Contact>();
             this.matchedAccts = new List<Account>();
@@ -254,41 +255,16 @@ public class GiftEntryFormController {
 
             // Insert or Update the provided Donation information
             if(giftModel.di != null){
-                System.debug(' **** DI Before Upsert:'); 
-                System.debug(giftModel.di); 
                 upsert giftModel.di;
+            } else {
+                System.debug('No DataImport object was provided'); 
+                return null;
             }
 
             // After saving, need to process
             runGiftProcess(giftModel.di.Id, false);
 
             Id oppId = getOpportunityIdFromImport(giftModel.di.Id);
-
-            /*
-            // Insert or Update the provided Donor information
-            if(giftModel.acct != null && !String.isBlank(giftModel.acct.Name)){
-                if(!String.isBlank(giftModel.opp.AccountId)){
-                    giftModel.acct.Id = giftModel.opp.AccountId;
-                }
-                upsert giftModel.acct;
-            }
-            if(giftModel.contact != null && !String.isBlank(giftModel.contact.LastName)){
-                if(!String.isBlank(giftModel.opp.npsp__Primary_Contact__c)){
-                    giftModel.contact.Id = giftModel.opp.npsp__Primary_Contact__c;
-                }
-                upsert giftModel.contact;
-            }
-
-            // Insert or Update the provided Donation information
-            if(giftModel.acct != null && giftModel.acct.Id != null){
-                giftModel.opp.AccountId = giftModel.acct.Id;
-            }
-            if(giftModel.contact != null && giftModel.contact.Id != null){
-                giftModel.opp.npsp__Primary_Contact__c = giftModel.contact.Id;
-            }
-
-            upsert giftModel.opp;
-            */
             
             if(giftModel.payments != null && !giftModel.payments.isEmpty()){
                 for(npe01__OppPayment__c p : giftModel.payments){
@@ -314,9 +290,7 @@ public class GiftEntryFormController {
             }
 
             giftModel.oppId = oppId;
-
             System.debug(giftModel);
-
             return giftModel;
 
         } catch(Exception e){
@@ -458,26 +432,6 @@ public class GiftEntryFormController {
         }
     }
 
-    /*******************************************************************************************************
-    * @description Given a paymentId, mark it as paid and return true on success
-    * @param paymentId Id of Payment to be marked paid
-    * @return Boolean true on success, false if not
-    */
-    @AuraEnabled
-    public static Boolean markPaymentPaid(Id paymentId){
-        try {
-            npe01__OppPayment__c payment = new npe01__OppPayment__c(
-                Id = paymentId, 
-                npe01__Paid__c = true
-            );
-            update payment;
-            return true;
-        } catch(Exception e){
-            System.debug(e);
-            return false; 
-        }
-    }
-
     // Not currently used, but useful for processing a large number of DataImport objects
     @AuraEnabled
     public static Id runGiftBatch(Id batchId){
@@ -553,156 +507,10 @@ public class GiftEntryFormController {
     }
 
     @AuraEnabled
-    public static GiftFormModel returnDataMatches(String giftModelString){
-        GiftFormModel giftModel = processGiftModelString(giftModelString);
-        giftModel = setDataMatches(giftModel);
-        return giftModel;
-    }
-
-    @AuraEnabled
     public static GiftFormModel saveGift(String giftModelString){
         GiftFormModel giftModel = processGiftModelString(giftModelString);
         giftModel = saveDonationInformation(giftModel);
         return giftModel;
-    }
-
-    /*******************************************************************************************************
-    * @description Return the provided GiftFormModel with Ids and information about potential 
-    * matching objects
-    * @return GiftFormModel with information about the potential matches filled in
-    */
-    @TestVisible
-    private static GiftFormModel setDataMatches(GiftFormModel giftModel){
-
-        // Break names into parts and check "like" on each part?
-        // Query for object similar to what was entered, then set lists for the user to choose from
-
-        // TODO: If a lookup value is set on the Opp, ONLY return information about that object?
-
-        System.debug(giftModel.di); 
-        Id contactId = null;
-        Id accountId = null;
-        Id oppId = null;
-
-        if(giftModel.di != null){
-            contactId = giftModel.di.npsp__Contact1Imported__c;
-            accountId = giftModel.di.npsp__Account1Imported__c;
-            oppId = giftModel.di.npsp__DonationImported__c;
-        }
-
-        Map<String, List<sObject>> matchMap = new Map<String, List<sObject>>();
-
-        // Match Accounts
-        if(accountId != null){
-            // String aName = addWildcards(giftModel.acct.Name);
-            giftModel.matchedAccts = [SELECT Id, Name 
-                FROM Account 
-                WHERE Id = :accountId];
-        }
-        /*
-        if(accountId != null){
-            // Override the current account based on the selected lookup
-            for(Account a : giftModel.matchedAccts){
-                if(a.Id == accountId){
-                    giftModel.acct = a;
-                }
-            }
-        }
-        */
-
-        // Match Contacts
-        if(contactId != null){
-
-            String cFName = addWildcards(giftModel.contact.FirstName);
-            String cLName = addWildcards(giftModel.contact.LastName);
-
-            String query = 'SELECT Id, Name, FirstName, LastName, Phone, Email FROM Contact WHERE';
-            String whereClause = '';
-            if(contactId != null){
-                whereClause += ' Id = :contactId ';
-            }
-            // if(cFName != null){
-            //     if(!String.isBlank(whereClause)){
-            //         whereClause += ' OR ';
-            //     }
-            //     whereClause += ' FirstName LIKE :cFName ';
-            // }
-            // if(cLName != null){
-            //     if(!String.isBlank(whereClause)){
-            //         whereClause += ' OR ';
-            //     }
-            //     whereClause += ' LastName LIKE :cLName ';
-            // }
-            whereClause += ' LIMIT 8';
-
-            giftModel.matchedContacts = Database.query(query + whereClause);
-        }
-        /*
-        if(contactId != null){
-            // Override the current contact based on the selected lookup
-            for(Contact c : giftModel.matchedContacts){
-                if(c.Id == contactId){
-                    giftModel.contact = c;
-                }
-            }
-        }
-        */
-
-        // Find potential Opportunities if an existing donor has been set
-        if( !String.isEmpty(accountId) || !String.isEmpty(contactId) ){
-
-            String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
-
-            //String oName = addWildcards(giftModel.opp.Name);
-            String query = 'SELECT ' + allOppFields + ' FROM Opportunity WHERE ';
-            String whereClause = '';
-            //whereClause += ' Name LIKE :oName ';
-            
-            if(!String.isEmpty(accountId)){
-                whereClause += ' AccountId = :accountId ';
-            }
-            if(!String.isEmpty(contactId)){
-                if(!String.isBlank(whereClause)){
-                    whereClause += ' OR ';
-                }
-                whereClause += ' npsp__Primary_Contact__c = :contactId ';
-            }
-            whereClause += ' LIMIT 10';
-
-            System.debug(' ** Opp Query:'); 
-            System.debug(query + whereClause); 
-
-            giftModel.matchedOpps = Database.query(query + whereClause);
-            System.debug(giftModel.matchedOpps); 
-            //matchMap.put('Opportunity', matchedOpps);
-        }
-
-        if( oppId != null || !giftModel.matchedOpps.isEmpty() ){
-            Set<Id> oppIds = new Set<Id>();
-            
-            if(oppId != null){
-                oppIds.add(oppId);
-            }
-            for(Opportunity o : giftModel.matchedOpps){
-                oppIds.add(o.Id);
-            }
-
-            giftModel.matchedPayments = [SELECT Id, npe01__Payment_Amount__c, 
-                npe01__Scheduled_Date__c, npe01__Opportunity__r.Name
-                FROM npe01__OppPayment__c 
-                WHERE npe01__Opportunity__c in :oppIds AND npe01__Paid__c = false
-                ORDER BY npe01__Scheduled_Date__c ASC
-                LIMIT 10];
-        }
-
-        return giftModel;
-    }
-
-    private static String addWildcards(String str){
-        if(String.isBlank(str)){
-            return null;
-        }
-        return '%' + str + '%';
     }
 
     /*******************************************************************************************************

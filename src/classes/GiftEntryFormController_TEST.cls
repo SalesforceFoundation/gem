@@ -56,15 +56,26 @@ private class GiftEntryFormController_TEST {
     	GiftEntryFormController.insertGiftEntrySettings();
     }
 
-    private static GiftEntryFormController.GiftFormModel setupModelData(){
-        GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
-        giftModel.acct = new Account(Name=acctName);
-        giftModel.contact = new Contact(FirstName=cFirst, LastName=cLast);
-        giftModel.opp = new Opportunity(Name=oppName, 
-            CloseDate=System.today(), 
-            StageName=closedWonStage, 
-            Amount=donationAmount);
+    private static GiftEntryFormController.GiftFormModel returnGiftModel(){
+        GiftEntryFormController.GiftFormModel giftModel = setModelData(acctName, 
+            cFirst, cLast, oppName, closedWonStage, donationAmount);
         return giftModel;
+    }
+
+    private static GiftEntryFormController.GiftFormModel setModelData(String acctName, 
+        String cFirst, String cLast, String oppName, String closedWonStage, Decimal donationAmount){
+            GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
+            Account a = new Account(Name=acctName);
+            insert a;
+            Contact c = new Contact(FirstName=cFirst, LastName=cLast);
+            insert c;
+            giftModel.di.npsp__Account1Imported__c = a.Id;
+            giftModel.di.npsp__Contact1Imported__c = c.Id;
+            giftModel.di.npsp__Donation_Name__c = oppName;
+            giftModel.di.npsp__Donation_Date__c = System.today(); 
+            giftModel.di.npsp__Donation_Stage__c = closedWonStage;
+            giftModel.di.npsp__Donation_Amount__c = donationAmount;
+            return giftModel;
     }
 
     /*******************************************************************************************************
@@ -73,104 +84,26 @@ private class GiftEntryFormController_TEST {
     @isTest
     private static void testNewGift() {
 
-        GiftEntryFormController.GiftFormModel giftModel = setupModelData();
+        GiftEntryFormController.GiftFormModel giftModel = returnGiftModel();
     
         Test.startTest();
         giftModel = GiftEntryFormController.GiftFormModel.saveDonationInformation(giftModel);
         Test.stopTest();
 
         List<Opportunity> opps = [SELECT Id FROM Opportunity 
-            WHERE Account.Name =: acctName
-            AND npsp__Primary_Contact__r.FirstName =: cFirst
+            WHERE npsp__Primary_Contact__r.FirstName =: cFirst
             AND npsp__Primary_Contact__r.LastName =: cLast];
-        System.assert(opps.size() == 1, 'Make sure Opportunity was created and Account and Contact were assigned');
+        System.assert(opps.size() == 1, 'Make sure Opportunity was created and Contact was assigned');
         Opportunity opp = opps[0];
-
-        Contact c = [SELECT Id, Account.Name FROM Contact WHERE Id =: giftModel.contact.Id];
-        // Contact is being set to 'TestLast Administrative Account', is that right?
-        //System.assertEquals(acctName, c.Account.Name, 'The Contact should be under the new Account ');
 
         List<npe01__OppPayment__c> payments = [SELECT Id FROM npe01__OppPayment__c 
             WHERE npe01__Opportunity__c =: opp.Id];
         System.assertEquals(1, payments.size(), 'There should be a payment for the closed donation');
 
-    }
+        // Now test loading this gift
+        giftModel = GiftEntryFormController.initClass(opp.Id);
+        System.assertEquals(1, giftModel.payments.size(), 'The existing payment should have been found');
 
-    @isTest
-    private static void setDataMatches() {
-
-        Account a = new Account(Name=acctName + ' 2');
-        insert a;
-        insert new Contact(Firstname='NewFirst',Lastname=cLast);
-        insert new Opportunity(Name=oppName + ' 2', 
-            CloseDate=System.today().addDays(-10),
-            AccountId=a.Id, 
-            StageName=closedWonStage,
-            Amount=50);
-
-        GiftEntryFormController.GiftFormModel giftModel = setupModelData();
-        giftModel.opp.AccountId = a.Id;
-
-        giftModel = GiftEntryFormController.GiftFormModel.setDataMatches(giftModel);
-
-        System.assertNotEquals(null, giftModel.matchedAccts);
-        System.assertEquals(1, giftModel.matchedAccts.size(), 
-            'One Account match should be found');
-
-        System.assertNotEquals(null, giftModel.matchedContacts);
-        System.assertEquals(1, giftModel.matchedContacts.size(), 
-            'One Contact match should be found');
-
-        System.assertNotEquals(null, giftModel.matchedOpps);
-        System.assertEquals(1, giftModel.matchedContacts.size(), 
-            'One Opportunity match should be found');
-
-    }
-
-    /*******************************************************************************************************
-    * @description Test updating existing Account and Contact via Gift Form
-    */ 
-    @isTest
-    private static void testUpdateGiftDonor() {
-
-        String acctName = 'Test Account';
-        String acctName2 = 'Test Account Update';
-        String cFirst = 'TestFirst';
-        String cLast = 'TestLast';
-        String cLast2 = 'TestLastUpdate';
-        String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
-
-        Account a = new Account(Name=acctName);
-        Contact c = new Contact(FirstName=cFirst, LastName=cLast);
-
-        insert a;
-        insert c;
-
-        GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
-        giftModel.acct = new Account(Name=acctName2);
-        giftModel.contact = new Contact(FirstName=cFirst, LastName=cLast2);
-        giftModel.opp = new Opportunity(Name='Test Opp', 
-            CloseDate=System.today(), 
-            StageName=closedWonStage, 
-            Amount=100,
-            npsp__Primary_Contact__c=c.Id,
-            AccountId = a.Id);
-    
-        Test.startTest();
-        giftModel = GiftEntryFormController.GiftFormModel.saveDonationInformation(giftModel);
-        Test.stopTest();
-
-        List<Opportunity> opps = [SELECT Id FROM Opportunity 
-            WHERE Account.Name =: acctName2
-            AND npsp__Primary_Contact__r.FirstName =: cFirst
-            AND npsp__Primary_Contact__r.LastName =: cLast2];
-        System.assert(opps.size() == 1, 'Make sure Opportunity was created and Account and Contact were assigned and updated');
-
-        List<Contact> cList = [SELECT Id, Account.Name FROM Contact];
-        System.assert(cList.size() == 1, 'Contact should have been updated, not added');
-
-        List<Account> aList = [SELECT Id, Name FROM Account WHERE Name =: acctName];
-        System.assert(aList.size() == 0, 'Account should have been updated, not added');
     }
 
     @isTest
@@ -211,15 +144,8 @@ private class GiftEntryFormController_TEST {
         Id oppId = giftModel.oppId;
         System.assert(giftModel.oppId != null, 'The new Opportunity ID should be returned');
 
-        // Contact c = giftModel.contact;
-        // Account a = giftModel.acct;
-        // Opportunity o = giftModel.opp;
         List<npsp__Allocation__c> allocs = giftModel.allocs;
         List<npe01__OppPayment__c> payments = giftModel.payments;
-
-        // System.assertEquals('Firstname', c.FirstName, 'The Contact should be set on the controller');
-        // System.assertEquals('New Account', a.Name, 'The Account should be set on the controller');
-        // System.assertEquals('Test Opp', o.Name, 'The Opportunity should be set on the controller');
 
         // Check that the allocations were created
         List<npsp__Allocation__c> alloQuery = [Select Id from npsp__Allocation__c 
@@ -265,7 +191,6 @@ private class GiftEntryFormController_TEST {
             where npsp__Contact__c =: scContactId
             and npsp__Amount__c =: payAmt];
         System.assertEquals(0, pscQuery.size());
-        
     }
 
     @isTest

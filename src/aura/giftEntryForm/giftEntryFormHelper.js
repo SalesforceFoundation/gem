@@ -15,37 +15,11 @@
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
                 
-                console.log('From init'); 
-                console.log(giftModel); 
+                // console.log('From init'); 
+                // console.log(giftModel); 
 
                 component.set('v.giftModel', giftModel);
                 component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
-
-                // If editing a gift
-                if(giftModel.opp){
-                    component.set('v.opp', giftModel.opp);
-                }
-                if(giftModel.acct){
-                    component.set('v.acct', giftModel.acct);
-                    // Make sure the lookup field UI gets updated
-                    var selectedObject = this.proxyToObj(giftModel.acct);
-                    helper.updateLookupUI(component, 'accountLookup', 'Account', selectedObject);
-                }
-                if(giftModel.contact){
-                    component.set('v.contact', giftModel.contact);
-                    // Make sure the lookup field UI gets updated
-                    var selectedObject = this.proxyToObj(giftModel.contact);
-                    helper.updateLookupUI(component, 'contactLookup', 'Contact', selectedObject);
-                }
-                if(giftModel.payments){
-                    component.set('v.payments', giftModel.payments);
-                }
-                if(giftModel.allocs){
-                    component.set('v.allocs', giftModel.allocs);
-                }
-                if(giftModel.partialCredits){
-                    component.set('v.partialCredits', giftModel.partialCredits);
-                }
 
                 helper.handlePicklistSetup(component, giftModel.picklistValues);
 
@@ -60,16 +34,6 @@
         $A.enqueueAction(getModelAction);
     },
     setDefaults: function(component, helper, opp){
-        // If Updating and Stage is set to Closed, disable Donation fields
-        // var stageField = component.find('stageField');
-        // if(stageField){
-        //     var stage = stageField.get('v.value');
-        //     // TODO: Query this instead
-        //     var closedStage = component.get('v.closedStage');
-        //     var oppClosed = stage == closedStage ? true : false;
-        //     component.set('v.oppClosed', oppClosed);
-        // }
-
         // For new forms, set Date to Today, otherwise use existing value
         var curDate = component.get('v.di.npsp__Donation_Date__c');
         if(!curDate){
@@ -85,8 +49,6 @@
         } else {
             component.set('v.di.npsp__Donation_Donor__c', 'Contact1');
         }
-
-        //this.setPicklists(component, helper);
     },
     handlePicklistSetup: function(component, picklistOptions, helper){
         // var picklistOptions = response.getReturnValue();
@@ -115,42 +77,6 @@
             this.setHiddenField(component, fieldId, newVal);
         }
     },
-    handleMatchChange: function(component, message, helper) {
-        // A new selection was made on a data match list
-        var isEditMode = component.get('v.editMode');
-        var selectedObject = message['selectedObject'];
-        var objectType = message['objectType'];
-        var inputAuraId = message['inputAuraId'];
-        var oppLookupField = message['oppLookupField'];
-
-        console.log(' ** handleMatchChange for : ' + objectType); 
-
-        // Could be an option on the component instead, lookup vs. normal input?
-        if(objectType == 'npe01__OppPayment__c'){
-            // Since this isn't a lookup field, just set the value
-            var field = component.find(inputAuraId);
-            if(field){
-                var newVal = (selectedObject && selectedObject.Id) ? selectedObject.Id : null;
-                field.set('v.value', newVal);
-            }
-        } else {
-            // Lookup fields take extra steps to show correctly in the UI
-            helper.setLookupField(component, objectType, selectedObject, inputAuraId, oppLookupField);
-        }
-
-        if(isEditMode){
-            return;
-        }
-
-        // If the donor changed, check for matches again
-        if(objectType == 'Contact' || objectType == 'Account'){
-            // console.log('Search for opps!'); 
-            helper.checkMatches(component, 'Opportunity');
-        } else if(objectType == 'Opportunity'){
-            // console.log('Search for payments!'); 
-            helper.checkMatches(component, 'npe01__OppPayment__c');
-        }
-    },
     setHiddenField: function(component, fieldId, newVal){
         var field = component.find(fieldId);
         if(field){
@@ -158,8 +84,8 @@
         }
     },
     redirectToSobject: function(component, objId){
-        console.log('Redirect to:'); 
-        console.log(objId); 
+        // console.log('Redirect to:'); 
+        // console.log(objId); 
         var event = $A.get('e.force:navigateToSObject');
         event.setParams({
             recordId: objId
@@ -195,29 +121,6 @@
 
         $A.enqueueAction(action);
     },
-    getDataMatches: function(component){
-        component.set('v.showMatchSpinner', true);
-        var action = component.get('c.returnDataMatches');
-        var giftModelString = component.get('v.giftModelString');
-        action.setParams({
-            giftModelString: giftModelString
-        });
-
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === 'SUCCESS') {
-                var giftModel = response.getReturnValue();
-                component.set('v.giftModel', giftModel);
-                component.set('v.showSpinner', false);
-                component.set('v.showMatchSpinner', false);
-            } else if (state === 'ERROR') {
-                this.handleError(component, response);
-            }
-        });
-
-        $A.enqueueAction(action);
-
-    },
     handleSaveGift: function(component){
         component.set('v.showSpinner', true);
         var action = component.get('c.saveGift');
@@ -231,8 +134,8 @@
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
                 
-                console.log('Gift Model about to be overwritten by handleSaveGift'); 
-                console.log(giftModel); 
+                // console.log('Gift Model about to be overwritten by handleSaveGift'); 
+                // console.log(giftModel); 
 
                 component.set('v.giftModel', giftModel);
                 var oppId = component.find('oppId').get('v.value');
@@ -248,9 +151,7 @@
 
     },
     checkValidation: function(component){
-        var formValid = this.validateForm(component);
-        // var btn = component.find('createButton');
-        // btn.set('v.disabled',!formValid);
+        this.validateForm(component);
     },
     validateForm: function(component, showErrors) {
         component.set('v.error', null);
@@ -354,29 +255,16 @@
 
         var giftModel = component.get('v.giftModel');
 
-        // Now set the 'primary' gift field
+        // Set the fields on the giftModal object
         var di = this.proxyToObj(component.get('v.di'));
-        // var acct = this.proxyToObj(component.get('v.acct'));
-        // var contact = this.proxyToObj(component.get('v.contact'));
-        // var opp = this.proxyToObj(component.get('v.opp'));
-        
-        // console.log(' *** opp'); 
-        // console.log(opp); 
         
         var objsToDelete = this.proxyToObj(component.get('v.objsToDelete'));
         giftModel['di'] = di;
-        // giftModel['acct'] = acct;
-        // giftModel['contact'] = contact;
-        // giftModel['opp'] = opp;
         giftModel['objsToDelete'] = objsToDelete;
 
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};
         giftModel['picklistValues'] = {};
-
-        // console.log('Gift Model about to be overwritten by fillJsonField'); 
-        // component.set('v.jsonObj', jsonObj);
-        // component.set('v.giftModel', giftModel);
 
         if(giftModel.payments && giftModel.payments.length > 0){
             // Payments are being scheduled, do not create one for the full donation
@@ -384,123 +272,11 @@
         }
 
         var giftModelString = JSON.stringify(giftModel);
-        console.log(giftModelString);
+        // console.log(giftModelString);
 
         // component.set('v.jsonObjectString', jsonObjString);
         component.set('v.giftModelString', giftModelString);
         return allRowsValid;
-    },
-    setLookupField: function(component, objectType, selectedObject, inputAuraId, oppLookupField){
-        var newId = null;
-        //console.log(selectedObject);
-        if(selectedObject){
-            selectedObject = this.proxyToObj(selectedObject);
-            newId = selectedObject.Id;
-        }
-
-        console.log('setLookupField for: ' + objectType); 
-
-        if(objectType == 'Opportunity'){
-            // component.set('v.opp', null);
-            // component.set('v.opp', selectedObject);
-            // Instead of filling every field, just redirect to that Opportunity?
-            // this.redirectToSobject(component, newId);
-            var relatedCmp = this.getRelatedComponents(component);
-            for(var i=0; i < relatedCmp.length; i++){
-                relatedCmp[i].set('v.initFinished', false);
-            }
-            this.getDonationInformation(component, this, newId);
-            return;
-
-        } else if(objectType == 'Account'){
-            component.set('v.acct', null);
-            component.set('v.acct', selectedObject);
-        } else if(objectType == 'Contact'){
-            // component.set('v.contact', null);
-            component.set('v.contact.Email', null);
-            component.set('v.contact.Phone', null);
-            component.set('v.contact', selectedObject);
-            // Value updates, but UI does not
-            // var contact = this.proxyToObj(component.get('v.contact'));
-            // console.log(contact); 
-            this.updateInputUI(component);
-        }
-
-        var oppObj = component.get('v.opp');
-        oppObj = this.proxyToObj(oppObj);
-        if(oppLookupField){
-            oppObj[oppLookupField] = newId;
-            component.set('v.opp', oppObj);
-        }
-		
-		if(inputAuraId){
-            this.updateLookupUI(component, inputAuraId, objectType, selectedObject);
-        }
-    },
-    updateLookupUI: function(component, inputAuraId, objectType, selectedObject){
-        var newValue = [{}];
-        // If updating a lookup field, make sure the UI reflects the change
-        newValue[0] = {
-            id: selectedObject.Id,
-            type: objectType,
-            label: selectedObject.Name
-        };
-        // console.log(newValue); 
-        this.setLookupValue(component, inputAuraId, newValue);
-    },
-    setLookupValue: function(component, inputAuraId, newValue){
-        var field = component.find(inputAuraId);
-        if(field){
-            // this.updateFieldUI(field);
-            var lookupInput = field.get('v.body')[0];
-            if(lookupInput){
-                lookupInput.updateValues();
-                lookupInput.set('v.values', this.proxyToObj(newValue));
-            }
-        }
-    },
-    setPaymentPaid: function(component, paymentId){
-        component.set('v.showSpinner', true);
-        var action = component.get('c.markPaymentPaid');
-        action.setParams({
-            paymentId: paymentId
-        });
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === 'SUCCESS') {
-                var wasPaymentUpdated = response.getReturnValue();
-                if(wasPaymentUpdated){
-                    component.set('v.payment.Id', null);
-                    this.checkMatches(component);
-                }
-                component.set('v.showSpinner', false);
-            } else if (state === 'ERROR') {
-                helper.handleError(component, response);
-            }
-        });
-        $A.enqueueAction(action);
-    },
-    checkMatches: function(component, objToMatch){
-        var isEditMode = component.get('v.editMode');
-        var matchListCmps = this.getMatchListComponents(component);
-        // console.log('Check matches for: ' + objToMatch); 
-
-        var numMatchCmps = matchListCmps.length;
-
-        for(var i = 0; i < numMatchCmps; i++){
-            var thisCmp = matchListCmps[i];
-            var objType = thisCmp.get('v.objectType');
-
-            // Don't fire this component's change event if we aren't checking matches for this object
-            if( (objToMatch && objType != objToMatch) || isEditMode){
-                thisCmp.set('v.enableChangeEvent', false);
-            }
-        }
-
-        if(numMatchCmps > 0){
-            this.fillJsonField(component);
-            this.getDataMatches(component);
-        }
     },
     showSaveToast: function(titleTxt, msgText){
         var toastEvent = $A.get('e.force:showToast');
@@ -517,12 +293,6 @@
     getRelatedComponents: function(component){
         var namespace = component.get('v.namespacePrefix');
         var rowCmpName = namespace + ':giftFormRelated';
-        var formWrapper = component.find('formWrapper');
-        return formWrapper.find({instancesOf:rowCmpName});
-    },
-    getMatchListComponents: function(component){
-        var namespace = component.get('v.namespacePrefix');
-        var rowCmpName = namespace + ':giftFormMatchList';
         var formWrapper = component.find('formWrapper');
         return formWrapper.find({instancesOf:rowCmpName});
     },

@@ -21,7 +21,7 @@
     <aura:attribute type="String" name="paymentMethod" />
     <aura:attribute type="npe01__OppPayment__c[]" name="paymentList" />
     <aura:attribute type="sObject[]" name="objsToDelete" />
-    <aura:attribute type="GiftEntryFormController.GiftFormModel" name="giftModel" />
+    <aura:attribute type="Object" name="giftModel" />
     <aura:attribute type="npe01__OppPayment__c" name="singlePayment" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
 
@@ -88,25 +88,26 @@
                 <lightning:button aura:id="calcButton" disabled="true" label="{!v.calculateButtonLabel}" 
                     onclick="{!c.clickCalculate}" />
             </lightning:layoutItem>
+
+            <!-- Show a row for each payment -->
+            <div class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
+                <c:giftFormRelated objectName="npe01__OppPayment__c"
+                    itemList="{!v.paymentList}"
+                    objsToDelete="{!v.objsToDelete}"
+                    blockItemChangeEvent="{!v.blockItemChangeEvent}"
+                    rowCmpName="{!v.rowCmpName}"
+                    oppField="npe01__Opportunity__c"
+                    amtField="npe01__Payment_Amount__c"
+                    donationAmt="{!v.donationAmt}"
+                    preventAmountSurplus="false"
+                    preventAmountDeficit="true"
+                    objectFieldData="{!v.objectFieldData}"
+                    modelAttribute="payments"
+                    buttonTitle="Add New Payment"
+                    giftModel="{!v.giftModel}" />
+            </div>
+
         </lightning:layout>
     </lightning:layoutItem>
-    
-    <!-- Show a row for each payment -->
-    <div class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
-        <c:giftFormRelated objectName="npe01__OppPayment__c"
-            itemList="{!v.paymentList}"
-            objsToDelete="{!v.objsToDelete}"
-            blockItemChangeEvent="{!v.blockItemChangeEvent}"
-            rowCmpName="{!v.rowCmpName}"
-            oppField="npe01__Opportunity__c"
-            amtField="npe01__Payment_Amount__c"
-            donationAmt="{!v.donationAmt}"
-            preventAmountSurplus="false"
-            preventAmountDeficit="true"
-            objectFieldData="{!v.objectFieldData}"
-            modelAttribute="payments"
-            buttonTitle="Add New Payment"
-            giftModel="{!v.giftModel}" />
-    </div>
 
 </aura:component>

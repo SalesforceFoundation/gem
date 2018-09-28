@@ -1,16 +1,13 @@
 <aura:component extends="c:giftFormRelatedRow">
     
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleDonationChange}"/>
-    <aura:handler name="init" value="{!this}" action="{!c.handleAmountCheck}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
 
     <aura:attribute name="item" 
         type="npsp__Partial_Soft_Credit__c" 
         default="{sobjectType:'npsp__Partial_Soft_Credit__c'}" />
-    <aura:attribute name="creditType" type="String" default="Partial" />
-    <aura:attribute name="typeOptions" type="List" default="[
-        {'label': 'Full', 'value': 'Full'},
-        {'label': 'Partial', 'value': 'Partial'}
-        ]" />
+    <aura:attribute name="creditType" type="String" default="{!$Label.c.Partial}" />
+    <aura:attribute name="typeOptions" type="List" />
 
     <lightning:layout multipleRows="true" horizontalAlign="spread">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="4">
@@ -22,13 +19,15 @@
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">Credit Type</label>
+                <label class="slds-form-element__label">{!$Label.c.Gift_Credit_Type}</label>
             </aura:if>
+
             <lightning:radioGroup name="creditType"
                 value="{!v.creditType}"
                 options="{!v.typeOptions}"
                 type="button"
                 onchange="{!c.handleTypeChange}" />
+                
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <aura:if isTrue="{!v.showLabels}">
@@ -38,7 +37,7 @@
                 onblur="{!c.handleAmountCheck}"
                 name="allocationAmt" 
                 type="number" 
-                label="Amount" 
+                label="{!v.objectFieldData.objectLabels.PSC.npsp__Amount__c}" 
                 variant="label-hidden"
                 formatter="currency"
                 step="0.01"
@@ -50,7 +49,7 @@
             </aura:if>
             <lightning:select name="select" 
                 aura:id="requiredField"
-                label="Role Name"
+                label="{!v.objectFieldData.objectLabels.PSC.npsp__Role_Name__c}"
                 variant="label-hidden"
                 value="{!v.item.npsp__Role_Name__c}">
                 <aura:iteration items="{!v.objectFieldData.picklistOptions.npsp__Role_Name__c}" var="plWrapper">

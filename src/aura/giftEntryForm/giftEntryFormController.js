@@ -3,7 +3,7 @@
         var recordId = component.get('v.recordId');
         // Get the data model class for the form
         // Includes picklist options, field labels, and objects if loading an existing record
-        helper.getDonationInformation(component, helper, recordId);
+        helper.getDonationInformation(component, recordId);
 
         // Set the namespace var so components load in managed package
         var namespace = component.getType().split(':')[0];
@@ -11,6 +11,7 @@
         if(namespace != 'c'){
             component.set('v.namespaceFieldPrefix', namespace+'__');
         }
+        helper.setOppToDiMap(component);
     },
     handleFieldChange: function(component, event, helper){
         // Each time a required input changes, check validation
@@ -52,13 +53,8 @@
         }
     },
     clickCancel: function(component, event, helper) {
-        // TODO: Clear the form? Close a modal?
-        console.log('Do Cancel');
-    },
-    clickBackToForm: function(component, event, helper){
-        component.set('v.showForm', true);
-        component.set('v.showSuccess', false);
-        helper.scrollToTop();
+        // Refresh the view to clear the form
+        $A.get('e.force:refreshView').fire();
     },
     handleDonorTypeChange: function(component, event, helper){
         var donorType = event.getParam('value');

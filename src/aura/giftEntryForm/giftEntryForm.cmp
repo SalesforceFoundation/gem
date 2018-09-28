@@ -6,14 +6,13 @@
     
     <aura:dependency resource="markup://force:*" type="EVENT" />
 
-    <aura:attribute name="giftModel" type="GiftEntryFormController.GiftFormModel"/>
+    <aura:attribute name="giftModel" type="Object"/>
     <aura:attribute type="String" name="giftModelString" />
     
     <aura:attribute type="Map" name="objectFieldData" default="{}" />
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="Map" name="objectLabels" />
-    <aura:attribute type="Object" name="jsonObject" />
-    <aura:attribute type="String" name="jsonObjectString" />
+    <aura:attribute type="Map" name="oppToDiFieldMap" />
     
     <aura:attribute type="String" name="namespacePrefix" />
     <aura:attribute type="String" name="namespaceFieldPrefix" default="" />
@@ -44,18 +43,10 @@
         type="npsp__DataImport__c" 
         default="{sobjectType:'npsp__DataImport__c'}"/>
 
+    <!-- Used to add lookup fields, mapped back to DataImport object on submit -->
     <aura:attribute name="opp" 
         type="Opportunity" 
         default="{sobjectType:'Opportunity',CloseDate:null,npe01__Do_Not_Automatically_Create_Payment__c:false}"/>
-    <aura:attribute name="payment" 
-        type="npe01__OppPayment__c" 
-        default="{sobjectType:'npe01__OppPayment__c'}"/>
-    <aura:attribute name="acct" 
-        type="Account" 
-        default="{sobjectType:'Account',Name:'',Phone:''}"/>
-    <aura:attribute name="contact" 
-        type="Contact" 
-        default="{sobjectType:'Contact',FirstName:'',LastName:''}"/>
     
     <aura:attribute name="allocs" 
         type="npsp__Allocation__c[]" 
@@ -95,7 +86,7 @@
 
             <lightning:layoutItem size="12">
                 <div class="slds-page-header slds-page-header__title">
-                    Donor Information
+                    {!$Label.c.Gift_Donor_Information}
                 </div>
             </lightning:layoutItem>
 
@@ -103,7 +94,7 @@
                 <lightning:layout multipleRows="true">
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                         <c:giftPicklist picklistValues="[{value:'Account1',label:'Account'},{value:'Contact1',label:'Contact'}]" 
-                            fieldLabel="Donor Type" 
+                            fieldLabel="{!$Label.c.Gift_Donor_Type}"
                             selectedVal="{!v.di.npsp__Donation_Donor__c}" />
                     </lightning:layoutItem>
 
@@ -128,7 +119,7 @@
                         <br/>
                         <lightning:button aura:id="editDonorButton" 
                             disabled="{!v.donorExists == false}"
-                            label="Edit Selected Donor"
+                            label="{!$Label.c.Gift_Edit_Selected_Donor}"
                             onclick="{!c.clickEditDonor}" />
                     </lightning:layoutItem>
                 </lightning:layout>
@@ -136,7 +127,7 @@
 
             <lightning:layoutItem size="12">
                 <div class="slds-page-header slds-page-header__title">
-                    Donation Information
+                    {!$Label.c.Gift_Donation_Information}
                 </div>
             </lightning:layoutItem>
 
@@ -203,9 +194,7 @@
                         <label class="slds-form-element__label">
                             {!v.objectFieldData.objectLabels.Opportunity.CampaignId}
                         </label>
-                        <force:inputField 
-                            value="{!v.di.Donation_Primary_Campaign__c}" />
-                            <!-- value="{!v.namespaceFieldPrefix+'Donation_Primary_Campaign__c'}" -->
+                        <force:inputField value="{!v.opp.CampaignId}" />
                     </lightning:layoutItem>
 
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
@@ -225,21 +214,23 @@
                     onclick="{!c.expandTributeSection}">
                     <lightning:icon iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
                         size="x-small"
-                        alternativeText="Toggle Tribute Information" />Tribute Information
+                        alternativeText="Toggle Tribute Information" />{!$Label.c.Gift_Tribute_Information}
                 </button>
             </lightning:layoutItem>
 
             <lightning:layoutItem size="12">
                 <lightning:layout multipleRows="true" class="{!v.expandTribute == true ? '' : 'slds-hidden'}">
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Tribute_Type__c}" 
-                            fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.npsp__Tribute_Type__c}" 
-                            selectedVal="{!v.di.Donation_Tribute_Type__c}" />
+                        <label class="slds-form-element__label">
+                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Tribute_Type__c}
+                        </label>
+                        <force:inputField value="{!v.opp.npsp__Tribute_Type__c}" />
                     </lightning:layoutItem>
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Acknowledgment_Status__c}" 
-                            fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}" 
-                            selectedVal="{!v.di.Donation_Acknowledgment_Status__c}" />
+                        <label class="slds-form-element__label">
+                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}
+                        </label>
+                        <force:inputField value="{!v.opp.npsp__Acknowledgment_Status__c}" />
                     </lightning:layoutItem>
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                         <label class="slds-form-element__label">
@@ -247,14 +238,13 @@
                         </label>
                         <lightning:input
                             variant="label-hidden"
-                            value="{!v.di.Donation_Honoree_Name__c}" />
+                            value="{!v.opp.npsp__Honoree_Name__c}" />
                     </lightning:layoutItem>
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                         <label class="slds-form-element__label">
                             {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Contact__c}
                         </label>
-                        <force:inputField
-                            value="{!v.di.Donation_Honoree_Contact__c}" />
+                        <force:inputField value="{!v.opp.npsp__Honoree_Contact__c}" />
                     </lightning:layoutItem>
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                         <label class="slds-form-element__label">
@@ -262,7 +252,7 @@
                         </label>
                         <lightning:input
                             variant="label-hidden"
-                            value="{!v.di.Notification_Recipient_Name__c}" />
+                            value="{!v.opp.npsp__Notification_Recipient_Name__c}" />
                     </lightning:layoutItem>
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                         <label class="slds-form-element__label">
@@ -270,7 +260,7 @@
                         </label>
                         <lightning:input
                             variant="label-hidden"
-                            value="{!v.di.Donation_Notification_Message__c}" />
+                            value="{!v.opp.npsp__Notification_Message__c}" />
                     </lightning:layoutItem>
                 </lightning:layout>
             </lightning:layoutItem>
@@ -281,7 +271,7 @@
                     onclick="{!c.expandMatchingSection}">
                     <lightning:icon iconName="{!v.expandMatching == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
                         size="x-small"
-                        alternativeText="Toggle Matching Gift Information" />Matching Gift
+                        alternativeText="Toggle Matching Gift Information" />{!$Label.c.Gift_Matching_Gift}
                 </button>
             </lightning:layoutItem>
 
@@ -293,31 +283,30 @@
                         </label>
                         <lightning:input
                             variant="label-hidden"
-                            value="{!v.di.Donation_Matching_Gift_Employer__c}" />
+                            value="{!v.opp.npsp__Matching_Gift_Employer__c}" />
                     </lightning:layoutItem>
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                         <label class="slds-form-element__label">
                             {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Account__c}
                         </label>
-                        <force:inputField 
-                            value="{!v.di.Donation_Matching_Gift_Account__c}" />
+                        <force:inputField value="{!v.opp.npsp__Matching_Gift_Account__c}" />
                     </lightning:layoutItem>
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                         <label class="slds-form-element__label">
                             {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift__c}
                         </label>
-                        <force:inputField 
-                            value="{!v.di.Donation_Matching_Gift__c}" />
+                        <force:inputField value="{!v.opp.npsp__Matching_Gift__c}" />
                     </lightning:layoutItem>
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.Donation_Matching_Gift_Status__c}" 
-                            fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Status__c}" 
-                            selectedVal="{!v.di.Donation_Matching_Gift_Status__c}" />
+                        <label class="slds-form-element__label">
+                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Status__c}
+                        </label>
+                        <force:inputField value="{!v.opp.npsp__Matching_Gift_Status__c}" />
                     </lightning:layoutItem>
                 </lightning:layout>
             </lightning:layoutItem>
 
-            <c:giftPaymentScheduler sectionTitle="Payment Scheduler"
+            <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
                 paymentList="{!v.payments}"
                 objsToDelete="{!v.objsToDelete}"
                 rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
@@ -326,7 +315,7 @@
                 objectFieldData="{!v.objectFieldData}"
                 giftModel="{!v.giftModel}" />
 
-            <c:giftFormRelated sectionTitle="Soft Credits"
+            <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
                 itemList="{!v.partialCredits}"
                 objsToDelete="{!v.objsToDelete}"
                 objectName="npsp__Partial_Soft_Credit__c"
@@ -341,7 +330,7 @@
                 buttonTitle="Add New Soft Credit"
                 giftModel="{!v.giftModel}" />
 
-            <c:giftFormRelated sectionTitle="Allocation"
+            <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                 itemList="{!v.allocs}"
                 objsToDelete="{!v.objsToDelete}"
                 objectName="npsp__Allocation__c"

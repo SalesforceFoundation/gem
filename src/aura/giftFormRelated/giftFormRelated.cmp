@@ -13,7 +13,7 @@
     <aura:attribute type="sObject[]" name="itemList" />
     <aura:attribute type="sObject[]" name="rowList" default="[]" />
     
-    <aura:attribute type="GiftEntryFormController.GiftFormModel" name="giftModel" />
+    <aura:attribute type="Object" name="giftModel" />
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="buttonTitle" default="Add New" />
@@ -52,25 +52,24 @@
                 </lightning:layoutItem>
             </aura:if>
             
-            <lightning:layoutItem size="12" class="{!v.amountError ? '' : 'slds-hidden'}">
-                <div class="{!v.messageIsError == true 
-                    ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error' 
-                    : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}" 
-                    role="alert">
-                    <span class="slds-assistive-text">Amount error</span>
-                    <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
-                        <lightning:icon iconName="{!v.messageIsError == true 
-                            ? 'utility:error' 
-                            : 'utility:warning'}" 
-                            variant="inverse"
-                            size="x-small" />
-                    </span>
-                    <h2>{!v.amountError}</h2>
-                </div>
-            </lightning:layoutItem>
-
             <lightning:layoutItem size="12" class="{!v.expandSection == true ? '' : 'slds-hidden'}">
                 <lightning:layout multipleRows="true" horizontalAlign="spread">
+                    <lightning:layoutItem size="12" class="{!v.amountError ? '' : 'slds-hidden'}">
+                        <div class="{!v.messageIsError == true 
+                            ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error' 
+                            : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}" 
+                            role="alert">
+                            <span class="slds-assistive-text">Amount error</span>
+                            <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+                                <lightning:icon iconName="{!v.messageIsError == true 
+                                    ? 'utility:error' 
+                                    : 'utility:warning'}" 
+                                    variant="inverse"
+                                    size="x-small" />
+                            </span>
+                            <h2>{!v.amountError}</h2>
+                        </div>
+                    </lightning:layoutItem>
                     {!v.body}
                     <lightning:layoutItem padding="around-small" size="12">
                         <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />

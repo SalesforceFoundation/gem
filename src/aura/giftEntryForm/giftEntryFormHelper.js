@@ -1,5 +1,5 @@
 ({
-    getDonationInformation: function(component, helper, oppId){
+    getDonationInformation: function(component, oppId){
         // Make changes if a recordId was provided (Edit mode)
         if(oppId){
             this.changeSubmitText(component, $A.get('$Label.c.Gift_Update'));
@@ -14,26 +14,23 @@
             var state = response.getState();
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
-                
-                // console.log('From init'); 
-                // console.log(giftModel); 
 
                 component.set('v.giftModel', giftModel);
                 component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
 
-                helper.handlePicklistSetup(component, giftModel.picklistValues);
+                this.handlePicklistSetup(component, giftModel.picklistValues);
 
                 // Setup any default form values
-                helper.setDefaults(component, helper, giftModel.opp);
-                helper.checkValidation(component);
+                this.setDefaults(component, giftModel.opp);
+                this.checkValidation(component);
 
             } else if (state === 'ERROR') {
-                helper.handleError(component, response);
+                this.handleError(component, response);
             }
         });
         $A.enqueueAction(getModelAction);
     },
-    setDefaults: function(component, helper, opp){
+    setDefaults: function(component, opp){
         // For new forms, set Date to Today, otherwise use existing value
         var curDate = component.get('v.di.npsp__Donation_Date__c');
         if(!curDate){
@@ -50,8 +47,7 @@
             component.set('v.di.npsp__Donation_Donor__c', 'Contact1');
         }
     },
-    handlePicklistSetup: function(component, picklistOptions, helper){
-        // var picklistOptions = response.getReturnValue();
+    handlePicklistSetup: function(component, picklistOptions){
         // Add 'None' option to start of each picklist
         var noneOption = component.get('v.picklistNoneText');
         var noneObj = {value:'', label:noneOption};
@@ -84,8 +80,6 @@
         }
     },
     redirectToSobject: function(component, objId){
-        // console.log('Redirect to:'); 
-        // console.log(objId); 
         var event = $A.get('e.force:navigateToSObject');
         event.setParams({
             recordId: objId
@@ -99,28 +93,6 @@
         });
         event.fire();
     },
-    getImportedDonationId: function(component, dataImportObjId, redirectAfter){
-        var action = component.get('c.getOpportunityIdFromImport');
-        action.setParams({
-            diObjId: dataImportObjId
-        });
-
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === 'SUCCESS') {
-                var oppId = response.getReturnValue();
-                component.set('v.oppId', oppId);
-                //console.log('New opp ID: ' + oppId);
-                if(redirectAfter){
-                    this.redirectToSobject(component, oppId);
-                }
-            } else if (state === 'ERROR') {
-                this.handleError(component, response);
-            }
-        });
-
-        $A.enqueueAction(action);
-    },
     handleSaveGift: function(component){
         component.set('v.showSpinner', true);
         var action = component.get('c.saveGift');
@@ -133,14 +105,10 @@
             var state = response.getState();
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
-                
-                // console.log('Gift Model about to be overwritten by handleSaveGift'); 
-                // console.log(giftModel); 
-
                 component.set('v.giftModel', giftModel);
                 var oppId = component.find('oppId').get('v.value');
 
-                this.showSaveToast('Details Saved', 'Testing message');
+                this.showSaveToast('Details Saved', 'Your gift has been added');
                 this.redirectToSobject(component, oppId);
             } else if (state === 'ERROR') {
                 this.handleError(component, response);
@@ -163,14 +131,11 @@
         var donorType = component.get('v.di.npsp__Donation_Donor__c');
         var donorExists = false;
 
+        // Make sure a donor has been provided
         if(donorType == 'Account1' || !donorType){
-            // donorExists = donorExists || this.checkFields(component, 'requiredAccountField', false);
             donorExists = donorExists || this.checkFields(component, 'accountLookup', true);
         }
         if(donorType == 'Contact1' || !donorType) {
-            // Check if Contact1 Firstname and Lastname are filled in
-            // donorExists = donorExists || this.checkFields(component, 'requiredContactField', true);
-            // Check any other donor fields we could use
             donorExists = donorExists || this.checkFields(component, 'contactLookup', true);
         }
 
@@ -201,20 +166,10 @@
         }
         findResult = this.singleInputToArray(findResult);
         var validationResult = findResult.reduce(function (validSoFar, inputCmp) {
-            // lightning:inputField can use reportValidity
-            //TODO: How to check force:inputField for disabled?
-            // var disabled = inputCmp.get('v.disabled');
-            // if(disabled){
-            //     return validSoFar;
-            // }
             var fieldVal = inputCmp.get('v.value');
-            // if(fieldId == 'accountLookup'){
-            //     console.log(fieldVal); 
-            // }
             var isValid = fieldVal || fieldVal === false;
             if(showErrors && typeof inputCmp.reportValidity === 'function'){
                 var validMsg = inputCmp.reportValidity();
-                // console.log(validMsg); 
             }
             if(!allMustBeValid && (isValid || validSoFar)){
                 // We only need one of these fields filled in
@@ -239,7 +194,33 @@
                 this.setErrorMessage(component, errorMsg);
             }
         } else {
-            this.setErrorMessage(component, 'Unknown error');
+            this.setErrorMessage(component, $A.get('$Label.c.Error_Unknown'));
+        }
+    },
+    setOppToDiMap: function(component){
+        var nsFieldPrefix = component.get('v.namespaceFieldPrefix');
+        var fieldMap = {
+            'npe01__Do_Not_Automatically_Create_Payment__c': nsFieldPrefix + 'Do_Not_Automatically_Create_Payment__c',
+            'npsp__Acknowledgment_Status__c': nsFieldPrefix + 'Donation_Acknowledgment_Status__c',
+            'npsp__Honoree_Contact__c': nsFieldPrefix + 'Donation_Honoree_Contact__c',
+            'npsp__Honoree_Name__c': nsFieldPrefix + 'Donation_Honoree_Name__c',
+            'npsp__Matching_Gift__c': nsFieldPrefix + 'Donation_Matching_Gift__c',
+            'npsp__Matching_Gift_Account__c': nsFieldPrefix + 'Donation_Matching_Gift_Account__c',
+            'npsp__Matching_Gift_Employer__c': nsFieldPrefix + 'Donation_Matching_Gift_Employer__c',
+            'npsp__Matching_Gift_Status__c': nsFieldPrefix + 'Donation_Matching_Gift_Status__c',
+            'npsp__Notification_Message__c': nsFieldPrefix + 'Donation_Notification_Message__c',
+            'CampaignId': nsFieldPrefix + 'Donation_Primary_Campaign__c',
+            'npsp__Tribute_Type__c': nsFieldPrefix + 'Donation_Tribute_Type__c',
+            'npsp__Notification_Recipient_Name__c': nsFieldPrefix + 'Notification_Recipient_Name__c'
+        };
+
+        component.set('v.oppToDiFieldMap', fieldMap);
+    },
+    mapOppToDi: function(component, di, opp){
+        var fieldMap = component.get('v.oppToDiFieldMap');
+        for(var field in fieldMap){
+            var diField = fieldMap[field];
+            di[diField] = opp[field];
         }
     },
     fillJsonField: function(component) {
@@ -254,9 +235,17 @@
         }
 
         var giftModel = component.get('v.giftModel');
-
-        // Set the fields on the giftModal object
+        var opp = this.proxyToObj(component.get('v.opp'));
         var di = this.proxyToObj(component.get('v.di'));
+
+        if(giftModel.payments && giftModel.payments.length > 0){
+            // Payments are being scheduled, do not create one for the full donation
+            opp.npe01__Do_Not_Automatically_Create_Payment__c = true;
+        }
+
+        // Map fields from Opportunity to DataImport
+        // This is done to avoid referencing Adv namespace fields in markup
+        this.mapOppToDi(component, di, opp);
         
         var objsToDelete = this.proxyToObj(component.get('v.objsToDelete'));
         giftModel['di'] = di;
@@ -266,15 +255,7 @@
         giftModel['objNameToApiToLabel'] = {};
         giftModel['picklistValues'] = {};
 
-        if(giftModel.payments && giftModel.payments.length > 0){
-            // Payments are being scheduled, do not create one for the full donation
-            giftModel['di'].Do_Not_Automatically_Create_Payment__c = true;
-        }
-
         var giftModelString = JSON.stringify(giftModel);
-        // console.log(giftModelString);
-
-        // component.set('v.jsonObjectString', jsonObjString);
         component.set('v.giftModelString', giftModelString);
         return allRowsValid;
     },
@@ -296,25 +277,11 @@
         var formWrapper = component.find('formWrapper');
         return formWrapper.find({instancesOf:rowCmpName});
     },
-    getAllForceInputs: function(component){
-        var formWrapper = component.find('formWrapper');
-        return formWrapper.find({instancesOf:'force:inputField'});
-    },
-    updateInputUI: function(component){
-        var inputArray = this.getAllForceInputs(component);
-        for(var i=0; i<inputArray.length; i++){
-            var field = inputArray[i];
-            this.updateFieldUI(field);
-        }
-        // Refreshes the whole page
-        //$A.get('e.force:refreshView').fire();
-    },
     scrollToTop: function(){
         window.scrollTo(0, 0);
     },
     updateFieldUI: function(field){
         var inputBody = field.get('v.body')[0];
-        // console.log(inputBody); 
         if(inputBody.updateValues){
             inputBody.updateValues();
         }

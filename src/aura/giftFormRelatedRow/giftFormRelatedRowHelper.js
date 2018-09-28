@@ -30,7 +30,6 @@
         
         // Show error messages if required fields are blank
         var reqFields = component.find('requiredField');
-        //console.log(reqFields); 
 
         // The aura:id of 'noDuplicates' is used to prevent duplicate values across rows
         var noDuplicatesList = component.find('noDuplicates');
@@ -84,14 +83,13 @@
         }
 
         var fieldVal = inputCmp.get('v.value');
-        //console.log(fieldVal);
         var isValid = fieldVal || fieldVal === false;
 
         if(checkDupes){
             // Check for duplicate values
             if(validationInfo.noDuplicateValueList.indexOf(fieldVal) > -1){
                 component.set('v.showError', true);
-                component.set('v.errorMessage', 'Duplicate values are not allowed:');
+                component.set('v.errorMessage', $A.get('$Label.c.Error_Duplicate_Value'));
                 isValid = false;
                 // This value duplicates another field, prevent it
             } else {
@@ -112,18 +110,9 @@
 
         return isValid && validationInfo.validSoFar;
     },
-    setRowAmt: function(component, newAmt){
-        var amtField = component.get('v.amtField');
-		var item = this.proxyToObj(component.get('v.item'));
-		if(item && amtField && item[amtField]){
-			item[amtField] = newAmt;
-        }
-        component.set('v.item', item);
-        this.amountCheck(component);
-    },
     getRowAmt: function(component){
         var amtField = component.get('v.amtField');
-		var item = this.proxyToObj(component.get('v.item'));
+        var item = this.proxyToObj(component.get('v.item'));
         var rowAmt = null;
 		if(item && amtField && item[amtField]){
 			rowAmt = item[amtField];

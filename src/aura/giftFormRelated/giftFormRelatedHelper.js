@@ -35,14 +35,14 @@
                     body.push(relatedCmp);
                     component.set('v.body', body);
 
-                    // Could clean this up by only calling after final item is added
+                    // TODO Could clean this up by only calling after final row is added
                     helper.getAmtTotal(component);
                 }
                 else if (status === 'INCOMPLETE') {
-                    console.log('No response from server or client is offline.')
+                    console.log($A.get('$Label.c.Error_Offline'));
                 }
                 else if (status === 'ERROR') {
-                    console.log('Error: ' + errorMessage);
+                    console.log($A.get('$Label.c.Error') + ': ' + errorMessage);
                 }
             }
         );
@@ -60,11 +60,12 @@
         var itemList = component.get('v.itemList');
         itemList = this.proxyToObj(itemList);
 
-        for(var i=0; i<itemList.length; i++){
-            this.handleAddRow(component, helper, itemList[i], i);
+        if(itemList instanceof Array){
+            for(var i=0; i<itemList.length; i++){
+                this.handleAddRow(component, helper, itemList[i], i);
+            }
         }
         component.set('v.showAmountError', false);
-        //component.set('v.blockItemChangeEvent', false);
     },
     handleAmtChangeHelper: function(component){
         var amountTotal = this.getAmtTotal(component);
@@ -98,6 +99,7 @@
 
         // If amounts are now valid, check validation of the form
         if(!preventSubmit && prevSubmitStatus){
+            // Potential issue when re-calculating payment list, runs unneeded validation
             this.sendValidateMessage();
         }
 
@@ -124,9 +126,6 @@
         for(var i=0; i < relatedRows.length; i++){
             // For each remaining row, reset its index and set the first to show labels
             var thisRow = relatedRows[i];
-            // console.log('thisRow'); 
-            // console.log(thisRow); 
-
             if(nextRowShowLabels){
                 thisRow.set('v.showLabels', true);
                 nextRowShowLabels = false;
@@ -136,7 +135,6 @@
                 var objName = component.get('v.objectName');
                 var thisItem = thisRow.get('v.item');
                 thisItem = helper.proxyToObj(thisItem);
-                // console.log(thisItem); 
                 if(thisItem.Id != null){
                     // Required attribute to delete a list of generic sobjects
                     thisItem['attributes'] = {'type':objName};
@@ -150,21 +148,12 @@
                 thisRow.destroy();
             }
         }
-        // console.log(objsToDelete); 
         component.set('v.objsToDelete', objsToDelete);
         component.set('v.rowList', rowList);
         component.set('v.body', body);
 
         // Update error message
         component.set('v.checkAmountTotals', true);
-    },
-    setOppIdPlaceholder: function(component, itemObj, oppFieldName){
-        // Set the opportunity field to a placeholder, which gets replaced in Apex
-        var curVal = itemObj[oppFieldName];
-        if(!curVal){
-            var oppPlaceholder = $A.get('$Label.c.Gift_Donation_ID_Placeholder');
-            itemObj[oppFieldName] = oppPlaceholder;
-        }
     },
     updateModelObject: function(component, arrayList){
         var attrName = component.get('v.modelAttribute');
@@ -173,9 +162,6 @@
             arrayList = null;
         }
         component.set('v.giftModel.'+attrName, arrayList);
-        // console.log('JSON set:');
-        // jsonObj = component.get('v.jsonObj');
-        // console.log(JSON.stringify(jsonObj));
     },
     validateRows: function(component){
         var preventSubmit = component.get('v.preventSubmit');

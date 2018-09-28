@@ -1,26 +1,26 @@
 ({
+	doInit: function(component, event, helper) {
+		// Set the credit options
+		var fullOption = $A.get('$Label.c.Full');
+		var partialOption = $A.get('$Label.c.Partial');
+		var typeOptions = 
+			[{'label': fullOption, 'value': fullOption},{'label': partialOption, 'value': partialOption}];
+		component.set('v.typeOptions', typeOptions);
+
+		// If loading data, checks the amounts
+		helper.handleAmountCheckHelper(component);
+	},
 	handleTypeChange: function(component, event, helper) {
 		var newType = event.getParam('value');
 		var donAmt = component.get('v.donationAmt');
 		if(newType == 'Full' && donAmt){
 			component.set('v.item.npsp__Amount__c', donAmt);
-			// Also call the event from the parent row component
+			// Also call the event from the extended giftFormRelatedRow component
 			helper.amountCheck(component, event, helper);
 		}
 	},
 	handleAmountCheck: function(component, event, helper) {
-		// Also call the event from the parent row component
-		helper.amountCheck(component, event, helper);
-		var donAmt = component.get('v.donationAmt');
-		var newAmt = component.get('v.item.npsp__Amount__c');
-		if(!newAmt){
-			return;
-		}
-		if(newAmt == donAmt){
-			component.set('v.creditType', 'Full');
-		} else {
-			component.set('v.creditType', 'Partial');
-		}
+		helper.handleAmountCheckHelper(component);
 	},
 	handleDonationChange: function(component, event, helper) {
 		var newAmt = event.getParam('value');

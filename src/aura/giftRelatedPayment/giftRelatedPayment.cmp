@@ -1,4 +1,5 @@
 <aura:component extends="c:giftFormRelatedRow">
+
     <aura:attribute name="item" 
         type="npe01__OppPayment__c" 
         default="{sobjectType:'npe01__OppPayment__c'}" />

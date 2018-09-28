@@ -42,7 +42,6 @@
         }
     },
     handleMessage: function(component, event, helper){
-        var message = event.getParam('message');
         var channel = event.getParam('channel');
 
         if(channel == 'deleteRowEvent'){

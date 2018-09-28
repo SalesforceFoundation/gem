@@ -37,12 +37,12 @@
 @isTest
 private class GiftEntryFormController_TEST {
 
-    private static String acctName = 'Test Account';
+    private static String acctName = 'Test Account' + Datetime.now().getTime();
     private static String cFirst = 'Testfirst';
     private static String cLast = 'Testlast';
     private static String c2First = 'Secondname';
     private static String c2Last = 'Secondlast';
-    private static String oppName = 'Test Opp';
+    private static String oppName = 'Test Opp' + Datetime.now().getTime();
     private static String openStage = 'Prospecting';
     private static String openStage2 = 'Qualification';
     private static String tributeName = 'Tribute Name';

@@ -15,6 +15,41 @@
         <value>Error</value>
     </labels>
     <labels>
+        <fullName>Error_Duplicate_Value</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Duplicate values are not allowed</shortDescription>
+        <value>Duplicate values are not allowed:</value>
+    </labels>
+    <labels>
+        <fullName>Error_Offline</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No response from server or client is offline</shortDescription>
+        <value>No response from server or client is offline</value>
+    </labels>
+    <labels>
+        <fullName>Error_Unknown</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unknown Error</shortDescription>
+        <value>Unknown Error</value>
+    </labels>
+    <labels>
+        <fullName>Full</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Full</shortDescription>
+        <value>Full</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Allocations</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Allocations</shortDescription>
+        <value>Allocations</value>
+    </labels>
+    <labels>
         <fullName>Gift_Amounts_Do_Not_Match</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -50,11 +85,32 @@
         <value>Save</value>
     </labels>
     <labels>
+        <fullName>Gift_Credit_Type</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Credit Type</shortDescription>
+        <value>Credit Type</value>
+    </labels>
+    <labels>
         <fullName>Gift_Donation_ID_Placeholder</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Gift Donation ID Placeholder</shortDescription>
         <value>OpportunityIdPlaceholder</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Donation_Information</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donation Information</shortDescription>
+        <value>Donation Information</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Donor_Information</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Information</shortDescription>
+        <value>Donor Information</value>
     </labels>
     <labels>
         <fullName>Gift_Donation_Locked</fullName>
@@ -71,11 +127,39 @@
         <value>Donor information is required.</value>
     </labels>
     <labels>
+        <fullName>Gift_Donor_Type</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Type</shortDescription>
+        <value>Donor Type</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Edit_Selected_Donor</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Edit Selected Donor</shortDescription>
+        <value>Edit Selected Donor</value>
+    </labels>
+    <labels>
         <fullName>Gift_Form_Error</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Error on Form</shortDescription>
         <value>Error on Form</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Matching_Gift</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Matching Gift</shortDescription>
+        <value>Matching Gift</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Payment_Scheduler</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Payment Scheduler</shortDescription>
+        <value>Payment Scheduler</value>
     </labels>
     <labels>
         <fullName>Gift_Saved_Message</fullName>
@@ -92,11 +176,39 @@
         <value>Show data matching results before submitting?</value>
     </labels>
     <labels>
+        <fullName>Gift_Soft_Credits</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Soft Credits</shortDescription>
+        <value>Soft Credits</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Tribute_Information</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Tribute Information</shortDescription>
+        <value>Tribute Information</value>
+    </labels>
+    <labels>
         <fullName>Gift_Update</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Gift Update</shortDescription>
         <value>Update Gift</value>
+    </labels>
+    <labels>
+        <fullName>Partial</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Partial</shortDescription>
+        <value>Partial</value>
+    </labels>
+    <labels>
+        <fullName>Remove</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Remove</shortDescription>
+        <value>Remove</value>
     </labels>
     <labels>
         <fullName>Warning</fullName>

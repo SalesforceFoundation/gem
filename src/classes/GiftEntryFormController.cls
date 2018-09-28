@@ -205,9 +205,6 @@ public class GiftEntryFormController {
                 giftModel.partialCredits = partialCredits;
             }
 
-            System.debug('giftModel from init:'); 
-            System.debug(giftModel); 
-
             return giftModel;
 
         } catch(Exception e){
@@ -290,7 +287,6 @@ public class GiftEntryFormController {
             }
 
             giftModel.oppId = oppId;
-            System.debug(giftModel);
             return giftModel;
 
         } catch(Exception e){
@@ -422,10 +418,6 @@ public class GiftEntryFormController {
         List<npsp__DataImport__c> listDI = 
             Database.query('SELECT '+ allDIFields +' FROM npsp__DataImport__c WHERE Id = :diObjId');
 
-        // System.debug(diSettings);
-        // System.debug(diObjId);
-        // System.debug(listDI); 
-
         npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
         if(!dryRunMode){
             //processJSONList(listDI);
@@ -476,9 +468,6 @@ public class GiftEntryFormController {
                 return new GiftFormModel(null);
             }
 
-            System.debug('BEFORE processing: '); 
-            System.debug(giftModelString); 
-
             // First, remove attributes passed from Lightning that can't be deserialized
             String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
             // Now remove related lookup object attributes, we can't upsert with the Id AND the object
@@ -488,15 +477,8 @@ public class GiftEntryFormController {
 
             giftModelString = giftModelString.replaceAll(sobjectTypeRegex, '');
             giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
-            
-            System.debug('AFTER Regex: '); 
-            System.debug(giftModelString); 
 
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
-
-            System.debug('****** giftModel:'); 
-            System.debug(giftModel.di); 
-
             // TODO: Loop through and remove objects of a certain depth
 
             return giftModel;
@@ -542,7 +524,6 @@ public class GiftEntryFormController {
             String oppId = di.npsp__DonationImported__c;
             thisList = new List<SObject>();
             objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(di.Post_Process_Object_JSON__c);
-            System.debug(objNameToObjList);
             // For each objet type included, add the list
             for(String objName : objNameToObjList.keySet()){
                 Object objList = objNameToObjList.get(objName);
@@ -552,7 +533,6 @@ public class GiftEntryFormController {
                     if(oppId != null){
                         String oppIdPlaceholderRegex = Label.Gift_Donation_ID_Placeholder;
                         objListString = objListString.replaceAll(oppIdPlaceholderRegex, oppId);
-                        System.debug(objListString);
                     }
                     Type listType = Type.forName('List<' + objName + '>');
                     thisList = (List<SObject>)JSON.deserialize(objListString, listType);

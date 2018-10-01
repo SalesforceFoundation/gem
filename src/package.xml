@@ -75,8 +75,8 @@
         <members>Gift_Credit_Type</members>
         <members>Gift_Donation_ID_Placeholder</members>
         <members>Gift_Donation_Information</members>
-        <members>Gift_Donor_Information</members>
         <members>Gift_Donation_Locked</members>
+        <members>Gift_Donor_Information</members>
         <members>Gift_Donor_Required</members>
         <members>Gift_Donor_Type</members>
         <members>Gift_Edit_Selected_Donor</members>
@@ -84,6 +84,8 @@
         <members>Gift_Matching_Gift</members>
         <members>Gift_Payment_Scheduler</members>
         <members>Gift_Saved_Message</members>
+        <members>Gift_Save_Message_Detail</members>
+        <members>Gift_Save_Message_Title</members>
         <members>Gift_Show_Matching</members>
         <members>Gift_Soft_Credits</members>
         <members>Gift_Tribute_Information</members>

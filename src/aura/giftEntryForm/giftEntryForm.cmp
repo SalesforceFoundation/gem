@@ -134,13 +134,10 @@
             <lightning:layoutItem size="12">
                 <lightning:layout multipleRows="true">
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="show-required slds-form-element__label">
+                        <label class="slds-form-element__label">
                             {!v.objectFieldData.objectLabels.Opportunity.Name}
                         </label>
-                        <lightning:input aura:id="requiredField" 
-                            required="true"
-                            variant="label-hidden"
-                            onchange="{!c.handleFieldChange}"
+                        <lightning:input variant="label-hidden"
                             value="{!v.di.npsp__Donation_Name__c}" />
                     </lightning:layoutItem>
 
@@ -170,15 +167,15 @@
                     </lightning:layoutItem>
 
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
-                            fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}" 
-                            selectedVal="{!v.di.npsp__Payment_Method__c}" />
-                    </lightning:layoutItem>
-
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                         <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}" 
                             fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}" 
                             selectedVal="{!v.di.npsp__Donation_Stage__c}" />
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
+                            fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}" 
+                            selectedVal="{!v.di.npsp__Payment_Method__c}" />
                     </lightning:layoutItem>
 
                     <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">

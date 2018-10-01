@@ -31,9 +31,9 @@
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}</label>
+                <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}</label>
             </aura:if>
-            <force:inputField aura:id="requiredField" 
+            <force:inputField aura:id="methodField" 
                 value="{!v.item.npe01__Payment_Method__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">

@@ -9,6 +9,13 @@
 		if(isPaid){
 			payDate = component.get('v.item.npe01__Scheduled_Date__c');
 		}
+		// Set the hidden Payment Date field if marked paid
 		paymentDate.set('v.value', payDate);
+
+		// Set the Payment Method field to 'required' if payment is paid
+		var methodInput = component.find('methodField');
+		if(methodInput){
+			methodInput.set("v.required", isPaid);
+		}
 	}
 })

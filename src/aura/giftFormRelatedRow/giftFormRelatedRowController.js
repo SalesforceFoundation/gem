@@ -3,7 +3,7 @@
 		// Add the new item to the related array
 		helper.addRowHelper(component);
 
-		var inputs = component.find({ instancesOf : 'lightning:input' });
+		var inputs = helper.getInputs(component);
 		if(inputs.length > 0){
 			var firstInput = inputs[0];
 			if(typeof firstInput.focus === 'function'){

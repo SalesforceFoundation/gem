@@ -33,6 +33,9 @@
 
         // The aura:id of 'noDuplicates' is used to prevent duplicate values across rows
         var noDuplicatesList = component.find('noDuplicates');
+
+        // TODO: Check for required inputs, find function isn't returning inputs right now
+        // var inputFields = helper.getInputs(component);
         
         if(!reqFields && !noDuplicatesList){
             return true;
@@ -67,6 +70,9 @@
         }
 
         return validForm && duplicateCheck;
+    },
+    getInputs: function(component){
+        return component.find({ instancesOf : 'lightning:input' });
     },
     singleInputToArray: function(findResult){
         // Convert a single input to an array for use in reduce functions

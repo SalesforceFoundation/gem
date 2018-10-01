@@ -108,7 +108,8 @@
                 component.set('v.giftModel', giftModel);
                 var oppId = component.find('oppId').get('v.value');
 
-                this.showSaveToast('Details Saved', 'Your gift has been added');
+                this.showSaveToast($A.get('$Label.c.Gift_Save_Message_Title'), 
+                    $A.get('$Label.c.Gift_Save_Message_Detail'));
                 this.redirectToSobject(component, oppId);
             } else if (state === 'ERROR') {
                 this.handleError(component, response);
@@ -132,7 +133,7 @@
         var donorExists = false;
 
         // Make sure a donor has been provided
-        if(donorType == 'Account1' || !donorType){
+        if(donorType == 'Account1' || !donorType){ 
             donorExists = donorExists || this.checkFields(component, 'accountLookup', true);
         }
         if(donorType == 'Contact1' || !donorType) {
@@ -198,6 +199,9 @@
         }
     },
     setOppToDiMap: function(component){
+        // This map is used to take field values from the Opportunity object and set them on the DataImport object
+        // Note: this is only needed to avoid a bug in force:inputField that requires hard-coding the fieldname,
+        // which made including an optional namespace impossible
         var nsFieldPrefix = component.get('v.namespaceFieldPrefix');
         var fieldMap = {
             'npe01__Do_Not_Automatically_Create_Payment__c': nsFieldPrefix + 'Do_Not_Automatically_Create_Payment__c',

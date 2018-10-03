@@ -5,7 +5,7 @@
 		if(!paymentDate){
 			return;
 		}
-		var payDate = '';
+		var payDate = null;
 		if(isPaid){
 			payDate = component.get("v.item.npe01__Scheduled_Date__c");
 		}

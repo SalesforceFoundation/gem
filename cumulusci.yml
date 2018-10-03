@@ -20,34 +20,85 @@ tasks:
             path: dev_config/src
             unmanaged: True
 
-    delete_dev_config:
+    deploy_dev_config_delete:
         description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
             path: dev_config/delete
 
     execute_install_apex:
-        description: Runs most of the install script methods from STG_InstallScript class
+        description: Runs most of the install script methods from Post_Install_Script class
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         options:
             apex: >
                 Post_Install_Script.giftSetup();
                 Post_Install_Script.populateNPSPAccountModel();
 
-    update_admin_profile:
-        class_path: tasks.salesforce.UpdateAdminProfile
+    test_data_dev_org:
+        description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'
+        class_path: cumulusci.tasks.bulkdata.LoadData
+        options:
+            database_url: 'sqlite:///testdata/dev_org/test_data.db'
+            mapping: 'testdata/mapping.yml'
+
+    test_data_delete:
+        description: 'WARNING: Deletes all data in the objects specified in the objects option.'
+        class_path: cumulusci.tasks.bulkdata.DeleteData
+        options:
+            objects:
+                - Opportunity
+                - npe03__Recurring_Donation__c
+                - Case
+                - Contact
+                - Account
+                - npsp__Allocation__c
+                - npsp__General_Accounting_Unit__c
+                - Campaign
+
+    test_data_default_settings:
+        description: Configure the default NPSP Settings for Gift Processing
+        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        options:
+            path: dev_config/scripts/configure_default_settings.cls
+            method: initializeNPSPSettingsForADV();
+
+    test_data_user_setup:
+        description: Sets up Gift Processing Users with correct Profiles
+        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        options:
+            path: dev_config/scripts/configure_default_settings.cls
+            method: AddGiftProcessor();
 
 flows:
     config_apextest:
         steps:
             3: 
                 task: deploy_dev_config
+
     config_dev:
         steps:
             3: 
+                task: deploy_dev_config_delete
+            4: 
                 task: deploy_dev_config
-            4:
-                task: execute_install_apex
+            5:
+                flow: test_data_setup
+
+    config_qa:
+        steps:
+            2:
+                task: None
+            3: 
+                task: deploy_dev_config_delete
+            4: 
+                task: deploy_dev_config
+            5:
+                task: update_admin_profile
+            6:
+                flow: test_data_setup
+            7:
+                flow: test_data_dev_org
+
     config_managed:
         steps:
             3: 
@@ -55,18 +106,36 @@ flows:
                 options:
                     unmanaged: False
     ci_feature:
-      steps:
-        7.1:
-           task: run_tests
-           options:
-               managed: True
-               namespace: hed
-        7.2:
-            task: run_tests
-            options:
-                managed: True
-                namespace: npsp
-               
+        steps:
+            7.1:
+                task: run_tests
+                options:
+                   managed: True
+                   namespace: hed
+            7.2:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: npsp
+
+    test_data_setup:
+        description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
+        steps:
+            1:
+                task: test_data_default_settings
+            2:
+                task: test_data_user_setup
+            3:
+                task: execute_install_apex
+
+    test_data_dev_org:
+        description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
+        steps:
+            1:
+                task: test_data_delete
+            2:
+                task: test_data_dev_org
+
 orgs:
     scratch:
         dev_namespaced:

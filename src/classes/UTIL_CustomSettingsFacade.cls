@@ -131,4 +131,15 @@ public without sharing class UTIL_CustomSettingsFacade {
 
         insert householdsSettings;
     }
+
+    /*******************************************************************************************************
+    * @description Updates the provided Contacts and Orgs settings if not running tests
+    * @return void
+    ********************************************************************************************************/
+    public static void setNPSPOrgContactsSettings(npe01__Contacts_And_Orgs_Settings__c orgContactsSettings) {
+         if (!Test.isRunningTest()) {
+            update orgContactsSettings;
+        }
+    }
+
 }

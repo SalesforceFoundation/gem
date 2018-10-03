@@ -95,7 +95,7 @@ public with sharing class TDTM_Glue {
         // If the cached Trigger handler is empty, then query the database. otherwise just return the cached one.
         if(listTH == null) {
             listTH = [select npsp__Asynchronous__c, npsp__Class__c, npsp__Load_Order__c, npsp__Object__c, npsp__Active__c, npsp__Usernames_to_Exclude__c,
-                    npsp__Trigger_Action__c from npsp__Trigger_Handler__c order by npsp__Load_Order__c];
+                    npsp__Trigger_Action__c, npsp__User_Managed__c from npsp__Trigger_Handler__c order by npsp__Load_Order__c];
 
         }
 
@@ -125,7 +125,7 @@ public with sharing class TDTM_Glue {
         }
         npspTriggerHandlerActiveMap = new Map<String, Boolean>();
         List<npsp__Trigger_Handler__c> listTH = [select npsp__Asynchronous__c, npsp__Class__c, npsp__Load_Order__c, npsp__Object__c, npsp__Active__c, npsp__Usernames_to_Exclude__c,
-                npsp__Trigger_Action__c from npsp__Trigger_Handler__c order by npsp__Load_Order__c];
+                npsp__Trigger_Action__c, npsp__User_Managed__c from npsp__Trigger_Handler__c order by npsp__Load_Order__c];
         if(listTH != null && listTH.size() > 0) {
             for(npsp__Trigger_Handler__c th: listTH) {
                 npspTriggerHandlerActiveMap.put(th.npsp__Class__c, th.npsp__Active__c);
@@ -165,9 +165,7 @@ public with sharing class TDTM_Glue {
                     npspOrgSettings.npe01__One_to_One_RecordTypeID__c != hedaOrgSettings.hed__Account_Processor__c) {
                 npspOrgSettings.npe01__Account_Processor__c = 'One-to-One Individual';
                 npspOrgSettings.npe01__One_to_One_RecordTypeID__c = hedaOrgSettings.hed__Account_Processor__c;
-                if (!Test.isRunningTest()) {
-                    update npspOrgSettings;
-                }
+                UTIL_CustomSettingsFacade.setNPSPOrgContactsSettings(npspOrgSettings);
             }
             return true;
         } else if(hedaOrgSettings.hed__Account_Processor__c == hhAccountRecTypeId) {
@@ -175,9 +173,7 @@ public with sharing class TDTM_Glue {
                     npspOrgSettings.npe01__HH_Account_RecordTypeID__c != hedaOrgSettings.hed__Account_Processor__c) {
                 npspOrgSettings.npe01__Account_Processor__c = 'Household Account';
                 npspOrgSettings.npe01__HH_Account_RecordTypeID__c = hedaOrgSettings.hed__Account_Processor__c;
-                if (!Test.isRunningTest()) {
-                    update npspOrgSettings;
-                }
+                UTIL_CustomSettingsFacade.setNPSPOrgContactsSettings(npspOrgSettings);
             }
             return true;
         } else {

@@ -44,18 +44,25 @@
         // console.log(donationAmt);
         // console.log(amountTotal);
         // If there is a donation amount and a total, and they do not match, show message
-        var amtError = '';
+        var amtError = $A.get("$Label.c.Warning");
         var amountsDoNotMatch = donationAmt && amountTotal && (donationAmt != amountTotal);
-        if(amountTotal > donationAmt && preventAmountSurplus){
-            // Prevent submission of form
-            component.set("v.preventSubmit", true);
-            amtError = $A.get("$Label.c.Gift_Amounts_Greater_than_Donation");
-        } else if(amountsDoNotMatch && preventAmountDeficit){
-            component.set("v.preventSubmit", false);
-            amtError = $A.get("$Label.c.Gift_Amounts_Do_Not_Match");
+        var preventSubmit = false;
+        if(amountTotal > donationAmt){
+            if(preventAmountSurplus){
+                amtError = $A.get("$Label.c.Error");
+                preventSubmit = true;
+            }
+            amtError += ' : ' + $A.get("$Label.c.Gift_Amounts_Greater_than_Donation");
+        } else if(amountsDoNotMatch){
+            if(preventAmountDeficit){
+                amtError = $A.get("$Label.c.Error");
+                preventSubmit = true;
+            }
+            amtError += ' : ' + $A.get("$Label.c.Gift_Amounts_Do_Not_Match");
         } else {
-            component.set("v.preventSubmit", false);
+            amtError = '';
         }
+        component.set("v.preventSubmit", preventSubmit);
         component.set("v.amountError", amtError);
     }
 })

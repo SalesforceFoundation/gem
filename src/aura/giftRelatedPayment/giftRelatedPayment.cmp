@@ -16,7 +16,8 @@
                 onblur="{!c.handleAmountCheck}"
                 name="paymentAmt" 
                 type="number" 
-                label="Amount" variant="label-hidden"
+                label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Amount__c}" 
+                variant="label-hidden"
                 formatter="currency"
                 step="0.01"
                 value="{!v.item.npe01__Payment_Amount__c}" />
@@ -51,7 +52,8 @@
             <lightning:input name="paymentPaid" 
                 type="checkbox" 
                 onchange="{!c.handlePaid}" 
-                label="Paid" variant="label-hidden"
+                label="{!v.objectFieldData.objectLabels.Payment.npe01__Paid__c}" 
+                variant="label-hidden"
                 checked="{!v.item.npe01__Paid__c}" />
         </lightning:layoutItem>
 

@@ -61,10 +61,12 @@
     </types>
     <types>
         <members>Cancel</members>
+        <members>Date_of_First_Payment</members>
         <members>Error</members>
         <members>Error_Duplicate_Value</members>
         <members>Error_Offline</members>
         <members>Error_Unknown</members>
+        <members>Frequency</members>
         <members>Full</members>
         <members>Gift_Allocations</members>
         <members>Gift_Amounts_Do_Not_Match</members>
@@ -90,6 +92,8 @@
         <members>Gift_Soft_Credits</members>
         <members>Gift_Tribute_Information</members>
         <members>Gift_Update</members>
+        <members>Interval</members>
+        <members>Number_of_Payments</members>
         <members>Partial</members>
         <members>Remove</members>
         <members>Warning</members>

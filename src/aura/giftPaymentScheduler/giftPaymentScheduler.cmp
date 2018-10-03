@@ -40,20 +40,24 @@
         <lightning:layout multipleRows="true" horizontalAlign="spread">
 
             <lightning:layoutItem padding="around-small" size="2">
-                Donation Amount:<br/><ui:outputCurrency value="{!v.donationAmt}"/>
+                {!v.objectFieldData.objectLabels.Opportunity.Amount}:<br/>
+                <ui:outputCurrency value="{!v.donationAmt}"/>
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="2">
-                <lightning:input type="number" value="{!v.paymentNum}" label="Number of Payments" step="1" />
+                <lightning:input type="number" 
+                    value="{!v.paymentNum}" 
+                    label="{!$Label.c.Number_of_Payments}" 
+                    step="1" />
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="3">
                 <ui:inputDate class="show-required"
-                    label="Date of First Payment"
+                    label="{!$Label.c.Date_of_First_Payment}"
                     value="{!v.startDate}" 
                     displayDatePicker="true" />
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="1">
                 <lightning:select name="interval" 
-                    label="Interval" 
+                    label="{!$Label.c.Interval}" 
                     value="{!v.intervalNum}">
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -71,7 +75,7 @@
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="2">
                 <lightning:select name="frequency" 
-                    label="Frequency" 
+                    label="{!$Label.c.Frequency}" 
                     value="{!v.intervalFreq}">
                     <option value="Month">Month</option>
                     <option value="Year">Year</option>

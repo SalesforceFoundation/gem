@@ -8,6 +8,13 @@
         <value>Cancel</value>
     </labels>
     <labels>
+        <fullName>Date_of_First_Payment</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Date of First Payment</shortDescription>
+        <value>Date of First Payment</value>
+    </labels>
+    <labels>
         <fullName>Error</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -34,6 +41,13 @@
         <protected>true</protected>
         <shortDescription>Unknown Error</shortDescription>
         <value>Unknown Error</value>
+    </labels>
+    <labels>
+        <fullName>Frequency</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Frequency</shortDescription>
+        <value>Frequency</value>
     </labels>
     <labels>
         <fullName>Full</fullName>
@@ -209,6 +223,20 @@
         <protected>true</protected>
         <shortDescription>Gift Update</shortDescription>
         <value>Update Gift</value>
+    </labels>
+    <labels>
+        <fullName>Interval</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Interval</shortDescription>
+        <value>Interval</value>
+    </labels>
+    <labels>
+        <fullName>Number_of_Payments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Number of Payments</shortDescription>
+        <value>Number of Payments</value>
     </labels>
     <labels>
         <fullName>Partial</fullName>

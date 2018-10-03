@@ -62,7 +62,7 @@
     
 
     <aura:if isTrue="{!v.showSpinner}">
-        <lightning:spinner />
+        <lightning:spinner class="slds-is-fixed" />
     </aura:if>
 
     <div class="slds-card" aura:id="formWrapper">

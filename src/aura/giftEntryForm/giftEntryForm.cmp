@@ -67,12 +67,6 @@
 
     <div class="slds-card" aura:id="formWrapper">
 
-        <aura:if isTrue="{!v.error != null}">
-            <ui:message title="Error" severity="error">
-                {!v.error}
-            </ui:message>
-        </aura:if>
-
         <lightning:layout class="{!v.showForm ? '' : 'slds-hidden'}" 
             multipleRows="true">
 

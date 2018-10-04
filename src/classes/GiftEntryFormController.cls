@@ -362,7 +362,7 @@ public class GiftEntryFormController {
         String plLabel;
         String plValue;
         String optionJson;
-        for( Schema.PicklistEntry pickListVal : ple){
+        for(Schema.PicklistEntry pickListVal : ple){
             plLabel = pickListVal.getLabel();
             plValue = pickListVal.getValue();
             plWrapper = new picklistOptionWrapper(plLabel, plValue);
@@ -379,16 +379,25 @@ public class GiftEntryFormController {
     * @return Id of the Opportunity
     */
     @AuraEnabled
-    public static Id getOpportunityIdFromImport(Id diObjId){
+    public static String getOpportunityIdFromImport(Id diObjId){
         try {
-            npsp__DataImport__c di = [SELECT npsp__DonationImported__c 
+            npsp__DataImport__c di = [SELECT npsp__DonationImported__c,
+                npsp__FailureInformation__c
                 FROM npsp__DataImport__c
                 WHERE Id =: diObjId];
+            if(di.npsp__FailureInformation__c != null){
+                throw returnAuraException(di.npsp__FailureInformation__c);
+            }
             return di.npsp__DonationImported__c;
         } catch(Exception e){
-            System.debug(e);
-            return null;
+            throw returnAuraException(e.getMessage());
         }
+    }
+
+    private static AuraHandledException returnAuraException(String errorMsg){
+        AuraHandledException ex = new AuraHandledException(errorMsg);
+        ex.setMessage(errorMsg);
+        return ex;
     }
 
     /*******************************************************************************************************
@@ -484,7 +493,7 @@ public class GiftEntryFormController {
             return giftModel;
 
         } catch(Exception e){
-            throw e;
+            throw returnAuraException(e.getMessage());
         }
     }
 

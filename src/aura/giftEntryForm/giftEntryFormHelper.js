@@ -188,14 +188,15 @@
         return findResult;
     },
     handleError: function(component, response) {
+        component.set('v.showSpinner', false);
         var errors = response.getError();
         if (errors) {
             if (errors[0] && errors[0].message) {
                 var errorMsg = errors[0].message;
-                this.setErrorMessage(component, errorMsg);
+                this.showErrorToast(errorMsg);
             }
         } else {
-            this.setErrorMessage(component, $A.get('$Label.c.Error_Unknown'));
+            this.showErrorToast($A.get('$Label.c.Error_Unknown'));
         }
     },
     setOppToDiMap: function(component){
@@ -269,9 +270,18 @@
             title : titleTxt,
             message: msgText,
             duration:' 5000',
-            key: 'info_alt',
             type: 'success',
             mode: 'dismissible'
+        });
+        toastEvent.fire();
+    },
+    showErrorToast: function(msgText){
+        var toastEvent = $A.get('e.force:showToast');
+        toastEvent.setParams({
+            title : $A.get('$Label.c.Error'),
+            message: msgText,
+            type: 'error',
+            mode: 'sticky'
         });
         toastEvent.fire();
     },
@@ -297,9 +307,6 @@
             findResult[i].set('v.value', '');
             this.updateFieldUI(findResult[i]);
         }
-    },
-    setErrorMessage: function(component, errorMsg){
-        component.set('v.error', errorMsg);
     },
     convertDateToString: function(dateObj){
 		return dateObj.toISOString().split('T')[0];

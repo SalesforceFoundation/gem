@@ -34,7 +34,8 @@
         // The aura:id of 'noDuplicates' is used to prevent duplicate values across rows
         var noDuplicatesList = component.find('noDuplicates');
 
-        // TODO: Check for required inputs, find function isn't returning inputs right now
+        // TODO: Check for required inputs that aren't using aura:id of requiredField
+        // (helper function isn't correctly returning inputs right now)
         // var inputFields = helper.getInputs(component);
         
         if(!reqFields && !noDuplicatesList){
@@ -82,12 +83,6 @@
         return findResult;
     },
     validateField: function(component, inputCmp, validationInfo, checkDupes, helper){
-        var disabled = inputCmp.get('v.disabled');
-        if(disabled){
-            helper.removeError(inputCmp);
-            return validationInfo.validSoFar;
-        }
-
         var fieldVal = inputCmp.get('v.value');
         var isValid = fieldVal || fieldVal === false;
 

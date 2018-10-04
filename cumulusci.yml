@@ -110,6 +110,19 @@ flows:
                     managed: True
                     namespace: npsp
 
+    ci_feature_beta_deps:
+        steps:
+            5:
+                task: run_tests
+                options:
+                   managed: True
+                   namespace: hed
+            6:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: npsp
+
     test_data_setup:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
         steps:

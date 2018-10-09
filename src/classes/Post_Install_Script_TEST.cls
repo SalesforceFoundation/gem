@@ -40,13 +40,13 @@ public with sharing class Post_Install_Script_TEST {
     @isTest
     static void onInstall() {
         //Set HEDA Account Model to Administrative
-        hed__Hierarchy_Settings__c hedaOrgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
-        hedaOrgSettings.hed__Account_Processor__c = UTIL_Describe.getAdminAccRecTypeID();
-        insert hedaOrgSettings;
+        hed__Hierarchy_Settings__c hedaOrgSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
+        hedaOrgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+        hed.UTIL_CustomSettings_API.getSettingsForTests(hedaOrgSettings);
 
         //Set NPSP Account Model to Household
         npe01__Contacts_And_Orgs_Settings__c npspOrgSettings = npsp.UTIL_CustomSettings_API.getContactsSettings();
-        npspOrgSettings.npe01__Account_Processor__c = 'Household Account';
+        npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.HH_ACCOUNT_TYPE;
 
         Test.startTest();
         //Run the install script
@@ -55,7 +55,9 @@ public with sharing class Post_Install_Script_TEST {
 
         //Verify that the NPSP Account Model now becomes One-to-One
         npspOrgSettings = npsp.UTIL_CustomSettings_API.getContactsSettings();
-        system.assertEquals('One-to-One Individual',npspOrgSettings.npe01__Account_Processor__c);
-        system.assertEquals(hedaOrgSettings.hed__Account_Processor__c,npspOrgSettings.npe01__One_to_One_RecordTypeID__c);
+        system.assertEquals(npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE,
+          npspOrgSettings.npe01__Account_Processor__c);
+        system.assertEquals(hedaOrgSettings.hed__Account_Processor__c,
+          npspOrgSettings.npe01__One_to_One_RecordTypeID__c);
     }
 }

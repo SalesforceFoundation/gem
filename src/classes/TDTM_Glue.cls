@@ -143,16 +143,15 @@ public with sharing class TDTM_Glue {
 
         //If adminAccountRecTypeId is empty, try to populate it
         if(String.isBlank(adminAccountRecTypeId)) {
-            adminAccountRecTypeId = UTIL_Describe.getAdminAccRecTypeID();
+            adminAccountRecTypeId = hed.UTIL_Describe_API.getAdminAccRecTypeID();
         }
 
         //If hhAccountRecTypeId is empty, try to populate it
         if(String.isBlank(hhAccountRecTypeId)) {
-            hhAccountRecTypeId = UTIL_Describe.getHhAccRecTypeID();
+            hhAccountRecTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
         }
 
-        //TODO: It is better to use HEDA Custom Setting API to get the Custom Setting
-        hed__Hierarchy_Settings__c hedaOrgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
+        hed__Hierarchy_Settings__c hedaOrgSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
 
         npe01__Contacts_And_Orgs_Settings__c npspOrgSettings = npsp.UTIL_CustomSettings_API.getContactsSettings();
 
@@ -161,17 +160,17 @@ public with sharing class TDTM_Glue {
         }
 
         if(hedaOrgSettings.hed__Account_Processor__c == adminAccountRecTypeId) {
-            if (npspOrgSettings.npe01__Account_Processor__c != 'One-to-One Individual' ||
+            if (npspOrgSettings.npe01__Account_Processor__c != npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE ||
                     npspOrgSettings.npe01__One_to_One_RecordTypeID__c != hedaOrgSettings.hed__Account_Processor__c) {
-                npspOrgSettings.npe01__Account_Processor__c = 'One-to-One Individual';
+                npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE;
                 npspOrgSettings.npe01__One_to_One_RecordTypeID__c = hedaOrgSettings.hed__Account_Processor__c;
                 UTIL_CustomSettingsFacade.setNPSPOrgContactsSettings(npspOrgSettings);
             }
             return true;
         } else if(hedaOrgSettings.hed__Account_Processor__c == hhAccountRecTypeId) {
-            if(npspOrgSettings.npe01__Account_Processor__c != 'Household Account' ||
+            if(npspOrgSettings.npe01__Account_Processor__c != npsp.CAO_Constants_API.HH_ACCOUNT_TYPE ||
                     npspOrgSettings.npe01__HH_Account_RecordTypeID__c != hedaOrgSettings.hed__Account_Processor__c) {
-                npspOrgSettings.npe01__Account_Processor__c = 'Household Account';
+                npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.HH_ACCOUNT_TYPE;
                 npspOrgSettings.npe01__HH_Account_RecordTypeID__c = hedaOrgSettings.hed__Account_Processor__c;
                 UTIL_CustomSettingsFacade.setNPSPOrgContactsSettings(npspOrgSettings);
             }

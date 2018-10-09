@@ -60,8 +60,8 @@ private class NPSP_Account_TDTM_TEST {
 
         acc = [Select Type, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c from Account where Id =: acc.Id];
 
-        system.assertNotEquals('Household', acc.Type);
-        system.assertNotEquals('Household Account', acc.npe01__SYSTEM_AccountType__c);
+        system.assertNotEquals(npsp.CAO_Constants_API.HH_TYPE, acc.Type);
+        system.assertNotEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, acc.npe01__SYSTEM_AccountType__c);
         system.assertNotEquals(true, acc.npe01__SYSTEMISINDIVIDUAL__c);
 
         acc.RecordTypeId = UTIL_Describe.getHhAccRecTypeID();
@@ -72,8 +72,8 @@ private class NPSP_Account_TDTM_TEST {
 
         acc = [Select Type, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c from Account where Id =: acc.Id];
 
-        system.assertEquals('Household', acc.Type);
-        system.assertEquals('Household Account', acc.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(npsp.CAO_Constants_API.HH_TYPE, acc.Type);
+        system.assertEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, acc.npe01__SYSTEM_AccountType__c);
         system.assertEquals(true, acc.npe01__SYSTEMISINDIVIDUAL__c);
     }
 }

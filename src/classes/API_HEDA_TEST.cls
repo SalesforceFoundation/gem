@@ -49,11 +49,11 @@ private class API_HEDA_TEST {
         insert npspHandlers;
 
         //Set HEDA custom setting
-        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = UTIL_Describe.getHhAccRecTypeID()));
+        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID()));
 
         //Set the NPSP Contact setting
         UTIL_CustomSettingsFacade.setNPSPContactsSettingsForTests(new npe01__Contacts_and_Orgs_Settings__c (
-                npe01__Account_Processor__c = 'Household Account',
+                npe01__Account_Processor__c = npsp.CAO_Constants_API.HH_ACCOUNT_TYPE,
                 npe01__Enable_Opportunity_Contact_Role_Trigger__c = true,
                 npe01__Opportunity_Contact_Role_Default_role__c = 'Donor'
         ));
@@ -305,8 +305,8 @@ private class API_HEDA_TEST {
         Contact con = [SELECT Id, AccountId FROM Contact];
 
         Account a = [Select Type, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c from Account where Id =:con.AccountId];
-        system.assertEquals('Household', a.Type);
-        system.assertEquals('Household Account', a.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(npsp.CAO_Constants_API.HH_TYPE, a.Type);
+        system.assertEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, a.npe01__SYSTEM_AccountType__c);
         system.assertEquals(true, a.npe01__SYSTEMISINDIVIDUAL__c);
     }
 
@@ -336,9 +336,9 @@ private class API_HEDA_TEST {
         delete [Select Id from Contact];
 
         //Set HEDA custom setting with Administrative
-        hed__Hierarchy_Settings__c hedaSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
-        hedaSettings.hed__Account_Processor__c = UTIL_Describe.getAdminAccRecTypeID();
-        update hedaSettings;
+        hed__Hierarchy_Settings__c hedaSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
+        hedaSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+        hed.UTIL_CustomSettings_API.getSettingsForTests(hedaSettings);
 
         Contact con = UTIL_UnitTestData_TEST.getContact();
         Test.startTest();
@@ -348,7 +348,7 @@ private class API_HEDA_TEST {
         con = [SELECT Account.npe01__SYSTEM_AccountType__c, Account.npe01__SYSTEMISINDIVIDUAL__c, Account.Type FROM Contact
         WHERE Id =: con.Id];
         system.assertEquals(null, con.Account.Type);
-        system.assertEquals('One-to-One Individual', con.Account.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE, con.Account.npe01__SYSTEM_AccountType__c);
         system.assertEquals(true, con.Account.npe01__SYSTEMISINDIVIDUAL__c);
     }
 
@@ -360,9 +360,9 @@ private class API_HEDA_TEST {
         delete [Select Id from Contact];
 
         //Set HEDA custom setting with Household
-        hed__Hierarchy_Settings__c hedaSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
-        hedaSettings.hed__Account_Processor__c = UTIL_Describe.getHhAccRecTypeID();
-        update hedaSettings;
+        hed__Hierarchy_Settings__c hedaSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
+        hedaSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
+        hed.UTIL_CustomSettings_API.getSettingsForTests(hedaSettings);
 
         Contact con = UTIL_UnitTestData_TEST.getContact();
         Test.startTest();
@@ -371,8 +371,8 @@ private class API_HEDA_TEST {
 
         con = [SELECT Account.npe01__SYSTEM_AccountType__c, Account.npe01__SYSTEMISINDIVIDUAL__c, Account.Type FROM Contact
         WHERE Id =: con.Id];
-        system.assertEquals('Household', con.Account.Type);
-        system.assertEquals('Household Account', con.Account.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(npsp.CAO_Constants_API.HH_TYPE, con.Account.Type);
+        system.assertEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, con.Account.npe01__SYSTEM_AccountType__c);
         system.assertEquals(true, con.Account.npe01__SYSTEMISINDIVIDUAL__c);
     }
 

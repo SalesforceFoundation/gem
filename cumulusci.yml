@@ -155,3 +155,6 @@ orgs:
         dev_namespaced:
             config_file: orgs/dev.json
             namespaced: True
+
+        dev_prerelease:
+            config_file: orgs/dev_prerelease.json

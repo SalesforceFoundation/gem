@@ -118,6 +118,30 @@ flows:
                     managed: True
                     namespace: npsp
 
+    ci_feature_beta_deps:
+        description: When run, the latest version (including betas) of Cumulus and HEDA are installed, and all tests are run.
+        steps:
+            5:
+                task: run_tests
+                options:
+                   managed: True
+                   namespace: hed
+            6:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: npsp
+
+    dev_org_beta_deps:
+        description: Set up an org as a development environment for unmanaged metadata based on the latest version (including betas).
+        steps:
+            1:
+                flow: beta_dependencies
+            2: 
+                flow: deploy_unmanaged
+            3: 
+                flow: config_dev
+
     test_data_setup:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
         steps:
@@ -141,3 +165,6 @@ orgs:
         dev_namespaced:
             config_file: orgs/dev.json
             namespaced: True
+
+        dev_prerelease:
+            config_file: orgs/dev_prerelease.json

@@ -1,0 +1,17 @@
+{
+  "template": "0TTB0000000XH5L",
+  "instance": "CS46",
+  "orgName": "Advancement - Dev Workspace (Pre-release)",
+  "hasSampleData": "true",
+  "orgPreferences": {
+    "enabled": [
+      "ChatterEnabled",
+      "S1DesktopEnabled",
+      "Translation",
+      "DisableParallelApexTesting"
+    ],
+    "disabled": [
+      "S1EncryptedStoragePref2"
+    ]
+  }
+}

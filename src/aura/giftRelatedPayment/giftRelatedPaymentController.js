@@ -1,14 +1,21 @@
 ({
 	handlePaid : function(component, event, helper) {
-		var isPaid = component.get("v.item.npe01__Paid__c");
 		var paymentDate = component.find('paymentDate');
 		if(!paymentDate){
 			return;
 		}
 		var payDate = null;
+		var isPaid = component.get('v.item.npe01__Paid__c');
 		if(isPaid){
-			payDate = component.get("v.item.npe01__Scheduled_Date__c");
+			payDate = component.get('v.item.npe01__Scheduled_Date__c');
 		}
-		paymentDate.set("v.value", payDate);
+		// Set the hidden Payment Date field if marked paid
+		paymentDate.set('v.value', payDate);
+
+		// Set the Payment Method field to 'required' if payment is paid
+		var methodInput = component.find('methodField');
+		if(methodInput){
+			methodInput.set("v.required", isPaid);
+		}
 	}
 })

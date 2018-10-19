@@ -1,51 +1,83 @@
 <aura:component access="global"
     implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
-
+    
     <aura:method name="handleJsonUpdate" />
-    <aura:attribute type="sObject[]" name="itemList" />
+    
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.checkAmountTotals}" action="{!c.handleAmtChange}"/>
-    <aura:handler name="change" value="{!v.picklistOptions}" action="{!c.clickAddRow}"/>
+    <aura:handler name="change" value="{!v.objectFieldData}" action="{!c.handleInitRows}"/>
+    <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
 
-    <aura:attribute type="Map" name="picklistOptions" />
+    <aura:attribute type="sObject[]" name="objsToDelete" />
+    <aura:attribute type="sObject[]" name="itemList" />
+    <aura:attribute type="sObject[]" name="rowList" default="[]" />
+    
+    <aura:attribute type="Object" name="giftModel" />
+    <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="String" name="sectionTitle" />
     <aura:attribute type="String" name="buttonTitle" default="Add New" />
     <aura:attribute type="String" name="objectName" default="npsp__Allocation__c" />
+    <aura:attribute type="String" name="modelAttribute" default="allocs" />
     <aura:attribute type="String" name="rowCmpName" default="c:giftRelatedAllocation" />
-    <aura:attribute type="Object" name="jsonObj" />
-    <aura:attribute type="sObject[]" name="rowList" />
     <aura:attribute type="String[]" name="fieldList" />
     <aura:attribute type="String[]" name="noDuplicateValueList" />
     <aura:attribute type="String" name="oppField" />
+    <aura:attribute type="String" name="amtField" />
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="Decimal" name="amountTotal" />
     <aura:attribute type="String" name="amountError" />
-    <aura:attribute type="Boolean" name="checkAmountTotals" default="true" />
+    <aura:attribute type="Boolean" name="initFinished" default="false" />
+    <aura:attribute type="Boolean" name="checkAmountTotals" default="false" />
     <aura:attribute type="Boolean" name="preventAmountSurplus" default="false" />
     <aura:attribute type="Boolean" name="preventAmountDeficit" default="false" />
     <aura:attribute type="Boolean" name="preventSubmit" default="false" />
-    
-    <aura:if isTrue="{!v.sectionTitle}">
-    <div class="slds-col slds-size_1-of-1">
-        <div class="slds-page-header slds-page-header__title">
-            {!v.sectionTitle}
-        </div>
-    </div>
-    </aura:if>
-    
-    <div class="{!v.amountError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
-        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-            <h2>{!v.amountError}</h2>
-        </div>
-    </div>
+    <aura:attribute type="Boolean" name="blockItemChangeEvent" />
+    <aura:attribute type="Boolean" name="expandSection" default="true" />
+    <aura:attribute type="Boolean" name="messageIsError" default="false" />
 
-    <div aura:id="relatedWrapper" class="slds-col slds-wrap slds-grid">
-        {!v.body}
-    </div>
+    <lightning:layoutItem size="12">
+        <lightning:layout multipleRows="true">
 
-    <div class="slds-col slds-size_1-of-1 slds-p-around_small">
-        <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
-    </div>
+            <aura:if isTrue="{!v.sectionTitle}">
+                <lightning:layoutItem size="12">
+                    <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
+                        aria-expanded="{!v.expandSection}"
+                        onclick="{!c.toggleRelatedSection}">
+                        <lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
+                            size="x-small"
+                            alternativeText="Toggle Section" />
+                            {!v.sectionTitle}
+                    </button>
+                </lightning:layoutItem>
+            </aura:if>
+            
+            <lightning:layoutItem size="12" class="{!v.expandSection == true ? '' : 'slds-hidden'}">
+                <lightning:layout multipleRows="true" horizontalAlign="spread">
+                    <lightning:layoutItem size="12" class="{!v.amountError ? '' : 'slds-hidden'}">
+                        <div class="{!v.messageIsError == true 
+                            ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error' 
+                            : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}" 
+                            role="alert">
+                            <span class="slds-assistive-text">Amount error</span>
+                            <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+                                <lightning:icon iconName="{!v.messageIsError == true 
+                                    ? 'utility:error' 
+                                    : 'utility:warning'}" 
+                                    variant="inverse"
+                                    size="x-small" />
+                            </span>
+                            <h2>{!v.amountError}</h2>
+                        </div>
+                    </lightning:layoutItem>
+                    {!v.body}
+                    <lightning:layoutItem padding="around-small" size="12">
+                        <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:layoutItem>
+
+        </lightning:layout>
+    </lightning:layoutItem>
     
 </aura:component>

@@ -37,10 +37,12 @@
 @isTest
 private class GiftEntryFormController_TEST {
 
+    private static String acctName = 'Test Account' + Datetime.now().getTime();
     private static String cFirst = 'Testfirst';
     private static String cLast = 'Testlast';
     private static String c2First = 'Secondname';
     private static String c2Last = 'Secondlast';
+    private static String oppName = 'Test Opp' + Datetime.now().getTime();
     private static String openStage = 'Prospecting';
     private static String openStage2 = 'Qualification';
     private static String tributeName = 'Tribute Name';
@@ -48,9 +50,145 @@ private class GiftEntryFormController_TEST {
     private static String updateStringTest = 'New Text';
     private static String donationName = 'Test Donation';
     private static Decimal donationAmount = 100;
+    private static String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
     
     @testSetup static void setupGiftEntry() {
     	GiftEntryFormController.insertGiftEntrySettings();
+    }
+
+    private static GiftEntryFormController.GiftFormModel returnGiftModel(){
+        GiftEntryFormController.GiftFormModel giftModel = setModelData(acctName, 
+            cFirst, cLast, oppName, closedWonStage, donationAmount);
+        return giftModel;
+    }
+
+    private static GiftEntryFormController.GiftFormModel setModelData(String acctName, 
+        String cFirst, String cLast, String oppName, String closedWonStage, Decimal donationAmount){
+            GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
+            Account a = new Account(Name=acctName);
+            insert a;
+            Contact c = new Contact(FirstName=cFirst, LastName=cLast);
+            insert c;
+            giftModel.di.npsp__Account1Imported__c = a.Id;
+            giftModel.di.npsp__Contact1Imported__c = c.Id;
+            giftModel.di.npsp__Donation_Name__c = oppName;
+            giftModel.di.npsp__Donation_Date__c = System.today(); 
+            giftModel.di.npsp__Donation_Stage__c = closedWonStage;
+            giftModel.di.npsp__Donation_Amount__c = donationAmount;
+            return giftModel;
+    }
+
+    /*******************************************************************************************************
+    * @description Test creating new Account, Contact and Opportunity via Gift Form
+    */ 
+    @isTest
+    private static void testNewGift() {
+
+        GiftEntryFormController.GiftFormModel giftModel = returnGiftModel();
+    
+        Test.startTest();
+        giftModel = GiftEntryFormController.GiftFormModel.saveDonationInformation(giftModel);
+        Test.stopTest();
+
+        List<Opportunity> opps = [SELECT Id FROM Opportunity 
+            WHERE npsp__Primary_Contact__r.FirstName =: cFirst
+            AND npsp__Primary_Contact__r.LastName =: cLast];
+        System.assert(opps.size() == 1, 'Make sure Opportunity was created and Contact was assigned');
+        Opportunity opp = opps[0];
+
+        List<npe01__OppPayment__c> payments = [SELECT Id FROM npe01__OppPayment__c 
+            WHERE npe01__Opportunity__c =: opp.Id];
+        System.assertEquals(1, payments.size(), 'There should be a payment for the closed donation');
+
+        // Now test loading this gift
+        giftModel = GiftEntryFormController.initClass(opp.Id);
+        System.assertEquals(1, giftModel.payments.size(), 'The existing payment should have been found');
+
+    }
+
+    @isTest
+    private static void testJsonProcess() {
+
+        String gauAmt = '123';
+        String gauPerc = '12';
+        String gauName = 'Test2';
+        npsp__General_Accounting_Unit__c testGau = 
+            new npsp__General_Accounting_Unit__c(Name=gauName, npsp__Active__c=true);
+
+        insert testGau;
+        String gauId = (String)testGau.Id;
+
+        Contact scContact = new Contact(FirstName='Soft', LastName='Credit');
+        insert scContact;
+        Id scContactId = scContact.Id;
+
+        // Test stripping Lightning attributes from JSON, then processing it into a Donation
+        String testJson = '{"di":{"sobjectType":"npsp__DataImport__c","npsp__Contact1_Firstname__c":"Firstname","npsp__Contact1_Lastname__c":"Lastname","npsp__Donation_Amount__c":1000,"npsp__Donation_Name__c":"Test Opp"'
+        + ',"npsp__Account1Imported__c":"","npsp__Account1Imported__r":{"sobjectType":"Account","Name":""},"npsp__Contact1Imported__c":"","npsp__Contact1Imported__r":{"sobjectType":"Contact","Name":""},"Donation_Primary_Campaign__c":"","Donation_Primary_Campaign__r":{"sobjectType":"Campaign","Name":""},"Donation_Honoree_Contact__c":"","Donation_Honoree_Contact__r":{"sobjectType":"Contact","Name":""},"Donation_Matching_Gift_Account__c":"","Donation_Matching_Gift_Account__r":{"sobjectType":"Account","Name":""},"Donation_Matching_Gift__c":"","Donation_Matching_Gift__r":{"sobjectType":"Opportunity","Name":""},"npsp__Donation_Stage__c":"Closed Won","npsp__Payment_Method__c":"","Donation_Tribute_Type__c":"","Donation_Acknowledgment_Status__c":"","Donation_Matching_Gift_Status__c":"","npsp__Donation_Date__c":"2018-09-05"}'
+        + ',"allocs":['
+        + '{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"'+gauAmt+'","npsp__Percent__c":""}'
+        + ',{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"","npsp__Percent__c":"'+gauPerc+'"}'
+        + ']'
+        + ',"payments":['
+        + '{"npe01__Payment_Amount__c":"'+gauAmt+'","npe01__Scheduled_Date__c":"2018-08-06","npe01__Payment_Method__c":"Cash","npe01__Opportunity__c":""}'
+        + ']'
+        + ',"partialCredits":[' 
+        + '{"npsp__Amount__c":"'+gauAmt+'","npsp__Contact__c":"' + scContactId + '"}]'
+        + '}';
+        
+        GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
+        giftModel = GiftEntryFormController.saveGift(testJson);
+
+        Id oppId = giftModel.oppId;
+        System.assert(giftModel.oppId != null, 'The new Opportunity ID should be returned');
+
+        List<npsp__Allocation__c> allocs = giftModel.allocs;
+        List<npe01__OppPayment__c> payments = giftModel.payments;
+
+        // Check that the allocations were created
+        List<npsp__Allocation__c> alloQuery = [Select Id from npsp__Allocation__c 
+            where npsp__General_Accounting_Unit__c =: gauId
+            and npsp__Opportunity__c =: oppId];
+        System.assertEquals(2, alloQuery.size());
+
+        // Check that the payments were created
+        Decimal payAmt = Decimal.ValueOf(gauAmt);
+        List<npe01__OppPayment__c> paymentQuery = [Select Id from npe01__OppPayment__c 
+            where npe01__Opportunity__c =: oppId
+            and npe01__Payment_Amount__c =: payAmt];
+        System.assertEquals(1, paymentQuery.size());
+        
+        // Check that partial soft credits were created
+        List<npsp__Partial_Soft_Credit__c> pscQuery = [Select Id from npsp__Partial_Soft_Credit__c 
+            where npsp__Contact__c =: scContactId
+            and npsp__Amount__c =: payAmt];
+        System.assertEquals(1, pscQuery.size());
+
+        // Now test deletion of related objects
+        List<SObject> objToDelete = new List<SObject>();
+
+        objToDelete.addAll((List<SObject>)alloQuery);
+        objToDelete.addAll((List<SObject>)paymentQuery);
+        objToDelete.addAll((List<SObject>)pscQuery);
+
+        giftModel.objsToDelete = objToDelete;
+
+        GiftEntryFormController.deleteObjList(giftModel.objsToDelete);
+
+        alloQuery = [Select Id from npsp__Allocation__c 
+            where npsp__General_Accounting_Unit__c =: gauId
+            and npsp__Opportunity__c =: oppId];
+        System.assertEquals(0, alloQuery.size());
+
+        paymentQuery = [Select Id from npe01__OppPayment__c 
+            where npe01__Opportunity__c =: oppId
+            and npe01__Payment_Amount__c =: payAmt];
+        System.assertEquals(0, paymentQuery.size());
+
+        pscQuery = [Select Id from npsp__Partial_Soft_Credit__c 
+            where npsp__Contact__c =: scContactId
+            and npsp__Amount__c =: payAmt];
+        System.assertEquals(0, pscQuery.size());
     }
 
     @isTest
@@ -98,7 +236,6 @@ private class GiftEntryFormController_TEST {
             npsp__PaymentImportStatus__c
             from npsp__DataImport__c 
             where Id =: diObj.Id];
-        //System.debug(diObj);
 
         // There should not be a payment, it will need to be added later
         List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c];
@@ -119,7 +256,6 @@ private class GiftEntryFormController_TEST {
             and npsp__Notification_Recipient_Name__c =: updateStringTest
         ];
 
-        //System.debug(oppList);
         System.assertEquals(1, oppList.size());
     }
     

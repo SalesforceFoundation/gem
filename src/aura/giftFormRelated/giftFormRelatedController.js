@@ -1,68 +1,54 @@
 ({
     clickAddRow: function(component, event, helper) {
-        helper.handleAddRow(component);
+        helper.handleAddRow(component, helper);
+    },
+    handleInitRows: function(component, event, helper) {
+        var itemList = component.get('v.itemList');
+        if(itemList && itemList.length != 0){
+            // If an itemList was provided on load, add it now that picklist values are available
+            helper.createRowsFromItemList(component, helper);
+        }
+        component.set('v.initFinished', true);
     },
     handleJsonUpdate: function(component, event, helper) {
         // Reset the duplicate checking array
-        component.set("v.noDuplicateValueList", []);
+        component.set('v.noDuplicateValueList', []);
         var validRows = helper.validateRows(component);
-        var isValid = validRows;
         // If there are no rows, the JSON gets overwritten
-        helper.updateJsonObject(component, validRows);
-        return isValid;
+        helper.updateModelObject(component, validRows);
+        return validRows;
     },
     handleItemListChange: function(component, event, helper){
-        // Called when the item list is overwritten
-        // Ex. Calculating multiple Payments
+        // In the payment scheduler, this event gets called twice so we prevent it one time
+        var blockChange = component.get('v.blockItemChangeEvent');
+        var thisObj = component.get('v.objectName');
+        var rowList = component.get('v.rowList');
 
-        // First, clear the existing rows
-        component.set("v.body", []);
-        component.set("v.rowList", []);
-
-        // Set the starting total to the donation amount
-        var donationAmt = component.get("v.donationAmt");
-        component.set("v.amountTotal", +donationAmt);
-        
-        // Now add the calculated payments
-        var itemList = event.getParam("value");
-        itemList = helper.proxyToObj(itemList);
-        //console.log(itemList);
-        for(var i=0; i<itemList.length; i++){
-            helper.handleAddRow(component, itemList[i], i);
+        // If Payments are being overwritten, call delete on each of them first
+        if(thisObj == 'npe01__OppPayment__c' && rowList.length > 0){
+            helper.deleteAll(component);
         }
-        component.set("v.showAmountError", false);
+
+        // On load, since the itemlist comes in before the picklist values are set,
+        // we need to wait for the picklists before processing the rows
+        if(component.get('v.initFinished') && !blockChange){
+            helper.createRowsFromItemList(component, helper);
+        }
     },
     handleAmtChange: function(component, event, helper){
-        var checkAmountTotals = component.get("v.checkAmountTotals");
-        if(!checkAmountTotals){
-            return;
+        var checkAmountTotals = component.get('v.checkAmountTotals');
+        if(checkAmountTotals){
+            helper.handleAmtChangeHelper(component);
         }
-        var preventAmountSurplus = component.get("v.preventAmountSurplus");
-        var preventAmountDeficit = component.get("v.preventAmountDeficit");
-        var donationAmt = component.get("v.donationAmt");
-        var amountTotal = component.get("v.amountTotal");
-        // console.log(donationAmt);
-        // console.log(amountTotal);
-        // If there is a donation amount and a total, and they do not match, show message
-        var amtError = $A.get("$Label.c.Warning");
-        var amountsDoNotMatch = donationAmt && amountTotal && (donationAmt != amountTotal);
-        var preventSubmit = false;
-        if(amountTotal > donationAmt){
-            if(preventAmountSurplus){
-                amtError = $A.get("$Label.c.Error");
-                preventSubmit = true;
-            }
-            amtError += ' : ' + $A.get("$Label.c.Gift_Amounts_Greater_than_Donation");
-        } else if(amountsDoNotMatch){
-            if(preventAmountDeficit){
-                amtError = $A.get("$Label.c.Error");
-                preventSubmit = true;
-            }
-            amtError += ' : ' + $A.get("$Label.c.Gift_Amounts_Do_Not_Match");
-        } else {
-            amtError = '';
+    },
+    handleMessage: function(component, event, helper){
+        var channel = event.getParam('channel');
+
+        if(channel == 'deleteRowEvent'){
+            helper.handleRowDelete(component, helper);
         }
-        component.set("v.preventSubmit", preventSubmit);
-        component.set("v.amountError", amtError);
+    },
+    toggleRelatedSection: function(component, event, helper) {
+        component.set('v.expandSection', !component.get('v.expandSection'));
     }
 })

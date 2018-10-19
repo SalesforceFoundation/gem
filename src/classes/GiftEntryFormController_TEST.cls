@@ -53,7 +53,7 @@ private class GiftEntryFormController_TEST {
     private static String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
     
     @testSetup static void setupGiftEntry() {
-        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = UTIL_Describe.getHhAccRecTypeID()));
+        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID()));
         GiftEntryFormController.insertGiftEntrySettings();
     }
 

@@ -54,7 +54,7 @@ private class NPSP_Account_TDTM_TEST {
     */
     @isTest
     static void testAccountTDTM() {
-        Account acc = UTIL_UnitTestData_TEST.getAccount(UTIL_Describe.getAdminAccRecTypeID());
+        Account acc = UTIL_UnitTestData_TEST.getAccount(hed.UTIL_Describe_API.getAdminAccRecTypeID());
 
         insert acc;
 
@@ -64,7 +64,7 @@ private class NPSP_Account_TDTM_TEST {
         system.assertNotEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, acc.npe01__SYSTEM_AccountType__c);
         system.assertNotEquals(true, acc.npe01__SYSTEMISINDIVIDUAL__c);
 
-        acc.RecordTypeId = UTIL_Describe.getHhAccRecTypeID();
+        acc.RecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
 
         Test.startTest();
         update acc;

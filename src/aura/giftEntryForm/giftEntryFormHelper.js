@@ -1,219 +1,177 @@
 ({
-    setDefaults: function(component, helper){
-        // If Updating and Stage is set to Closed, disable Donation fields
-        var stageField = component.find("stageField");
-        if(stageField){
-            var stage = stageField.get("v.value");
-            var closedStage = component.get("v.closedStage");
-            var oppClosed = stage == closedStage ? true : false;
-            component.set("v.oppClosed", oppClosed);
+    getDonationInformation: function(component, oppId){
+        // Make changes if a recordId was provided (Edit mode)
+        if(oppId){
+            this.changeSubmitText(component, $A.get('$Label.c.Gift_Update'));
+            component.set('v.editMode', true);
         }
 
-        // For new forms, set Date to Today, otherwise use existing value
-        var dateField = component.find("dateField");
-        if(dateField){
-            var closeDate = dateField.get("v.value");
-            if(!closeDate){
-                // Set Close Date to Today
-                closeDate = new Date();
-                closeDate = this.convertDateToString(closeDate);
-            }
-            component.set("v.paymentDate", closeDate);            
-        }
-
-        this.setPicklists(component, helper);
-    },
-    setPicklists: function(component, helper) {
-        var action = component.get("c.getPickListValues");
-
-        action.setCallback(this, function(response) {
+        var getModelAction = component.get('c.initClass');
+        getModelAction.setParams({
+            oppId: oppId
+        });
+        getModelAction.setCallback(this, function(response) {
             var state = response.getState();
-            if (state === "SUCCESS") {
-                // Return value is a map of string arrays for our picklists
-                var picklistOptions = response.getReturnValue();
-                // Add "None" option to start of each picklist
-                var noneOption = component.get("v.picklistNoneText");
-                var noneObj = {value:'', label:noneOption};
+            if (state === 'SUCCESS') {
+                var giftModel = response.getReturnValue();
 
-                for(var field in picklistOptions){
-                    var optionList = picklistOptions[field];
-                    var convertedList = [];
-                    convertedList.push(noneObj);
-                    for(var i in optionList){
-                        // The values come into Javascript as JSON strings, need to parse
-                        var option = JSON.parse(optionList[i]);
-                        convertedList.push(option);
-                    }
-                    picklistOptions[field] = convertedList;
-                }
-                // Setting this map will update all of the picklists
-                component.set("v.picklistOptions", picklistOptions);
+                component.set('v.giftModel', giftModel);
+                component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
 
-                // Check to see if values were already set for picklists
-                helper.setupPicklistValues(component, helper);
-            } else if (state === "ERROR") {
+                this.handlePicklistSetup(component, giftModel.picklistValues);
+
+                // Setup any default form values
+                this.setDefaults(component, giftModel.opp);
+                this.checkValidation(component);
+
+            } else if (state === 'ERROR') {
                 this.handleError(component, response);
             }
         });
-
-        $A.enqueueAction(action);
+        $A.enqueueAction(getModelAction);
     },
-    setupPicklistValues: function(component, helper){
-        var picklistCmp = component.find("formWrapper").find({instancesOf:"c:giftPicklist"});
-        // For each picklist, check for existing field values, otherwise set the first option
-        for(var i=0; i < picklistCmp.length; i++){
-            helper.setStartingPicklistValue(component, picklistCmp[i]);
+    setDefaults: function(component, opp){
+        // For new forms, set Date to Today, otherwise use existing value
+        var curDate = component.get('v.di.npsp__Donation_Date__c');
+        if(!curDate){
+            // Set Close Date to Today
+            var closeDate = new Date();
+            closeDate = this.convertDateToString(closeDate);
+            component.set('v.di.npsp__Donation_Date__c', closeDate);
+        }
+
+        // Also check whether the Contact or Account information should be shown
+        if(opp && opp.AccountId && !opp.npsp__Primary_Contact__c){
+            component.set('v.di.npsp__Donation_Donor__c', 'Account1');
+        } else {
+            component.set('v.di.npsp__Donation_Donor__c', 'Contact1');
         }
     },
-    setStartingPicklistValue: function(component, picklistCmp){
-        var fieldId = picklistCmp.get("v.inputFieldId");
-        // For nested picklist components (e.g. Payment Method in the Scheduler),
-        // we will not find it in the current component, so just return
-        var field = component.find(fieldId);
-        if(!field){
-            //var errorMsg = 'Picklist ' + fieldId + ' was not found';
-            //this.setErrorMessage(component, errorMsg);
-            //console.log(errorMsg); 
-            return;
-        }
+    handlePicklistSetup: function(component, picklistOptions){
+        // Add 'None' option to start of each picklist
+        var noneOption = component.get('v.picklistNoneText');
+        var noneObj = {value:'', label:noneOption};
 
-        var curValue = field.get("v.value");
-        // If a value does not exist, set the picklist to the first option
-        if(!curValue){
-            var options = this.proxyToObj(picklistCmp.get("v.picklistValues"));
-            curValue = options[0].value;
-            this.setHiddenField(component, fieldId, curValue);
+        for(var field in picklistOptions){
+            var optionList = picklistOptions[field];
+            var convertedList = [];
+            convertedList.push(noneObj);
+            for(var i in optionList){
+                // The values come into Javascript as JSON strings, need to parse
+                var option = JSON.parse(optionList[i]);
+                convertedList.push(option);
+            }
+            picklistOptions[field] = convertedList;
         }
-        //console.log(curValue); 
-        picklistCmp.set("v.selectedVal", curValue);
-
-        // Allow the picklist change event to fire
-        // Without this, the default picklist value overwrites existing object values
-        picklistCmp.set("v.callEvent", true);
+        // Setting this map will update all of the picklists
+        component.set('v.objectFieldData.picklistOptions', picklistOptions);
+    },
+    handlePicklistChange: function(component, message) {
+        var newVal = message['newVal'];
+        var fieldId = message['fieldId'];
+        if(fieldId){
+            this.setHiddenField(component, fieldId, newVal);
+        }
     },
     setHiddenField: function(component, fieldId, newVal){
         var field = component.find(fieldId);
         if(field){
-            field.set("v.value", newVal);
+            field.set('v.value', newVal);
         }
     },
-    updateAmountField: function(component, amt){
-        component.set("v.donationAmount", amt);
+    redirectToSobject: function(component, objId){
+        var event = $A.get('e.force:navigateToSObject');
+        event.setParams({
+            recordId: objId
+        });
+        event.fire();
     },
-    redirectToDonation: function(component){
-        var oppId = component.get("v.oppId");
-
-        if(!oppId){
-            var recordId = component.get('v.returnedRecordId');
-            var redirectAfter = true;
-            this.getImportedDonationId(component, recordId, redirectAfter);
-        } else {
-            var event = $A.get("e.force:navigateToSObject");
-            event.setParams({
-                recordId: oppId
-            });
-            event.fire();
-        }
+    showEditRecordModal: function(component, objId){
+        var event = $A.get('e.force:editRecord');
+        event.setParams({
+            recordId: objId
+        });
+        event.fire();
     },
-    getImportedDonationId: function(component, dataImportObjId, redirectAfter){
-        var action = component.get("c.getOpportunityIdFromImport");
+    handleSaveGift: function(component){
+        component.set('v.showSpinner', true);
+        var action = component.get('c.saveGift');
+        var giftModelString = component.get('v.giftModelString');
         action.setParams({
-            diObjId: dataImportObjId
+            giftModelString: giftModelString
         });
 
         action.setCallback(this, function(response) {
             var state = response.getState();
-            if (state === "SUCCESS") {
-                var oppId = response.getReturnValue();
-                component.set("v.oppId", oppId);
-                //console.log("New opp ID: " + oppId);
-                if(redirectAfter){
-                    this.redirectToDonation(component);
-                }
-            } else if (state === "ERROR") {
+            if (state === 'SUCCESS') {
+                var giftModel = response.getReturnValue();
+                component.set('v.giftModel', giftModel);
+                var oppId = component.find('oppId').get('v.value');
+
+                this.showSaveToast($A.get('$Label.c.Gift_Save_Message_Title'), 
+                    $A.get('$Label.c.Gift_Save_Message_Detail'));
+                this.redirectToSobject(component, oppId);
+            } else if (state === 'ERROR') {
                 this.handleError(component, response);
             }
         });
 
         $A.enqueueAction(action);
-    },
-    processGift: function(component, dataImportObjId, dryRun) {
-        component.set("v.showSpinner", true);
 
-        // Now run the batch for this single gift
-        var action = component.get("c.runGiftProcess");
-        action.setParams({
-            diObjId: dataImportObjId,
-            dryRunMode: dryRun
-        });
-
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === "SUCCESS") {
-                this.scrollToTop();
-                // Navigate to Opportunity page
-                if(!dryRun){
-                    this.redirectToDonation(component, dataImportObjId);
-                } else {
-                    // If dry run, show the results of data matching
-                    component.set("v.showForm", false);
-                    component.set("v.showSuccess", true);
-                    component.set("v.showSpinner", false);
-                }
-            } else if (state === "ERROR") {
-                var errors = response.getError();
-                this.handleError(component, response);
-            }
-        });
-
-        $A.enqueueAction(action);        
     },
     checkValidation: function(component){
-        var formValid = this.validateForm(component);
-        var btn = component.find('createButton');
-        btn.set('v.disabled',!formValid);
+        this.validateForm(component);
     },
-    validateForm: function(component) {
-        component.set("v.error", null);
+    validateForm: function(component, showErrors) {
+        component.set('v.error', null);
         // Show error messages if required fields are blank
-        var validForm = this.checkFields(component, 'requiredField', true);
+        var validForm = this.checkFields(component, 'requiredField', true, showErrors);
         
         // Check that at least one combination of donor fields is valid, otherwise show error
         // First check if an Account field is filled in
-        var donorType = component.get("v.donorType");
+        var donorType = component.get('v.di.npsp__Donation_Donor__c');
         var donorExists = false;
-        if(donorType == "Account1"){
-            donorExists = this.checkFields(component, 'requiredAccountField', false);
-        } else {
-            // Check if Contact1 Firstname and Lastname are filled in
-            donorExists = this.checkFields(component, 'requiredContactField', true);        
-            // Check any other donor fields we could use
-            donorExists = donorExists || this.checkFields(component, 'requiredDonorField', false);
+
+        // Make sure a donor has been provided
+        if(donorType == 'Account1' || !donorType){ 
+            donorExists = donorExists || this.checkFields(component, 'accountLookup', true);
+        }
+        if(donorType == 'Contact1' || !donorType) {
+            donorExists = donorExists || this.checkFields(component, 'contactLookup', true);
         }
 
+        component.set('v.donorExists', donorExists);
+        
         if(!donorExists){
-            // Show error if no Donors have been entered
-            component.set("v.submitError", "Donor information is required.");
+            // Show error if no Donor has been entered
+            if(showErrors){
+                this.showErrorMessage(component, $A.get('$Label.c.Gift_Donor_Required'), true);
+            }
             return false;
         } else {
-            component.set("v.submitError", "");
+            // Clear the error
+            this.showErrorMessage(component, '', false);            
         }
 
         return validForm;
     },
-    checkFields: function(component, fieldId, allMustBeValid){
+    showErrorMessage: function(component, errorMsg, msgIsError){
+        component.set('v.messageIsError', msgIsError);
+        component.set('v.showSpinner', false);
+        component.set('v.submitError', errorMsg);
+    },
+    checkFields: function(component, fieldId, allMustBeValid, showErrors){
         var findResult = component.find(fieldId); 
         if(!findResult){
             return allMustBeValid;
         }
         findResult = this.singleInputToArray(findResult);
         var validationResult = findResult.reduce(function (validSoFar, inputCmp) {
-            var disabled = inputCmp.get("v.disabled");
-            if(disabled){
-                return validSoFar;
-            }
-            var fieldVal = inputCmp.get("v.value");
+            var fieldVal = inputCmp.get('v.value');
             var isValid = fieldVal || fieldVal === false;
+            if(showErrors && typeof inputCmp.reportValidity === 'function'){
+                var validMsg = inputCmp.reportValidity();
+            }
             if(!allMustBeValid && (isValid || validSoFar)){
                 // We only need one of these fields filled in
                 return true;
@@ -230,59 +188,140 @@
         return findResult;
     },
     handleError: function(component, response) {
+        component.set('v.showSpinner', false);
         var errors = response.getError();
         if (errors) {
             if (errors[0] && errors[0].message) {
                 var errorMsg = errors[0].message;
-                this.setErrorMessage(component, errorMsg);
+                this.showErrorToast(errorMsg);
             }
         } else {
-            this.setErrorMessage(component, "Unknown error");
+            this.showErrorToast($A.get('$Label.c.Error_Unknown'));
+        }
+    },
+    setOppToDiMap: function(component){
+        // This map is used to take field values from the Opportunity object and set them on the DataImport object
+        // Note: this is only needed to avoid a bug in force:inputField that requires hard-coding the fieldname,
+        // which made including an optional namespace impossible
+        var nsFieldPrefix = component.get('v.namespaceFieldPrefix');
+        var fieldMap = {
+            'npe01__Do_Not_Automatically_Create_Payment__c': nsFieldPrefix + 'Do_Not_Automatically_Create_Payment__c',
+            'npsp__Acknowledgment_Status__c': nsFieldPrefix + 'Donation_Acknowledgment_Status__c',
+            'npsp__Honoree_Contact__c': nsFieldPrefix + 'Donation_Honoree_Contact__c',
+            'npsp__Honoree_Name__c': nsFieldPrefix + 'Donation_Honoree_Name__c',
+            'npsp__Matching_Gift__c': nsFieldPrefix + 'Donation_Matching_Gift__c',
+            'npsp__Matching_Gift_Account__c': nsFieldPrefix + 'Donation_Matching_Gift_Account__c',
+            'npsp__Matching_Gift_Employer__c': nsFieldPrefix + 'Donation_Matching_Gift_Employer__c',
+            'npsp__Matching_Gift_Status__c': nsFieldPrefix + 'Donation_Matching_Gift_Status__c',
+            'npsp__Notification_Message__c': nsFieldPrefix + 'Donation_Notification_Message__c',
+            'CampaignId': nsFieldPrefix + 'Donation_Primary_Campaign__c',
+            'npsp__Tribute_Type__c': nsFieldPrefix + 'Donation_Tribute_Type__c',
+            'npsp__Notification_Recipient_Name__c': nsFieldPrefix + 'Notification_Recipient_Name__c'
+        };
+
+        component.set('v.oppToDiFieldMap', fieldMap);
+    },
+    mapOppToDi: function(component, di, opp){
+        var fieldMap = component.get('v.oppToDiFieldMap');
+        for(var field in fieldMap){
+            var diField = fieldMap[field];
+            di[diField] = opp[field];
         }
     },
     fillJsonField: function(component) {
-        var relatedCmp = component.find("formWrapper").find({instancesOf:"c:giftFormRelated"});
+        var relatedCmp = this.getRelatedComponents(component);
         var allRowsValid = true;
 
+        // First process the related objects
         for(var i=0; i < relatedCmp.length; i++){
+            // Need to get variable name for each of these to know where to map the return
             var jsonResp = relatedCmp[i].handleJsonUpdate();
             allRowsValid = allRowsValid && jsonResp;
         }
 
-        // Need to prevent overwrite by undefined related objects!
-        var jsonField = component.find("postProcessJsonField");
-        var jsonObj = component.get("v.jsonObject");
-        //console.log("All rows valid: " + allRowsValid); 
-        if(jsonObj.npe01__OppPayment__c && jsonObj.npe01__OppPayment__c.length > 0){
+        var giftModel = component.get('v.giftModel');
+        var opp = this.proxyToObj(component.get('v.opp'));
+        var di = this.proxyToObj(component.get('v.di'));
+
+        if(giftModel.payments && giftModel.payments.length > 0){
             // Payments are being scheduled, do not create one for the full donation
-            var autoPaymentField = component.find('doNotAutoCreatePayment');
-            if(autoPaymentField){
-                autoPaymentField.set("v.value", true);
-            }
+            opp.npe01__Do_Not_Automatically_Create_Payment__c = true;
         }
-        jsonObj = JSON.stringify(jsonObj);
-        console.log(jsonObj);
-        jsonField.set("v.value", jsonObj);
+
+        // Map fields from Opportunity to DataImport
+        // This is done to avoid referencing Adv namespace fields in markup
+        this.mapOppToDi(component, di, opp);
+        
+        var objsToDelete = this.proxyToObj(component.get('v.objsToDelete'));
+        giftModel['di'] = di;
+        giftModel['objsToDelete'] = objsToDelete;
+
+        // Clear unneeded variables
+        giftModel['objNameToApiToLabel'] = {};
+        giftModel['picklistValues'] = {};
+
+        var giftModelString = JSON.stringify(giftModel);
+        component.set('v.giftModelString', giftModelString);
         return allRowsValid;
+    },
+    showSaveToast: function(titleTxt, msgText){
+        var toastEvent = $A.get('e.force:showToast');
+        toastEvent.setParams({
+            title : titleTxt,
+            message: msgText,
+            duration:' 5000',
+            type: 'success',
+            mode: 'dismissible'
+        });
+        toastEvent.fire();
+    },
+    showErrorToast: function(msgText){
+        var toastEvent = $A.get('e.force:showToast');
+        toastEvent.setParams({
+            title : $A.get('$Label.c.Error'),
+            message: msgText,
+            type: 'error',
+            mode: 'sticky'
+        });
+        toastEvent.fire();
+    },
+    getRelatedComponents: function(component){
+        var namespace = component.get('v.namespacePrefix');
+        var rowCmpName = namespace + ':giftFormRelated';
+        var formWrapper = component.find('formWrapper');
+        return formWrapper.find({instancesOf:rowCmpName});
     },
     scrollToTop: function(){
         window.scrollTo(0, 0);
+    },
+    updateFieldUI: function(field){
+        var inputBody = field.get('v.body')[0];
+        if(inputBody.updateValues){
+            inputBody.updateValues();
+        }
     },
     clearInputs: function(component, fieldId){
         var findResult = component.find(fieldId);
         findResult = this.singleInputToArray(findResult);
         for(var i in findResult){
-            var inputCmp = findResult[i].set("v.value", '');
+            findResult[i].set('v.value', '');
+            this.updateFieldUI(findResult[i]);
         }
-    },
-    setErrorMessage: function(component, errorMsg){
-        component.set("v.error", errorMsg);
     },
     convertDateToString: function(dateObj){
 		return dateObj.toISOString().split('T')[0];
     },
     proxyToObj: function(attr){
+        if(!attr){
+            return null;
+        }
         // Used to convert a Proxy object to an actual Javascript object
         return JSON.parse(JSON.stringify(attr));
+    },
+    changeSubmitText: function(component, newText){
+        component.find('createButton').set('v.label', newText);
+    },
+    doToggleSection: function changeState (component, sectionBool){
+        component.set('v.' + sectionBool, !component.get('v.' + sectionBool));
     }
 })

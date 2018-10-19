@@ -1,120 +1,176 @@
 ({
-    handleAddRow: function(component, item, index){
+    handleAddRow: function(component, helper, item, index){
         // Now, create the component that contains the fields and pass it the list of data
-        var rowList = component.getReference("v.rowList");
-        var rowListArray = component.get("v.rowList");
-        var newRowNum = rowListArray.length;
-        var rowCmpName = component.get("v.rowCmpName");
-        var picklistOptions = component.get("v.picklistOptions");
-        var amountTotal = component.getReference("v.amountTotal");
-        var donationAmt = component.getReference("v.donationAmt");
-        var checkAmountTotals = component.getReference("v.checkAmountTotals");
-        var noDuplicateValueList = component.getReference("v.noDuplicateValueList");
-        //var oppField = component.get("v.oppField");
-        var showLabels = true;
-        if(newRowNum > 0 || index && index > 0){
-            showLabels = false;
+        var rowList = component.getReference('v.rowList');
+        var rowListArray = component.get('v.rowList');
+        var newRowNum = index ? index : rowListArray.length;
+        var rowCmpName = component.get('v.rowCmpName');
+        var objectFieldData = component.get('v.objectFieldData');
+        var amtField = component.getReference('v.amtField');
+        var donationAmt = component.getReference('v.donationAmt');
+        var checkAmountTotals = component.getReference('v.checkAmountTotals');
+        var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
+    
+        var showLabels = false;
+        if(newRowNum == 0){
+            showLabels = true;
         }
 
         $A.createComponent(
             rowCmpName, {
-                "rowList": rowList,
-                "rowComponent": rowCmpName,
-                "picklistOptions": picklistOptions,
-                "rowNum": newRowNum,
-                "item": item,
-                "amountTotal": amountTotal,
-                "donationAmt": donationAmt,
-                "checkAmountTotals": checkAmountTotals,
-                "noDuplicateValueList": noDuplicateValueList,
-                "showLabels": showLabels
+                'rowList': rowList,
+                'rowComponent': rowCmpName,
+                'objectFieldData': objectFieldData,
+                'item': item,
+                'donationAmt': donationAmt,
+                'checkAmountTotals': checkAmountTotals,
+                'noDuplicateValueList': noDuplicateValueList,
+                'amtField': amtField,
+                'showLabels': showLabels
             },
             function(relatedCmp, status, errorMessage){
-                if (status === "SUCCESS") {
+                if (status === 'SUCCESS') {
                     // Add the component to the page
-                    var body = component.get("v.body");
+                    var body = component.get('v.body');
                     body.push(relatedCmp);
-                    component.set("v.body", body);
+                    component.set('v.body', body);
+
+                    // TODO Could clean this up by only calling after final row is added
+                    helper.getAmtTotal(component);
                 }
-                else if (status === "INCOMPLETE") {
-                    console.log("No response from server or client is offline.")
+                else if (status === 'INCOMPLETE') {
+                    console.log($A.get('$Label.c.Error_Offline'));
                 }
-                else if (status === "ERROR") {
-                    console.log("Error: " + errorMessage);
+                else if (status === 'ERROR') {
+                    console.log($A.get('$Label.c.Error') + ': ' + errorMessage);
                 }
             }
         );
     },
-    setOppIdPlaceholder: function(component, itemObj, oppFieldName){
-        // Set the opportunity field to a placeholder, which gets replaced in Apex
-        var curVal = itemObj[oppFieldName];
-        if(!curVal){
-            var oppPlaceholder = $A.get("$Label.c.Gift_Donation_ID_Placeholder");
-            itemObj[oppFieldName] = oppPlaceholder;
-        }
-    },
-    updateJsonObject: function(component, arrayList){
-        var jsonObj = component.get("v.jsonObj");
-        var objectName = component.get("v.objectName");
-        var fieldList = component.get("v.fieldList");
-        var oppField = component.get("v.oppField");
-        var oppFieldName = component.get("v.oppField");
+    createRowsFromItemList: function(component, helper){
+        // Called when the item list is completely overwritten
+        // Ex. Calculating Payment schedule, or loading existing data
 
-        if(jsonObj == null){
-            // If adding first row, set to empty object
-            jsonObj = {};
-            component.set("v.jsonObj", jsonObj);
-        } else {
-            // If retrieved, turn the attribute into an actual Javascript object
-            jsonObj = this.proxyToObj(jsonObj);
-        }
-
-        // Get the relevant fields from the list of objects    
-        var newObjList = [];
-        arrayList = this.proxyToObj(arrayList);
-        //console.log(arrayList);
-        fieldList = this.proxyToObj(fieldList);
-        // Add the Opportunity field so it gets included
-        fieldList.push(oppField);
-        for(var i=0; i < arrayList.length; i++){
-            var oldObj = arrayList[i];
-            // If this row was deleted, skip it
-            if(!oldObj){
-                continue;
-            }
-            var newObj = {};
-            // For each object, only save the fields we want
-            for(var j=0; j < fieldList.length; j++){
-                var fieldName = fieldList[j];
-                var fieldVal = oldObj[fieldName];
-                newObj[fieldName] = fieldVal;
-            }
-            this.setOppIdPlaceholder(component, newObj, oppFieldName);
-            newObjList.push(newObj);
-        }
-        // console.log(objectName);
-        // console.log(arrayList);
-        //jsonObj[objectName] = newObjList;
-
-        // Can't set entire object, async calls overwrite each other
-        // Should overwrite with blank array if no list is passed!
-        component.set("v.jsonObj."+objectName, newObjList);
+        // First, clear the existing rows
+        component.set('v.body', []);
+        component.set('v.rowList', []);
         
-        // console.log('JSON set:');
-        // jsonObj = component.get("v.jsonObj");
-        // console.log(JSON.stringify(jsonObj));
+        // Now add the passed in objects to the rowList
+        //var itemList = event.getParam('value');
+        var itemList = component.get('v.itemList');
+        itemList = this.proxyToObj(itemList);
+
+        if(itemList instanceof Array){
+            for(var i=0; i<itemList.length; i++){
+                this.handleAddRow(component, helper, itemList[i], i);
+            }
+        }
+        component.set('v.showAmountError', false);
+    },
+    handleAmtChangeHelper: function(component){
+        var amountTotal = this.getAmtTotal(component);
+
+        var preventAmountSurplus = component.get('v.preventAmountSurplus');
+        var preventAmountDeficit = component.get('v.preventAmountDeficit');
+        var donationAmt = component.get('v.donationAmt');
+        // If there is a donation amount and a total, and they do not match, show message
+        var amtError = '';
+        component.set('v.messageIsError', false);
+        var amountsDoNotMatch = donationAmt && amountTotal && (donationAmt != amountTotal);
+        var preventSubmit = false;
+        if(amountTotal > donationAmt){
+            if(preventAmountSurplus){
+                component.set('v.messageIsError', true);
+                preventSubmit = true;
+            }
+            amtError += $A.get('$Label.c.Gift_Amounts_Greater_than_Donation');
+        } else if(amountsDoNotMatch){
+            if(preventAmountDeficit){
+                component.set('v.messageIsError', true);
+                preventSubmit = true;
+            }
+            amtError += $A.get('$Label.c.Gift_Amounts_Do_Not_Match');
+        } else {
+            amtError = '';
+        }
+        var prevSubmitStatus = component.get('v.preventSubmit');
+        component.set('v.preventSubmit', preventSubmit);
+        component.set('v.amountError', amtError);
+
+        // If amounts are now valid, check validation of the form
+        if(!preventSubmit && prevSubmitStatus){
+            // Potential issue when re-calculating payment list, runs unneeded validation
+            this.sendValidateMessage();
+        }
+
+        // Setting to false will ensure totals get checked again if a change occurs
+        component.set('v.checkAmountTotals', false);
+    },
+    sendValidateMessage: function() {
+		// Call validate event, handled by the parent
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+			'channel': 'validateEvent'
+		});
+		sendMsgEvent.fire();
+	},
+    handleRowDelete: function(component, helper){
+        var relatedRows = helper.getRelatedRows(component);
+
+        var rowList = component.get('v.rowList');
+        var objsToDelete = component.get('v.objsToDelete');
+        var body = component.get('v.body');
+        var nextRowShowLabels = false;
+        rowList = helper.proxyToObj(rowList);
+
+        for(var i=0; i < relatedRows.length; i++){
+            // For each remaining row, reset its index and set the first to show labels
+            var thisRow = relatedRows[i];
+            if(nextRowShowLabels){
+                thisRow.set('v.showLabels', true);
+                nextRowShowLabels = false;
+            }
+
+            if(thisRow.get('v.markedForDelete')){
+                var objName = component.get('v.objectName');
+                var thisItem = thisRow.get('v.item');
+                thisItem = helper.proxyToObj(thisItem);
+                if(thisItem.Id != null){
+                    // Required attribute to delete a list of generic sobjects
+                    thisItem['attributes'] = {'type':objName};
+                    objsToDelete.push(thisItem);
+                }
+                if(thisRow.get('v.showLabels')){
+                    nextRowShowLabels = true;
+                }
+                body.splice(i,1);
+                rowList.splice(i,1);
+                thisRow.destroy();
+            }
+        }
+        component.set('v.objsToDelete', objsToDelete);
+        component.set('v.rowList', rowList);
+        component.set('v.body', body);
+
+        // Update error message
+        component.set('v.checkAmountTotals', true);
+    },
+    updateModelObject: function(component, arrayList){
+        var attrName = component.get('v.modelAttribute');
+        arrayList = this.proxyToObj(arrayList);
+        if(!arrayList){
+            arrayList = null;
+        }
+        component.set('v.giftModel.'+attrName, arrayList);
     },
     validateRows: function(component){
-        var preventSubmit = component.get("v.preventSubmit");
+        var preventSubmit = component.get('v.preventSubmit');
         if(preventSubmit){
             return false;
         }
         // Returns valid items or false if there is a validation issue
-        var rowCmpName = component.get("v.rowCmpName");
-        var relatedWrapper = component.find("relatedWrapper");
-        var relatedRows = relatedWrapper.find({instancesOf:rowCmpName});
+        var relatedRows = this.getRelatedRows(component);
         var validRows = [];
-        var rowsAreValid = true;
         var invalidRow = false;
         for(var i=0; i < relatedRows.length; i++){
             var thisRow = relatedRows[i];
@@ -123,7 +179,7 @@
                 // Skip this row, it's either deleted or blank
             } else if(rowValid){
                 // Add this row to the array to pass along
-                var item = thisRow.get("v.item");
+                var item = thisRow.get('v.item');
                 validRows.push(item);
             } else {
                 // There is a row that's invalid, show an error message
@@ -137,11 +193,32 @@
             return validRows;
         }
     },
-    getAmountTotal: function(component){
+    deleteAll: function(component){
+        var relatedRows = this.getRelatedRows(component);
+        for(var i=0; i < relatedRows.length; i++){
+            var thisRow = relatedRows[i];
+            thisRow.clickDeleteRow();
+        }
+    },
+    getAmtTotal: function(component){
         // Returns valid items or false if there is a validation issue
-        var relatedWrapper = component.find("relatedWrapper");
-        var relatedRows = relatedWrapper.find("v.amountNumber");
-        //console.log(relatedRows); 
+        var relatedRows = this.getRelatedRows(component);
+        var totalOfAllRows = 0;
+        for(var i=0; i < relatedRows.length; i++){
+            var thisRow = relatedRows[i];
+            // Make sure the return is a number
+            var rowAmt = +thisRow.returnRowAmount();
+            if(rowAmt){
+                totalOfAllRows += rowAmt;
+            }
+        }
+        totalOfAllRows = Math.round(totalOfAllRows * 100) / 100;
+        component.set('v.amountTotal', totalOfAllRows);
+        return totalOfAllRows;
+    },
+    getRelatedRows: function(component){
+        var rowCmpName = component.get('v.rowCmpName');
+        return component.find({instancesOf:rowCmpName});
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

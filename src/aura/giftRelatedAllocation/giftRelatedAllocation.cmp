@@ -1,47 +1,48 @@
 <aura:component extends="c:giftFormRelatedRow">
+    
     <aura:attribute name="item" 
         type="npsp__Allocation__c" 
         default="{sobjectType:'npsp__Allocation__c'}"/>
-    <aura:handler name="change" 
-        value="{!v.item.npsp__Amount__c}" 
-        action="{!c.handleAmountChange}"/>
 
-    <div class="slds-grid slds-wrap">
-        <div class="slds-col slds-size_2-of-4 slds-p-around_small">
+    <lightning:layout>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="6">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">General Accounting Unit</label>
+                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Allocation.npsp__General_Accounting_Unit__c}</label>
             </aura:if>
             <force:inputField aura:id="noDuplicates"
                 value="{!v.item.npsp__General_Accounting_Unit__c}" />
-        </div>
-        <div class="slds-col slds-size_1-of-4 slds-p-around_small">
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">Amount</label>
+                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Allocation.npsp__Amount__c}</label>
             </aura:if>
             <lightning:input aura:id="requiredField"
                 onblur="{!c.handleAmountCheck}"
                 name="allocationAmt" 
                 type="number" 
-                label="Amount" variant="label-hidden"
+                label="{!v.objectFieldData.objectLabels.Allocation.npsp__Amount__c}" 
+                variant="label-hidden"
+                step="0.01"
                 formatter="currency"
                 disabled="{!v.item.npsp__Percent__c ? true : false}"
                 value="{!v.item.npsp__Amount__c}" />
-        </div>
-        <div class="slds-col slds-size_1-of-4 slds-p-around_small">
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
             <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">Percent</label>
+                <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Allocation.npsp__Percent__c}</label>
             </aura:if>
             <lightning:input onblur="{!c.handlePercentChange}"
                 name="allocationPerc" 
                 type="number" 
-                label="Percent" variant="label-hidden"
+                label="{!v.objectFieldData.objectLabels.Allocation.npsp__Percent__c}" 
+                variant="label-hidden"
                 max="100" min="0" 
                 value="{!v.item.npsp__Percent__c}" />
-        </div>
+        </lightning:layoutItem>
+    </lightning:layout>
 
-        <div class="slds-hidden">
-            <lightning:input name="oppId" type="text" label="opp" value="{!v.item.npsp__Opportunity__c}" />
-        </div>
+    <div class="slds-hidden">
+        <lightning:input name="oppId" type="text" label="opp" value="{!v.item.npsp__Opportunity__c}" />
     </div>
 
 </aura:component>

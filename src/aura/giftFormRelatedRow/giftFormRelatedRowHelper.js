@@ -1,55 +1,42 @@
 ({
 	addRowHelper: function(component){
-        this.addToObjectArray(component, "v.rowList", "v.item");
+        this.addToObjectArray(component, 'v.rowList', 'v.item');
     },
-    amountCheck: function(component, event, helper){
-        component.set("v.checkAmountTotals", true);
-    },
-    amountChanged: function(component, event, helper){
-        component.set("v.checkAmountTotals", false);
-		var newAmt = this.checkUndefined(event.getParam("value"));
-        var oldAmt = this.checkUndefined(event.getParam("oldValue"));
-        //var total = this.checkUndefined(component.get("v.amountTotal"));
-        var total = component.get("v.amountTotal");
-        if(total === undefined){
-            // If the total was undefined, set it to the old amount
-            total = oldAmt;
-        }
-        //console.log(newAmt + ", " + oldAmt + ", " + total);
-        total += (newAmt - oldAmt);
-        total = Math.round(total * 100) / 100;
-        component.set("v.amountTotal", total);
-        //console.log(total);
+    amountCheck: function(component){
+        component.set('v.checkAmountTotals', true);
     },
     addToObjectArray: function(component, vArray, vObj){
-        // Now, create the component that contains the fields and pass it the list of data
+        // Pass the component that contains the fields to the list of data
         // The parent list needs an actual reference to the item, 
 		// so that it gets updated as fields are filled in
         var objList = component.get(vArray);
-		var obj = component.get(vObj);
+        var obj = component.get(vObj);
+
         objList.push(obj);
         component.set(vArray, objList);
-        //console.log(objList);
     },
     validateRow: function(component, helper) {
-        component.set("v.showError", false);
         // Check if this row has all required inputs filled in
         // If none are filled in, assume this row should not be processed
-        // var needsError = [];
+        component.set('v.showError', false);
+        
+        // Small JS object to store info about current validation check
         var validationInfo = {needsError: [], allBlank: true, validSoFar: true, 
             noDuplicateValueList: []};
         validationInfo.noDuplicateValueList = 
             helper.proxyToObj(component.get('v.noDuplicateValueList'));
-        var validSoFar = true;
         var validForm = true;
         var duplicateCheck = true;
         
         // Show error messages if required fields are blank
         var reqFields = component.find('requiredField');
-        //console.log(reqFields); 
 
+        // The aura:id of 'noDuplicates' is used to prevent duplicate values across rows
         var noDuplicatesList = component.find('noDuplicates');
-        //console.log(noDuplicates); 
+
+        // TODO: Check for required inputs that aren't using aura:id of requiredField
+        // (helper function isn't correctly returning inputs right now)
+        // var inputFields = helper.getInputs(component);
         
         if(!reqFields && !noDuplicatesList){
             return true;
@@ -85,28 +72,25 @@
 
         return validForm && duplicateCheck;
     },
+    getInputs: function(component){
+        return component.find({ instancesOf : 'lightning:input' });
+    },
     singleInputToArray: function(findResult){
+        // Convert a single input to an array for use in reduce functions
         if(findResult && !findResult.length){
             findResult = [findResult];
         }
         return findResult;
     },
     validateField: function(component, inputCmp, validationInfo, checkDupes, helper){
-        var disabled = inputCmp.get("v.disabled");
-        if(disabled){
-            helper.removeError(inputCmp);
-            return validationInfo.validSoFar;
-        }
-        var fieldVal = inputCmp.get("v.value");
-        //console.log(fieldVal);
+        var fieldVal = inputCmp.get('v.value');
         var isValid = fieldVal || fieldVal === false;
 
         if(checkDupes){
             // Check for duplicate values
             if(validationInfo.noDuplicateValueList.indexOf(fieldVal) > -1){
-                //inputCmp.set("v.value", "Duplicate");
-                component.set("v.showError", true);
-                component.set("v.errorMessage", "Duplicate values are not allowed:");
+                component.set('v.showError', true);
+                component.set('v.errorMessage', $A.get('$Label.c.Error_Duplicate_Value'));
                 isValid = false;
                 // This value duplicates another field, prevent it
             } else {
@@ -127,18 +111,20 @@
 
         return isValid && validationInfo.validSoFar;
     },
+    getRowAmt: function(component){
+        var amtField = component.get('v.amtField');
+        var item = this.proxyToObj(component.get('v.item'));
+        var rowAmt = null;
+		if(item && amtField && item[amtField]){
+			rowAmt = item[amtField];
+        }
+        return rowAmt;
+    },
     addError: function(inputCmp){
         $A.util.addClass(inputCmp, 'slds-has-error');
     },
     removeError: function(inputCmp){
         $A.util.removeClass(inputCmp, 'slds-has-error');
-    },
-    checkUndefined: function(num){
-        if(num === undefined){
-            return 0;
-        } else {
-            return +num; // Convert string to number, just in case
-        }
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

@@ -55,7 +55,7 @@ public with sharing class Post_Install_Script_TEST {
 
         //Verify that the NPSP Account Model now becomes One-to-One
         npspOrgSettings = npsp.UTIL_CustomSettings_API.getContactsSettings();
-        system.assertEquals(npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE,
+        system.assertEquals(npsp.CAO_Constants_API.ONE_TO_ONE_PROCESSOR,
           npspOrgSettings.npe01__Account_Processor__c);
         system.assertEquals(hedaOrgSettings.hed__Account_Processor__c,
           npspOrgSettings.npe01__One_to_One_RecordTypeID__c);

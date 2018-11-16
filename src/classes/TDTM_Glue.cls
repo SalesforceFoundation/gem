@@ -160,17 +160,17 @@ public with sharing class TDTM_Glue {
         }
 
         if(hedaOrgSettings.hed__Account_Processor__c == adminAccountRecTypeId) {
-            if (npspOrgSettings.npe01__Account_Processor__c != npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE ||
+            if (npspOrgSettings.npe01__Account_Processor__c != npsp.CAO_Constants_API.ONE_TO_ONE_PROCESSOR ||
                     npspOrgSettings.npe01__One_to_One_RecordTypeID__c != hedaOrgSettings.hed__Account_Processor__c) {
-                npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE;
+                npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.ONE_TO_ONE_PROCESSOR;
                 npspOrgSettings.npe01__One_to_One_RecordTypeID__c = hedaOrgSettings.hed__Account_Processor__c;
                 UTIL_CustomSettingsFacade.setNPSPOrgContactsSettings(npspOrgSettings);
             }
             return true;
         } else if(hedaOrgSettings.hed__Account_Processor__c == hhAccountRecTypeId) {
-            if(npspOrgSettings.npe01__Account_Processor__c != npsp.CAO_Constants_API.HH_ACCOUNT_TYPE ||
+            if(npspOrgSettings.npe01__Account_Processor__c != npsp.CAO_Constants_API.HH_ACCOUNT_PROCESSOR ||
                     npspOrgSettings.npe01__HH_Account_RecordTypeID__c != hedaOrgSettings.hed__Account_Processor__c) {
-                npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.HH_ACCOUNT_TYPE;
+                npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.HH_ACCOUNT_PROCESSOR;
                 npspOrgSettings.npe01__HH_Account_RecordTypeID__c = hedaOrgSettings.hed__Account_Processor__c;
                 UTIL_CustomSettingsFacade.setNPSPOrgContactsSettings(npspOrgSettings);
             }

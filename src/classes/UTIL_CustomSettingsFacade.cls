@@ -105,7 +105,7 @@ public without sharing class UTIL_CustomSettingsFacade {
     *******************************************************************************************************/
     public static void setNPSPHouseholdsSettingsForTests(npo02__Households_Settings__c mySettings) {
 
-        npo02__Households_Settings__c   householdsSettings = new npo02__Households_Settings__c();
+        npo02__Households_Settings__c householdsSettings = new npo02__Households_Settings__c();
 
         //create our own based on what's passed in from the test
         householdsSettings.npo02__Household_Rules__c = mySettings.npo02__Household_Rules__c;

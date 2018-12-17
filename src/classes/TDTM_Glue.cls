@@ -141,6 +141,11 @@ public with sharing class TDTM_Glue {
     *********************************************************************************************************/
     public static Boolean updateNPSPAccountModel() {
 
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        if(!gemSettings.Sync_Account_Models__c){
+            return false;
+        }
+
         //If adminAccountRecTypeId is empty, try to populate it
         if(String.isBlank(adminAccountRecTypeId)) {
             adminAccountRecTypeId = hed.UTIL_Describe_API.getAdminAccRecTypeID();

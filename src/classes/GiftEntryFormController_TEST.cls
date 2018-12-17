@@ -53,7 +53,12 @@ private class GiftEntryFormController_TEST {
     private static String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
     
     @testSetup static void setupGiftEntry() {
-        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID()));
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
+        UTIL_CustomSettingsFacade.setHEDASettingForTest(
+            new hed__Hierarchy_Settings__c(hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID()));
         GiftEntryFormController.insertGiftEntrySettings();
     }
 
@@ -84,6 +89,9 @@ private class GiftEntryFormController_TEST {
     */ 
     @isTest
     private static void testNewGift() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
 
         GiftEntryFormController.GiftFormModel giftModel = returnGiftModel();
     
@@ -194,6 +202,10 @@ private class GiftEntryFormController_TEST {
 
     @isTest
     private static void testDataImportUpdate() {
+
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
 
         List<npsp__Data_Import_Settings__c> diSettingsList = 
             [Select npsp__Donation_Matching_Behavior__c from npsp__Data_Import_Settings__c];

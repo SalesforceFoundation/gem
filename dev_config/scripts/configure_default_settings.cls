@@ -56,6 +56,10 @@ public static void initializeHEDASettingsForADV() {
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
     update orgSettings;
 
+    GEM_Settings__c gemSettings UTIL_CustomSettingsFacade.getOrgGemSettings();
+    gemSettings.Sync_Account_Models__c = true;
+    update gemSettings;
+
 }
 
 public static void AddGiftProcessor() {

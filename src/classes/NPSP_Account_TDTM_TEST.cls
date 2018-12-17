@@ -76,4 +76,24 @@ private class NPSP_Account_TDTM_TEST {
         system.assertEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, acc.npe01__SYSTEM_AccountType__c);
         system.assertEquals(true, acc.npe01__SYSTEMISINDIVIDUAL__c);
     }
+
+    /*******************************************************************************************************
+    * @description Test if system does not update npsp fields when Account sync is turned off
+    */
+    @isTest
+    static void testNoSyncAccountTDTM() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = false;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
+        Boolean updateModel = TDTM_Glue.updateNPSPAccountModel();
+        System.assertEquals(false, updateModel, 'The setting is turned off, there should be no udpate');
+
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
+        updateModel = TDTM_Glue.updateNPSPAccountModel();
+        System.assertEquals(true, updateModel, 'The setting is turned on, there should be an udpate');
+    }
+
 }

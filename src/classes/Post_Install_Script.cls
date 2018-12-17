@@ -39,6 +39,7 @@ global with sharing class Post_Install_Script implements InstallHandler{
     global void onInstall(InstallContext context) {
         //Initial installation.
         if(context.previousVersion() == null) {
+            UTIL_CustomSettingsFacade.getOrgGemSettings();
             populateNPSPAccountModel();
         }
     }

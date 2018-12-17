@@ -39,6 +39,10 @@ public with sharing class Post_Install_Script_TEST {
 
     @isTest
     static void onInstall() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
         //Set HEDA Account Model to Administrative
         hed__Hierarchy_Settings__c hedaOrgSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
         hedaOrgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID();

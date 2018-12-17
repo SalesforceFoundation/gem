@@ -40,6 +40,10 @@ private class API_HEDA_TEST {
 
     @testSetup
     static void setupTriggerHandlers() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
         //Insert HEDA Trigger Handlers
         List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
         hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
@@ -300,6 +304,10 @@ private class API_HEDA_TEST {
     */
     @isTest
     static void testConfigAccountForContact() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
         reInsertContact();
 
         Contact con = [SELECT Id, AccountId FROM Contact];
@@ -333,6 +341,10 @@ private class API_HEDA_TEST {
      */
     @isTest
     static void testConfigNPSPAccountModelAdministrative(){
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
         delete [Select Id from Contact];
 
         //Set HEDA custom setting with Administrative
@@ -357,6 +369,10 @@ private class API_HEDA_TEST {
      */
     @isTest
     static void testConfigNPSPAccountModelHousehold(){
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
         delete [Select Id from Contact];
 
         //Set HEDA custom setting with Household

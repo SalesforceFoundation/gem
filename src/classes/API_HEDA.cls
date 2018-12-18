@@ -94,10 +94,9 @@ global with sharing class API_HEDA extends hed.Advancement_Adapter {
     global override void configAccountForContact(Account a) {
         //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
         if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
-            if(TDTM_Glue.updateNPSPAccountModel()) {
-                npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
-                adapter.configAccountForContact(a);
-            }
+            TDTM_Glue.updateNPSPAccountModel();
+            npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
+            adapter.configAccountForContact(a);
         }
     }
 }

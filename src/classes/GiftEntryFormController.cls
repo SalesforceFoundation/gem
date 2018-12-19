@@ -262,6 +262,13 @@ public class GiftEntryFormController {
             runGiftProcess(giftModel.di.Id, false);
 
             Id oppId = getOpportunityIdFromImport(giftModel.di.Id);
+
+            if(giftModel.allocs != null && !giftModel.allocs.isEmpty()){
+                for(npsp__Allocation__c a : giftModel.allocs){
+                    a.npsp__Opportunity__c = oppId;
+                }
+                upsert giftModel.allocs;
+            }
             
             if(giftModel.payments != null && !giftModel.payments.isEmpty()){
                 for(npe01__OppPayment__c p : giftModel.payments){
@@ -271,12 +278,7 @@ public class GiftEntryFormController {
                 }
                 upsert giftModel.payments;
             }
-            if(giftModel.allocs != null && !giftModel.allocs.isEmpty()){
-                for(npsp__Allocation__c a : giftModel.allocs){
-                    a.npsp__Opportunity__c = oppId;
-                }
-                upsert giftModel.allocs;
-            }
+            
             if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()){
                 for(npsp__Partial_Soft_Credit__c c : giftModel.partialCredits){
                     if(c.Id == null){

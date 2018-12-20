@@ -19,5 +19,6 @@
     <tabs>standard-Opportunity</tabs>
     <tabs>standard-report</tabs>
     <tabs>Gift_Entry</tabs>
+    <tabs>npsp__Batch_Gift_Entry</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

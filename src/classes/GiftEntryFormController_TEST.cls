@@ -322,9 +322,12 @@ private class GiftEntryFormController_TEST {
         GiftEntryFormController.processJSONList(diList);
 
         // Check that the allocations were created
-        List<npsp__Allocation__c> testList = [Select Id from npsp__Allocation__c 
-            where npsp__General_Accounting_Unit__c =: gauId
-            and npsp__Opportunity__c =: oppId];
+        List<npsp__Allocation__c> testList = [
+                Select Id
+                from npsp__Allocation__c
+                where npsp__General_Accounting_Unit__c = :gauId
+                and npsp__Opportunity__c = :oppId
+        ];
         System.assertEquals(2, testList.size());
         
     }

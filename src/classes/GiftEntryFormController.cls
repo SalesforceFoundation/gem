@@ -36,9 +36,9 @@
 */
 public with sharing class GiftEntryFormController {
 
-    
+
     public GiftEntryFormController() {
-        
+
     }
 
     public class GiftFormModel{
@@ -79,8 +79,8 @@ public with sharing class GiftEntryFormController {
             this.oppId = oppId;
         }
     }
-    
-    
+
+
     @AuraEnabled
     public static GiftFormModel initClass(Id oppId) {
         GiftFormModel giftModel = new GiftFormModel(oppId);
@@ -258,7 +258,15 @@ public with sharing class GiftEntryFormController {
             runGiftProcess(giftModel.di.Id, false);
 
             Id oppId = getOpportunityIdFromImport(giftModel.di.Id);
-            
+
+            if(giftModel.allocs != null && !giftModel.allocs.isEmpty()){
+                for(npsp__Allocation__c a : giftModel.allocs){
+                    a.npsp__Opportunity__c = oppId;
+                }
+                UTIL_CrudFLS.checkUpsert(giftModel.allocs);
+                upsert giftModel.allocs;
+            }
+
             if(giftModel.payments != null && !giftModel.payments.isEmpty()) {
                 for(npe01__OppPayment__c p : giftModel.payments) {
                     if(p.Id == null) {
@@ -268,16 +276,10 @@ public with sharing class GiftEntryFormController {
                 UTIL_CrudFLS.checkUpsert(giftModel.payments);
                 upsert giftModel.payments;
             }
-            if(giftModel.allocs != null && !giftModel.allocs.isEmpty()) {
-                for(npsp__Allocation__c a : giftModel.allocs) {
-                    a.npsp__Opportunity__c = oppId;
-                }
-                UTIL_CrudFLS.checkUpsert(giftModel.allocs);
-                upsert giftModel.allocs;
-            }
-            if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()) {
-                for(npsp__Partial_Soft_Credit__c c : giftModel.partialCredits) {
-                    if(c.Id == null) {
+
+            if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()){
+                for(npsp__Partial_Soft_Credit__c c : giftModel.partialCredits){
+                    if(c.Id == null){
                         c.npsp__Opportunity__c = oppId;
                     }
                 }
@@ -561,12 +563,12 @@ public with sharing class GiftEntryFormController {
     class PicklistOptionWrapper {
         String label {get; set;}
         String value {get; set;}
-        
+
         PicklistOptionWrapper(String optionValue) {
             this.label = optionValue;
             this.value = optionValue;
         }
-        
+
         PicklistOptionWrapper(String optionLabel, String optionValue) {
             this.label = optionLabel;
             this.value = optionValue;

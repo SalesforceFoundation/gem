@@ -35,7 +35,7 @@
 public with sharing class UTIL_CrudFLS {
 
     /**
-     * @description Overload of create(List<SOBject>) that takes a single SObject
+     * @description Overload of create(List<SObject>) that takes a single SObject
      *
      * @param record                        Records to attempt to create
      *
@@ -114,6 +114,30 @@ public with sharing class UTIL_CrudFLS {
         return Database.upsert(records);
     }
 
+
+    public static void checkRead(String objectName, List<String> fieldNames) {
+        Map<String, Schema.DescribeFieldResult> fieldDescribes = UTIL_Describe.getAllFieldsDescribe(objectName);
+        Schema.DescribeSObjectResult objectDescribe = UTIL_Describe.getObjectDescribe(objectName);
+
+        if(!objectDescribe.isAccessible()) {
+            throw new AccessException(objectDescribe, 'read');
+        }
+
+        for(String fieldName : fieldNames) {
+            Schema.DescribeFieldResult fieldDescribe = fieldDescribes.get(fieldName);
+            if(fieldDescribe.isPermissionable() && !fieldDescribe.isAccessible()) {
+                throw new AccessException(objectDescribe, fieldDescribe, 'read');
+            }
+        }
+
+    }
+
+    /**
+     * @description     Check if a List of SObjects is createable (DML insert)
+     *
+     * @param records   Records being Created
+     * @throws          AccessException when current CRUD/FLS settings prohibit DML Insert for the given records
+     */
     private static void checkCreate(List<SObject> records) {
         Schema.DescribeSObjectResult objectDescribe = getDescribeFromSObjects(records);
 
@@ -126,14 +150,18 @@ public with sharing class UTIL_CrudFLS {
         Map<String, Schema.DescribeFieldResult> fieldDescribes = getFieldDescribesFromSObjects(records);
         for(Schema.DescribeFieldResult fieldDescribe : fieldDescribes.values()) {
             if(fieldDescribe.isPermissionable()
-                    && fieldDescribe.isAccessible()
                     && !fieldDescribe.isCalculated()
-                    && !fieldDescribe.isCreateable()) {
+                    && (!fieldDescribe.isAccessible() || !fieldDescribe.isCreateable())) {
                 throw new AccessException(objectDescribe, fieldDescribe, 'insert');
             }
         }
     }
 
+    /**
+     * @description     Check if a List of SObjects is updateable with current CRUD/FLS settings
+     * @param records   Records being updated
+     * @throws          AccessException when current CRUD/FLS settings prohibit update for the given records
+     */
     private static void checkUpdate(List<SObject> records) {
         Schema.DescribeSObjectResult objectDescribe = getDescribeFromSObjects(records);
 
@@ -146,22 +174,18 @@ public with sharing class UTIL_CrudFLS {
         Map<String, Schema.DescribeFieldResult> fieldDescribes = getFieldDescribesFromSObjects(records);
         for(Schema.DescribeFieldResult fieldDescribe : fieldDescribes.values()) {
             if(fieldDescribe.isPermissionable()
-                    && fieldDescribe.isAccessible()
                     && !fieldDescribe.isCalculated()
-                    && !fieldDescribe.isUpdateable()) {
+                    && (!fieldDescribe.isAccessible() || !fieldDescribe.isCreateable())) {
                 throw new AccessException(objectDescribe, fieldDescribe, 'update');
             }
         }
     }
 
     /**
-     * @description Check a single SObject for upsert-ability.
-     * Public because we are not able to provide a true "upsert" operation as a part of this Utility class.
-     * Database.upsert() does not accept a generic SObject
-     * The caller of this function must perform the DML upsert operation on the concrete SObject
+     * @description     Overload of @see checkUpsert for a single SObject
      *
-     * @param record Record to check CRUD/FLS on
-     * @throws AccessException when CRUD and FLS do not allow for an Upsert operation
+     * @param record    Record to check CRUD/FLS on
+     * @throws          AccessException when CRUD and FLS do not allow for an Upsert operation
      */
     public static void checkUpsert(SObject record) {
         List<SObject> records = new List<SObject>{record};
@@ -182,6 +206,11 @@ public with sharing class UTIL_CrudFLS {
         checkUpdate(records);
     }
 
+    /**
+     * @description Check if a List of SObjects is Deleteable
+     *
+     * @param records
+     */
     private static void checkDelete(List<SObject> records) {
         Schema.DescribeSObjectResult objectDescribe = getDescribeFromSObjects(records);
 
@@ -191,13 +220,24 @@ public with sharing class UTIL_CrudFLS {
         }
     }
 
+    /**
+     * @description     Utility method to get object describe information on a list of a single type of SObject. Use prior to DML.
+     * @param records   List containing a single type of SObject to get describe information for
+     *
+     * @return          Schema.DescribeSObjectResult for the given type of SObject
+     */
     private static Schema.DescribeSObjectResult getDescribeFromSObjects(List<SObject> records) {
-        String objectName = String.valueOf(records[0].getSObjectType());
+        String objectName = records[0].getSObjectType().getDescribe().getName();
         return UTIL_Describe.getObjectDescribe(objectName);
     }
 
+    /**
+     * @description     Utility method to get field describe information on a list of a single type of SObject. Use prior to DML.
+     * @param records   List containing a single type of SObject to get field describe information for
+     * @return          Map containing field describe information for the given SObject
+     */
     private static Map<String, Schema.DescribeFieldResult> getFieldDescribesFromSObjects(List<SObject> records) {
-        String objectName = String.valueOf(records[0].getSObjectType());
+        String objectName = records[0].getSObjectType().getDescribe().getName();
         Set<String> fieldNames = new Set<String>();
         for(SObject record : records) {
             fieldNames.addAll(record.getPopulatedFieldsAsMap().keySet());
@@ -207,8 +247,11 @@ public with sharing class UTIL_CrudFLS {
 
     }
 
+    /**
+     * @description Exception thrown when attempting an operation prohibited by current CRUD/FLS settings
+     */
     public class AccessException extends Exception {
-        public AccessException(Schema.DescribeSObjectResult objectDescribe,  String operation) {
+        public AccessException(Schema.DescribeSObjectResult objectDescribe, String operation) {
             this.setMessage('No ' + operation + ' access for object ' + objectDescribe.getName());
         }
 

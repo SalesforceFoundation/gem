@@ -156,7 +156,7 @@ public with sharing class UTIL_CrudFLS {
 
         // check CRUD for delete
         if(!objectDescribe.isDeletable()) {
-            throw new AccessException();
+            throw new AccessException(objectDescribe, 'delete');
         }
     }
 
@@ -170,11 +170,8 @@ public with sharing class UTIL_CrudFLS {
     public static void checkAccess(CRUD_OPERATION op, String objectName, List<String> fieldNames) {
         Schema.DescribeSObjectResult objectDescribe = UTIL_Describe.getObjectDescribe(objectName);
         Map<String, Schema.DescribeFieldResult> fieldDescribeMap = UTIL_Describe.getAllFieldsDescribe(objectName);
-        System.debug(JSON.serializePretty(fieldDescribeMap));
-        System.debug(fieldNames);
         List<Schema.DescribeFieldResult> fieldDescribes = new List<Schema.DescribeFieldResult>();
         for(String fieldName : fieldNames) {
-            Schema.DescribeFieldResult dfr = fieldDescribeMap.get(fieldName.toLowerCase());
             fieldDescribes.add(fieldDescribeMap.get(fieldName.toLowerCase()));
         }
         checkAccess(op, objectDescribe, fieldDescribes);

@@ -13,6 +13,7 @@
         <members>Post_Install_Script</members>
         <members>TDTM_Glue</members>
         <members>UTIL_CustomSettingsFacade</members>
+        <members>UTIL_CrudFLS</members>
         <members>UTIL_Describe</members>
         <members>UTIL_Describe_TEST</members>
         <members>UTIL_Namespace</members>

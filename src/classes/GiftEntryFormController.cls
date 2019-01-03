@@ -36,12 +36,7 @@
 */
 public with sharing class GiftEntryFormController {
 
-
-    public GiftEntryFormController() {
-
-    }
-
-    public class GiftFormModel{
+    public class GiftFormModel {
         @AuraEnabled public Id oppId {get;set;}
         @AuraEnabled public npsp__DataImport__c di {get;set;}
         @AuraEnabled public Opportunity opp {get;set;}
@@ -83,9 +78,90 @@ public with sharing class GiftEntryFormController {
 
     @AuraEnabled
     public static GiftFormModel initClass(Id oppId) {
+        try {
+            checkCRUDFLS();
+        } catch(UTIL_CrudFLS.AccessException ex) {
+            throw returnAuraException(ex.getMessage());
+        }
         GiftFormModel giftModel = new GiftFormModel(oppId);
         giftModel = getDonationRecords(giftModel);
         return giftModel;
+    }
+
+    /**
+     * @description This method checks CRUD/FLS on load of the gift entry form controller.
+     * Not all CRUD/FLS violations may be caught by this method. Run-time CRUD/FLS checks on SOQL/DML operations
+     * are used elsewhere that will prevent users from performing SOQL/DML if they do not have access.
+     * For an example, @see getDonationRecords and @see saveDonationInformation
+     * @throws Util_CrudFLS.AccessException if a user does not have the needed access to a field being checked
+     */
+    public static void checkCRUDFLS() {
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'npsp__Allocation__c',
+                new List<String>{
+                        'npsp__General_Accounting_Unit__c',
+                        'npsp__Percent__c',
+                        'npsp__Amount__c',
+                        'npsp__Opportunity__c'
+                }
+        );
+
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'npe01__OppPayment__c',
+                new List<String>{
+                        'npe01__Payment_Amount__c',
+                        'npe01__Scheduled_Date__c',
+                        'npe01__Payment_Method__c',
+                        'npe01__Check_Reference_Number__c',
+                        'npe01__Paid__c',
+                        'npe01__Payment_Date__c'
+                }
+        );
+
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'npsp__Partial_Soft_Credit__c',
+                new List<String>{
+                        'npsp__Contact__c',
+                        'npsp__Amount__c',
+                        'npsp__Role_Name__c',
+                        'npsp__Opportunity__c'
+                }
+        );
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'npsp__DataImport__c',
+                new List<String>{
+                        'npsp__Account1Imported__c',
+                        'npsp__Contact1Imported__c',
+                        'npsp__Donation_Donor__c',
+                        'npsp__Donation_Name__c',
+                        'npsp__Donation_Amount__c',
+                        'npsp__Donation_Stage__c',
+                        'npsp__Payment_Method__c',
+                        'npsp__Payment_Check_Reference_Number__c',
+                        'npsp__Donation_Description__c'
+                }
+        );
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'Opportunity',
+                new List<String>{
+                        'CampaignId',
+                        'npsp__Tribute_Type__c',
+                        'npsp__Acknowledgment_Status__c',
+                        'npsp__Honoree_Name__c',
+                        'npsp__Honoree_Contact__c',
+                        'npsp__Notification_Recipient_Name__c',
+                        'npsp__Notification_Message__c',
+                        'npsp__Matching_Gift_Employer__c',
+                        'npsp__Matching_Gift_Account__c',
+                        'npsp__Matching_Gift__c',
+                        'npsp__Matching_Gift_Status__c'
+                }
+        );
     }
 
     /*******************************************************************************************************
@@ -166,40 +242,72 @@ public with sharing class GiftEntryFormController {
 
             // Now check for related objects
             if(opp.npe01__Number_of_Payments__c > 0) {
-                List<npe01__OppPayment__c> payments = [SELECT Id, 
-                        npe01__Payment_Amount__c,
-                        npe01__Scheduled_Date__c,
-                        npe01__Payment_Date__c,
-                        npe01__Payment_Method__c,
-                        npe01__Check_Reference_Number__c,
-                        npe01__Paid__c
-                    FROM npe01__OppPayment__c 
-                    WHERE npe01__Opportunity__c =: oppId];
+                UTIL_CrudFLS.checkRead('npe01__OppPayment__c',
+                        new List<String>{
+                                'Id',
+                                'npe01__Payment_Amount__c',
+                                'npe01__Scheduled_Date__c',
+                                'npe01__Payment_Date__c',
+                                'npe01__Payment_Method__c',
+                                'npe01__Check_Reference_Number__c',
+                                'npe01__Paid__c'
+                        });
+                List<npe01__OppPayment__c> payments = [
+                        SELECT Id,
+                                npe01__Payment_Amount__c,
+                                npe01__Scheduled_Date__c,
+                                npe01__Payment_Date__c,
+                                npe01__Payment_Method__c,
+                                npe01__Check_Reference_Number__c,
+                                npe01__Paid__c
+                        FROM npe01__OppPayment__c
+                        WHERE npe01__Opportunity__c = :oppId
+                ];
                 if(!payments.isEmpty()) {
                     giftModel.payments = payments;
                 }
             }
 
-            List<npsp__Allocation__c> allocations = [SELECT Id, 
-                    npsp__Amount__c,
-                    npsp__General_Accounting_Unit__c,
-                    npsp__Percent__c,
-                    npsp__Recurring_Donation__c,
-                    npsp__Opportunity__c
-                FROM npsp__Allocation__c 
-                WHERE npsp__Opportunity__c =: oppId];
+            UTIL_CrudFLS.checkRead('npsp__Allocation__c',
+                    new List<String>{
+                            'npsp__Amount__c',
+                            'npsp__General_Accounting_Unit__c',
+                            'npsp__Percent__c',
+                            'npsp__Recurring_Donation__c',
+                            'npsp__Opportunity__c'
+                    });
+            List<npsp__Allocation__c> allocations = [
+                    SELECT Id,
+                            npsp__Amount__c,
+                            npsp__General_Accounting_Unit__c,
+                            npsp__Percent__c,
+                            npsp__Recurring_Donation__c,
+                            npsp__Opportunity__c
+                    FROM npsp__Allocation__c
+                    WHERE npsp__Opportunity__c = :oppId
+            ];
             if(!allocations.isEmpty()) {
                 giftModel.allocs = allocations;
             }
 
-            List<npsp__Partial_Soft_Credit__c> partialCredits = [SELECT Id, 
-                    npsp__Amount__c,
-                    npsp__Contact__c,
-                    npsp__Contact_Name__c,
-                    npsp__Role_Name__c,
-                    npsp__Opportunity__c
-                FROM npsp__Partial_Soft_Credit__c 
-                WHERE npsp__Opportunity__c =: oppId];
+            UTIL_CrudFLS.checkRead('npsp__Partial_Soft_Credit__c',
+                    new List<String>{
+                            'npsp__Amount__c',
+                            'npsp__Contact__c',
+                            'npsp__Contact_Name__c',
+                            'npsp__Role_Name__c',
+                            'npsp__Opportunity__c'
+                    });
+            List<npsp__Partial_Soft_Credit__c> partialCredits = [
+                    SELECT Id,
+                            npsp__Amount__c,
+                            npsp__Contact__c,
+                            npsp__Contact_Name__c,
+                            npsp__Role_Name__c,
+                            npsp__Opportunity__c
+                    FROM npsp__Partial_Soft_Credit__c
+                    WHERE npsp__Opportunity__c = :oppId
+            ];
             if(!partialCredits.isEmpty()) {
                 giftModel.partialCredits = partialCredits;
             }
@@ -382,10 +490,19 @@ public with sharing class GiftEntryFormController {
     @AuraEnabled
     public static String getOpportunityIdFromImport(Id diObjId) {
         try {
-            npsp__DataImport__c di = [SELECT npsp__DonationImported__c,
-                npsp__FailureInformation__c
-                FROM npsp__DataImport__c
-                WHERE Id =: diObjId];
+            UTIL_CrudFLS.checkRead(
+                    'npsp__DataImport__c',
+                    new List<String>{
+                            'npsp__DonationImported__c',
+                            'npsp__FailureInformation__c'
+                    }
+            );
+            npsp__DataImport__c di = [
+                    SELECT npsp__DonationImported__c,
+                            npsp__FailureInformation__c
+                    FROM npsp__DataImport__c
+                    WHERE Id = :diObjId
+            ];
             if(di.npsp__FailureInformation__c != null) {
                 throw returnAuraException(di.npsp__FailureInformation__c);
             }
@@ -426,7 +543,7 @@ public with sharing class GiftEntryFormController {
 
         String allDIFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npsp__DataImport__c');
         List<npsp__DataImport__c> listDI = 
-            Database.query('SELECT '+ allDIFields +' FROM npsp__DataImport__c WHERE Id = :diObjId');
+            Database.query('SELECT '+ String.escapeSingleQuotes(allDIFields) +' FROM npsp__DataImport__c WHERE Id = :diObjId');
 
         npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
     }
@@ -473,13 +590,13 @@ public with sharing class GiftEntryFormController {
             }
 
             // First, remove attributes passed from Lightning that can't be deserialized
-            String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
+            String sObjectTypeRegex = '"sobjectType":.+?(?=,),';
             // Now remove related lookup object attributes, we can't upsert with the Id AND the object
             // NOTE: If this stops working, it may be best to loop through the object and remove
             // any objects at a certain "depth"
             String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
 
-            giftModelString = giftModelString.replaceAll(SObjectTypeRegex, '');
+            giftModelString = giftModelString.replaceAll(sObjectTypeRegex, '');
             giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
 
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
@@ -488,7 +605,6 @@ public with sharing class GiftEntryFormController {
             return giftModel;
 
         } catch(Exception e) {
-            System.debug(e.getStackTraceString());
             throw returnAuraException(e.getMessage());
         }
     }
@@ -515,7 +631,10 @@ public with sharing class GiftEntryFormController {
             diIdSet.add(di.Id);
         }
 
-
+        UTIL_CrudFLS.checkRead('npsp__DataImport__c',
+                new List<String>{
+                        'Post_Process_Object_JSON__c', 'npsp__DonationImported__c'
+                });
         List<npsp__DataImport__c> listDiWithFields = [
                 SELECT Id, Post_Process_Object_JSON__c, npsp__DonationImported__c
                 FROM npsp__DataImport__c

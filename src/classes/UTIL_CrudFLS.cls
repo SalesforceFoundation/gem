@@ -35,6 +35,14 @@
 public with sharing class UTIL_CrudFLS {
 
     /**
+     * READ - SOQL Query
+     * CREATE - DML Insert
+     * MODIFY - DML Update
+     * MODIFY_CREATE - DML Upsert
+     */
+    public enum CRUD_OPERATION { READ, CREATE, MODIFY, MODIFY_CREATE }
+
+    /**
      * @description Overload of create(List<SObject>) that takes a single SObject
      *
      * @param record                        Records to attempt to create
@@ -83,58 +91,13 @@ public with sharing class UTIL_CrudFLS {
         return Database.delete(records, allOrNothing);
     }
 
-   /**
-     * @description Upsert a single SObject, with CRUD/FLS checks. Upsert is a keyword.
-     *
-     * @param records                       Records to attempt to upsert
-     *
-     * @throws AccessException              When FLS/CRUD do not allow DML upsert of the given records
-     * @return List<Database.UpsertResult>  Containing the results of the upsert operation
-     */
-    public static List<Database.UpsertResult> upsurt(SObject record) {
-        return upsurt(new List<SObject>{record});
-    }
-
-    /**
-     * @description Upsert a list of SObjects, with CRUD/FLS checks. Upsert is a keyword.
-     *
-     * @param records                       Records to attempt to upsert
-     *
-     * @throws AccessException              When FLS/CRUD do not allow DML insert of the given records
-     * @return List<Database.UpsertResult>  Containing the results of the upsert operation
-     */
-    public static List<Database.UpsertResult> upsurt(List<SObject> records) {
-        if(records == null || records.size() == 0) {
-            return null;
-        }
-
-        checkCreate(records);
-        checkUpdate(records);
-
-        return Database.upsert(records);
-    }
-
 
     public static void checkRead(String objectName, List<String> fieldNames) {
-        Map<String, Schema.DescribeFieldResult> fieldDescribes = UTIL_Describe.getAllFieldsDescribe(objectName);
-        Schema.DescribeSObjectResult objectDescribe = UTIL_Describe.getObjectDescribe(objectName);
-
-        if(!objectDescribe.isAccessible()) {
-            throw new AccessException(objectDescribe, 'read');
-        }
-
-        for(String fieldName : fieldNames) {
-            Schema.DescribeFieldResult fieldDescribe = fieldDescribes.get(fieldName);
-            if(fieldDescribe.isPermissionable() && !fieldDescribe.isAccessible()) {
-                throw new AccessException(objectDescribe, fieldDescribe, 'read');
-            }
-        }
-
+        checkAccess(CRUD_OPERATION.READ, objectName, fieldNames);
     }
 
     /**
      * @description     Check if a List of SObjects is createable (DML insert)
-     *
      * @param records   Records being Created
      * @throws          AccessException when current CRUD/FLS settings prohibit DML Insert for the given records
      */
@@ -164,21 +127,8 @@ public with sharing class UTIL_CrudFLS {
      */
     private static void checkUpdate(List<SObject> records) {
         Schema.DescribeSObjectResult objectDescribe = getDescribeFromSObjects(records);
-
-        // check CRUD for insert
-        if(!objectDescribe.isUpdateable()) {
-            throw new AccessException(objectDescribe, 'update');
-        }
-
-        // check FLS for insert
         Map<String, Schema.DescribeFieldResult> fieldDescribes = getFieldDescribesFromSObjects(records);
-        for(Schema.DescribeFieldResult fieldDescribe : fieldDescribes.values()) {
-            if(fieldDescribe.isPermissionable()
-                    && !fieldDescribe.isCalculated()
-                    && (!fieldDescribe.isAccessible() || !fieldDescribe.isCreateable())) {
-                throw new AccessException(objectDescribe, fieldDescribe, 'update');
-            }
-        }
+        checkAccess(CRUD_OPERATION.MODIFY, objectDescribe, fieldDescribes.values());
     }
 
     /**
@@ -202,14 +152,15 @@ public with sharing class UTIL_CrudFLS {
      * @throws AccessException when CRUD and FLS do not allow for an Upsert operation
      */
     public static void checkUpsert(List<SObject> records) {
-        checkCreate(records);
-        checkUpdate(records);
+        Schema.DescribeSObjectResult objectDescribe = getDescribeFromSObjects(records);
+        Map<String, Schema.DescribeFieldResult> fieldDescribes = getFieldDescribesFromSObjects(records);
+        checkAccess(CRUD_OPERATION.MODIFY_CREATE, objectDescribe, fieldDescribes.values());
     }
 
     /**
-     * @description Check if a List of SObjects is Deleteable
-     *
-     * @param records
+     * @description     Check if a List of SObjects is deletable
+     * @param records   Records to check CRUD delete on
+     * @throws          AccessException when CRUD does not allow delete of the given records
      */
     private static void checkDelete(List<SObject> records) {
         Schema.DescribeSObjectResult objectDescribe = getDescribeFromSObjects(records);
@@ -217,6 +168,88 @@ public with sharing class UTIL_CrudFLS {
         // check CRUD for delete
         if(!objectDescribe.isDeletable()) {
             throw new AccessException();
+        }
+    }
+
+    /**
+     * Overload of @see checkAccess that accepts Strings instead of Describe Results
+     *
+     * @param op            CRUD operation being performed
+     * @param sObjectName   Name of SObject in context
+     * @param fieldNames    Name of fields in context
+     */
+    public static void checkAccess(CRUD_OPERATION op, String objectName, List<String> fieldNames) {
+        Schema.DescribeSObjectResult objectDescribe = UTIL_Describe.getObjectDescribe(objectName);
+        Map<String, Schema.DescribeFieldResult> fieldDescribeMap = UTIL_Describe.getAllFieldsDescribe(objectName);
+        System.debug(JSON.serializePretty(fieldDescribeMap));
+        System.debug(fieldNames);
+        List<Schema.DescribeFieldResult> fieldDescribes = new List<Schema.DescribeFieldResult>();
+        for(String fieldName : fieldNames) {
+            Schema.DescribeFieldResult dfr = fieldDescribeMap.get(fieldName.toLowerCase());
+            if(dfr == null) {
+                AccessException ex = new AccessException();
+                ex.setMessage(fieldName + ' on ' + objectName + ' had no describe');
+                throw ex;
+            }
+            fieldDescribes.add(fieldDescribeMap.get(fieldName.toLowerCase()));
+        }
+        checkAccess(op, objectDescribe, fieldDescribes);
+    }
+
+    /**
+     * @description Check an object and fields for CRUD/FLS for a given operation.
+     *
+     * @param op                CRUD operation being performed
+     * @param objectDescribe    Describe of the Object in context
+     * @param fieldDescribes    Describe of the fields in context
+     */
+    public static void checkAccess(CRUD_OPERATION op, DescribeSObjectResult objectDescribe, List<DescribeFieldResult> fieldDescribes) {
+        switch on op {
+            when READ {
+                if(!objectDescribe.isAccessible()) {
+                    throw new AccessException(objectDescribe, 'read');
+                }
+                for(DescribeFieldResult fieldDescribe : fieldDescribes) {
+                    if(fieldDescribe.isPermissionable() && !fieldDescribe.isAccessible()) {
+                        throw new AccessException(objectDescribe, fieldDescribe, 'read');
+                    }
+                }
+            }
+            when CREATE {
+                // check CRUD for insert
+                if(!objectDescribe.isCreateable()) {
+                    throw new AccessException(objectDescribe, 'insert');
+                }
+                // check FLS for insert
+                for(Schema.DescribeFieldResult fieldDescribe : fieldDescribes) {
+                    if(fieldDescribe.isPermissionable()
+                            && !fieldDescribe.isCalculated()
+                            && (!fieldDescribe.isAccessible() || !fieldDescribe.isCreateable())) {
+                        throw new AccessException(objectDescribe, fieldDescribe, 'insert');
+                    }
+                }
+            }
+            when MODIFY {
+                // check CRUD for update
+                if(!objectDescribe.isUpdateable()) {
+                    throw new AccessException(objectDescribe, 'update');
+                }
+
+                // check FLS for update
+                for(Schema.DescribeFieldResult fieldDescribe : fieldDescribes) {
+                    if(fieldDescribe.isPermissionable()
+                            && !fieldDescribe.isCalculated()
+                            && (!fieldDescribe.isAccessible() || !fieldDescribe.isCreateable())) {
+                        throw new AccessException(objectDescribe, fieldDescribe, 'update');
+                    }
+                }
+            }
+            when MODIFY_CREATE {
+                checkAccess(CRUD_OPERATION.CREATE, objectDescribe, fieldDescribes);
+                checkAccess(CRUD_OPERATION.MODIFY, objectDescribe, fieldDescribes);
+            }
+
+
         }
     }
 

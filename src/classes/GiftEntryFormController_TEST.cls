@@ -87,7 +87,7 @@ private class GiftEntryFormController_TEST {
         GiftEntryFormController.GiftFormModel giftModel = returnGiftModel();
     
         Test.startTest();
-        giftModel = GiftEntryFormController.GiftFormModel.saveDonationInformation(giftModel);
+        giftModel = GiftEntryFormController.saveDonationInformation(giftModel);
         Test.stopTest();
 
         List<Opportunity> opps = [SELECT Id FROM Opportunity 

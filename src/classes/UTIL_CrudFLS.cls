@@ -121,17 +121,6 @@ public with sharing class UTIL_CrudFLS {
     }
 
     /**
-     * @description     Check if a List of SObjects is updateable with current CRUD/FLS settings
-     * @param records   Records being updated
-     * @throws          AccessException when current CRUD/FLS settings prohibit update for the given records
-     */
-    private static void checkUpdate(List<SObject> records) {
-        Schema.DescribeSObjectResult objectDescribe = getDescribeFromSObjects(records);
-        Map<String, Schema.DescribeFieldResult> fieldDescribes = getFieldDescribesFromSObjects(records);
-        checkAccess(CRUD_OPERATION.MODIFY, objectDescribe, fieldDescribes.values());
-    }
-
-    /**
      * @description     Overload of @see checkUpsert for a single SObject
      *
      * @param record    Record to check CRUD/FLS on
@@ -186,11 +175,6 @@ public with sharing class UTIL_CrudFLS {
         List<Schema.DescribeFieldResult> fieldDescribes = new List<Schema.DescribeFieldResult>();
         for(String fieldName : fieldNames) {
             Schema.DescribeFieldResult dfr = fieldDescribeMap.get(fieldName.toLowerCase());
-            if(dfr == null) {
-                AccessException ex = new AccessException();
-                ex.setMessage(fieldName + ' on ' + objectName + ' had no describe');
-                throw ex;
-            }
             fieldDescribes.add(fieldDescribeMap.get(fieldName.toLowerCase()));
         }
         checkAccess(op, objectDescribe, fieldDescribes);

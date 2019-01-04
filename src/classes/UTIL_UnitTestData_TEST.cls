@@ -140,4 +140,34 @@ public class UTIL_UnitTestData_TEST {
         }
         return u;
     }
+
+
+    /**
+     * @description         Create a new user with a given username and profile
+     *
+     * @param userName      UserName to use
+     * @param profileName   Profile to look for. This needs to be a built-in profile e.g. 'Read Only' or 'Standard User'
+     *
+     * @return              The newly created user
+     */
+    public static User createNewUserWithProfile(String userName, String profileName) {
+
+        Profile p = [SELECT Id, Name FROM Profile WHERE Name = :profileName];
+        User u;
+        System.runAs( new User(Id = UserInfo.getUserId())) {
+            u = new User(
+                    UserName = userName,
+                    Alias = 'jsmith',
+                    Email = 'jsmith@acme.com',
+                    EmailEncodingKey = 'UTF-8',
+                    LastName = 'Testing',
+                    LanguageLocaleKey = 'en_US',
+                    LocaleSidKey = 'en_US',
+                    ProfileId = p.Id,
+                    TimezoneSidKey = 'America/Los_Angeles'
+            );
+            insert u;
+        }
+        return u;
+    }
 }

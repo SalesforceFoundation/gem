@@ -229,8 +229,6 @@ public with sharing class UTIL_CrudFLS {
                 checkAccess(CRUD_OPERATION.CREATE, objectDescribe, fieldDescribes);
                 checkAccess(CRUD_OPERATION.MODIFY, objectDescribe, fieldDescribes);
             }
-
-
         }
     }
 
@@ -252,13 +250,22 @@ public with sharing class UTIL_CrudFLS {
      */
     private static Map<String, Schema.DescribeFieldResult> getFieldDescribesFromSObjects(List<SObject> records) {
         String objectName = records[0].getSObjectType().getDescribe().getName();
+
+        // collect all field names that are populated on at least one of the sobject
         Set<String> fieldNames = new Set<String>();
         for(SObject record : records) {
             fieldNames.addAll(record.getPopulatedFieldsAsMap().keySet());
         }
-        Map<String, Schema.DescribeFieldResult> fieldDescribes = UTIL_Describe.getAllFieldsDescribe(objectName);
-        return fieldDescribes;
+        Map<String, Schema.DescribeFieldResult> allFieldDescribes = UTIL_Describe.getAllFieldsDescribe(objectName);
 
+        // collect the describe information for the populated fields, so we can check FLS
+        Map<String, Schema.DescribeFieldResult> fieldDescribes = new Map<String, Schema.DescribeFieldResult>();
+        for(String fieldName : fieldNames) {
+            Schema.DescribeFieldResult dfr = allFieldDescribes.get(fieldName.toLowerCase());
+            fieldDescribes.put(fieldName, dfr);
+        }
+
+        return fieldDescribes;
     }
 
     /**

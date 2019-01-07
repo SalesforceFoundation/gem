@@ -24,7 +24,7 @@
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
     <aura:attribute type="String" name="oppId" />
-    <aura:attribute type="Boolean" name="showForm" default="false" />
+    <aura:attribute type="Boolean" name="showForm" default="true" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disabled" default="true" />
     <aura:attribute type="Boolean" name="showSpinner" default="false" />

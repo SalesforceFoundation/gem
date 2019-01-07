@@ -23,9 +23,9 @@
                 // Setup any default form values
                 this.setDefaults(component, giftModel.opp);
                 this.checkValidation(component);
-                component.set('v.showForm', true);
 
             } else if (state === 'ERROR') {
+                component.set('v.showForm', false);
                 this.handleError(component, response);
             }
         });

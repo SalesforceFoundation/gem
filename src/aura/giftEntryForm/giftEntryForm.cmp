@@ -24,7 +24,7 @@
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
     <aura:attribute type="String" name="oppId" />
-    <aura:attribute type="Boolean" name="showForm" default="true" />
+    <aura:attribute type="Boolean" name="showForm" default="false" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disabled" default="true" />
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
@@ -64,317 +64,315 @@
     <aura:if isTrue="{!v.showSpinner}">
         <lightning:spinner class="slds-is-fixed" />
     </aura:if>
-
-    <div class="slds-card" aura:id="formWrapper">
-
-        <lightning:layout class="{!v.showForm ? '' : 'slds-hidden'}" 
-            multipleRows="true">
-
-            <aura:if isTrue="{!v.oppClosed}">     
-                <div class="slds-col slds-size_1-of-1">
-                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-                        <h2>{!$Label.c.Gift_Donation_Locked}</h2>
+    <aura:if isTrue="{!v.showForm}">
+        <div class="slds-card" aura:id="formWrapper">
+            <lightning:layout
+                multipleRows="true">
+                <aura:if isTrue="{!v.oppClosed}">
+                    <div class="slds-col slds-size_1-of-1">
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>{!$Label.c.Gift_Donation_Locked}</h2>
+                        </div>
                     </div>
-                </div>
-            </aura:if>
+                </aura:if>
 
-            <lightning:layoutItem size="12">
-                <div class="slds-page-header slds-page-header__title">
-                    {!$Label.c.Gift_Donor_Information}
-                </div>
-            </lightning:layoutItem>
+                <lightning:layoutItem size="12">
+                    <div class="slds-page-header slds-page-header__title">
+                        {!$Label.c.Gift_Donor_Information}
+                    </div>
+                </lightning:layoutItem>
 
-            <lightning:layoutItem size="12">
-                <lightning:layout multipleRows="true">
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <c:giftPicklist picklistValues="[{value:'Account1',label:'Account'},{value:'Contact1',label:'Contact'}]" 
-                            fieldLabel="{!$Label.c.Gift_Donor_Type}"
-                            selectedVal="{!v.di.npsp__Donation_Donor__c}" />
-                    </lightning:layoutItem>
+                <lightning:layoutItem size="12">
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <c:giftPicklist picklistValues="[{value:'Account1',label:'Account'},{value:'Contact1',label:'Contact'}]"
+                                fieldLabel="{!$Label.c.Gift_Donor_Type}"
+                                selectedVal="{!v.di.npsp__Donation_Donor__c}" />
+                        </lightning:layoutItem>
 
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <div class="{!v.di.npsp__Donation_Donor__c != 'Contact1' ? '' : 'slds-hidden'}">
-                            <label class="show-required slds-form-element__label">
-                                {!v.objectFieldData.objectLabels.Opportunity.AccountId}
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <div class="{!v.di.npsp__Donation_Donor__c != 'Contact1' ? '' : 'slds-hidden'}">
+                                <label class="show-required slds-form-element__label">
+                                    {!v.objectFieldData.objectLabels.Opportunity.AccountId}
+                                </label>
+                                <force:inputField aura:id="accountLookup"
+                                    value="{!v.di.npsp__Account1Imported__c}" />
+                            </div>
+                            <div class="{!v.di.npsp__Donation_Donor__c != 'Account1' ? '' : 'slds-hidden'}">
+                                <label class="show-required slds-form-element__label">
+                                    {!v.objectFieldData.objectLabels.Opportunity.npsp__Primary_Contact__c}
+                                </label>
+                                <force:inputField aura:id="contactLookup"
+                                    value="{!v.di.npsp__Contact1Imported__c}" />
+                            </div>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">&nbsp;</label>
+                            <br/>
+                            <lightning:button aura:id="editDonorButton"
+                                disabled="{!v.donorExists == false}"
+                                label="{!$Label.c.Gift_Edit_Selected_Donor}"
+                                onclick="{!c.clickEditDonor}" />
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12">
+                    <div class="slds-page-header slds-page-header__title">
+                        {!$Label.c.Gift_Donation_Information}
+                    </div>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12">
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.Name}
                             </label>
-                            <force:inputField aura:id="accountLookup" 
-                                value="{!v.di.npsp__Account1Imported__c}" />
-                        </div>
-                        <div class="{!v.di.npsp__Donation_Donor__c != 'Account1' ? '' : 'slds-hidden'}">
+                            <lightning:input variant="label-hidden"
+                                value="{!v.di.npsp__Donation_Name__c}" />
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="show-required slds-form-element__label">
-                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Primary_Contact__c}
+                                {!v.objectFieldData.objectLabels.Opportunity.CloseDate}
                             </label>
-                            <force:inputField aura:id="contactLookup"
-                                value="{!v.di.npsp__Contact1Imported__c}" />
-                        </div>
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">&nbsp;</label>
-                        <br/>
-                        <lightning:button aura:id="editDonorButton" 
-                            disabled="{!v.donorExists == false}"
-                            label="{!$Label.c.Gift_Edit_Selected_Donor}"
-                            onclick="{!c.clickEditDonor}" />
-                    </lightning:layoutItem>
-                </lightning:layout>
-            </lightning:layoutItem>
+                            <lightning:input aura:id="requiredField"
+                                required="true"
+                                variant="label-hidden"
+                                type="date"
+                                onchange="{!c.handleFieldChange}"
+                                value="{!v.di.npsp__Donation_Date__c}" />
+                        </lightning:layoutItem>
 
-            <lightning:layoutItem size="12">
-                <div class="slds-page-header slds-page-header__title">
-                    {!$Label.c.Gift_Donation_Information}
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="show-required slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.Amount}
+                            </label>
+                            <lightning:input aura:id="requiredField"
+                                required="true"
+                                variant="label-hidden"
+                                type="number"
+                                formatter="currency" step="0.01"
+                                onchange="{!c.handleFieldChange}"
+                                value="{!v.di.npsp__Donation_Amount__c}" />
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}"
+                                fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}"
+                                selectedVal="{!v.di.npsp__Donation_Stage__c}" />
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}"
+                                fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
+                                selectedVal="{!v.di.npsp__Payment_Method__c}" />
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}
+                            </label>
+                            <lightning:input disabled="{!v.di.npsp__Payment_Method__c != 'Check'}"
+                                variant="label-hidden"
+                                value="{!v.di.npsp__Payment_Check_Reference_Number__c}" />
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.CampaignId}
+                            </label>
+                            <force:inputField value="{!v.opp.CampaignId}" />
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.Description}
+                            </label>
+                            <lightning:textarea
+                                variant="label-hidden"
+                                value="{!v.di.npsp__Donation_Description__c}" />
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12">
+                    <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
+                        aria-expanded="true"
+                        onclick="{!c.expandTributeSection}">
+                        <lightning:icon iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}"
+                            size="x-small"
+                            alternativeText="Toggle Tribute Information" />{!$Label.c.Gift_Tribute_Information}
+                    </button>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12">
+                    <lightning:layout multipleRows="true" class="{!v.expandTribute == true ? '' : 'slds-hidden'}">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Tribute_Type__c}
+                            </label>
+                            <force:inputField value="{!v.opp.npsp__Tribute_Type__c}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}
+                            </label>
+                            <force:inputField value="{!v.opp.npsp__Acknowledgment_Status__c}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Name__c}
+                            </label>
+                            <lightning:input
+                                variant="label-hidden"
+                                value="{!v.opp.npsp__Honoree_Name__c}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Contact__c}
+                            </label>
+                            <force:inputField value="{!v.opp.npsp__Honoree_Contact__c}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Recipient_Name__c}
+                            </label>
+                            <lightning:input
+                                variant="label-hidden"
+                                value="{!v.opp.npsp__Notification_Recipient_Name__c}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Message__c}
+                            </label>
+                            <lightning:input
+                                variant="label-hidden"
+                                value="{!v.opp.npsp__Notification_Message__c}" />
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12">
+                    <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
+                        aria-expanded="true"
+                        onclick="{!c.expandMatchingSection}">
+                        <lightning:icon iconName="{!v.expandMatching == true ? 'utility:chevrondown' : 'utility:chevronright'}"
+                            size="x-small"
+                            alternativeText="Toggle Matching Gift Information" />{!$Label.c.Gift_Matching_Gift}
+                    </button>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12">
+                    <lightning:layout multipleRows="true" class="{!v.expandMatching == true ? '' : 'slds-hidden'}">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Employer__c}
+                            </label>
+                            <lightning:input
+                                variant="label-hidden"
+                                value="{!v.opp.npsp__Matching_Gift_Employer__c}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Account__c}
+                            </label>
+                            <force:inputField value="{!v.opp.npsp__Matching_Gift_Account__c}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift__c}
+                            </label>
+                            <force:inputField value="{!v.opp.npsp__Matching_Gift__c}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                            <label class="slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Status__c}
+                            </label>
+                            <force:inputField value="{!v.opp.npsp__Matching_Gift_Status__c}" />
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </lightning:layoutItem>
+
+                <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
+                    paymentList="{!v.payments}"
+                    objsToDelete="{!v.objsToDelete}"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
+                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    paymentMethod="{!v.di.npsp__Payment_Method__c}"
+                    objectFieldData="{!v.objectFieldData}"
+                    giftModel="{!v.giftModel}" />
+
+                <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
+                    itemList="{!v.partialCredits}"
+                    objsToDelete="{!v.objsToDelete}"
+                    objectName="npsp__Partial_Soft_Credit__c"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
+                    oppField="npsp__Opportunity__c"
+                    amtField="npsp__Amount__c"
+                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    preventAmountSurplus="true"
+                    preventAmountDeficit="false"
+                    objectFieldData="{!v.objectFieldData}"
+                    modelAttribute="partialCredits"
+                    buttonTitle="Add New Soft Credit"
+                    giftModel="{!v.giftModel}" />
+
+                <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
+                    itemList="{!v.allocs}"
+                    objsToDelete="{!v.objsToDelete}"
+                    objectName="npsp__Allocation__c"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
+                    oppField="npsp__Opportunity__c"
+                    amtField="npsp__Amount__c"
+                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    preventAmountSurplus="true"
+                    preventAmountDeficit="false"
+                    objectFieldData="{!v.objectFieldData}"
+                    modelAttribute="allocs"
+                    buttonTitle="Add New Allocation"
+                    giftModel="{!v.giftModel}" />
+
+                <aura:if isTrue="{!v.submitError}">
+                    <div id="submitError"
+                    class="{!v.messageIsError == true
+                        ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error'
+                        : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}"
+                        role="alert">
+                        <span class="slds-assistive-text">Submit error</span>
+                        <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+                            <lightning:icon iconName="{!v.messageIsError == true
+                                ? 'utility:error'
+                                : 'utility:warning'}"
+                                variant="inverse"
+                                size="x-small" />
+                        </span>
+                        <h2>{!v.submitError}</h2>
+                    </div>
+                </aura:if>
+
+                <div class="slds-docked-form-footer" style="height: 50px;">
+                    <lightning:button aura:id="cancelButton"
+                        label="{!$Label.c.Cancel}"
+                        onclick="{!c.clickCancel}" />
+                    <lightning:button aura:id="createButton"
+                        label="{!$Label.c.Gift_Create}"
+                        variant="brand"
+                        onclick="{!c.clickCreate}" />
                 </div>
-            </lightning:layoutItem>
 
-            <lightning:layoutItem size="12">
-                <lightning:layout multipleRows="true">
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.Name}
-                        </label>
-                        <lightning:input variant="label-hidden"
-                            value="{!v.di.npsp__Donation_Name__c}" />
-                    </lightning:layoutItem>
-
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="show-required slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.CloseDate}
-                        </label>
-                        <lightning:input aura:id="requiredField" 
-                            required="true"
-                            variant="label-hidden"
-                            type="date"
-                            onchange="{!c.handleFieldChange}"
-                            value="{!v.di.npsp__Donation_Date__c}" />
-                    </lightning:layoutItem>
-
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="show-required slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.Amount}
-                        </label>
-                        <lightning:input aura:id="requiredField"
-                            required="true"
-                            variant="label-hidden"
-                            type="number"
-                            formatter="currency" step="0.01"
-                            onchange="{!c.handleFieldChange}"
-                            value="{!v.di.npsp__Donation_Amount__c}" />
-                    </lightning:layoutItem>
-
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}" 
-                            fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}" 
-                            selectedVal="{!v.di.npsp__Donation_Stage__c}" />
-                    </lightning:layoutItem>
-
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
-                            fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}" 
-                            selectedVal="{!v.di.npsp__Payment_Method__c}" />
-                    </lightning:layoutItem>
-
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}
-                        </label>
-                        <lightning:input disabled="{!v.di.npsp__Payment_Method__c != 'Check'}"
-                            variant="label-hidden"
-                            value="{!v.di.npsp__Payment_Check_Reference_Number__c}" />
-                    </lightning:layoutItem>
-
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.CampaignId}
-                        </label>
-                        <force:inputField value="{!v.opp.CampaignId}" />
-                    </lightning:layoutItem>
-
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.Description}
-                        </label>
-                        <lightning:textarea
-                            variant="label-hidden"
-                            value="{!v.di.npsp__Donation_Description__c}" />
-                    </lightning:layoutItem>
-                </lightning:layout>
-            </lightning:layoutItem>
-
-            <lightning:layoutItem size="12">
-                <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
-                    aria-expanded="true"
-                    onclick="{!c.expandTributeSection}">
-                    <lightning:icon iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
-                        size="x-small"
-                        alternativeText="Toggle Tribute Information" />{!$Label.c.Gift_Tribute_Information}
-                </button>
-            </lightning:layoutItem>
-
-            <lightning:layoutItem size="12">
-                <lightning:layout multipleRows="true" class="{!v.expandTribute == true ? '' : 'slds-hidden'}">
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Tribute_Type__c}
-                        </label>
-                        <force:inputField value="{!v.opp.npsp__Tribute_Type__c}" />
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}
-                        </label>
-                        <force:inputField value="{!v.opp.npsp__Acknowledgment_Status__c}" />
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Name__c}
-                        </label>
-                        <lightning:input
-                            variant="label-hidden"
-                            value="{!v.opp.npsp__Honoree_Name__c}" />
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Contact__c}
-                        </label>
-                        <force:inputField value="{!v.opp.npsp__Honoree_Contact__c}" />
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Recipient_Name__c}
-                        </label>
-                        <lightning:input
-                            variant="label-hidden"
-                            value="{!v.opp.npsp__Notification_Recipient_Name__c}" />
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Message__c}
-                        </label>
-                        <lightning:input
-                            variant="label-hidden"
-                            value="{!v.opp.npsp__Notification_Message__c}" />
-                    </lightning:layoutItem>
-                </lightning:layout>
-            </lightning:layoutItem>
-
-            <lightning:layoutItem size="12">
-                <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
-                    aria-expanded="true"    
-                    onclick="{!c.expandMatchingSection}">
-                    <lightning:icon iconName="{!v.expandMatching == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
-                        size="x-small"
-                        alternativeText="Toggle Matching Gift Information" />{!$Label.c.Gift_Matching_Gift}
-                </button>
-            </lightning:layoutItem>
-
-            <lightning:layoutItem size="12">
-                <lightning:layout multipleRows="true" class="{!v.expandMatching == true ? '' : 'slds-hidden'}">
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Employer__c}
-                        </label>
-                        <lightning:input
-                            variant="label-hidden"
-                            value="{!v.opp.npsp__Matching_Gift_Employer__c}" />
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Account__c}
-                        </label>
-                        <force:inputField value="{!v.opp.npsp__Matching_Gift_Account__c}" />
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift__c}
-                        </label>
-                        <force:inputField value="{!v.opp.npsp__Matching_Gift__c}" />
-                    </lightning:layoutItem>
-                    <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                        <label class="slds-form-element__label">
-                            {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Status__c}
-                        </label>
-                        <force:inputField value="{!v.opp.npsp__Matching_Gift_Status__c}" />
-                    </lightning:layoutItem>
-                </lightning:layout>
-            </lightning:layoutItem>
-
-            <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
-                paymentList="{!v.payments}"
-                objsToDelete="{!v.objsToDelete}"
-                rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
-                donationAmt="{!v.di.npsp__Donation_Amount__c}"
-                paymentMethod="{!v.di.npsp__Payment_Method__c}"
-                objectFieldData="{!v.objectFieldData}"
-                giftModel="{!v.giftModel}" />
-
-            <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
-                itemList="{!v.partialCredits}"
-                objsToDelete="{!v.objsToDelete}"
-                objectName="npsp__Partial_Soft_Credit__c"
-                rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
-                oppField="npsp__Opportunity__c"
-                amtField="npsp__Amount__c"
-                donationAmt="{!v.di.npsp__Donation_Amount__c}"
-                preventAmountSurplus="true"
-                preventAmountDeficit="false"
-                objectFieldData="{!v.objectFieldData}"
-                modelAttribute="partialCredits"
-                buttonTitle="Add New Soft Credit"
-                giftModel="{!v.giftModel}" />
-
-            <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
-                itemList="{!v.allocs}"
-                objsToDelete="{!v.objsToDelete}"
-                objectName="npsp__Allocation__c"
-                rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
-                oppField="npsp__Opportunity__c"
-                amtField="npsp__Amount__c"
-                donationAmt="{!v.di.npsp__Donation_Amount__c}"
-                preventAmountSurplus="true"
-                preventAmountDeficit="false"
-                objectFieldData="{!v.objectFieldData}"
-                modelAttribute="allocs"
-                buttonTitle="Add New Allocation"
-                giftModel="{!v.giftModel}" />
-
-            <aura:if isTrue="{!v.submitError}">
-                <div id="submitError"
-                class="{!v.messageIsError == true 
-                    ? 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error' 
-                    : 'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning'}" 
-                    role="alert">
-                    <span class="slds-assistive-text">Submit error</span>
-                    <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
-                        <lightning:icon iconName="{!v.messageIsError == true 
-                            ? 'utility:error' 
-                            : 'utility:warning'}" 
-                            variant="inverse"
-                            size="x-small" />
-                    </span>
-                    <h2>{!v.submitError}</h2>
+                <!-- Fields that are hidden from the user, set by code -->
+                <div class="slds-hidden" style="height: 0">
+                    <lightning:input aura:id="doDryRun" type="checkbox" checked="false" class="slds-m-bottom_small"
+                        label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
+                    <lightning:input aura:id="oppId"
+                        value="{!v.giftModel.oppId}" />
+                    <lightning:input aura:id="paymentLookup"
+                        value="{!v.payment.Id}" />
                 </div>
-            </aura:if>
-
-            <div class="slds-docked-form-footer" style="height: 50px;">
-                <lightning:button aura:id="cancelButton" 
-                    label="{!$Label.c.Cancel}"
-                    onclick="{!c.clickCancel}" />
-                <lightning:button aura:id="createButton" 
-                    label="{!$Label.c.Gift_Create}"
-                    variant="brand" 
-                    onclick="{!c.clickCreate}" />
-            </div>
-
-            <!-- Fields that are hidden from the user, set by code -->
-            <div class="slds-hidden" style="height: 0">
-                <lightning:input aura:id="doDryRun" type="checkbox" checked="false" class="slds-m-bottom_small"
-                    label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
-                <lightning:input aura:id="oppId" 
-                    value="{!v.giftModel.oppId}" />
-                <lightning:input aura:id="paymentLookup" 
-                    value="{!v.payment.Id}" />
-            </div>
-        </lightning:layout>
-
-    </div>
+            </lightning:layout>
+        </div>
+    </aura:if>
 
 </aura:component>

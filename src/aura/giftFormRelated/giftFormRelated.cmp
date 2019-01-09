@@ -9,7 +9,6 @@
     <aura:handler name="change" value="{!v.objectFieldData}" action="{!c.handleInitRows}"/>
     <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
 
-    <aura:attribute type="sObject[]" name="objsToDelete" />
     <aura:attribute type="sObject[]" name="itemList" />
     <aura:attribute type="sObject[]" name="rowList" default="[]" />
     

@@ -57,8 +57,6 @@
     <aura:attribute name="partialCredits" 
         type="npsp__Partial_Soft_Credit__c[]" 
         default="[]"/>
-     <aura:attribute name="objsToDelete" 
-        type="sObject[]"/>
     
 
     <aura:if isTrue="{!v.showSpinner}">
@@ -297,7 +295,6 @@
 
                 <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
                     paymentList="{!v.payments}"
-                    objsToDelete="{!v.objsToDelete}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
                     donationAmt="{!v.di.npsp__Donation_Amount__c}"
                     paymentMethod="{!v.di.npsp__Payment_Method__c}"
@@ -306,7 +303,6 @@
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
                     itemList="{!v.partialCredits}"
-                    objsToDelete="{!v.objsToDelete}"
                     objectName="npsp__Partial_Soft_Credit__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
                     oppField="npsp__Opportunity__c"
@@ -321,7 +317,6 @@
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                     itemList="{!v.allocs}"
-                    objsToDelete="{!v.objsToDelete}"
                     objectName="npsp__Allocation__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
                     oppField="npsp__Opportunity__c"

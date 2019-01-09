@@ -45,7 +45,6 @@ public with sharing class GiftEntryFormController {
         @AuraEnabled public List<npe01__OppPayment__c> payments {get;set;}
         @AuraEnabled public List<npsp__Allocation__c> allocs {get;set;}
         @AuraEnabled public List<npsp__Partial_Soft_Credit__c> partialCredits {get;set;}
-        @AuraEnabled public List<SObject> objsToDelete {get;set;}
 
         @AuraEnabled public List<Opportunity> matchedOpps {get;set;}
         @AuraEnabled public List<Account> matchedAccts {get;set;}
@@ -321,24 +320,6 @@ public with sharing class GiftEntryFormController {
     }
 
     /*******************************************************************************************************
-    * @description Delete a list of SObjects passed in by the Gift Entry form
-    * @param objsToDelete List<SObject> to be deleted
-    */
-    @TestVisible
-    private static void deleteObjList(List<SObject> objsToDelete) {
-        Database.DeleteResult[] deleteResults = UTIL_CrudFLS.del(objsToDelete, true);
-        for(Database.DeleteResult dr : deleteResults) {
-            if (!dr.isSuccess()) {
-                for(Database.Error err : dr.getErrors()) {
-                    System.debug(LoggingLevel.ERROR, 'The following error has occurred.'
-                        + '\n' + err.getStatusCode() + ': ' + err.getMessage()
-                        + '\n fields that affected this error: ' + err.getFields());
-                }
-            }
-        }
-    }
-
-    /*******************************************************************************************************
     * @description Add the objects in a giftModel to the database, passing back the new Ids
     * @param giftModel GiftFormModel which holds the information to be committed to the database
     * @return GiftFormModel with new Ids included
@@ -347,16 +328,11 @@ public with sharing class GiftEntryFormController {
     private static GiftFormModel saveDonationInformation(GiftFormModel giftModel) {
         Savepoint sp = Database.setSavepoint();
         // Upsert or Delete the provided Donor and Donation information
+        List<Database.SaveResult> saveResults = new List<Database.SaveResult>();
         try {
-            // First, delete any objects that were removed from the form
-            if(giftModel.objsToDelete != null && !giftModel.objsToDelete.isEmpty()) {
-                deleteObjList(giftModel.objsToDelete);
-            }
-
             // Insert or Update the provided Donation information
             if(giftModel.di != null) {
-                UTIL_CrudFLS.checkUpsert(giftModel.di);
-                upsert giftModel.di;
+                saveResults.addAll(UTIL_CrudFLS.create(giftModel.di));
             } else {
                 System.debug('No DataImport object was provided'); 
                 return null;
@@ -371,8 +347,7 @@ public with sharing class GiftEntryFormController {
                 for(npsp__Allocation__c a : giftModel.allocs){
                     a.npsp__Opportunity__c = oppId;
                 }
-                UTIL_CrudFLS.checkUpsert(giftModel.allocs);
-                upsert giftModel.allocs;
+                saveResults.addAll(UTIL_CrudFLS.create(giftModel.allocs));
             }
 
             if(giftModel.payments != null && !giftModel.payments.isEmpty()) {
@@ -381,8 +356,7 @@ public with sharing class GiftEntryFormController {
                         p.npe01__Opportunity__c = oppId;
                     }
                 }
-                UTIL_CrudFLS.checkUpsert(giftModel.payments);
-                upsert giftModel.payments;
+                saveResults.addAll(UTIL_CrudFLS.create(giftModel.payments));
             }
 
             if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()){
@@ -391,11 +365,18 @@ public with sharing class GiftEntryFormController {
                         c.npsp__Opportunity__c = oppId;
                     }
                 }
-                UTIL_CrudFLS.checkUpsert(giftModel.partialCredits);
-                upsert giftModel.partialCredits;
+                saveResults.addAll(UTIL_CrudFLS.create(giftModel.partialCredits));
             }
 
             giftModel.oppId = oppId;
+
+            for(Database.SaveResult result : saveResults) {
+                if(!result.isSuccess()) {
+                    DmlException dmlException = new DmlException();
+                    dmlException.setMessage(result.getErrors()[0].getMessage());
+                    throw dmlException;
+                }
+            }
 
             return giftModel;
 
@@ -614,64 +595,6 @@ public with sharing class GiftEntryFormController {
         GiftFormModel giftModel = processGiftModelString(giftModelString);
         giftModel = saveDonationInformation(giftModel);
         return giftModel;
-    }
-
-    /*******************************************************************************************************
-    * @description For a list of DataImport objects with Post Process JSON values filled in,
-    * process those lists to add related objects
-    * @param listDi List of DataImport objects that will have Post_Process_Object_JSON__c processed
-    * @return void
-    */
-    public static void processJSONList(List<npsp__DataImport__c> listDi) {
-        List<SObject> objsToUpsert = new List<SObject>();
-
-        Set<Id> diIdSet = new Set<Id>();
-        // Select the fields we need
-        for(npsp__DataImport__c di : listDi) {
-            diIdSet.add(di.Id);
-        }
-
-        UTIL_CrudFLS.checkRead('npsp__DataImport__c',
-                new List<String>{
-                        'Post_Process_Object_JSON__c', 'npsp__DonationImported__c'
-                });
-        List<npsp__DataImport__c> listDiWithFields = [
-                SELECT Id, Post_Process_Object_JSON__c, npsp__DonationImported__c
-                FROM npsp__DataImport__c
-                WHERE Id IN :diIdSet
-        ];
-
-        List<SObject> thisList;
-        Map<String, Object> objNameToObjList;
-        for(npsp__DataImport__c di : listDiWithFields) {
-            if(di.Post_Process_Object_JSON__c == null) {
-                continue;
-            }
-            String oppId = di.npsp__DonationImported__c;
-            thisList = new List<SObject>();
-            objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(di.Post_Process_Object_JSON__c);
-            // For each objet type included, add the list
-            for(String objName : objNameToObjList.keySet()) {
-                Object objList = objNameToObjList.get(objName);
-                if(objList != null) {
-                    String objListString = JSON.serialize(objList);
-                    // Replace opportunity Id placeholders with the actual Id
-                    if(oppId != null) {
-                        String oppIdPlaceholderRegex = Label.Gift_Donation_ID_Placeholder;
-                        objListString = objListString.replaceAll(oppIdPlaceholderRegex, oppId);
-                    }
-                    Type listType = Type.forName('List<' + objName + '>');
-                    thisList = (List<SObject>)JSON.deserialize(objListString, listType);
-                    objsToUpsert.addAll(thisList);
-                }
-            }
-        }
-
-        // TODO: How to handle upsert? Need to separate into object lists?
-        if(!objsToUpsert.isEmpty()) {
-            UTIL_CrudFLS.create(objsToUpsert);
-        }
-
     }
     
     /*******************************************************************************************************

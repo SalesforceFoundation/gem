@@ -253,9 +253,7 @@
         // This is done to avoid referencing Adv namespace fields in markup
         this.mapOppToDi(component, di, opp);
         
-        var objsToDelete = this.proxyToObj(component.get('v.objsToDelete'));
         giftModel['di'] = di;
-        giftModel['objsToDelete'] = objsToDelete;
 
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};

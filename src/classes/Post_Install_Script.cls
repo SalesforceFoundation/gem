@@ -34,13 +34,21 @@
 * @group-content
 * @description This is the post install script for Adv.
 **/
-global with sharing class Post_Install_Script {
+global with sharing class Post_Install_Script implements InstallHandler{
 
     global void onInstall(InstallContext context) {
-
+        //Initial installation.
+        if(context.previousVersion() == null) {
+            UTIL_CustomSettingsFacade.getOrgGemSettings();
+            populateNPSPAccountModel();
+        }
     }
 
     global static void giftSetup(){
-      GiftEntryFormController.insertGiftEntrySettings();
+        GiftEntryFormController.insertGiftEntrySettings();
+    }
+
+    global static void populateNPSPAccountModel() {
+        TDTM_Glue.updateNPSPAccountModel();
     }
 }

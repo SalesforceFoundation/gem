@@ -43,6 +43,18 @@ public with sharing class TDTM_Glue {
     private static Map<String, Boolean> npspTriggerHandlerActiveMap;
 
     /*******************************************************************************************************
+   * @description Hold HEDA's Administrative Account Record Type Id
+   *********************************************************************************************************/
+    @TestVisible
+    private static String adminAccountRecTypeId;
+
+    /*******************************************************************************************************
+   * @description Hold HEDA's Household Account Record Type Id
+   *********************************************************************************************************/
+    @TestVisible
+    private static String hhAccountRecTypeId;
+
+    /*******************************************************************************************************
     * @description Returns the default TDTM configuration for HEDA
     * Inject any additional TDTM trigger handler if needed
     * @return List<TDTM_Global_API.TdtmToken> A list of HEDA tokens
@@ -120,5 +132,56 @@ public with sharing class TDTM_Glue {
             }
         }
         return npspTriggerHandlerActiveMap;
+    }
+
+    /********************************************************************************************************
+    * @description Update the NPSP Account Model setting based on the HEDA Account model when needed
+    * @return Boolean Determine if we need to populate the NPSP Account fields, if the current model is not Admin or HH
+    *         then the Account fields should all be empty
+    *********************************************************************************************************/
+    public static Boolean updateNPSPAccountModel() {
+
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        if(!gemSettings.Sync_Account_Models__c){
+            return false;
+        }
+
+        //If adminAccountRecTypeId is empty, try to populate it
+        if(String.isBlank(adminAccountRecTypeId)) {
+            adminAccountRecTypeId = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+        }
+
+        //If hhAccountRecTypeId is empty, try to populate it
+        if(String.isBlank(hhAccountRecTypeId)) {
+            hhAccountRecTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
+        }
+
+        hed__Hierarchy_Settings__c hedaOrgSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
+
+        npe01__Contacts_And_Orgs_Settings__c npspOrgSettings = npsp.UTIL_CustomSettings_API.getContactsSettings();
+
+        if(hedaOrgSettings == null || npspOrgSettings == null) {
+            return false;
+        }
+
+        if(hedaOrgSettings.hed__Account_Processor__c == adminAccountRecTypeId) {
+            if (npspOrgSettings.npe01__Account_Processor__c != npsp.CAO_Constants_API.ONE_TO_ONE_PROCESSOR ||
+                    npspOrgSettings.npe01__One_to_One_RecordTypeID__c != hedaOrgSettings.hed__Account_Processor__c) {
+                npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.ONE_TO_ONE_PROCESSOR;
+                npspOrgSettings.npe01__One_to_One_RecordTypeID__c = hedaOrgSettings.hed__Account_Processor__c;
+                UTIL_CustomSettingsFacade.setNPSPOrgContactsSettings(npspOrgSettings);
+            }
+            return true;
+        } else if(hedaOrgSettings.hed__Account_Processor__c == hhAccountRecTypeId) {
+            if(npspOrgSettings.npe01__Account_Processor__c != npsp.CAO_Constants_API.HH_ACCOUNT_PROCESSOR ||
+                    npspOrgSettings.npe01__HH_Account_RecordTypeID__c != hedaOrgSettings.hed__Account_Processor__c) {
+                npspOrgSettings.npe01__Account_Processor__c = npsp.CAO_Constants_API.HH_ACCOUNT_PROCESSOR;
+                npspOrgSettings.npe01__HH_Account_RecordTypeID__c = hedaOrgSettings.hed__Account_Processor__c;
+                UTIL_CustomSettingsFacade.setNPSPOrgContactsSettings(npspOrgSettings);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -28,6 +28,7 @@ public static void initializeNPSPSettingsForADV() {
 
     npo02__Households_Settings__c hs = npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
     hs.npo02__Membership_Record_Types__c = rtId;
+    hs.npo02__Advanced_Household_Naming__c = false;
     upsert hs;
 
     npe01__Contacts_And_Orgs_Settings__c cos = npsp.UTIL_CustomSettings_API.getContactsSettings();
@@ -56,6 +57,10 @@ public static void initializeHEDASettingsForADV() {
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
     update orgSettings;
 
+    GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+    gemSettings.Sync_Account_Models__c = true;
+    update gemSettings;
+    
 }
 
 public static void AddGiftProcessor() {

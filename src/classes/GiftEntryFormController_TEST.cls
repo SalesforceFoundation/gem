@@ -53,7 +53,13 @@ private class GiftEntryFormController_TEST {
     private static String closedWonStage = UTIL_UnitTestData_TEST.getClosedWonStage();
     
     @testSetup static void setupGiftEntry() {
-    	GiftEntryFormController.insertGiftEntrySettings();
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
+        UTIL_CustomSettingsFacade.setHEDASettingForTest(
+            new hed__Hierarchy_Settings__c(hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID()));
+        GiftEntryFormController.insertGiftEntrySettings();
     }
 
     private static GiftEntryFormController.GiftFormModel returnGiftModel(){
@@ -83,6 +89,9 @@ private class GiftEntryFormController_TEST {
     */ 
     @isTest
     private static void testNewGift() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
 
         GiftEntryFormController.GiftFormModel giftModel = returnGiftModel();
     
@@ -189,74 +198,6 @@ private class GiftEntryFormController_TEST {
             where npsp__Contact__c =: scContactId
             and npsp__Amount__c =: payAmt];
         System.assertEquals(0, pscQuery.size());
-    }
-
-    @isTest
-    private static void testDataImportUpdate() {
-
-        List<npsp__Data_Import_Settings__c> diSettingsList = 
-            [Select npsp__Donation_Matching_Behavior__c from npsp__Data_Import_Settings__c];
-
-        npsp__DataImport__c diObj = getTestDI();
-        diObj.npsp__Donation_Stage__c = openStage;
-        diObj.Do_Not_Automatically_Create_Payment__c = true;
-        insert diObj;
-        
-        GiftEntryFormController.runGiftProcess(diObj.Id, false);
-        
-        List<Opportunity> oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c
-            from Opportunity 
-            where Name =: donationName
-            and npsp__Honoree_Name__c =: tributeName
-            and npsp__Notification_Recipient_Name__c =: recipientName
-            and StageName =: openStage
-        ];
-    
-        System.assertEquals(1, oppList.size());
-
-        // Now make a change to the DataImport object, 
-        // and check that the Donation and Payment were updated
-        diObj.npsp__Payment_Method__c = 'Check';
-        diObj.Notification_Recipient_Name__c = updateStringTest;
-        diObj.npsp__Donation_Stage__c = openStage2;
-        Decimal newAmt = 500;
-        diObj.npsp__Donation_Amount__c = newAmt;
-
-        update diObj;
-
-        Test.startTest();
-        GiftEntryFormController.runGiftProcess(diObj.Id, false);
-        Test.stopTest();
-
-        // Check the errors on diObj
-        diObj = [Select npsp__Status__c,
-            npsp__Contact1ImportStatus__c,
-            npsp__FailureInformation__c,
-            npsp__DonationImportStatus__c,
-            npsp__PaymentImportStatus__c
-            from npsp__DataImport__c 
-            where Id =: diObj.Id];
-
-        // There should not be a payment, it will need to be added later
-        List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c];
-        System.assertEquals(0, paymentList.size());
-
-        // Make sure there is still only 1 opportunity
-        oppList = [Select Id from Opportunity];
-        System.assertEquals(1, oppList.size());
-
-        // Now check that the Opportunity was correctly updated
-        oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c,
-            Amount, StageName
-            from Opportunity 
-            where Name =: donationName
-            and npsp__Honoree_Name__c =: tributeName
-            and npsp__Notification_Recipient_Name__c =: updateStringTest
-            and StageName =: openStage2
-            and npsp__Notification_Recipient_Name__c =: updateStringTest
-        ];
-
-        System.assertEquals(1, oppList.size());
     }
     
     @isTest

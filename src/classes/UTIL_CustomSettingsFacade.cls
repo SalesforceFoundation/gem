@@ -35,6 +35,39 @@
 
 public without sharing class UTIL_CustomSettingsFacade {
 
+    static GEM_Settings__c orgGemSettings;
+
+    /*******************************************************************************************************
+    * @description Returns the org-level GEM settings. Default org-level settings will be created 
+    * if none exist. Meant to be called only from settings page and install script.
+    * @return Household_Naming_Settings__c Org-level settings for Household Naming.
+    */
+    public static GEM_Settings__c getOrgGemSettings() {
+        if(orgGemSettings == null) {
+            orgGemSettings = GEM_Settings__c.getOrgDefaults();
+            if(orgGemSettings.Id == null) {
+                orgGemSettings.Sync_Account_Models__c = false;
+                if(!Test.isRunningTest())
+                    upsert orgGemSettings;
+            }
+        }
+        return orgGemSettings;
+    }
+
+    /*******************************************************************************************************
+    * @description Creates instance of settings to use in tests. It does not insert it, but all other methods 
+    * will see these settings as the configured settings.
+    * @parameter gemSettings Settings instance with the values to set.
+    * @return GEM_Settings__c The configured settings.
+    **/
+    public static GEM_Settings__c getOrgGemSettingsForTests(GEM_Settings__c gemSettings) {
+        if(orgGemSettings == null) {
+            orgGemSettings = new GEM_Settings__c();
+        }
+        orgGemSettings.Sync_Account_Models__c = gemSettings.Sync_Account_Models__c;
+        return orgGemSettings;
+    }
+
     /*******************************************************************************************************
     * @description Creates instance of settings to use in tests
     * @param mySettings Settings instance with the values to set
@@ -105,7 +138,7 @@ public without sharing class UTIL_CustomSettingsFacade {
     *******************************************************************************************************/
     public static void setNPSPHouseholdsSettingsForTests(npo02__Households_Settings__c mySettings) {
 
-        npo02__Households_Settings__c   householdsSettings = new npo02__Households_Settings__c();
+        npo02__Households_Settings__c householdsSettings = new npo02__Households_Settings__c();
 
         //create our own based on what's passed in from the test
         householdsSettings.npo02__Household_Rules__c = mySettings.npo02__Household_Rules__c;
@@ -131,4 +164,15 @@ public without sharing class UTIL_CustomSettingsFacade {
 
         insert householdsSettings;
     }
+
+    /*******************************************************************************************************
+    * @description Updates the provided Contacts and Orgs settings if not running tests
+    * @return void
+    ********************************************************************************************************/
+    public static void setNPSPOrgContactsSettings(npe01__Contacts_And_Orgs_Settings__c orgContactsSettings) {
+         if (!Test.isRunningTest()) {
+            update orgContactsSettings;
+        }
+    }
+
 }

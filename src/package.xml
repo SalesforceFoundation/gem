@@ -11,6 +11,7 @@
         <members>NPSP_Account_TDTM</members>
         <members>NPSP_Account_TDTM_TEST</members>
         <members>Post_Install_Script</members>
+        <members>Post_Install_Script_TEST</members>
         <members>TDTM_Glue</members>
         <members>UTIL_CustomSettingsFacade</members>
         <members>UTIL_Describe</members>
@@ -43,6 +44,7 @@
         <members>Donation_Tag__c.Donation_Opportunity__c</members>
         <members>Donation_Tag__c.Tag_Name__c</members>
         <members>Donation_Tag__c.Tag__c</members>
+        <members>GEM_Settings__c.Sync_Account_Models__c</members>
         <members>Opportunity.Tags__c</members>
         <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
         <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
@@ -85,9 +87,9 @@
         <members>Gift_Form_Error</members>
         <members>Gift_Matching_Gift</members>
         <members>Gift_Payment_Scheduler</members>
-        <members>Gift_Saved_Message</members>
         <members>Gift_Save_Message_Detail</members>
         <members>Gift_Save_Message_Title</members>
+        <members>Gift_Saved_Message</members>
         <members>Gift_Show_Matching</members>
         <members>Gift_Soft_Credits</members>
         <members>Gift_Tribute_Information</members>
@@ -106,6 +108,7 @@
     <types>
         <members>Advancement_Setting__mdt</members>
         <members>Donation_Tag__c</members>
+        <members>GEM_Settings__c</members>
         <members>Tag__c</members>
         <name>CustomObject</name>
     </types>

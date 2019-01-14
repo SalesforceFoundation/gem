@@ -54,17 +54,17 @@ private class NPSP_Account_TDTM_TEST {
     */
     @isTest
     static void testAccountTDTM() {
-        Account acc = UTIL_UnitTestData_TEST.getAccount(UTIL_Describe.getAdminAccRecTypeID());
+        Account acc = UTIL_UnitTestData_TEST.getAccount(hed.UTIL_Describe_API.getAdminAccRecTypeID());
 
         insert acc;
 
         acc = [Select Type, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c from Account where Id =: acc.Id];
 
-        system.assertNotEquals('Household', acc.Type);
-        system.assertNotEquals('Household Account', acc.npe01__SYSTEM_AccountType__c);
+        system.assertNotEquals(npsp.CAO_Constants_API.HH_TYPE, acc.Type);
+        system.assertNotEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, acc.npe01__SYSTEM_AccountType__c);
         system.assertNotEquals(true, acc.npe01__SYSTEMISINDIVIDUAL__c);
 
-        acc.RecordTypeId = UTIL_Describe.getHhAccRecTypeID();
+        acc.RecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
 
         Test.startTest();
         update acc;
@@ -72,8 +72,28 @@ private class NPSP_Account_TDTM_TEST {
 
         acc = [Select Type, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c from Account where Id =: acc.Id];
 
-        system.assertEquals('Household', acc.Type);
-        system.assertEquals('Household Account', acc.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(npsp.CAO_Constants_API.HH_TYPE, acc.Type);
+        system.assertEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, acc.npe01__SYSTEM_AccountType__c);
         system.assertEquals(true, acc.npe01__SYSTEMISINDIVIDUAL__c);
     }
+
+    /*******************************************************************************************************
+    * @description Test if system does not update npsp fields when Account sync is turned off
+    */
+    @isTest
+    static void testNoSyncAccountTDTM() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = false;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
+        Boolean updateModel = TDTM_Glue.updateNPSPAccountModel();
+        System.assertEquals(false, updateModel, 'The setting is turned off, there should be no udpate');
+
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
+        updateModel = TDTM_Glue.updateNPSPAccountModel();
+        System.assertEquals(true, updateModel, 'The setting is turned on, there should be an udpate');
+    }
+
 }

@@ -40,6 +40,10 @@ private class API_HEDA_TEST {
 
     @testSetup
     static void setupTriggerHandlers() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
         //Insert HEDA Trigger Handlers
         List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
         hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
@@ -49,11 +53,11 @@ private class API_HEDA_TEST {
         insert npspHandlers;
 
         //Set HEDA custom setting
-        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = UTIL_Describe.getHhAccRecTypeID()));
+        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID()));
 
         //Set the NPSP Contact setting
         UTIL_CustomSettingsFacade.setNPSPContactsSettingsForTests(new npe01__Contacts_and_Orgs_Settings__c (
-                npe01__Account_Processor__c = 'Household Account',
+                npe01__Account_Processor__c = npsp.CAO_Constants_API.HH_ACCOUNT_TYPE,
                 npe01__Enable_Opportunity_Contact_Role_Trigger__c = true,
                 npe01__Opportunity_Contact_Role_Default_role__c = 'Donor'
         ));
@@ -300,13 +304,17 @@ private class API_HEDA_TEST {
     */
     @isTest
     static void testConfigAccountForContact() {
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
         reInsertContact();
 
         Contact con = [SELECT Id, AccountId FROM Contact];
 
         Account a = [Select Type, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c from Account where Id =:con.AccountId];
-        system.assertEquals('Household', a.Type);
-        system.assertEquals('Household Account', a.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(npsp.CAO_Constants_API.HH_TYPE, a.Type);
+        system.assertEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, a.npe01__SYSTEM_AccountType__c);
         system.assertEquals(true, a.npe01__SYSTEMISINDIVIDUAL__c);
     }
 
@@ -326,6 +334,62 @@ private class API_HEDA_TEST {
         system.assertEquals(null, a.Type);
         system.assertEquals(null, a.npe01__SYSTEM_AccountType__c);
         system.assertEquals(false, a.npe01__SYSTEMISINDIVIDUAL__c);
+    }
+
+    /*******************************************************************************************************
+     * @description Test Create Contact/Account with Administrative Account model
+     */
+    @isTest
+    static void testConfigNPSPAccountModelAdministrative(){
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
+        delete [Select Id from Contact];
+
+        //Set HEDA custom setting with Administrative
+        hed__Hierarchy_Settings__c hedaSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
+        hedaSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+        hed.UTIL_CustomSettings_API.getSettingsForTests(hedaSettings);
+
+        Contact con = UTIL_UnitTestData_TEST.getContact();
+        Test.startTest();
+        insert con;
+        Test.stopTest();
+
+        con = [SELECT Account.npe01__SYSTEM_AccountType__c, Account.npe01__SYSTEMISINDIVIDUAL__c, Account.Type FROM Contact
+        WHERE Id =: con.Id];
+        system.assertEquals(null, con.Account.Type);
+        system.assertEquals(npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE, con.Account.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(true, con.Account.npe01__SYSTEMISINDIVIDUAL__c);
+    }
+
+    /*******************************************************************************************************
+     * @description Test Create Contact/Account with Household Account Model
+     */
+    @isTest
+    static void testConfigNPSPAccountModelHousehold(){
+        GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
+        gemSettings.Sync_Account_Models__c = true;
+        UTIL_CustomSettingsFacade.getOrgGemSettingsForTests(gemSettings);
+
+        delete [Select Id from Contact];
+
+        //Set HEDA custom setting with Household
+        hed__Hierarchy_Settings__c hedaSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
+        hedaSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
+        hed.UTIL_CustomSettings_API.getSettingsForTests(hedaSettings);
+
+        Contact con = UTIL_UnitTestData_TEST.getContact();
+        Test.startTest();
+        insert con;
+        Test.stopTest();
+
+        con = [SELECT Account.npe01__SYSTEM_AccountType__c, Account.npe01__SYSTEMISINDIVIDUAL__c, Account.Type FROM Contact
+        WHERE Id =: con.Id];
+        system.assertEquals(npsp.CAO_Constants_API.HH_TYPE, con.Account.Type);
+        system.assertEquals(npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, con.Account.npe01__SYSTEM_AccountType__c);
+        system.assertEquals(true, con.Account.npe01__SYSTEMISINDIVIDUAL__c);
     }
 
     /*******************************************************************************************************

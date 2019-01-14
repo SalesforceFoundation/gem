@@ -26,6 +26,14 @@ tasks:
         options:
             path: dev_config/delete
 
+    execute_install_apex:
+        description: Runs most of the install script methods from Post_Install_Script class
+        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        options:
+            apex: >
+                Post_Install_Script.giftSetup();
+                Post_Install_Script.populateNPSPAccountModel();
+
     test_data_dev_org:
         description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'
         class_path: cumulusci.tasks.bulkdata.LoadData
@@ -141,6 +149,8 @@ flows:
                 task: test_data_default_settings
             2:
                 task: test_data_user_setup
+            3:
+                task: execute_install_apex
 
     test_data_dev_org:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'

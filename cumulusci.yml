@@ -160,6 +160,22 @@ flows:
             2:
                 task: test_data_dev_org
 
+    install_pilot:
+      steps:
+          1:
+              task: update_dependencies
+              options:
+                  dependencies:
+                      - github: https://github.com/SalesforceFoundation/Cumulus
+                      - github: https://github.com/SalesforceFoundation/HEDAP
+                      - github: https://github.com/SalesforceFoundation/Abacus
+          2:
+              task: deploy_pre
+          3:
+              task: install_managed
+          4:
+              flow: config_managed
+
 orgs:
     scratch:
         dev_namespaced:

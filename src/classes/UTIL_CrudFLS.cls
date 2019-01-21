@@ -172,6 +172,10 @@ public with sharing class UTIL_CrudFLS {
         Map<String, Schema.DescribeFieldResult> fieldDescribeMap = UTIL_Describe.getAllFieldsDescribe(objectName);
         List<Schema.DescribeFieldResult> fieldDescribes = new List<Schema.DescribeFieldResult>();
         for(String fieldName : fieldNames) {
+            Schema.DescribeFieldResult dfr = fieldDescribeMap.get(UTIL_Namespace.StrTokenNSPrefix(fieldName).toLowerCase());
+            if(dfr == null) {
+                dfr = fieldDescribeMap.get(fieldName.toLowerCase());
+            }
             fieldDescribes.add(fieldDescribeMap.get(fieldName.toLowerCase()));
         }
         checkAccess(op, objectDescribe, fieldDescribes);
@@ -261,7 +265,10 @@ public with sharing class UTIL_CrudFLS {
         // collect the describe information for the populated fields, so we can check FLS
         Map<String, Schema.DescribeFieldResult> fieldDescribes = new Map<String, Schema.DescribeFieldResult>();
         for(String fieldName : fieldNames) {
-            Schema.DescribeFieldResult dfr = allFieldDescribes.get(fieldName.toLowerCase());
+            Schema.DescribeFieldResult dfr = allFieldDescribes.get(UTIL_Namespace.StrTokenNSPrefix(fieldName).toLowerCase());
+            if(dfr == null) {
+                dfr = allFieldDescribes.get(fieldName.toLowerCase());
+            }
             fieldDescribes.put(fieldName, dfr);
         }
 

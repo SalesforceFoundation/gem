@@ -20,7 +20,6 @@
     <aura:attribute type="String" name="rowCmpName" />
     <aura:attribute type="String" name="paymentMethod" />
     <aura:attribute type="npe01__OppPayment__c[]" name="paymentList" />
-    <aura:attribute type="sObject[]" name="objsToDelete" />
     <aura:attribute type="Object" name="giftModel" />
     <aura:attribute type="npe01__OppPayment__c" name="singlePayment" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
@@ -97,7 +96,6 @@
             <div class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
                 <c:giftFormRelated objectName="npe01__OppPayment__c"
                     itemList="{!v.paymentList}"
-                    objsToDelete="{!v.objsToDelete}"
                     blockItemChangeEvent="{!v.blockItemChangeEvent}"
                     rowCmpName="{!v.rowCmpName}"
                     oppField="npe01__Opportunity__c"

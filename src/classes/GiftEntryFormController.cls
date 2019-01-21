@@ -34,14 +34,9 @@
 * @group-content ../../ApexDocContent/GiftEntry.htm
 * @description Base Class for Gift Entry Components with Aura Enabled Methods
 */
-public class GiftEntryFormController {
+public with sharing class GiftEntryFormController {
 
-    public Boolean hasPerm {get;set;}
-    public GiftEntryFormController(){
-        hasPerm = Schema.sObjectType.npsp__DataImport__c.isCreateable();
-    }
-
-    public class GiftFormModel{
+    public class GiftFormModel {
         @AuraEnabled public Id oppId {get;set;}
         @AuraEnabled public npsp__DataImport__c di {get;set;}
         @AuraEnabled public Opportunity opp {get;set;}
@@ -50,7 +45,6 @@ public class GiftEntryFormController {
         @AuraEnabled public List<npe01__OppPayment__c> payments {get;set;}
         @AuraEnabled public List<npsp__Allocation__c> allocs {get;set;}
         @AuraEnabled public List<npsp__Partial_Soft_Credit__c> partialCredits {get;set;}
-        @AuraEnabled public List<sObject> objsToDelete {get;set;}
 
         @AuraEnabled public List<Opportunity> matchedOpps {get;set;}
         @AuraEnabled public List<Account> matchedAccts {get;set;}
@@ -61,7 +55,7 @@ public class GiftEntryFormController {
 
         @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
 
-        public GiftFormModel(){
+        public GiftFormModel() {
             this.objNameToApiToLabel = getObjNameToApiToLabel();
             this.picklistValues = getPickListValues();
             this.di = new npsp__DataImport__c();
@@ -74,17 +68,99 @@ public class GiftEntryFormController {
             this.allocs = new List<npsp__Allocation__c>();
         }
 
-        public GiftFormModel(Id oppId){
+        public GiftFormModel(Id oppId) {
             this();
             this.oppId = oppId;
         }
     }
 
+
     @AuraEnabled
-    public static GiftFormModel initClass(Id oppId){
+    public static GiftFormModel initClass(Id oppId) {
+        try {
+            checkCRUDFLS();
+        } catch(UTIL_CrudFLS.AccessException ex) {
+            throw returnAuraException(ex.getMessage());
+        }
         GiftFormModel giftModel = new GiftFormModel(oppId);
         giftModel = getDonationRecords(giftModel);
         return giftModel;
+    }
+
+    /**
+     * @description This method checks CRUD/FLS on load of the gift entry form controller.
+     * Not all CRUD/FLS violations may be caught by this method. Run-time CRUD/FLS checks on SOQL/DML operations
+     * are used elsewhere that will prevent users from performing SOQL/DML if they do not have access.
+     * For an example, @see getDonationRecords and @see saveDonationInformation
+     * @throws Util_CrudFLS.AccessException if a user does not have the needed access to a field being checked
+     */
+    public static void checkCRUDFLS() {
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'npsp__Allocation__c',
+                new List<String>{
+                        'npsp__General_Accounting_Unit__c',
+                        'npsp__Percent__c',
+                        'npsp__Amount__c',
+                        'npsp__Opportunity__c'
+                }
+        );
+
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'npe01__OppPayment__c',
+                new List<String>{
+                        'npe01__Payment_Amount__c',
+                        'npe01__Scheduled_Date__c',
+                        'npe01__Payment_Method__c',
+                        'npe01__Check_Reference_Number__c',
+                        'npe01__Paid__c',
+                        'npe01__Payment_Date__c'
+                }
+        );
+
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'npsp__Partial_Soft_Credit__c',
+                new List<String>{
+                        'npsp__Contact__c',
+                        'npsp__Amount__c',
+                        'npsp__Role_Name__c',
+                        'npsp__Opportunity__c'
+                }
+        );
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'npsp__DataImport__c',
+                new List<String>{
+                        'npsp__Account1Imported__c',
+                        'npsp__Contact1Imported__c',
+                        'npsp__Donation_Donor__c',
+                        'npsp__Donation_Name__c',
+                        'npsp__Donation_Amount__c',
+                        'npsp__Donation_Stage__c',
+                        'npsp__Payment_Method__c',
+                        'npsp__Payment_Check_Reference_Number__c',
+                        'npsp__Donation_Description__c'
+                }
+        );
+        UTIL_CrudFLS.checkAccess(
+                UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
+                'Opportunity',
+                new List<String>{
+                        'CampaignId',
+                        'npsp__Tribute_Type__c',
+                        'npsp__Acknowledgment_Status__c',
+                        'npsp__Honoree_Name__c',
+                        'npsp__Honoree_Contact__c',
+                        'npsp__Notification_Recipient_Name__c',
+                        'npsp__Notification_Message__c',
+                        'npsp__Matching_Gift_Employer__c',
+                        'npsp__Matching_Gift_Account__c',
+                        'npsp__Matching_Gift__c',
+                        'npsp__Matching_Gift_Status__c'
+                }
+        );
     }
 
     /*******************************************************************************************************
@@ -92,7 +168,7 @@ public class GiftEntryFormController {
     * @return Map<String, Map<String,String>> which maps an object name to a map of fields
     */
     @AuraEnabled
-    public static Map<String, Map<String,String>> getObjNameToApiToLabel(){
+    public static Map<String, Map<String,String>> getObjNameToApiToLabel() {
         Map<String, Map<String,String>> objLabelMap = new Map<String, Map<String,String>>();
         objLabelMap = new Map<String, Map<String,String>>();
         objLabelMap.put('Account', getFieldNameToLabelForObject('Account'));
@@ -109,9 +185,9 @@ public class GiftEntryFormController {
     * @param objName Name of object to return field map for
     * @return Map<String,String> of field names to labels for a given object
     */
-    private static Map<String,String> getFieldNameToLabelForObject(String objName){
+    private static Map<String,String> getFieldNameToLabelForObject(String objName) {
         Map<String,String> fieldNameToLabel = new Map<String,String>();
-        for(Schema.DescribeFieldResult df : hed.UTIL_Describe_API.getAllFieldsDescribe(objName).values()){
+        for(Schema.DescribeFieldResult df : hed.UTIL_Describe_API.getAllFieldsDescribe(objName).values()) {
             String fieldLabel = df.getLabel();
             fieldLabel = fieldLabel.replace(' ID', '');
             fieldNameToLabel.put(df.getLocalName(), fieldLabel);
@@ -124,10 +200,10 @@ public class GiftEntryFormController {
     * @param diObjId Id of DataImport object that created or matching this Opportunity
     * @return Id of the Opportunity
     */
-    private static GiftFormModel getDonationRecords(GiftFormModel giftModel){
+    private static GiftFormModel getDonationRecords(GiftFormModel giftModel) {
         try {
             Id oppId = giftModel.oppId;
-            if(oppId == null){
+            if(oppId == null) {
                 return giftModel;
             }
 
@@ -135,11 +211,9 @@ public class GiftEntryFormController {
             String allAccountFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Account');
             String allContactFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Contact');
             List<Opportunity> opps = 
-                Database.query('SELECT '+ allOppFields +' FROM Opportunity WHERE Id = :oppId');
-            
-            Map<String, List<sObject>> objNameToObjects = new Map<String, List<sObject>>();
+                Database.query('SELECT '+ String.escapeSingleQuotes(allOppFields) +' FROM Opportunity WHERE Id = :oppId');
 
-            if(!opps.isEmpty()){
+            if(!opps.isEmpty()) {
                 giftModel.opp = opps[0];
             } else {
                 return giftModel;
@@ -147,91 +221,101 @@ public class GiftEntryFormController {
 
             Opportunity opp = giftModel.opp;
 
-            if(opp.AccountId != null){
+            if(opp.AccountId != null) {
                 Id aId = opp.AccountId;
                 List<Account> accounts = 
-                    Database.query('SELECT '+ allAccountFields +' FROM Account WHERE Id = :aId');
-                if(!accounts.isEmpty()){
+                    Database.query('SELECT '+ String.escapeSingleQuotes(allAccountFields) +' FROM Account WHERE Id = :aId');
+                if(!accounts.isEmpty()) {
                     giftModel.acct = accounts[0];
                 }
             }
 
-            if(opp.npsp__Primary_Contact__c != null){
+            if(opp.npsp__Primary_Contact__c != null) {
                 Id cId = opp.npsp__Primary_Contact__c;
                 List<Contact> contacts = 
-                    Database.query('SELECT '+ allContactFields +' FROM Contact WHERE Id = :cId');
-                if(!contacts.isEmpty()){
+                    Database.query('SELECT '+ String.escapeSingleQuotes(allContactFields) +' FROM Contact WHERE Id = :cId');
+                if(!contacts.isEmpty()) {
                     giftModel.contact = contacts[0];
                 }
             }
 
             // Now check for related objects
-            if(opp.npe01__Number_of_Payments__c > 0){
-                List<npe01__OppPayment__c> payments = [SELECT Id, 
-                        npe01__Payment_Amount__c,
-                        npe01__Scheduled_Date__c,
-                        npe01__Payment_Date__c,
-                        npe01__Payment_Method__c,
-                        npe01__Check_Reference_Number__c,
-                        npe01__Paid__c
-                    FROM npe01__OppPayment__c 
-                    WHERE npe01__Opportunity__c =: oppId];
-                if(!payments.isEmpty()){
+            if(opp.npe01__Number_of_Payments__c > 0) {
+                UTIL_CrudFLS.checkRead('npe01__OppPayment__c',
+                        new List<String>{
+                                'Id',
+                                'npe01__Payment_Amount__c',
+                                'npe01__Scheduled_Date__c',
+                                'npe01__Payment_Date__c',
+                                'npe01__Payment_Method__c',
+                                'npe01__Check_Reference_Number__c',
+                                'npe01__Paid__c'
+                        });
+                List<npe01__OppPayment__c> payments = [
+                        SELECT Id,
+                                npe01__Payment_Amount__c,
+                                npe01__Scheduled_Date__c,
+                                npe01__Payment_Date__c,
+                                npe01__Payment_Method__c,
+                                npe01__Check_Reference_Number__c,
+                                npe01__Paid__c
+                        FROM npe01__OppPayment__c
+                        WHERE npe01__Opportunity__c = :oppId
+                ];
+                if(!payments.isEmpty()) {
                     giftModel.payments = payments;
                 }
             }
 
-            List<npsp__Allocation__c> allocations = [SELECT Id, 
-                    npsp__Amount__c,
-                    npsp__General_Accounting_Unit__c,
-                    npsp__Percent__c,
-                    npsp__Recurring_Donation__c,
-                    npsp__Opportunity__c
-                FROM npsp__Allocation__c 
-                WHERE npsp__Opportunity__c =: oppId];
-            if(!allocations.isEmpty()){
+            UTIL_CrudFLS.checkRead('npsp__Allocation__c',
+                    new List<String>{
+                            'npsp__Amount__c',
+                            'npsp__General_Accounting_Unit__c',
+                            'npsp__Percent__c',
+                            'npsp__Recurring_Donation__c',
+                            'npsp__Opportunity__c'
+                    });
+            List<npsp__Allocation__c> allocations = [
+                    SELECT Id,
+                            npsp__Amount__c,
+                            npsp__General_Accounting_Unit__c,
+                            npsp__Percent__c,
+                            npsp__Recurring_Donation__c,
+                            npsp__Opportunity__c
+                    FROM npsp__Allocation__c
+                    WHERE npsp__Opportunity__c = :oppId
+            ];
+            if(!allocations.isEmpty()) {
                 giftModel.allocs = allocations;
             }
 
-            List<npsp__Partial_Soft_Credit__c> partialCredits = [SELECT Id, 
-                    npsp__Amount__c,
-                    npsp__Contact__c,
-                    npsp__Contact_Name__c,
-                    npsp__Role_Name__c,
-                    npsp__Opportunity__c
-                FROM npsp__Partial_Soft_Credit__c 
-                WHERE npsp__Opportunity__c =: oppId];
-            if(!partialCredits.isEmpty()){
+            UTIL_CrudFLS.checkRead('npsp__Partial_Soft_Credit__c',
+                    new List<String>{
+                            'npsp__Amount__c',
+                            'npsp__Contact__c',
+                            'npsp__Contact_Name__c',
+                            'npsp__Role_Name__c',
+                            'npsp__Opportunity__c'
+                    });
+            List<npsp__Partial_Soft_Credit__c> partialCredits = [
+                    SELECT Id,
+                            npsp__Amount__c,
+                            npsp__Contact__c,
+                            npsp__Contact_Name__c,
+                            npsp__Role_Name__c,
+                            npsp__Opportunity__c
+                    FROM npsp__Partial_Soft_Credit__c
+                    WHERE npsp__Opportunity__c = :oppId
+            ];
+            if(!partialCredits.isEmpty()) {
                 giftModel.partialCredits = partialCredits;
             }
 
             return giftModel;
 
-        } catch(Exception e){
+        } catch(Exception e) {
             System.debug(e);
             return null;
-        }
-    }
-
-    /*******************************************************************************************************
-    * @description Delete a list of SObjects passed in by the Gift Entry form
-    * @param objsToDelete List<SObject> to be deleted
-    */
-    @TestVisible
-    private static void deleteObjList(List<SObject> objsToDelete){
-        List<Id> idsToDelete = new List<Id>();
-        for(SObject so : objsToDelete){
-            idsToDelete.add(so.Id);
-        }
-        Database.DeleteResult[] deleteResults = Database.delete(idsToDelete, true);
-        for(Database.DeleteResult dr : deleteResults) {
-            if (!dr.isSuccess()) {
-                for(Database.Error err : dr.getErrors()) {
-                    System.debug(LoggingLevel.Error, 'The following error has occurred.'
-                        + '\n' + err.getStatusCode() + ': ' + err.getMessage()
-                        + '\n fields that affected this error: ' + err.getFields());
-                }
-            }
         }
     }
 
@@ -241,18 +325,14 @@ public class GiftEntryFormController {
     * @return GiftFormModel with new Ids included
     */
     @TestVisible
-    private static GiftFormModel saveDonationInformation(GiftFormModel giftModel){
+    private static GiftFormModel saveDonationInformation(GiftFormModel giftModel) {
         Savepoint sp = Database.setSavepoint();
         // Upsert or Delete the provided Donor and Donation information
+        List<Database.SaveResult> saveResults = new List<Database.SaveResult>();
         try {
-            // First, delete any objects that were removed from the form
-            if(giftModel.objsToDelete != null && !giftModel.objsToDelete.isEmpty()){
-                deleteObjList(giftModel.objsToDelete);
-            }
-
             // Insert or Update the provided Donation information
-            if(giftModel.di != null){
-                upsert giftModel.di;
+            if(giftModel.di != null) {
+                saveResults.addAll(UTIL_CrudFLS.create(giftModel.di));
             } else {
                 System.debug('No DataImport object was provided'); 
                 return null;
@@ -267,31 +347,40 @@ public class GiftEntryFormController {
                 for(npsp__Allocation__c a : giftModel.allocs){
                     a.npsp__Opportunity__c = oppId;
                 }
-                upsert giftModel.allocs;
+                saveResults.addAll(UTIL_CrudFLS.create(giftModel.allocs));
             }
-            
-            if(giftModel.payments != null && !giftModel.payments.isEmpty()){
-                for(npe01__OppPayment__c p : giftModel.payments){
-                    if(p.Id == null){
+
+            if(giftModel.payments != null && !giftModel.payments.isEmpty()) {
+                for(npe01__OppPayment__c p : giftModel.payments) {
+                    if(p.Id == null) {
                         p.npe01__Opportunity__c = oppId;
                     }
                 }
-                upsert giftModel.payments;
+                saveResults.addAll(UTIL_CrudFLS.create(giftModel.payments));
             }
-            
+
             if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()){
                 for(npsp__Partial_Soft_Credit__c c : giftModel.partialCredits){
                     if(c.Id == null){
                         c.npsp__Opportunity__c = oppId;
                     }
                 }
-                upsert giftModel.partialCredits;
+                saveResults.addAll(UTIL_CrudFLS.create(giftModel.partialCredits));
             }
 
             giftModel.oppId = oppId;
+
+            for(Database.SaveResult result : saveResults) {
+                if(!result.isSuccess()) {
+                    DmlException dmlException = new DmlException();
+                    dmlException.setMessage(result.getErrors()[0].getMessage());
+                    throw dmlException;
+                }
+            }
+
             return giftModel;
 
-        } catch(Exception e){
+        } catch(Exception e) {
             Database.rollback(sp);
             throw e;
         }
@@ -302,7 +391,7 @@ public class GiftEntryFormController {
     * @return Map<String, List<String>> which maps a picklist field name to picklist values
     */
     @AuraEnabled
-    public static Map<String, List<String>> getPickListValues(){
+    public static Map<String, List<String>> getPickListValues() {
         Map<String, List<String>> picklistMap = 
             new Map<String, List<String>>();
 
@@ -334,12 +423,11 @@ public class GiftEntryFormController {
     * @param ple List<Schema.PicklistEntry> of picklist entries for the field
     * @return List<String> with picklist values filtered for soft credit roles
     */
-    private static List<String> returnSoftCreditRoleList(List<Schema.PicklistEntry> ple){
-        Set<String> contactRoles = new Set<String>();
+    private static List<String> returnSoftCreditRoleList(List<Schema.PicklistEntry> ple) {
         Set<String> softCreditRoles = new Set<String>();
         String softCreditRoleString = 
             npsp.UTIL_CustomSettings_API.getHouseholdsSettings().npo02__Soft_Credit_Roles__c;
-        if (softCreditRoleString != null){
+        if (softCreditRoleString != null) {
             softCreditRoles = new set<String>(softCreditRoleString.split(';'));
         }
 
@@ -358,16 +446,16 @@ public class GiftEntryFormController {
     * @param ple List<Schema.PicklistEntry> of picklist entries for the field
     * @return List<String> with all picklist values for the provided field
     */
-    private static List<String> returnPicklistValuesList(List<Schema.PicklistEntry> ple){
+    private static List<String> returnPicklistValuesList(List<Schema.PicklistEntry> ple) {
         List<String> pickListValuesList = new List<String>();
-        picklistOptionWrapper plWrapper;
+        PicklistOptionWrapper plWrapper;
         String plLabel;
         String plValue;
         String optionJson;
-        for(Schema.PicklistEntry pickListVal : ple){
+        for(Schema.PicklistEntry pickListVal : ple) {
             plLabel = pickListVal.getLabel();
             plValue = pickListVal.getValue();
-            plWrapper = new picklistOptionWrapper(plLabel, plValue);
+            plWrapper = new PicklistOptionWrapper(plLabel, plValue);
             // Convert to JSON for easier parsing in Javascript
             optionJson = JSON.serialize(plWrapper);
             pickListValuesList.add(optionJson);
@@ -381,22 +469,31 @@ public class GiftEntryFormController {
     * @return Id of the Opportunity
     */
     @AuraEnabled
-    public static String getOpportunityIdFromImport(Id diObjId){
+    public static String getOpportunityIdFromImport(Id diObjId) {
         try {
-            npsp__DataImport__c di = [SELECT npsp__DonationImported__c,
-                npsp__FailureInformation__c
-                FROM npsp__DataImport__c
-                WHERE Id =: diObjId];
-            if(di.npsp__FailureInformation__c != null){
+            UTIL_CrudFLS.checkRead(
+                    'npsp__DataImport__c',
+                    new List<String>{
+                            'npsp__DonationImported__c',
+                            'npsp__FailureInformation__c'
+                    }
+            );
+            npsp__DataImport__c di = [
+                    SELECT npsp__DonationImported__c,
+                            npsp__FailureInformation__c
+                    FROM npsp__DataImport__c
+                    WHERE Id = :diObjId
+            ];
+            if(di.npsp__FailureInformation__c != null) {
                 throw returnAuraException(di.npsp__FailureInformation__c);
             }
             return di.npsp__DonationImported__c;
-        } catch(Exception e){
+        } catch(Exception e) {
             throw returnAuraException(e.getMessage());
         }
     }
 
-    private static AuraHandledException returnAuraException(String errorMsg){
+    private static AuraHandledException returnAuraException(String errorMsg) {
         AuraHandledException ex = new AuraHandledException(errorMsg);
         ex.setMessage(errorMsg);
         return ex;
@@ -406,7 +503,7 @@ public class GiftEntryFormController {
     * @description Set DataImport Settings that are important to Gift Entry matching
     * @return npsp__Data_Import_Settings__c diSettings object used to process gifts
     */
-    private static npsp__Data_Import_Settings__c getGiftEntrySettings(){
+    private static npsp__Data_Import_Settings__c getGiftEntrySettings() {
         npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
         diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.BestMatchOrCreate;
         diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_amount__c;npsp__donation_date__c';
@@ -422,23 +519,20 @@ public class GiftEntryFormController {
     * @return void
     */
     @AuraEnabled
-    public static void runGiftProcess(Id diObjId, Boolean dryRunMode){
+    public static void runGiftProcess(Id diObjId, Boolean dryRunMode) {
         npsp__Data_Import_Settings__c diSettings = getGiftEntrySettings();
 
         String allDIFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npsp__DataImport__c');
         List<npsp__DataImport__c> listDI = 
-            Database.query('SELECT '+ allDIFields +' FROM npsp__DataImport__c WHERE Id = :diObjId');
+            Database.query('SELECT '+ String.escapeSingleQuotes(allDIFields) +' FROM npsp__DataImport__c WHERE Id = :diObjId');
 
         npsp.BDI_DataImport_API.processDataImportRecords(diSettings, listDI, dryRunMode);
-        if(!dryRunMode){
-            //processJSONList(listDI);
-        }
     }
 
     // Not currently used, but useful for processing a large number of DataImport objects
     @AuraEnabled
-    public static Id runGiftBatch(Id batchId){
-        if(batchId != null){
+    public static Id runGiftBatch(Id batchId) {
+        if(batchId != null) {
             List<npsp.BDI_DataImport_API.ProcessDataImportBatchesResult> batchesResults =
                 new List<npsp.BDI_DataImport_API.ProcessDataImportBatchesResult>();
             List<Id> listBatchId = new List<Id>{batchId};
@@ -455,17 +549,14 @@ public class GiftEntryFormController {
     * @return void
     */
     public static void insertGiftEntrySettings() {
-        List<npsp__Data_Import_Settings__c> diSettings = [select ID from npsp__Data_Import_Settings__c];
-        if(diSettings.size() == 0) {
-            diSettings.add(
-                new npsp__Data_Import_Settings__c(
-                    npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate,
-                    npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c'
-                )
-            );
-            insert diSettings;
+        npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
+        if(diSettings.Id == null) {
+            diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
+            diSettings.npsp__Donation_Matching_Rule__c = 'npsp__donation_date__c;npsp__donation_name__c';
+            UTIL_CrudFLS.create(diSettings);
         }
     }
+
 
     /*******************************************************************************************************
     * @description Given a list of objects in JSON, process them in the right order
@@ -473,20 +564,20 @@ public class GiftEntryFormController {
     * @return Id of the Opportunity created
     */
     @AuraEnabled
-    public static GiftFormModel processGiftModelString(String giftModelString){
+    public static GiftFormModel processGiftModelString(String giftModelString) {
         try {
-            if(giftModelString == null){
+            if(giftModelString == null) {
                 return new GiftFormModel(null);
             }
 
             // First, remove attributes passed from Lightning that can't be deserialized
-            String sobjectTypeRegex = '"sobjectType":.+?(?=,),';
+            String sObjectTypeRegex = '"sobjectType":.+?(?=,),';
             // Now remove related lookup object attributes, we can't upsert with the Id AND the object
             // NOTE: If this stops working, it may be best to loop through the object and remove
             // any objects at a certain "depth"
             String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
 
-            giftModelString = giftModelString.replaceAll(sobjectTypeRegex, '');
+            giftModelString = giftModelString.replaceAll(sObjectTypeRegex, '');
             giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
 
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
@@ -494,69 +585,16 @@ public class GiftEntryFormController {
 
             return giftModel;
 
-        } catch(Exception e){
+        } catch(Exception e) {
             throw returnAuraException(e.getMessage());
         }
     }
 
     @AuraEnabled
-    public static GiftFormModel saveGift(String giftModelString){
+    public static GiftFormModel saveGift(String giftModelString) {
         GiftFormModel giftModel = processGiftModelString(giftModelString);
         giftModel = saveDonationInformation(giftModel);
         return giftModel;
-    }
-
-    /*******************************************************************************************************
-    * @description For a list of DataImport objects with Post Process JSON values filled in,
-    * process those lists to add related objects
-    * @param listDi List of DataImport objects that will have Post_Process_Object_JSON__c processed
-    * @return void
-    */
-    public static void processJSONList(List<npsp__DataImport__c> listDi){
-        List<SObject> objsToUpsert = new List<SObject>();
-
-        Set<Id> diIdSet = new Set<Id>();
-        // Select the fields we need
-        for(npsp__DataImport__c di : listDi){
-            diIdSet.add(di.Id);
-        }
-
-        List<npsp__DataImport__c> listDiWithFields = 
-            [SELECT Id, Post_Process_Object_JSON__c, npsp__DonationImported__c 
-            FROM npsp__DataImport__c 
-            WHERE Id in :diIdSet];
-
-        List<SObject> thisList;
-        Map<String, Object> objNameToObjList;
-        for(npsp__DataImport__c di : listDiWithFields){
-            if(di.Post_Process_Object_JSON__c == null){
-                continue;
-            }
-            String oppId = di.npsp__DonationImported__c;
-            thisList = new List<SObject>();
-            objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(di.Post_Process_Object_JSON__c);
-            // For each objet type included, add the list
-            for(String objName : objNameToObjList.keySet()){
-                Object objList = objNameToObjList.get(objName);
-                if(objList != null){
-                    String objListString = JSON.serialize(objList);
-                    // Replace opportunity Id placeholders with the actual Id
-                    if(oppId != null){
-                        String oppIdPlaceholderRegex = Label.Gift_Donation_ID_Placeholder;
-                        objListString = objListString.replaceAll(oppIdPlaceholderRegex, oppId);
-                    }
-                    Type listType = Type.forName('List<' + objName + '>');
-                    thisList = (List<SObject>)JSON.deserialize(objListString, listType);
-                    objsToUpsert.addAll(thisList);
-                }
-            }
-        }
-
-        // TODO: How to handle upsert? Need to separate into object lists?
-        if(!objsToUpsert.isEmpty()){
-            insert objsToUpsert;
-        }
-
     }
     
     /*******************************************************************************************************
@@ -564,14 +602,16 @@ public class GiftEntryFormController {
     * @attribute label String for the visible label
     * @attribute value String for the actual input
     */
-    class picklistOptionWrapper {
+    class PicklistOptionWrapper {
         String label {get; set;}
         String value {get; set;}
-        picklistOptionWrapper(String optionValue){
+
+        PicklistOptionWrapper(String optionValue) {
             this.label = optionValue;
             this.value = optionValue;
         }
-        picklistOptionWrapper(String optionLabel, String optionValue){
+
+        PicklistOptionWrapper(String optionLabel, String optionValue) {
             this.label = optionLabel;
             this.value = optionValue;
         }

@@ -96,7 +96,7 @@ private class GiftEntryFormController_TEST {
         GiftEntryFormController.GiftFormModel giftModel = returnGiftModel();
     
         Test.startTest();
-        giftModel = GiftEntryFormController.GiftFormModel.saveDonationInformation(giftModel);
+        giftModel = GiftEntryFormController.saveDonationInformation(giftModel);
         Test.stopTest();
 
         List<Opportunity> opps = [SELECT Id FROM Opportunity 
@@ -173,31 +173,6 @@ private class GiftEntryFormController_TEST {
             and npsp__Amount__c =: payAmt];
         System.assertEquals(1, pscQuery.size());
 
-        // Now test deletion of related objects
-        List<SObject> objToDelete = new List<SObject>();
-
-        objToDelete.addAll((List<SObject>)alloQuery);
-        objToDelete.addAll((List<SObject>)paymentQuery);
-        objToDelete.addAll((List<SObject>)pscQuery);
-
-        giftModel.objsToDelete = objToDelete;
-
-        GiftEntryFormController.deleteObjList(giftModel.objsToDelete);
-
-        alloQuery = [Select Id from npsp__Allocation__c 
-            where npsp__General_Accounting_Unit__c =: gauId
-            and npsp__Opportunity__c =: oppId];
-        System.assertEquals(0, alloQuery.size());
-
-        paymentQuery = [Select Id from npe01__OppPayment__c 
-            where npe01__Opportunity__c =: oppId
-            and npe01__Payment_Amount__c =: payAmt];
-        System.assertEquals(0, paymentQuery.size());
-
-        pscQuery = [Select Id from npsp__Partial_Soft_Credit__c 
-            where npsp__Contact__c =: scContactId
-            and npsp__Amount__c =: payAmt];
-        System.assertEquals(0, pscQuery.size());
     }
     
     @isTest
@@ -260,14 +235,74 @@ private class GiftEntryFormController_TEST {
         diObj.Post_Process_Object_JSON__c = jsonString;
         update diObj;
         List<npsp__DataImport__c> diList = new List<npsp__DataImport__c>{diObj};
-        GiftEntryFormController.processJSONList(diList);
+        processJSONList(diList);
 
         // Check that the allocations were created
-        List<npsp__Allocation__c> testList = [Select Id from npsp__Allocation__c 
-            where npsp__General_Accounting_Unit__c =: gauId
-            and npsp__Opportunity__c =: oppId];
+        List<npsp__Allocation__c> testList = [
+                Select Id
+                from npsp__Allocation__c
+                where npsp__General_Accounting_Unit__c = :gauId
+                and npsp__Opportunity__c = :oppId
+        ];
         System.assertEquals(2, testList.size());
         
+    }
+
+    /*******************************************************************************************************
+    * @description For a list of DataImport objects with Post Process JSON values filled in,
+    * process those lists to add related objects
+    * @param listDi List of DataImport objects that will have Post_Process_Object_JSON__c processed
+    * @return void
+    */
+    public static void processJSONList(List<npsp__DataImport__c> listDi) {
+        List<SObject> objsToUpsert = new List<SObject>();
+
+        Set<Id> diIdSet = new Set<Id>();
+        // Select the fields we need
+        for(npsp__DataImport__c di : listDi) {
+            diIdSet.add(di.Id);
+        }
+
+        UTIL_CrudFLS.checkRead('npsp__DataImport__c',
+                new List<String>{
+                        'Post_Process_Object_JSON__c', 'npsp__DonationImported__c'
+                });
+        List<npsp__DataImport__c> listDiWithFields = [
+                SELECT Id, Post_Process_Object_JSON__c, npsp__DonationImported__c
+                FROM npsp__DataImport__c
+                WHERE Id IN :diIdSet
+        ];
+
+        List<SObject> thisList;
+        Map<String, Object> objNameToObjList;
+        for(npsp__DataImport__c di : listDiWithFields) {
+            if(di.Post_Process_Object_JSON__c == null) {
+                continue;
+            }
+            String oppId = di.npsp__DonationImported__c;
+            thisList = new List<SObject>();
+            objNameToObjList = (Map<String, Object>)JSON.deserializeUntyped(di.Post_Process_Object_JSON__c);
+            // For each objet type included, add the list
+            for(String objName : objNameToObjList.keySet()) {
+                Object objList = objNameToObjList.get(objName);
+                if(objList != null) {
+                    String objListString = JSON.serialize(objList);
+                    // Replace opportunity Id placeholders with the actual Id
+                    if(oppId != null) {
+                        String oppIdPlaceholderRegex = Label.Gift_Donation_ID_Placeholder;
+                        objListString = objListString.replaceAll(oppIdPlaceholderRegex, oppId);
+                    }
+                    Type listType = Type.forName('List<' + objName + '>');
+                    thisList = (List<SObject>)JSON.deserialize(objListString, listType);
+                    objsToUpsert.addAll(thisList);
+                }
+            }
+        }
+
+        // TODO: How to handle upsert? Need to separate into object lists?
+        if(!objsToUpsert.isEmpty()) {
+            UTIL_CrudFLS.create(objsToUpsert);
+        }
     }
 
     @isTest

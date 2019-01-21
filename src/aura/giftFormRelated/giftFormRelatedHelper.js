@@ -118,7 +118,6 @@
         var relatedRows = helper.getRelatedRows(component);
 
         var rowList = component.get('v.rowList');
-        var objsToDelete = component.get('v.objsToDelete');
         var body = component.get('v.body');
         var nextRowShowLabels = false;
         rowList = helper.proxyToObj(rowList);
@@ -132,14 +131,8 @@
             }
 
             if(thisRow.get('v.markedForDelete')){
-                var objName = component.get('v.objectName');
                 var thisItem = thisRow.get('v.item');
                 thisItem = helper.proxyToObj(thisItem);
-                if(thisItem.Id != null){
-                    // Required attribute to delete a list of generic sobjects
-                    thisItem['attributes'] = {'type':objName};
-                    objsToDelete.push(thisItem);
-                }
                 if(thisRow.get('v.showLabels')){
                     nextRowShowLabels = true;
                 }
@@ -148,7 +141,6 @@
                 thisRow.destroy();
             }
         }
-        component.set('v.objsToDelete', objsToDelete);
         component.set('v.rowList', rowList);
         component.set('v.body', body);
 

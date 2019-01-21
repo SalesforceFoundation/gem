@@ -112,37 +112,4 @@ private with sharing class UTIL_CrudFLS_TEST {
             System.assert(exceptionCaught, 'No exception caught.');
         }
     }
-
-    @isTest
-    private static void testFieldUpdateNegative() {
-        User u = UTIL_UnitTestData_TEST.createNewUserWithProfile('teststandarduser@sfdodev.org', 'Standard User');
-
-        System.runAs(u) {
-            Boolean exceptionCaught = false;
-            try {
-                UTIL_CrudFLS.checkAccess(UTIL_CrudFLS.CRUD_OPERATION.MODIFY, 'Lead', new List<String>{'CleanStatus'});
-            } catch(UTIL_CrudFLS.AccessException ex) {
-                exceptionCaught = true;
-                System.assertEquals('No update access on Lead for field CleanStatus', ex.getMessage(), 'Exception message wrong');
-            }
-            System.assert(exceptionCaught, 'No exception caught.');
-        }
-    }
-
-    @isTest
-    private static void testFieldInsertNegative() {
-        User u = UTIL_UnitTestData_TEST.createNewUserWithProfile('teststandarduser@sfdodev.org', 'Standard User');
-        Lead ld = new Lead(LastName = LEAD_LASTNAME, Company = 'Test', CleanStatus = 'Test Status');
-
-        System.runAs(u) {
-            Boolean exceptionCaught = false;
-            try {
-                UTIL_CrudFLS.create(ld);
-            } catch(UTIL_CrudFLS.AccessException ex) {
-                exceptionCaught = true;
-                System.assertEquals('No insert access on Lead for field CleanStatus', ex.getMessage(), 'Exception message wrong');
-            }
-            System.assert(exceptionCaught, 'No exception caught.');
-        }
-    }
 }

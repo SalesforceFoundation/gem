@@ -26,6 +26,13 @@ tasks:
         options:
             path: dev_config/delete
 
+    enable_payment_allos:
+        description: Enable Payment Allocations
+        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        options:
+            path: dev_config/scripts/configure_default_settings.cls
+            method: enablePaymentAllocationsDefaultGAU();
+
     execute_install_apex:
         description: Runs most of the install script methods from Post_Install_Script class
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
@@ -175,6 +182,10 @@ flows:
               task: install_managed
           4:
               flow: config_managed
+          5:
+              task: enable_payment_allos
+              options:
+                  managed: True
 
 orgs:
     scratch:

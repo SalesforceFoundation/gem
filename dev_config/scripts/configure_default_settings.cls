@@ -9,6 +9,23 @@ String adminEmail = 'testing@example.com';
 String giftProfileName = 'Gift Processor';
 String giftProfileName2 = 'Development Officer';
 
+public static void enablePaymentAllocationsDefaultGAU() {
+    npsp__Allocations_Settings__c stgAllo = npsp.UTIL_CustomSettings_API.getAllocationsSettings();
+    stgAllo.npsp__Payment_Allocations_Enabled__c = true;
+    stgAllo.npsp__Default_Allocations_Enabled__c = true;
+    if(stgAllo.npsp__Default__c == null){
+        // There is no default GAU set, create one and assign it
+        String defaultGAUName = 'Default GAU';
+        npsp__General_Accounting_Unit__c defaultGau = new npsp__General_Accounting_Unit__c(
+            Name = defaultGAUName,
+            npsp__Active__c = true
+        );
+        insert defaultGau;
+        stgAllo.npsp__Default__c = defaultGau.Id;
+    }
+    upsert stgAllo;
+}
+
 public static void initializeNPSPSettingsForADV() {
 
     insertGiftEntrySettings();
@@ -46,7 +63,7 @@ public static void initializeNPSPSettingsForADV() {
 
     // Not global, but might be needed for recurring donations?
     //database.executeBatch(new RD_InstallScript_BATCH(), 10); 
-
+    enablePaymentAllocationsDefaultGAU();
     initializeHEDASettingsForADV();
 }
 
@@ -57,8 +74,8 @@ public static void initializeHEDASettingsForADV() {
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
     update orgSettings;
 
-    GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
-    gemSettings.Sync_Account_Models__c = true;
+    %%%NAMESPACE%%%GEM_Settings__c gemSettings = %%%NAMESPACE%%%UTIL_CustomSettingsFacade.getOrgGemSettings();
+    gemSettings.%%%NAMESPACE%%%Sync_Account_Models__c = true;
     update gemSettings;
     
 }

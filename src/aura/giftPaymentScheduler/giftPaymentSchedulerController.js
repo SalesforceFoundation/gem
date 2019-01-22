@@ -1,8 +1,4 @@
 ({
-	doInit: function(component, event, helper) {
-        var today = new Date();
-        component.set('v.startDate', helper.convertDateToString(today));
-	},
 	handlePaymentsChange: function(component, event, helper){
 		// Gets called twice (once while bubbling up, once from the parent change)
 		// We only want to event to fire once, boolean is toggled to handle this
@@ -14,7 +10,7 @@
 		}
     },
 	clickCalculate: function(component, event, helper) {
-		helper.clickCalculateHelper(component);
+		helper.clickCalculateHelper(component, false);
 	},
 	handleAmtChange: function(component, event, helper) {
 		var donationAmt = component.get('v.donationAmt');
@@ -31,5 +27,8 @@
 	},
 	toggleRelatedSection: function(component, event, helper) {
         component.set('v.expandSection', !component.get('v.expandSection'));
-    }
+	},
+	createDefaultPayment: function(component, event, helper){
+		helper.clickCalculateHelper(component, true);
+	}
 })

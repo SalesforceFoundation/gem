@@ -35,9 +35,13 @@
     <aura:attribute type="Boolean" name="expandTribute" default="true" />
     <aura:attribute type="Boolean" name="expandMatching" default="true" />
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
+    <aura:attribute type="Integer" name="paymentTimer" />
 
     <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.handleLookupChange}"/>
     <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.handleLookupChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Donation_Stage__c}" action="{!c.handlePaymentChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Donation_Amount__c}" action="{!c.handlePaymentChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Donation_Date__c}" action="{!c.handlePaymentChange}"/>
 
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 
@@ -46,7 +50,7 @@
     <!-- Used to add lookup fields, mapped back to DataImport object on submit -->
     <aura:attribute name="opp" 
         type="Opportunity" 
-        default="{sobjectType:'Opportunity',CloseDate:null,npe01__Do_Not_Automatically_Create_Payment__c:false}"/>
+        default="{sobjectType:'Opportunity',CloseDate:null,npe01__Do_Not_Automatically_Create_Payment__c:true}"/>
     
     <aura:attribute name="allocs" 
         type="npsp__Allocation__c[]" 
@@ -139,7 +143,6 @@
                                 required="true"
                                 variant="label-hidden"
                                 type="date"
-                                onchange="{!c.handleFieldChange}"
                                 value="{!v.di.npsp__Donation_Date__c}" />
                         </lightning:layoutItem>
 
@@ -152,7 +155,6 @@
                                 variant="label-hidden"
                                 type="number"
                                 formatter="currency" step="0.01"
-                                onchange="{!c.handleFieldChange}"
                                 value="{!v.di.npsp__Donation_Amount__c}" />
                         </lightning:layoutItem>
 
@@ -298,6 +300,8 @@
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
                     donationAmt="{!v.di.npsp__Donation_Amount__c}"
                     paymentMethod="{!v.di.npsp__Payment_Method__c}"
+                    donationStage="{!v.di.npsp__Donation_Stage__c}"
+                    startDate="{!v.di.npsp__Donation_Date__c}"
                     objectFieldData="{!v.objectFieldData}"
                     giftModel="{!v.giftModel}" />
 

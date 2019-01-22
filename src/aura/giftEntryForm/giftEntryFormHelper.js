@@ -17,6 +17,7 @@
 
                 component.set('v.giftModel', giftModel);
                 component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
+                component.set('v.objectFieldData.closedWonStageMap', giftModel.closedWonStageMap);
 
                 this.handlePicklistSetup(component, giftModel.picklistValues);
 
@@ -161,6 +162,33 @@
         component.set('v.showSpinner', false);
         component.set('v.submitError', errorMsg);
     },
+    checkForPaymentChange: function(component, helper){
+        // Delay payment creation to avoid duplicate events
+        var timer = component.get('v.paymentTimer');
+        clearTimeout(timer);
+
+        var timer = window.setTimeout(
+            $A.getCallback(function(){
+                helper.createDefaultPayment(component);
+                clearTimeout(timer);
+                component.set('v.paymentTimer', null);
+            }), 200
+        );
+        
+        component.set('v.paymentTimer', timer);
+    },
+    createDefaultPayment: function(component){
+        var amt = component.get('v.di.npsp__Donation_Amount__c');
+        var stage = component.get('v.di.npsp__Donation_Stage__c');
+        var date = component.get('v.di.npsp__Donation_Date__c');
+        
+        if(amt && stage && date){
+            var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
+            if(paySched){
+                paySched[0].createDefaultPayment();
+            }
+        }
+    },
     checkFields: function(component, fieldId, allMustBeValid, showErrors){
         var findResult = component.find(fieldId); 
         if(!findResult){
@@ -230,7 +258,7 @@
         }
     },
     fillJsonField: function(component) {
-        var relatedCmp = this.getRelatedComponents(component);
+        var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
         var allRowsValid = true;
 
         // First process the related objects
@@ -243,11 +271,6 @@
         var giftModel = component.get('v.giftModel');
         var opp = this.proxyToObj(component.get('v.opp'));
         var di = this.proxyToObj(component.get('v.di'));
-
-        if(giftModel.payments && giftModel.payments.length > 0){
-            // Payments are being scheduled, do not create one for the full donation
-            opp.npe01__Do_Not_Automatically_Create_Payment__c = true;
-        }
 
         // Map fields from Opportunity to DataImport
         // This is done to avoid referencing Adv namespace fields in markup
@@ -284,9 +307,9 @@
         });
         toastEvent.fire();
     },
-    getRelatedComponents: function(component){
+    getChildComponents: function(component, cmpName){
         var namespace = component.get('v.namespacePrefix');
-        var rowCmpName = namespace + ':giftFormRelated';
+        var rowCmpName = namespace + ':' + cmpName;
         var formWrapper = component.find('formWrapper');
         return formWrapper.find({instancesOf:rowCmpName});
     },

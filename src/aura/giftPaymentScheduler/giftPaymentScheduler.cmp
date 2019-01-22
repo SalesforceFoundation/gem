@@ -1,12 +1,14 @@
 <aura:component>
 
-    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:method name="createDefaultPayment" />
+
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
     <aura:handler name="change" value="{!v.paymentList}" action="{!c.handlePaymentsChange}"/>
     
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="Decimal" name="donationAmt" />
+    <aura:attribute type="String" name="donationStage" />
     <aura:attribute type="Boolean" name="showPayments" default="false" />
     <aura:attribute type="Boolean" name="blockItemChangeEvent" default="true" />
     <aura:attribute type="Boolean" name="expandSection" default="true" />

@@ -55,9 +55,12 @@ public with sharing class GiftEntryFormController {
 
         @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
 
+        @AuraEnabled Map<String, Boolean> closedWonStageMap {get;set;}
+
         public GiftFormModel() {
             this.objNameToApiToLabel = getObjNameToApiToLabel();
             this.picklistValues = getPickListValues();
+            this.closedWonStageMap = getClosedWonStageMap();
             this.di = new npsp__DataImport__c();
             this.matchedOpps = new List<Opportunity>();
             this.matchedContacts = new List<Contact>();
@@ -74,6 +77,28 @@ public with sharing class GiftEntryFormController {
         }
     }
 
+    /******************************************************************************************************
+    * @description String helper property for getClosedWonStageMap() method.
+    *******************************************************************************************************/
+    private static Map<String, Boolean> closedWonStageMap = null;
+
+    /******************************************************************************************************
+    * @description Build a the Map that includes all closed/won Opportunity Stage
+    * @return Map<String, Boolean> the Map that includes all closed/won Opportunity Stage
+    *******************************************************************************************************/
+    public static Map<String, Boolean> getClosedWonStageMap() {
+        if(closedWonStageMap == null) {
+            closedWonStageMap = new Map<String, Boolean>();
+            List<OpportunityStage> closedWonStages = [SELECT Id, MasterLabel FROM OpportunityStage WHERE IsWon = true AND IsClosed = true AND isActive = true];
+            if (closedWonStages != null && closedWonStages.size() > 0) {
+                for (OpportunityStage stage : closedWonStages) {
+                    closedWonStageMap.put(stage.MasterLabel, true);
+                }
+            }
+        }
+
+        return closedWonStageMap;
+    }
 
     @AuraEnabled
     public static GiftFormModel initClass(Id oppId) {

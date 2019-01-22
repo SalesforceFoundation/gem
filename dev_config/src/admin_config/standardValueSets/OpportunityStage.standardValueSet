@@ -6,7 +6,7 @@
         <default>false</default>
         <label>Pledged</label>
         <closed>false</closed>
-        <forecastCategory>Omitted</forecastCategory>
+        <forecastCategory>Pipeline</forecastCategory>
         <probability>10</probability>
         <won>false</won>
     </standardValue>
@@ -25,7 +25,7 @@
         <label>Declined</label>
         <closed>true</closed>
         <forecastCategory>Omitted</forecastCategory>
-        <probability>100</probability>
+        <probability>0</probability>
         <won>false</won>
     </standardValue>
     <standardValue>

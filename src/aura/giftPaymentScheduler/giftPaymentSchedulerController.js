@@ -10,6 +10,7 @@
 		}
     },
 	clickCalculate: function(component, event, helper) {
+		component.set('v.userInteracted', true);
 		helper.clickCalculateHelper(component, false);
 	},
 	handleAmtChange: function(component, event, helper) {
@@ -29,6 +30,9 @@
         component.set('v.expandSection', !component.get('v.expandSection'));
 	},
 	createDefaultPayment: function(component, event, helper){
-		helper.clickCalculateHelper(component, true);
+		// Only overwrite the payment if the user has not used the scheduler
+		if(!component.get('v.userInteracted')){
+			helper.clickCalculateHelper(component, true);
+		}
 	}
 })

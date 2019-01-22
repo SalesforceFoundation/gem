@@ -174,18 +174,24 @@
                 component.set('v.paymentTimer', null);
             }), 200
         );
-        
+
         component.set('v.paymentTimer', timer);
     },
     createDefaultPayment: function(component){
         var amt = component.get('v.di.npsp__Donation_Amount__c');
-        var stage = component.get('v.di.npsp__Donation_Stage__c');
         var date = component.get('v.di.npsp__Donation_Date__c');
         
-        if(amt && stage && date){
+        if(amt && date){
             var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
             if(paySched){
                 paySched[0].createDefaultPayment();
+                // Add back if we want to show a message when the payment is updated
+                // var paymentAdded = component.get('v.paymentAdded');
+                // if(paymentAdded){
+                //     this.showSaveToast('', 'Payment Updated');
+                // } else {
+                //     component.set('v.paymentAdded', true);
+                // }
             }
         }
     },

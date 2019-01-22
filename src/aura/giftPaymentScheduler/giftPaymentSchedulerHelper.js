@@ -54,19 +54,24 @@
 				thisPayment = Math.round(thisPayment * 100) / 100;
 			}
 
-			singlePayment = this.setPaymentFields(singlePaymentProxy, isClosedWon, dateObject, thisPayment, paymentMethod);
+			var firstPaymentClosed = false;
+			if(i == 0 && isClosedWon){
+				firstPaymentClosed = true;
+			}
+
+			singlePayment = this.setPaymentFields(singlePaymentProxy, firstPaymentClosed, dateObject, thisPayment, paymentMethod);
 			paymentList.push(singlePayment);
 		}
 
 		component.set('v.paymentList', paymentList);
 	},
-	setPaymentFields: function(paymentProxy, isClosedWon, date, amt, method){
+	setPaymentFields: function(paymentProxy, paymentPaid, date, amt, method){
 		var singlePayment = this.proxyToObj(paymentProxy);
 		var strDate = this.convertDateToString(date);
 		singlePayment.npe01__Scheduled_Date__c = strDate;
-		if(isClosedWon){
-			singlePayment.npe01__Payment_Date__c = strDate;
-			singlePayment.npe01__Paid__c = true;
+		if(paymentPaid){
+			// singlePayment.npe01__Payment_Date__c = strDate;
+			// singlePayment.npe01__Paid__c = true;
 		}
 		singlePayment.npe01__Payment_Amount__c = amt;
 		singlePayment.npe01__Payment_Method__c = method;

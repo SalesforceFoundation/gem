@@ -5,6 +5,7 @@
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
     <aura:handler name="change" value="{!v.paymentList}" action="{!c.handlePaymentsChange}"/>
+    <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
     
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="Decimal" name="donationAmt" />

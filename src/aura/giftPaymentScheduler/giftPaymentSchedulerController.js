@@ -34,5 +34,12 @@
 		if(!component.get('v.userInteracted')){
 			helper.clickCalculateHelper(component, true);
 		}
-	}
+	},
+	handleMessage: function(component, event, helper){
+		var channel = event.getParam('channel');
+		
+        if(channel == 'addRowEvent'){
+            component.set('v.userInteracted', true);
+        }
+    }
 })

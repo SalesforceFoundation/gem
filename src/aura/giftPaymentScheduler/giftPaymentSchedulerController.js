@@ -1,8 +1,4 @@
 ({
-	doInit: function(component, event, helper) {
-        var today = new Date();
-        component.set('v.startDate', helper.convertDateToString(today));
-	},
 	handlePaymentsChange: function(component, event, helper){
 		// Gets called twice (once while bubbling up, once from the parent change)
 		// We only want to event to fire once, boolean is toggled to handle this
@@ -14,7 +10,8 @@
 		}
     },
 	clickCalculate: function(component, event, helper) {
-		helper.clickCalculateHelper(component);
+		component.set('v.userInteracted', true);
+		helper.clickCalculateHelper(component, false);
 	},
 	handleAmtChange: function(component, event, helper) {
 		var donationAmt = component.get('v.donationAmt');
@@ -31,5 +28,18 @@
 	},
 	toggleRelatedSection: function(component, event, helper) {
         component.set('v.expandSection', !component.get('v.expandSection'));
+	},
+	createDefaultPayment: function(component, event, helper){
+		// Only overwrite the payment if the user has not used the scheduler
+		if(!component.get('v.userInteracted')){
+			helper.clickCalculateHelper(component, true);
+		}
+	},
+	handleMessage: function(component, event, helper){
+		var channel = event.getParam('channel');
+		
+        if(channel == 'addRowEvent'){
+            component.set('v.userInteracted', true);
+        }
     }
 })

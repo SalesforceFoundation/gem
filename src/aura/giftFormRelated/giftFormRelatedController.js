@@ -1,6 +1,12 @@
 ({
     clickAddRow: function(component, event, helper) {
         helper.handleAddRow(component, helper);
+        // Call addRowEvent, used by the Payment Scheduler component
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+			'channel': 'addRowEvent'
+		});
+		sendMsgEvent.fire();
     },
     handleInitRows: function(component, event, helper) {
         var itemList = component.get('v.itemList');

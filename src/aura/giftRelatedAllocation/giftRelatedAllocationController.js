@@ -3,6 +3,7 @@
         // Set the amount based on this percent so we can check totals
         var percent = component.get('v.item.npsp__Percent__c');
         if(!percent){
+            component.set('v.item.npsp__Percent__c', null);
             return;
         }
         var donationAmt = component.get('v.donationAmt');

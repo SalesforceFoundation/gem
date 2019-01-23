@@ -263,10 +263,6 @@ private class GiftEntryFormController_TEST {
             diIdSet.add(di.Id);
         }
 
-        UTIL_CrudFLS.checkRead('npsp__DataImport__c',
-                new List<String>{
-                        'Post_Process_Object_JSON__c', 'npsp__DonationImported__c'
-                });
         List<npsp__DataImport__c> listDiWithFields = [
                 SELECT Id, Post_Process_Object_JSON__c, npsp__DonationImported__c
                 FROM npsp__DataImport__c

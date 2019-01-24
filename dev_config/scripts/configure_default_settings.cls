@@ -9,6 +9,8 @@ String adminEmail = 'testing@example.com';
 String giftProfileName = 'Gift Processor';
 String giftProfileName2 = 'Development Officer';
 
+private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
+
 public static void enablePaymentAllocationsDefaultGAU() {
     npsp__Allocations_Settings__c stgAllo = npsp.UTIL_CustomSettings_API.getAllocationsSettings();
     stgAllo.npsp__Payment_Allocations_Enabled__c = true;
@@ -62,7 +64,7 @@ public static void initializeNPSPSettingsForADV() {
     // UTIL_MasterSchedulableHelper.setScheduledJobs();
 
     // Not global, but might be needed for recurring donations?
-    //database.executeBatch(new RD_InstallScript_BATCH(), 10); 
+    //database.executeBatch(new RD_InstallScript_BATCH(), 10);
     enablePaymentAllocationsDefaultGAU();
     initializeHEDASettingsForADV();
 }
@@ -74,11 +76,25 @@ public static void initializeHEDASettingsForADV() {
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
     update orgSettings;
 
-    %%%NAMESPACE%%%GEM_Settings__c gemSettings = %%%NAMESPACE%%%UTIL_CustomSettingsFacade.getOrgGemSettings();
+    %%%NAMESPACE%%%GEM_Settings__c gemSettings = getOrgGemSettings();
     gemSettings.%%%NAMESPACE%%%Sync_Account_Models__c = true;
     update gemSettings;
-    
+
 }
+    // Replicated from UTIL_CustomSettingsFacade so as not to expose method globally which
+    // was the only other option
+     private static %%%NAMESPACE%%%GEM_Settings__c getOrgGemSettings() {
+
+        if(orgGemSettings == null) {
+            orgGemSettings = %%%NAMESPACE%%%GEM_Settings__c.getOrgDefaults();
+            if(orgGemSettings.Id == null) {
+                orgGemSettings.%%%NAMESPACE%%%Sync_Account_Models__c = false;
+             }
+        }
+        return orgGemSettings;
+    }
+
+
 
 public static void AddGiftProcessor() {
     Savepoint sp = Database.setSavepoint();
@@ -87,8 +103,8 @@ public static void AddGiftProcessor() {
         List<User> users = new List<User>();
 
         // If the user count is maxed out for Dev orgs, leave and continue the flow
-        users = [SELECT Id 
-            FROM User 
+        users = [SELECT Id
+            FROM User
             WHERE Profile.UserLicense.LicenseDefinitionKey = 'SFDC' AND isActive = true];
         if(users.size() >= 2){
             return;

@@ -74,11 +74,11 @@ public static void initializeHEDASettingsForADV() {
     hed__Hierarchy_Settings__c orgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
     orgSettings.hed__Automatic_Household_Naming__c = true;
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
-    update orgSettings;
+    upsert orgSettings;
 
     %%%NAMESPACE%%%GEM_Settings__c gemSettings = getOrgGemSettings();
     gemSettings.%%%NAMESPACE%%%Sync_Account_Models__c = true;
-    update gemSettings;
+    upsert gemSettings;
 
 }
     // Replicated from UTIL_CustomSettingsFacade so as not to expose method globally which

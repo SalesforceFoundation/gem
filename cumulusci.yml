@@ -69,6 +69,18 @@ tasks:
             path: dev_config/scripts/configure_default_settings.cls
             method: AddGiftProcessor();
 
+    publish_installer:
+        class_path: cumulusci.tasks.metadeploy.Publish
+        options:
+            product_id: DBL2xmV
+            flow: install_pilot
+            title: Install Pilot
+            description: Installs the Gift Entry Manager pilot
+            slug: pilot
+            tier: primary
+            preflight_message: This is the preflight message.
+            post_install_message: This is the post-install message.
+
 flows:
     config_apextest:
         steps:

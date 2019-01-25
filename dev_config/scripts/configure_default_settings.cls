@@ -11,6 +11,13 @@ String giftProfileName2 = 'Development Officer';
 
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 
+public static void setupGEMDefaults(){
+    initializeNPSPSettingsForADV();
+    enablePaymentAllocationsDefaultGAU();
+    initializeHEDASettingsForADV();
+    initializeGEMSettings();
+}
+
 public static void enablePaymentAllocationsDefaultGAU() {
     npsp__Allocations_Settings__c stgAllo = npsp.UTIL_CustomSettings_API.getAllocationsSettings();
     stgAllo.npsp__Payment_Allocations_Enabled__c = true;
@@ -29,7 +36,6 @@ public static void enablePaymentAllocationsDefaultGAU() {
 }
 
 public static void initializeNPSPSettingsForADV() {
-
     insertGiftEntrySettings();
     npsp.UTIL_CustomSettings_API.getContactsSettings();
     npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
@@ -55,46 +61,19 @@ public static void initializeNPSPSettingsForADV() {
     cos.npsp__Notification_Recipient_Opp_Contact_Role__c = 'Notification Contact';
     cos.npsp__Payments_Auto_Close_Stage_Name__c = getClosedWonStage();
     upsert cos;
-
-    // Setup default custom settings, might already be done on install?
-    //npsp.STG_InstallScript stg = new npsp.STG_InstallScript();
-    //stg.runNewOrgScript();
-
-    // Would setup scheduled jobs, but it's not global, go to NPSP Settings page to automatically run
-    // UTIL_MasterSchedulableHelper.setScheduledJobs();
-
-    // Not global, but might be needed for recurring donations?
-    //database.executeBatch(new RD_InstallScript_BATCH(), 10);
-    enablePaymentAllocationsDefaultGAU();
-    initializeHEDASettingsForADV();
 }
 
 public static void initializeHEDASettingsForADV() {
-
     hed__Hierarchy_Settings__c orgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
     orgSettings.hed__Automatic_Household_Naming__c = true;
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
     upsert orgSettings;
-
-    %%%NAMESPACE%%%GEM_Settings__c gemSettings = getOrgGemSettings();
-    gemSettings.%%%NAMESPACE%%%Sync_Account_Models__c = true;
-    upsert gemSettings;
-
 }
-    // Replicated from UTIL_CustomSettingsFacade so as not to expose method globally which
-    // was the only other option
-     private static %%%NAMESPACE%%%GEM_Settings__c getOrgGemSettings() {
 
-        if(orgGemSettings == null) {
-            orgGemSettings = %%%NAMESPACE%%%GEM_Settings__c.getOrgDefaults();
-            if(orgGemSettings.Id == null) {
-                orgGemSettings.%%%NAMESPACE%%%Sync_Account_Models__c = false;
-             }
-        }
-        return orgGemSettings;
-    }
-
-
+public static void initializeGEMSettings() {
+    %%%NAMESPACE%%%GEM_Settings__c gemSettings = getOrgGemSettingsDefault();
+    upsert gemSettings;
+}
 
 public static void AddGiftProcessor() {
     Savepoint sp = Database.setSavepoint();
@@ -163,3 +142,10 @@ private static void insertGiftEntrySettings() {
     }
 }
 
+private static %%%NAMESPACE%%%GEM_Settings__c getOrgGemSettingsDefault() {
+    if(orgGemSettings == null) {
+        orgGemSettings = %%%NAMESPACE%%%GEM_Settings__c.getOrgDefaults();
+    }
+    orgGemSettings.%%%NAMESPACE%%%Sync_Account_Models__c = true;
+    return orgGemSettings;
+}

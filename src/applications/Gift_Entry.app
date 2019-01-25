@@ -18,7 +18,7 @@
     <tabs>standard-Contact</tabs>
     <tabs>standard-Opportunity</tabs>
     <tabs>standard-report</tabs>
-    <tabs>%%%NAMESPACE%%%Gift_Entry</tabs>
+    <tabs>Gift_Entry</tabs>
     <tabs>npsp__Batch_Gift_Entry</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

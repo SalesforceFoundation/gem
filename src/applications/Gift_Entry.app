@@ -9,9 +9,9 @@
         <type>Flexipage</type>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
     </actionOverrides>
-    <description>HEDA Advancement Gift Entry</description>
+    <description>The Salesforce.org Gift Entry Manager (GEM) application</description>
     <formFactors>Large</formFactors>
-    <label>Gift Entry</label>
+    <label>Salesforce.org Gift Entry Manager</label>
     <navType>Standard</navType>
     <tabs>standard-home</tabs>
     <tabs>standard-Account</tabs>

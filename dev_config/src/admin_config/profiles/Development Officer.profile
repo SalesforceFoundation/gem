@@ -102,10 +102,6 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
-        <recordType>Account.%%%NAMESPACED_ORG%%%Organization</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
         <recordType>Account.%%%NAMESPACED_ORG%%%Sports_Organization</recordType>
     </layoutAssignments>
     <layoutAssignments>
@@ -121,10 +117,6 @@
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
         <recordType>Opportunity.%%%NAMESPACED_ORG%%%Donation</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Grant</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
@@ -288,9 +280,9 @@
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <default>true</default>
+        <default>false</default>
         <recordType>Account.Organization</recordType>
-        <visible>true</visible>
+        <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
@@ -303,7 +295,7 @@
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <default>false</default>
+        <default>true</default>
         <recordType>Account.Business_Organization</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -340,7 +332,7 @@
     <recordTypeVisibilities>
         <default>false</default>
         <recordType>Opportunity.Grant</recordType>
-        <visible>true</visible>
+        <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>

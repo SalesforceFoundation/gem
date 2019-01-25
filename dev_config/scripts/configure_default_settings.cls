@@ -9,8 +9,33 @@ String adminEmail = 'testing@example.com';
 String giftProfileName = 'Gift Processor';
 String giftProfileName2 = 'Development Officer';
 
-public static void initializeNPSPSettingsForADV() {
+private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 
+public static void setupGEMDefaults(){
+    initializeNPSPSettingsForADV();
+    enablePaymentAllocationsDefaultGAU();
+    initializeHEDASettingsForADV();
+    initializeGEMSettings();
+}
+
+public static void enablePaymentAllocationsDefaultGAU() {
+    npsp__Allocations_Settings__c stgAllo = npsp.UTIL_CustomSettings_API.getAllocationsSettings();
+    stgAllo.npsp__Payment_Allocations_Enabled__c = true;
+    stgAllo.npsp__Default_Allocations_Enabled__c = true;
+    if(stgAllo.npsp__Default__c == null){
+        // There is no default GAU set, create one and assign it
+        String defaultGAUName = 'Default GAU';
+        npsp__General_Accounting_Unit__c defaultGau = new npsp__General_Accounting_Unit__c(
+            Name = defaultGAUName,
+            npsp__Active__c = true
+        );
+        insert defaultGau;
+        stgAllo.npsp__Default__c = defaultGau.Id;
+    }
+    upsert stgAllo;
+}
+
+public static void initializeNPSPSettingsForADV() {
     insertGiftEntrySettings();
     npsp.UTIL_CustomSettings_API.getContactsSettings();
     npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
@@ -36,31 +61,18 @@ public static void initializeNPSPSettingsForADV() {
     cos.npsp__Notification_Recipient_Opp_Contact_Role__c = 'Notification Contact';
     cos.npsp__Payments_Auto_Close_Stage_Name__c = getClosedWonStage();
     upsert cos;
-
-    // Setup default custom settings, might already be done on install?
-    //npsp.STG_InstallScript stg = new npsp.STG_InstallScript();
-    //stg.runNewOrgScript();
-
-    // Would setup scheduled jobs, but it's not global, go to NPSP Settings page to automatically run
-    // UTIL_MasterSchedulableHelper.setScheduledJobs();
-
-    // Not global, but might be needed for recurring donations?
-    //database.executeBatch(new RD_InstallScript_BATCH(), 10); 
-
-    initializeHEDASettingsForADV();
 }
 
 public static void initializeHEDASettingsForADV() {
-
     hed__Hierarchy_Settings__c orgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
     orgSettings.hed__Automatic_Household_Naming__c = true;
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
-    update orgSettings;
+    upsert orgSettings;
+}
 
-    GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
-    gemSettings.Sync_Account_Models__c = true;
-    update gemSettings;
-    
+public static void initializeGEMSettings() {
+    %%%NAMESPACE%%%GEM_Settings__c gemSettings = getOrgGemSettingsDefault();
+    upsert gemSettings;
 }
 
 public static void AddGiftProcessor() {
@@ -70,8 +82,8 @@ public static void AddGiftProcessor() {
         List<User> users = new List<User>();
 
         // If the user count is maxed out for Dev orgs, leave and continue the flow
-        users = [SELECT Id 
-            FROM User 
+        users = [SELECT Id
+            FROM User
             WHERE Profile.UserLicense.LicenseDefinitionKey = 'SFDC' AND isActive = true];
         if(users.size() >= 2){
             return;
@@ -130,3 +142,10 @@ private static void insertGiftEntrySettings() {
     }
 }
 
+private static %%%NAMESPACE%%%GEM_Settings__c getOrgGemSettingsDefault() {
+    if(orgGemSettings == null) {
+        orgGemSettings = %%%NAMESPACE%%%GEM_Settings__c.getOrgDefaults();
+    }
+    orgGemSettings.%%%NAMESPACE%%%Sync_Account_Models__c = true;
+    return orgGemSettings;
+}

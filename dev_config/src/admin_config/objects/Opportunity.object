@@ -7,12 +7,6 @@
         <label>Donation</label>
     </recordTypes>
     <recordTypes>
-        <fullName>Grant</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>Grant</label>
-    </recordTypes>
-    <recordTypes>
         <fullName>In_Kind</fullName>
         <active>true</active>
         <businessProcess>NPSP_Default</businessProcess>

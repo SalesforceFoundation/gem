@@ -26,13 +26,6 @@ tasks:
         options:
             path: dev_config/delete
 
-    deploy_default_settings:
-        description: Enable Payment Allocations
-        class_path: tasks.anon_apex.AnonymousApexFromFileTask
-        options:
-            path: dev_config/scripts/configure_default_settings.cls
-            method: initializeNPSPSettingsForADV();
-
     execute_install_apex:
         description: Runs most of the install script methods from Post_Install_Script class
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
@@ -183,7 +176,7 @@ flows:
           4:
               flow: config_managed
           5:
-              task: deploy_default_settings
+              task: test_data_default_settings
               options:
                   managed: True
 

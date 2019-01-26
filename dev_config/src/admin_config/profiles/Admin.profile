@@ -190,11 +190,6 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Opportunity.Grant</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
         <recordType>Opportunity.In_Kind</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -218,7 +213,7 @@
         <recordType>Opportunity.NPSP_Default</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
-    
+
     <tabVisibilities>
         <tab>%%%NAMESPACE%%%Gift_Entry</tab>
         <visibility>DefaultOn</visibility>

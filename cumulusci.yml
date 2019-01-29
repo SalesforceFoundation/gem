@@ -78,9 +78,12 @@ tasks:
             description: Installs the Gift Entry Manager pilot
             slug: pilot
             tier: primary
-            preflight_message: This is the preflight message.
-            post_install_message: This is the post-install message.
+            group: Release Management
+            preflight_message: Gift Entry Manager (GEM)
+            post_install_message: |
+                Thanks for installing Gift Entry Manager (GEM)!
 
+                Please post any feedback in the Power of Us Hub (<https://sfdc.co/bjJ33p>). Your feedback is valued and will help us improve the product.
 flows:
     config_apextest:
         steps:

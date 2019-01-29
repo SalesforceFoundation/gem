@@ -12,6 +12,13 @@ project:
         repo_url: https://github.com/SalesforceFoundation/adv
 
 tasks:
+    deploy_abacus_settings:
+        description: Configure the default Abacus Settings for Gift Processing
+        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        options:
+            path: dev_config/scripts/configure_abacus_settings.cls
+            method: initializeAbacusSettings();
+
     deploy_dev_config:
         description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
         class_path: cumulusci.tasks.salesforce.DeployBundles
@@ -60,7 +67,7 @@ tasks:
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
         options:
             path: dev_config/scripts/configure_default_settings.cls
-            method: initializeNPSPSettingsForADV();
+            method: setupGEMDefaults();
 
     test_data_user_setup:
         description: Sets up Gift Processing Users with correct Profiles
@@ -190,6 +197,20 @@ flows:
               task: install_managed
           4:
               flow: config_managed
+          5:
+              flow: install_pilot_settings
+
+    install_pilot_settings:
+        steps:
+            1: 
+                task: test_data_default_settings
+                options:
+                    managed: True
+            2: 
+                task: deploy_abacus_settings
+                options:
+                    managed: True
+
 
 orgs:
     scratch:

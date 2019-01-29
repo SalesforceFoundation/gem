@@ -76,6 +76,21 @@ tasks:
             path: dev_config/scripts/configure_default_settings.cls
             method: AddGiftProcessor();
 
+    publish_installer:
+        class_path: cumulusci.tasks.metadeploy.Publish
+        options:
+            product_id: DBL2xmV
+            flow: install_pilot
+            title: Install Pilot
+            description: Installs the Gift Entry Manager pilot
+            slug: pilot
+            tier: primary
+            group: Release Management
+            preflight_message: Gift Entry Manager (GEM)
+            post_install_message: |
+                Thanks for installing Gift Entry Manager (GEM)!
+
+                Please post any feedback in the Power of Us Hub (<https://sfdc.co/bjJ33p>). Your feedback is valued and will help us improve the product.
 flows:
     config_apextest:
         steps:

@@ -407,7 +407,7 @@ public with sharing class GiftEntryFormController {
 
         } catch(Exception e) {
             Database.rollback(sp);
-            throw e;
+            throw returnAuraException(e.getMessage());
         }
     }
 

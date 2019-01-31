@@ -161,6 +161,7 @@
         component.set('v.messageIsError', msgIsError);
         component.set('v.showSpinner', false);
         component.set('v.submitError', errorMsg);
+        component.set('v.disabled', false);
     },
     checkForPaymentChange: function(component, helper){
         // Delay payment creation to avoid duplicate events

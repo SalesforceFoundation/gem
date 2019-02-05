@@ -24,7 +24,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Use_Advancement__c</field>
+                <field>Use_GEM__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

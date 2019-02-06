@@ -129,14 +129,14 @@
         <name>FlexiPage</name>
     </types>
     <types>
-        <members>Account-Advancement Household Layout</members>
-        <members>Account-Advancement Organization Layout</members>
-        <members>Contact-Advancement Contact Layout</members>
+        <members>Account-GEM Household Layout</members>
+        <members>Account-GEM Organization Layout</members>
+        <members>Contact-GEM Contact Layout</members>
         <members>Donation_Tag__c-Donation Opportunity Layout</members>
-        <members>Opportunity-Advancement Gift Layout</members>
+        <members>Opportunity-GEM Gift Layout</members>
         <members>Tag__c-All Layout</members>
         <members>GEM_API_Settings__mdt-GEM API Settings Layout</members>
-        <members>npsp__DataImport__c-Advancement Gift Layout</members>
+        <members>npsp__DataImport__c-GEM Gift Layout</members>
         <name>Layout</name>
     </types>
     <types>

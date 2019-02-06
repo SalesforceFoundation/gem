@@ -12,5 +12,10 @@
         <members>*</members>
         <name>StandardValueSet</name>
     </types>
+    <types>
+        <members>Opportunity-Advancement Gift Layout</members>
+        <name>Layout</name>
+    </types>
+
     <version>42.0</version>
 </Package>

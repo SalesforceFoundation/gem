@@ -9,7 +9,7 @@ project:
         api_version: 42.0
     git:
         prefix_release: rel/
-        repo_url: https://github.com/SalesforceFoundation/adv
+        repo_url: https://github.com/SalesforceFoundation/gem
 
 tasks:
     deploy_abacus_settings:

@@ -2,6 +2,7 @@ project:
     dependencies:
         - github: https://github.com/SalesforceFoundation/Cumulus
         - github: https://github.com/SalesforceFoundation/HEDAP
+        - github: https://github.com/SalesforceFoundation/Abacus
     name: Advancement
     package:
         name: Advancement

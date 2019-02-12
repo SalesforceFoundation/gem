@@ -13,7 +13,12 @@
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="Map" name="objectLabels" />
     <aura:attribute type="Map" name="oppToDiFieldMap" />
-    
+
+    <aura:attribute name="bdiLabels" type="Map" description="Labels retrieved in Apex related to Schema information." access="public"/>
+    <aura:attribute name="openOpportunities" type="List" description="List of open Opportunities" access="public" />
+    <aura:attribute name="unpaidPayments" type="List" description="List of unpaid Payments" access="public" />
+    <aura:attribute name="selectedDonation" type="SObject" description="Stored selected open donation. Can also be null or empty." access="public" />
+
     <aura:attribute type="String" name="namespacePrefix" />
     <aura:attribute type="String" name="namespaceFieldPrefix" default="" />
 
@@ -38,8 +43,8 @@
     <aura:attribute type="Boolean" name="paymentAdded" default="false" />
     <aura:attribute type="Integer" name="paymentTimer" />
 
-    <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.handleLookupChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.handleLookupChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.onDonorChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.onDonorChange}"/>
     <aura:handler name="change" value="{!v.di.npsp__Donation_Amount__c}" action="{!c.handlePaymentChange}"/>
     <aura:handler name="change" value="{!v.di.npsp__Donation_Date__c}" action="{!c.handlePaymentChange}"/>
 
@@ -61,7 +66,13 @@
     <aura:attribute name="partialCredits" 
         type="npsp__Partial_Soft_Credit__c[]" 
         default="[]"/>
-    
+
+    <!--Modal Attributes-->
+    <aura:attribute name="donationModalHeader" type="Aura.ComponentDefRef[]" description="Formatted header text used in donation modal.">
+        <h2 class="title slds-text-heading_medium">{!$Label.npsp.bgeMatchingSelect}</h2>
+    </aura:attribute>
+
+    <lightning:overlayLibrary aura:id="overlayLib"/>
 
     <aura:if isTrue="{!v.showSpinner}">
         <lightning:spinner class="slds-is-fixed" />
@@ -115,7 +126,53 @@
                                 disabled="{!v.donorExists == false}"
                                 label="{!$Label.c.Gift_Edit_Selected_Donor}"
                                 onclick="{!c.clickEditDonor}" />
+                            <lightning:button aura:id="matchModal"
+                                label="Match Modal"
+                                onclick="{!c.openMatchModal}" />
                         </lightning:layoutItem>
+
+                        <!--BEGIN SCOPED MATCH NOTIFICATION-->
+                        <lightning:layoutItem padding="around-small" size="12" mediumDeviceSize="12">
+                        <aura:if isTrue="{!or(not(empty(v.openOpportunities)), not(empty(v.unpaidPayments)))}">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" class="slds-p-horizontal_small">
+                                <div class="slds-scoped-notification slds-media slds-media_center slds-scoped-notification_light slds-m-bottom_small"
+                                    role="alert">
+                                    <div class="slds-media__figure slds-text-align_center">
+                                        <lightning:icon iconName="utility:info"
+                                                        alternativeText="{!$Label.npsp.PageMessagesInfo}"
+                                                        size="x-small"
+                                                        aria-hidden="true"/>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <!--notification text depends on if donation is null, empty, or selected-->
+                                        <aura:if isTrue="{!equals(v.selectedDonation, null)}">
+                                            <p>{!$Label.npsp.bgeMatchingAlert}
+                                                <a class="slds-m-left_x-small" onclick="{!c.openMatchModal}" id="selectOpenDonation">{!$Label.npsp.bgeMatchingSelect}</a>
+                                            </p>
+                                            <aura:set attribute="else">
+                                                <aura:if isTrue="{!equals(v.selectedDonation, '')}">
+                                                    <p>{!$Label.c.bgeFormNewDonationHelptext}</p>
+                                                    <aura:set attribute="else">
+                                                        <p class="slds-m-right_x-small">{!$Label.c.bgeFormUpdateHelptext}
+                                                            <lightning:formattedUrl value="{! '/' + v.selectedDonation.Id}"
+                                                                                    label="{!v.selectedDonation.Name}"
+                                                                                    class="slds-m-left_x-small"
+                                                                                    target="_blank"/>
+                                                        </p>
+                                                    </aura:set>
+                                                </aura:if>
+                                                <p>
+                                                    <a onclick="{!c.openMatchModal}">{!$Label.c.bgeFormUpdateDonation}</a>
+                                                </p>
+                                            </aura:set>
+                                        </aura:if>
+                                    </div>
+                                </div>
+                            </lightning:layoutItem>
+                        </aura:if>
+                        </lightning:layoutItem>
+                        <!--END SCOPED MATCH NOTIFICATION-->
+                        
                     </lightning:layout>
                 </lightning:layoutItem>
 

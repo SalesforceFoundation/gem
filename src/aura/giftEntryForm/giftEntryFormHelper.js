@@ -16,6 +16,7 @@
                 var giftModel = response.getReturnValue();
 
                 component.set('v.giftModel', giftModel);
+                component.set('v.bdiLabels', giftModel.bdiLabels);
                 component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
                 component.set('v.objectFieldData.closedWonStageMap', giftModel.closedWonStageMap);
 
@@ -263,6 +264,30 @@
             var diField = fieldMap[field];
             di[diField] = opp[field];
         }
+    },
+    clearDonationSelectionOptions: function(component) {
+        component.set('v.selectedDonation', null);
+        component.set('v.openOpportunities', null);
+        component.set('v.unpaidPayments', null);
+    },
+    queryOpenDonations: function(component, donorId) {
+        const donorType = component.get('v.di.npsp__Donation_Donor__c');
+
+        let action = component.get('c.getOpenDonations');
+        action.setParams({donorId: donorId, donorType: donorType});
+        action.setCallback(this, function (response) {
+            const state = response.getState();
+            if (state === 'SUCCESS') {
+                const openDonations = JSON.parse(response.getReturnValue());
+                console.log(openDonations); 
+                component.set('v.openOpportunities', openDonations.openOpportunities);
+                component.set('v.unpaidPayments', openDonations.unpaidPayments);
+            } else {
+                this.handleError(component, response);
+            }
+            // this.sendMessage('hideFormSpinner', '');
+        });
+        $A.enqueueAction(action);
     },
     fillJsonField: function(component) {
         var relatedCmp = this.getChildComponents(component, 'giftFormRelated');

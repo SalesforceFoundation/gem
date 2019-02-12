@@ -55,6 +55,8 @@ public with sharing class GiftEntryFormController {
 
         @AuraEnabled public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
 
+        @AuraEnabled public Map<String, String> bdiLabels;
+
         @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
 
         @AuraEnabled Map<String, Boolean> closedWonStageMap {get;set;}
@@ -71,6 +73,7 @@ public with sharing class GiftEntryFormController {
             this.payments = new List<npe01__OppPayment__c>();
             this.partialCredits = new List<npsp__Partial_Soft_Credit__c>();
             this.allocs = new List<npsp__Allocation__c>();
+            this.bdiLabels = getBatchDataImportLabels();
         }
 
         public GiftFormModel(Id oppId) {
@@ -411,6 +414,95 @@ public with sharing class GiftEntryFormController {
             Database.rollback(sp);
             throw returnAuraException(e.getMessage());
         }
+    }
+
+    /*******************************************************************************************************
+    * @description Retrieves all open Opportunities and unpaid Payments for the selected Donor (Account or Contact)
+    * @return JSON stringified Map<String, List<SObject>> of all openOpportunities and unpaidPayments for the given donor
+    */
+    @AuraEnabled
+    public static String getOpenDonations(Id donorId, String donorType) {
+        String relationshipField;
+        if (donorType == 'Account1') {
+            relationshipField = 'AccountId';
+        } else if (donorType == 'Contact1') {
+            relationshipField = 'npsp__Primary_Contact__c';
+        }
+
+        String opportunitySOQL = 'SELECT Id, ' +
+                                'Name, ' +
+                                'StageName, ' +
+                                'Amount ' +
+                                'FROM Opportunity ' +
+                                'WHERE ' + relationshipField + ' = :donorId ' +
+                                'AND IsClosed = false';
+
+        String paymentSOQL = 'SELECT Id, ' +
+                                'Name, ' +
+                                'npe01__Scheduled_Date__c, ' +
+                                'npe01__Opportunity__r.Name, ' +
+                                'npe01__Opportunity__c, ' +
+                                'npe01__Payment_Amount__c ' +
+                                'FROM npe01__OppPayment__c ' +
+                                'WHERE npe01__Opportunity__r.' + relationshipField + ' = :donorId ' +
+                                'AND npe01__Paid__c = false';
+
+        try {
+            List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
+            List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);
+
+            Map<Id, Opportunity> openOpportunitiesById = new Map<Id, Opportunity>(openOpportunities);
+
+            // openOpportunities should only include opps with NO UNPAID PAYMENTS for BDI to process donations correctly
+            for (npe01__OppPayment__c payment : unpaidPayments) {
+                Id idOfCurrentOpportunity = payment.npe01__Opportunity__c;
+                if (openOpportunitiesById.containsKey(idOfCurrentOpportunity)) {
+                    openOpportunitiesById.remove(idOfCurrentOpportunity);
+                }
+            }
+
+            Map<String, List<SObject>> response = new Map<String, List<SObject>>{
+                'openOpportunities' => openOpportunitiesById.values(),
+                'unpaidPayments' => unpaidPayments
+            };
+            return JSON.serialize(response);
+        } catch (Exception ex){
+            throw new AuraHandledException('ERROR: ' + ex.getMessage());
+        }
+    }
+
+    /*******************************************************************************************************
+    * @description Retrieves required schema information for the component.
+    * @return Map of DataImport__c object and field name keys to their labels.
+    */
+    private static Map<String, String> getBatchDataImportLabels() {
+
+        Map<String, String> labels = new Map<String, String> {
+            'accountObject' => Schema.SObjectType.Account.getLabel(),
+            'accountLookup' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Account1Imported__c.getName(),
+            'batchIdField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__NPSP_Data_Import_Batch__c.getName(),
+            'contactLookup' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Contact1Imported__c.getName(),
+            'contactObject' => Schema.SObjectType.Contact.getLabel(),
+            'dataImportObject' => Schema.SObjectType.npsp__DataImport__c.getName(),
+            'donationDonor' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Donation_Donor__c.getName(),
+            'donationAmountField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Donation_Amount__c.getName(),
+            'expectedCountField' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__Expected_Count_of_Gifts__c.getName(),
+            'expectedTotalField' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__Expected_Total_Batch_Amount__c.getName(),
+            'opportunityImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__DonationImported__c.getName(),
+            'opportunityImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__DonationImportStatus__c.getName(),
+            'opportunityAmount' => Schema.SObjectType.Opportunity.fields.Amount.getLabel(),
+            'opportunityObject' => Schema.SObjectType.Opportunity.getLabel(),
+            'opportunityName' => Schema.SObjectType.Opportunity.getLabel(),
+            'opportunityStage' => Schema.SObjectType.Opportunity.fields.StageName.getLabel(),
+            'paymentAmount' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Payment_Amount__c.getLabel(),
+            'paymentObject' => Schema.SObjectType.npe01__OppPayment__c.getLabel(),
+            'paymentScheduledDate' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Scheduled_Date__c.getLabel(),
+            'paymentImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImported__c.getName(),
+            'paymentImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImportStatus__c.getName(),
+            'requireTotalMatch' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__RequireTotalMatch__c.getName()
+        };
+
+        return labels;
     }
 
     /*******************************************************************************************************

@@ -21,8 +21,18 @@
         // Each time a required input changes, check validation
         helper.checkValidation(component);
     },
-    handleLookupChange: function(component, event, helper){
-        // TODO: Add matching logic here
+    onDonorChange: function(component, event, helper){
+        helper.clearDonationSelectionOptions(component);
+        const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
+        const lookupValue = component.find(lookupField).get('v.value');
+        const lookupValueIsValidId = lookupValue.length === 18;
+
+        if (lookupValueIsValidId) {
+            // TODO: Add loading spinner during query
+            // helper.sendMessage('showFormSpinner', '');
+            helper.queryOpenDonations(component, lookupValue);
+        }
+
         helper.checkValidation(component);
     },
     clickEditDonor: function(component, event, helper) {
@@ -87,5 +97,35 @@
     },
     expandMatchingSection: function(component, event, helper) {
         helper.doToggleSection(component, 'expandMatching');
+    },
+    openMatchModal: function(component, event, helper) {
+        $A.createComponent('npsp:BGE_DonationSelector', {
+                'aura:id': 'donationSelector',
+                'name': 'donationSelector',
+                'unpaidPayments': component.get('v.unpaidPayments'),
+                'openOpportunities': component.get('v.openOpportunities'),
+                'selectedDonation': component.get('v.selectedDonation'),
+                'labels': component.get('v.bdiLabels')
+            },
+            function (newcomponent, status, errorMessage) {
+                if (status === 'SUCCESS') {
+                    component.find('overlayLib').showCustomModal({
+                        header: component.get('v.donationModalHeader'),
+                        body: newcomponent,
+                        showCloseButton: true,
+                        cssClass: 'slds-modal_large'
+                    });
+                } else if (status === 'INCOMPLETE') {
+                    const message = {
+                        title: $A.get('$Label.c.PageMessagesError'),
+                        errorMessage: $A.get('$Label.c.stgUnknownError')
+                    };
+                    helper.sendMessage('onError', message);
+
+                } else if (status === 'ERROR') {
+                    const message = {title: $A.get('$Label.c.PageMessagesError'), errorMessage: errorMessage};
+                    helper.sendMessage('onError', message);
+                }
+            });
     }
 })

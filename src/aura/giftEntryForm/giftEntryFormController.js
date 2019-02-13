@@ -15,7 +15,7 @@
     },
     handlePaymentChange: function(component, event, helper){
         helper.checkForPaymentChange(component, helper);
-        helper.checkValidation(component);
+        // helper.checkValidation(component);
     },
     handleFieldChange: function(component, event, helper){
         // Each time a required input changes, check validation

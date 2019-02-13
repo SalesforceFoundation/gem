@@ -77,6 +77,22 @@
 		singlePayment.npe01__Payment_Method__c = method;
 		return singlePayment;
 	},
+	clearPaymentAmts: function(component){
+		var paymentList = component.get('v.paymentList');
+		if(paymentList.length < 1){
+			return;
+		}
+		for(var i = 0; i < paymentList.length; i++){
+			paymentList[i].npe01__Payment_Amount__c = 0;
+		}
+		component.set('v.paymentList', paymentList);
+		// Call validate event, handled by the parent
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+			'channel': 'amtChange'
+		});
+		sendMsgEvent.fire();
+	},
 	proxyToObj: function(obj) {
 		return JSON.parse(JSON.stringify(obj))
 	},

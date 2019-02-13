@@ -52,6 +52,12 @@
 
         if(channel == 'deleteRowEvent'){
             helper.handleRowDelete(component, helper);
+        } else if(channel == 'amtChange'){
+            var thisObj = component.get('v.objectName');
+            // If the amount changes, we want to force validation on the Payment scheduler
+            if(thisObj == 'npe01__OppPayment__c'){
+                helper.handleAmtChangeHelper(component, true);
+            }
         }
     },
     toggleRelatedSection: function(component, event, helper) {

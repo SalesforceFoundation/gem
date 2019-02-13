@@ -105,6 +105,8 @@ flows:
             4: 
                 task: deploy_dev_config
             5:
+                task: deploy_abacus_settings
+            6:
                 flow: test_data_setup
 
     config_qa:
@@ -118,8 +120,10 @@ flows:
             5:
                 task: update_admin_profile
             6:
-                flow: test_data_setup
+                task: deploy_abacus_settings
             7:
+                flow: test_data_setup
+            8:
                 flow: test_data_dev_org
 
     config_managed:

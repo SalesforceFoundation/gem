@@ -633,11 +633,6 @@ public with sharing class GiftEntryFormController {
         String label {get; set;}
         String value {get; set;}
 
-        PicklistOptionWrapper(String optionValue) {
-            this.label = optionValue;
-            this.value = optionValue;
-        }
-
         PicklistOptionWrapper(String optionLabel, String optionValue) {
             this.label = optionLabel;
             this.value = optionValue;

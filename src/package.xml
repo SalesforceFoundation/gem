@@ -43,11 +43,7 @@
         <members>Advancement_Setting__mdt.API_HEDA_Class__c</members>
         <members>Advancement_Setting__mdt.API_NPSP_Class__c</members>
         <members>Advancement_Setting__mdt.Use_Advancement__c</members>
-        <members>Donation_Tag__c.Donation_Opportunity__c</members>
-        <members>Donation_Tag__c.Tag_Name__c</members>
-        <members>Donation_Tag__c.Tag__c</members>
         <members>GEM_Settings__c.Sync_Account_Models__c</members>
-        <members>Opportunity.Tags__c</members>
         <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
         <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
@@ -64,43 +60,7 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>Cancel</members>
-        <members>Date_of_First_Payment</members>
-        <members>Error</members>
-        <members>Error_Duplicate_Value</members>
-        <members>Error_Offline</members>
-        <members>Error_Unknown</members>
-        <members>Frequency</members>
-        <members>Full</members>
-        <members>Gift_Allocations</members>
-        <members>Gift_Amounts_Do_Not_Match</members>
-        <members>Gift_Amounts_Greater_than_Donation</members>
-        <members>Gift_Calculate_Payments</members>
-        <members>Gift_Clear_Calculate_Payments</members>
-        <members>Gift_Create</members>
-        <members>Gift_Credit_Type</members>
-        <members>Gift_Donation_ID_Placeholder</members>
-        <members>Gift_Donation_Information</members>
-        <members>Gift_Donation_Locked</members>
-        <members>Gift_Donor_Information</members>
-        <members>Gift_Donor_Required</members>
-        <members>Gift_Donor_Type</members>
-        <members>Gift_Edit_Selected_Donor</members>
-        <members>Gift_Form_Error</members>
-        <members>Gift_Matching_Gift</members>
-        <members>Gift_Payment_Scheduler</members>
-        <members>Gift_Save_Message_Detail</members>
-        <members>Gift_Save_Message_Title</members>
-        <members>Gift_Saved_Message</members>
-        <members>Gift_Show_Matching</members>
-        <members>Gift_Soft_Credits</members>
-        <members>Gift_Tribute_Information</members>
-        <members>Gift_Update</members>
-        <members>Interval</members>
-        <members>Number_of_Payments</members>
-        <members>Partial</members>
-        <members>Remove</members>
-        <members>Warning</members>
+        <members>*</members>
         <name>CustomLabel</name>
     </types>
     <types>
@@ -109,9 +69,7 @@
     </types>
     <types>
         <members>Advancement_Setting__mdt</members>
-        <members>Donation_Tag__c</members>
         <members>GEM_Settings__c</members>
-        <members>Tag__c</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -129,15 +87,9 @@
         <members>Account-Advancement Organization Layout</members>
         <members>Advancement_Setting__mdt-Advancement Setting Layout</members>
         <members>Contact-Advancement Contact Layout</members>
-        <members>Donation_Tag__c-Donation Opportunity Layout</members>
         <members>Opportunity-Advancement Gift Layout</members>
-        <members>Tag__c-All Layout</members>
         <members>npsp__DataImport__c-Advancement Gift Layout</members>
         <name>Layout</name>
-    </types>
-    <types>
-        <members>Donations_with_tags</members>
-        <name>ReportType</name>
     </types>
     <version>42.0</version>
 </Package>

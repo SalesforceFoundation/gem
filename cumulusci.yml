@@ -210,6 +210,10 @@ flows:
                 task: deploy_abacus_settings
                 options:
                     managed: True
+            3:
+                task: deploy_post
+                options:
+                    managed: True
 
 
 orgs:

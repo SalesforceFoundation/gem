@@ -38,7 +38,7 @@
 				if(intervalFreq == 'Week'){
 					dateObject.setDate(dateObject.getDate() + interval * 7);
 				} else if(intervalFreq == 'Month'){
-					dateObject.setMonth(dateObject.getMonth() + interval);
+					dateObject.setUTCMonth(dateObject.getUTCMonth() + interval);
 				} else if(intervalFreq == 'Year'){
 					dateObject.setFullYear(dateObject.getFullYear() + interval);
 				}

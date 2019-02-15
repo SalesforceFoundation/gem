@@ -31,11 +31,9 @@
 	},
 	createDefaultPayment: function(component, event, helper){
 		var params = event.getParam('arguments');
-		var fieldVal = params.fieldValue;
 		var amtWasChanged = false;
-		if(fieldVal){
-			// Check if the change was made to the amount field and not the date field
-			amtWasChanged = fieldVal.indexOf('-') < 0;
+		if(params){
+			amtWasChanged = params.amtWasChanged;
 		}
 
 		// Only overwrite the payment if the user has not used the scheduler yet

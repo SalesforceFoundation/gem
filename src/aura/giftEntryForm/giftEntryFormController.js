@@ -23,7 +23,7 @@
         var paymentValChanged = component.get('v.paymentValChanged');
         // We only want to run this blur event if a payment related value actually changed
         if(paymentValChanged){
-            helper.createDefaultPayment(component, fieldVal);
+            helper.updateRelatedPaymentAmounts(component, fieldVal);
         }
         component.set('v.paymentValChanged', false);
         helper.checkValidation(component);

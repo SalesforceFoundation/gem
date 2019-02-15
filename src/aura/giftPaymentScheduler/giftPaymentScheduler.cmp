@@ -1,7 +1,7 @@
 <aura:component>
 
     <aura:method name="createDefaultPayment" action="{!c.createDefaultPayment}"> 
-        <aura:attribute name="fieldValue" type="String" />
+        <aura:attribute name="amtWasChanged" type="Boolean" />
     </aura:method>
 
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>

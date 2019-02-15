@@ -163,14 +163,25 @@
         component.set('v.submitError', errorMsg);
         component.set('v.disabled', false);
     },
-    createDefaultPayment: function(component, fieldVal){
+    updateRelatedPaymentAmounts: function(component, fieldVal){
         var amt = component.get('v.di.npsp__Donation_Amount__c');
         var date = component.get('v.di.npsp__Donation_Date__c');
+
+        if(!amt){
+            return;
+        }
+
+        var amtWasChanged = false;
+		if(fieldVal){
+			// Check if the change was made to the amount field and not the date field
+			amtWasChanged = fieldVal.indexOf('-') < 0;
+		}
         
-        if(amt && date){
+        // If the amount and date are set, check if the Payment Schedule should be updated
+        if(date){
             var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
             if(paySched){  
-                paySched[0].createDefaultPayment(fieldVal);
+                paySched[0].createDefaultPayment(amtWasChanged);
                 // Add back if we want to show a message when the payment is updated
                 // var paymentAdded = component.get('v.paymentAdded');
                 // if(paymentAdded){
@@ -178,6 +189,16 @@
                 // } else {
                 //     component.set('v.paymentAdded', true);
                 // }
+            }
+        }
+        
+        // If the amount was changed, check if Allocation percentages need to be updated
+        if(amtWasChanged){
+            var allocations = this.getChildComponents(component, 'giftRelatedAllocation');
+            if(allocations){
+                for(var i=0; i<allocations.length; i++){
+                    allocations[i].handlePercentChange();
+                }
             }
         }
     },

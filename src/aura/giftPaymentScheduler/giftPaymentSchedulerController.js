@@ -21,13 +21,6 @@
 			var validAmount = (donationAmt > 0);
 			btn.set('v.disabled',!validAmount);
 		}
-
-		// If the user has interacted with the scheduler
-		// AND the opportunity amount changed, clear the payment amounts
-		if(component.get('v.userInteracted')){
-			helper.clearPaymentAmts(component);
-		}
-
 	},
 	handleMethodChange: function(component, event, helper) {
 		var paymentMethod = component.get('v.paymentMethod');
@@ -37,9 +30,19 @@
 		component.set('v.expandSection', !component.get('v.expandSection'));
 	},
 	createDefaultPayment: function(component, event, helper){
+		var params = event.getParam('arguments');
+		var fieldVal = params.fieldValue;
+		var amtWasChanged = false;
+		if(fieldVal){
+			// Check if the change was made to the amount field and not the date field
+			amtWasChanged = fieldVal.indexOf('-') < 0;
+		}
+
 		// Only overwrite the payment if the user has not used the scheduler yet
 		if(!component.get('v.userInteracted')){
 			helper.clickCalculateHelper(component, true);
+		} else if(amtWasChanged) {
+			helper.clearPaymentAmts(component, helper);
 		}
 	},
 	handleMessage: function(component, event, helper){

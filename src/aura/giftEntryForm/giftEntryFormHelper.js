@@ -163,29 +163,14 @@
         component.set('v.submitError', errorMsg);
         component.set('v.disabled', false);
     },
-    checkForPaymentChange: function(component, helper){
-        // Delay payment creation to avoid duplicate events
-        var timer = component.get('v.paymentTimer');
-        clearTimeout(timer);
-
-        var timer = window.setTimeout(
-            $A.getCallback(function(){
-                helper.createDefaultPayment(component);
-                clearTimeout(timer);
-                component.set('v.paymentTimer', null);
-            }), 200
-        );
-
-        component.set('v.paymentTimer', timer);
-    },
-    createDefaultPayment: function(component){
+    createDefaultPayment: function(component, fieldVal){
         var amt = component.get('v.di.npsp__Donation_Amount__c');
         var date = component.get('v.di.npsp__Donation_Date__c');
         
         if(amt && date){
             var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
-            if(paySched){
-                paySched[0].createDefaultPayment();
+            if(paySched){  
+                paySched[0].createDefaultPayment(fieldVal);
                 // Add back if we want to show a message when the payment is updated
                 // var paymentAdded = component.get('v.paymentAdded');
                 // if(paymentAdded){

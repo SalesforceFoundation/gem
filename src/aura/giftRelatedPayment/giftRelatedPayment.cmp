@@ -1,4 +1,6 @@
 <aura:component extends="c:giftFormRelatedRow">
+    
+    <aura:method name="clearAmount" />
 
     <aura:attribute name="item" 
         type="npe01__OppPayment__c" 

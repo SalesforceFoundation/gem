@@ -1,6 +1,8 @@
 <aura:component>
 
-    <aura:method name="createDefaultPayment" />
+    <aura:method name="createDefaultPayment" action="{!c.createDefaultPayment}"> 
+        <aura:attribute name="fieldValue" type="String" />
+    </aura:method>
 
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
@@ -97,7 +99,8 @@
             </lightning:layoutItem>
 
             <!-- Show a row for each payment -->
-            <div class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
+            <div aura:id="paymentWrap" 
+                class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
                 <c:giftFormRelated objectName="npe01__OppPayment__c"
                     itemList="{!v.paymentList}"
                     blockItemChangeEvent="{!v.blockItemChangeEvent}"

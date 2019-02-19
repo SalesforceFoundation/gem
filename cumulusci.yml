@@ -33,6 +33,14 @@ tasks:
         options:
             path: dev_config/delete
 
+    deploy_pilot_config:
+        description: Deploys configuration for Pilot Install. Sets page layout for Opportunity.
+        class_path: cumulusci.tasks.salesforce.DeployBundles
+        options:
+            namespace_inject: $project_config.project__package__namespace
+            path: pilot_config
+            unmanaged: False
+
     execute_install_apex:
         description: Runs most of the install script methods from Post_Install_Script class
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
@@ -211,10 +219,7 @@ flows:
                 options:
                     managed: True
             3:
-                task: deploy_post
-                options:
-                    managed: True
-
+                task: deploy_pilot_config
 
 orgs:
     scratch:

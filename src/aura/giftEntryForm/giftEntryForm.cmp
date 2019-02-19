@@ -26,7 +26,7 @@
     <aura:attribute type="String" name="oppId" />
     <aura:attribute type="Boolean" name="showForm" default="true" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
-    <aura:attribute type="Boolean" name="disabled" default="false" />
+    <aura:attribute type="Boolean" name="disableCreate" default="false" />
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
     <aura:attribute type="Boolean" name="showMatchSpinner" default="true" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
@@ -361,7 +361,7 @@
                     <lightning:button aura:id="createButton"
                         label="{!$Label.c.Gift_Create}"
                         variant="brand"
-                        disabled="{!v.disabled}"
+                        disabled="{!v.disableCreate}"
                         onclick="{!c.clickCreate}" />
                 </div>
 

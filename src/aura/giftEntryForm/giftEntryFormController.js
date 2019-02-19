@@ -37,7 +37,7 @@
     },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
-        component.set('v.disabled', true);
+        component.set('v.disableCreate', true);
         var validForm = helper.validateForm(component, true);
 
         // If we pass validation, submit the form

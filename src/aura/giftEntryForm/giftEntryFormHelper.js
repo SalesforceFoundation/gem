@@ -161,7 +161,10 @@
         component.set('v.messageIsError', msgIsError);
         component.set('v.showSpinner', false);
         component.set('v.submitError', errorMsg);
-        component.set('v.disabled', false);
+        if(errorMsg){
+            // If an error was reported, re-enable the Create button
+            component.set('v.disableCreate', false);
+        }
     },
     checkForPaymentChange: function(component, helper){
         // Delay payment creation to avoid duplicate events
@@ -225,6 +228,7 @@
     },
     handleError: function(component, response) {
         component.set('v.showSpinner', false);
+        component.set('v.disableCreate', false);
         var errors = response.getError();
         if (errors) {
             if (errors[0] && errors[0].message) {

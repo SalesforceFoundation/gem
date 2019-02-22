@@ -354,6 +354,7 @@
                 <div class="slds-docked-form-footer" style="height: 50px;">
                     <lightning:button aura:id="cancelButton"
                         label="{!$Label.c.Cancel}"
+                        disabled="{!v.disableCreate}"
                         onclick="{!c.clickCancel}" />
                     <lightning:button aura:id="createButton"
                         label="{!$Label.c.Gift_Create}"

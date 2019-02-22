@@ -78,7 +78,6 @@
     </types>
     <types>
         <members>Gift_Entry</members>
-        <members>Gift_Update</members>
         <members>Opportunity_Record_Page</members>
         <name>FlexiPage</name>
     </types>

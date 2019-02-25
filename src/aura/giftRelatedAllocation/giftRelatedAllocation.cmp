@@ -36,6 +36,7 @@
                 type="number" 
                 label="{!v.objectFieldData.objectLabels.Allocation.npsp__Percent__c}" 
                 variant="label-hidden"
+                step="any"
                 max="100" min="0" 
                 value="{!v.item.npsp__Percent__c}" />
         </lightning:layoutItem>

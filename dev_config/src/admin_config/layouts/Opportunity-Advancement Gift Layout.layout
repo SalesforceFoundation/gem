@@ -43,7 +43,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Tags__c</field>
+                <field>%%%NAMESPACE%%%Tags__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -291,7 +291,7 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <relatedList>Donation_Tag__c.Donation_Opportunity__c</relatedList>
+        <relatedList>%%%NAMESPACE%%%Donation_Tag__c.%%%NAMESPACE%%%Donation_Opportunity__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>TASK.SUBJECT</fields>

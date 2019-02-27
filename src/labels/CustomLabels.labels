@@ -176,13 +176,6 @@
         <value>Payment Scheduler</value>
     </labels>
     <labels>
-        <fullName>Gift_Saved_Message</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Gift Saved Message</shortDescription>
-        <value>Gift saved, but not created, here are the results of data matching:</value>
-    </labels>
-    <labels>
         <fullName>Gift_Save_Message_Detail</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -251,12 +244,5 @@
         <protected>true</protected>
         <shortDescription>Remove</shortDescription>
         <value>Remove</value>
-    </labels>
-    <labels>
-        <fullName>Warning</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Warning</shortDescription>
-        <value>Warning</value>
     </labels>
 </CustomLabels>

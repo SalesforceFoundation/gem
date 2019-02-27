@@ -78,64 +78,64 @@
     </fieldPermissions>
 
     <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
+        <layout>Account-%%%NAMESPACE%%%GEM Organization Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
+        <layout>Account-%%%NAMESPACE%%%GEM Organization Layout</layout>
         <recordType>Account.%%%NAMESPACED_ORG%%%Academic_Program</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
+        <layout>Account-%%%NAMESPACE%%%GEM Organization Layout</layout>
         <recordType>Account.%%%NAMESPACED_ORG%%%Administrative</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
+        <layout>Account-%%%NAMESPACE%%%GEM Organization Layout</layout>
         <recordType>Account.%%%NAMESPACED_ORG%%%Business_Organization</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
+        <layout>Account-%%%NAMESPACE%%%GEM Organization Layout</layout>
         <recordType>Account.%%%NAMESPACED_ORG%%%Educational_Institution</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Household Layout</layout>
+        <layout>Account-%%%NAMESPACE%%%GEM Household Layout</layout>
         <recordType>Account.%%%NAMESPACED_ORG%%%HH_Account</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
+        <layout>Account-%%%NAMESPACE%%%GEM Organization Layout</layout>
         <recordType>Account.%%%NAMESPACED_ORG%%%Sports_Organization</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Account-%%%NAMESPACE%%%Advancement Organization Layout</layout>
+        <layout>Account-%%%NAMESPACE%%%GEM Organization Layout</layout>
         <recordType>Account.%%%NAMESPACED_ORG%%%University_Department</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Contact-%%%NAMESPACE%%%Advancement Contact Layout</layout>
+        <layout>Contact-%%%NAMESPACE%%%GEM Contact Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
         <recordType>Opportunity.%%%NAMESPACED_ORG%%%Donation</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
         <recordType>Opportunity.%%%NAMESPACED_ORG%%%In_Kind</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
         <recordType>Opportunity.%%%NAMESPACED_ORG%%%Major_Gift</recordType>
     </layoutAssignments>
         <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
         <recordType>Opportunity.%%%NAMESPACED_ORG%%%Matching</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
         <recordType>Opportunity.%%%NAMESPACED_ORG%%%Membership</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>npsp__DataImport__c-%%%NAMESPACE%%%Advancement Gift Layout</layout>
+        <layout>npsp__DataImport__c-%%%NAMESPACE%%%GEM Gift Layout</layout>
     </layoutAssignments>
 
     <objectPermissions>

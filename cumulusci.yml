@@ -5,7 +5,7 @@ project:
     name: Advancement
     package:
         name: GEM
-        namespace: adv1
+        namespace: gem0
         api_version: 42.0
     git:
         prefix_release: rel/

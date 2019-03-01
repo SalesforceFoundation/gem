@@ -2,7 +2,6 @@ project:
     dependencies:
         - github: https://github.com/SalesforceFoundation/Cumulus
         - github: https://github.com/SalesforceFoundation/HEDAP
-        - github: https://github.com/SalesforceFoundation/Abacus
     name: Advancement
     package:
         name: Advancement
@@ -118,9 +117,9 @@ flows:
             5:
                 task: update_admin_profile
             6:
-                flow: test_data_dev_org
-            7:
                 flow: test_data_setup
+            7:
+                flow: test_data_dev_org
 
     config_managed:
         steps:
@@ -170,11 +169,9 @@ flows:
         steps:
             1:
                 task: test_data_default_settings
-            2: 
-                task: deploy_abacus_settings
-            3:
+            2:
                 task: test_data_user_setup
-            4:
+            3:
                 task: execute_install_apex
 
     test_data_dev_org:

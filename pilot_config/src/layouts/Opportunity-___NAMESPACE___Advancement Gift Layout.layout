@@ -41,10 +41,6 @@
                 <behavior>Edit</behavior>
                 <field>Description</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>%%%NAMESPACE%%%Tags__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -288,10 +284,6 @@
         <fields>npsp__Amount__c</fields>
         <fields>npsp__Percent__c</fields>
         <relatedList>npsp__Allocation__c.npsp__Opportunity__c</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <relatedList>%%%NAMESPACE%%%Donation_Tag__c.%%%NAMESPACE%%%Donation_Opportunity__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>TASK.SUBJECT</fields>

@@ -83,6 +83,13 @@
     </layoutSections>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>npsp__General_Accounting_Unit__c</fields>
+        <fields>npsp__Amount__c</fields>
+        <fields>npsp__Percent__c</fields>
+        <relatedList>npsp__Allocation__c.npsp__Payment__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
         <fields>aba1__Amount__c</fields>
         <fields>aba1__Date__c</fields>
         <fields>aba1__General_Accounting_Unit__c</fields>
@@ -95,7 +102,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h8000000IPAVh</masterLabel>
+        <masterLabel>00h3F000000bZkR</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

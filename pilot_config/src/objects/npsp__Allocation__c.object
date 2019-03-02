@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <compactLayoutAssignment>GAU_Allocation_Compact_Layout</compactLayoutAssignment>
+    <compactLayouts>
+        <fullName>GAU_Allocation_Compact_Layout</fullName>
+        <fields>Name</fields>
+        <fields>npsp__General_Accounting_Unit__c</fields>
+        <fields>npsp__Amount__c</fields>
+        <fields>npsp__Percent__c</fields>
+        <label>GAU Allocation Compact Layout</label>
+    </compactLayouts>
+</CustomObject>

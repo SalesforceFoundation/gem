@@ -1,6 +1,6 @@
 ({
     handlePicklistChange : function(component, event, helper) {
-		// We don't want the default option to overwrite the existing object value
+		// We don't want the default option to overwrite the existing object value		
 		// Will be needed to enable editing
 		var callEvent = component.get("v.callEvent");
 		var fieldId = component.get("v.inputFieldId");

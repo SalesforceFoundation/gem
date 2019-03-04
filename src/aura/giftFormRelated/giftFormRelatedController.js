@@ -26,22 +26,33 @@
     },
     handleItemListChange: function(component, event, helper){
         // In the payment scheduler, this event gets called twice so we prevent it one time
-        var blockChange = component.get('v.blockItemChangeEvent');
+        // var blockChange = component.get('v.blockItemChangeEvent');
         var thisObj = component.get('v.objectName');
         var rowList = component.get('v.rowList');
+        var itemList = component.get('v.itemList');
+
+        console.log('itemList for ' + thisObj); 
+        console.log(itemList); 
 
         // If Payments are being overwritten, call delete on each of them first
         if(thisObj == 'npe01__OppPayment__c' && rowList.length > 0){
             helper.deleteAll(component);
         }
 
+        // console.log("Block Item change, init: " + blockChange + ' ' + component.get('v.initFinished')); 
+
         // On load, since the itemlist comes in before the picklist values are set,
         // we need to wait for the picklists before processing the rows
-        if(component.get('v.initFinished') && !blockChange){
+        // if(component.get('v.initFinished') && !blockChange){
+        if(component.get('v.initFinished')){
+            console.log("Create rows!"); 
             helper.createRowsFromItemList(component, helper);
         }
     },
     handleAmtChange: function(component, event, helper){
+        if(component.get('v.disablePaymentEvents')){
+            return;
+        }
         var checkAmountTotals = component.get('v.checkAmountTotals');
         if(checkAmountTotals){
             helper.handleAmtChangeHelper(component);

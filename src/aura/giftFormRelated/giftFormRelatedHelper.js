@@ -10,6 +10,8 @@
         var donationAmt = component.getReference('v.donationAmt');
         var checkAmountTotals = component.getReference('v.checkAmountTotals');
         var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
+
+        console.log(rowCmpName + ", " + newRowNum + " " + index); 
     
         var showLabels = false;
         if(newRowNum == 0){
@@ -51,6 +53,8 @@
         // Called when the item list is completely overwritten
         // Ex. Calculating Payment schedule, or loading existing data
 
+        console.log(component.get('v.rowList')); 
+
         // First, clear the existing rows
         component.set('v.body', []);
         component.set('v.rowList', []);
@@ -59,6 +63,8 @@
         //var itemList = event.getParam('value');
         var itemList = component.get('v.itemList');
         itemList = this.proxyToObj(itemList);
+
+        console.log(itemList); 
 
         if(itemList instanceof Array){
             for(var i=0; i<itemList.length; i++){

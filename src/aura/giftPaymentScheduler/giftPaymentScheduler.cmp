@@ -1,6 +1,7 @@
 <aura:component>
 
     <aura:method name="createDefaultPayment" />
+    <aura:method name="disableCalcButton" />
 
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
@@ -10,10 +11,12 @@
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="String" name="donationStage" />
-    <aura:attribute type="Boolean" name="showPayments" default="false" />
+    <aura:attribute type="Boolean" name="showPayments" default="true" />
     <aura:attribute type="Boolean" name="blockItemChangeEvent" default="true" />
     <aura:attribute type="Boolean" name="expandSection" default="true" />
     <aura:attribute type="Boolean" name="userInteracted" default="false" />
+    <aura:attribute type="Boolean" name="calcButtonDisabled" default="false" />
+    <aura:attribute type="Boolean" name="disablePaymentEvents" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String" name="intervalFreq" />
     <aura:attribute type="Integer" name="intervalNum" />
@@ -92,13 +95,16 @@
             </lightning:layoutItem>
             
             <lightning:layoutItem padding="around-small" size="12">
-                <lightning:button aura:id="calcButton" disabled="true" label="{!v.calculateButtonLabel}" 
+                <lightning:button aura:id="calcButton" 
+                    disabled="true" 
+                    label="{!v.calculateButtonLabel}" 
                     onclick="{!c.clickCalculate}" />
             </lightning:layoutItem>
 
             <!-- Show a row for each payment -->
             <div class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
                 <c:giftFormRelated objectName="npe01__OppPayment__c"
+                    disablePaymentEvents="{!v.disablePaymentEvents}"    
                     itemList="{!v.paymentList}"
                     blockItemChangeEvent="{!v.blockItemChangeEvent}"
                     rowCmpName="{!v.rowCmpName}"

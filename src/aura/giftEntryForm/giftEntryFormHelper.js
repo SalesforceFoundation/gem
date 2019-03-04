@@ -15,15 +15,40 @@
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
 
+                console.log(giftModel); 
                 component.set('v.giftModel', giftModel);
-                component.set('v.bdiLabels', giftModel.bdiLabels);
-                component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
-                component.set('v.objectFieldData.closedWonStageMap', giftModel.closedWonStageMap);
 
-                this.handlePicklistSetup(component, giftModel.picklistValues);
+                // An Opportunity was matched, update the form to reflect that
+                if(giftModel.oppId){
+                    component.set('v.disableBlurEvents', true);
+                    this.disablePaymentCalculateButton(component);
+                    // var opp = this.proxyToObj(giftModel.opp);
+                    var di = this.proxyToObj(component.get('v.di'));
 
-                // Setup any default form values
-                this.setDefaults(component, giftModel.opp);
+                    // Map fields from Opportunity to DataImport
+                    this.mapOppToDi(component, di, giftModel.opp);
+                    component.set('v.opp', giftModel.opp);
+                    this.setDiFields(component, di);
+                    // console.log(giftModel.payments); 
+                    component.set('v.allocs', giftModel.allocs);
+                    component.set('v.partialCredits', giftModel.partialCredits);
+                    component.set('v.payments', giftModel.payments);
+                    component.set('v.disableBlurEvents', false);
+                }
+
+                // This is the initial call, set helper variables
+                // If using this page to load edits directly, we may need a separate variable
+                if(!oppId){
+                    component.set('v.bdiLabels', giftModel.bdiLabels);
+                    component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
+                    component.set('v.objectFieldData.closedWonStageMap', giftModel.closedWonStageMap);
+                    component.set('v.objectFieldData.diToOppFieldMap', giftModel.diToOppFieldMap);
+
+                    this.handlePicklistSetup(component, giftModel.picklistValues);
+                    // Setup any default form values
+                    this.setDefaults(component, giftModel.opp);
+                }
+
                 this.checkValidation(component);
 
             } else if (state === 'ERROR') {
@@ -32,6 +57,15 @@
             }
         });
         $A.enqueueAction(getModelAction);
+    },
+    setDiFields: function(component, di){
+        var val;
+        var vField;
+        for(var field in di){
+            vField = 'v.di.' + field;
+            val = di[field];
+            component.set(vField, val);
+        }
     },
     setDefaults: function(component, opp){
         // For new forms, set Date to Today, otherwise use existing value
@@ -170,6 +204,7 @@
     checkForPaymentChange: function(component, helper){
         // Delay payment creation to avoid duplicate events
         var timer = component.get('v.paymentTimer');
+        console.log(timer); 
         clearTimeout(timer);
 
         var timer = window.setTimeout(
@@ -181,6 +216,12 @@
         );
 
         component.set('v.paymentTimer', timer);
+    },
+    disablePaymentCalculateButton: function(component){
+        var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
+        if(paySched){
+            paySched[0].disableCalcButton();
+        }
     },
     createDefaultPayment: function(component){
         var amt = component.get('v.di.npsp__Donation_Amount__c');
@@ -240,33 +281,40 @@
             this.showErrorToast($A.get('$Label.c.Error_Unknown'));
         }
     },
-    setOppToDiMap: function(component){
-        // This map is used to take field values from the Opportunity object and set them on the DataImport object
-        // Note: this is only needed to avoid a bug in force:inputField that requires hard-coding the fieldname,
-        // which made including an optional namespace impossible
-        var nsFieldPrefix = component.get('v.namespaceFieldPrefix');
-        var fieldMap = {
-            'npe01__Do_Not_Automatically_Create_Payment__c': nsFieldPrefix + 'Do_Not_Automatically_Create_Payment__c',
-            'npsp__Acknowledgment_Status__c': nsFieldPrefix + 'Donation_Acknowledgment_Status__c',
-            'npsp__Honoree_Contact__c': nsFieldPrefix + 'Donation_Honoree_Contact__c',
-            'npsp__Honoree_Name__c': nsFieldPrefix + 'Donation_Honoree_Name__c',
-            'npsp__Matching_Gift__c': nsFieldPrefix + 'Donation_Matching_Gift__c',
-            'npsp__Matching_Gift_Account__c': nsFieldPrefix + 'Donation_Matching_Gift_Account__c',
-            'npsp__Matching_Gift_Employer__c': nsFieldPrefix + 'Donation_Matching_Gift_Employer__c',
-            'npsp__Matching_Gift_Status__c': nsFieldPrefix + 'Donation_Matching_Gift_Status__c',
-            'npsp__Notification_Message__c': nsFieldPrefix + 'Donation_Notification_Message__c',
-            'CampaignId': nsFieldPrefix + 'Donation_Primary_Campaign__c',
-            'npsp__Tribute_Type__c': nsFieldPrefix + 'Donation_Tribute_Type__c',
-            'npsp__Notification_Recipient_Name__c': nsFieldPrefix + 'Notification_Recipient_Name__c'
-        };
+    setDonation: function(component, selectedDonation) {
+        component.set('v.selectedDonation', selectedDonation);
+        var selection = this.proxyToObj(selectedDonation);
+        /*
+        Id: "a011100000hDmNvAAK"
+        Name: "PMT-00000"
+        attributes: {type: "npe01__OppPayment__c", url: "/services/data/v45.0/sobjects/npe01__OppPayment__c/a011100000hDmNvAAK"}
+        npe01__Opportunity__c: "0061100000GkIFpAAN"
+        npe01__Opportunity__r: {attributes: {…}, Name: "Luke Skywalker Donation 2/27/2019", Id: "0061100000GkIFpAAN"}
+        npe01__Payment_Amount__c: 250
+        npe01__Scheduled_Date__c: "2019-02-27"
+        */
+        // Check if a Payment was selected, and get the Opportunity Id
+        var oppId = selection["npe01__Opportunity__c"];
+        if(!oppId){
+            // An Opportunity was selected, set the Id
+            oppId = selection["Id"];
+        }
+        // Update the form to edit the selected Opportunity
+        this.getDonationInformation(component, oppId);
 
-        component.set('v.oppToDiFieldMap', fieldMap);
+        // TODO: Add, and lock, this payment in the scheduler
+        // component.set('v.payments', [selection]);
     },
     mapOppToDi: function(component, di, opp){
-        var fieldMap = component.get('v.oppToDiFieldMap');
+        var fieldMap = component.get('v.objectFieldData.diToOppFieldMap');
+        fieldMap = this.proxyToObj(fieldMap);
         for(var field in fieldMap){
-            var diField = fieldMap[field];
-            di[diField] = opp[field];
+            // var diField = fieldMap[field];
+            var oppField = fieldMap[field];
+            var oppValue = opp[oppField];
+            if(oppValue){
+                di[field] = opp[oppField];
+            }
         }
     },
     clearDonationSelectionOptions: function(component) {
@@ -309,7 +357,7 @@
         var di = this.proxyToObj(component.get('v.di'));
 
         // Map fields from Opportunity to DataImport
-        // This is done to avoid referencing Adv namespace fields in markup
+        // This is done to avoid referencing GEM namespace fields in markup
         this.mapOppToDi(component, di, opp);
         
         giftModel['di'] = di;

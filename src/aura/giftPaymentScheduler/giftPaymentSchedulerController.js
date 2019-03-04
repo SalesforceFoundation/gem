@@ -2,10 +2,21 @@
 	handlePaymentsChange: function(component, event, helper){
 		// Gets called twice (once while bubbling up, once from the parent change)
 		// We only want to event to fire once, boolean is toggled to handle this
-		var blockChange = component.get('v.blockItemChangeEvent');
-		component.set('v.blockItemChangeEvent', !blockChange);
+		// var blockChange = component.get('v.blockItemChangeEvent');
+		// component.set('v.blockItemChangeEvent', !blockChange);
 		var paymentList = component.get('v.paymentList');
+
+		paymentList = helper.proxyToObj(paymentList);
+
+		// This is coming through correctly, but isn't showing on the page? Force the reveal?
+		console.log('paymentList: '); 
+		console.log(paymentList); 
+		// console.log(paymentList.length); 
+
+		// component.set('v.paymentList', paymentList);
+		
 		if(paymentList.length > 0){
+			console.log("Show payments!"); 
 			component.set('v.showPayments', true);
 		}
     },
@@ -14,12 +25,16 @@
 		helper.clickCalculateHelper(component, false);
 	},
 	handleAmtChange: function(component, event, helper) {
+		if(component.get('v.disablePaymentEvents')){
+            return;
+        }
 		var donationAmt = component.get('v.donationAmt');
 		var btn = component.find('calcButton');
+		var calcDisabled = component.get('v.calcButtonDisabled');
 		// Enable the calculate button if a valid amount is entered
-		if(btn){
+		if(btn && !calcDisabled){
 			var validAmount = (donationAmt > 0);
-			btn.set('v.disabled',!validAmount);
+			btn.set('v.disabled', !validAmount);
 		}
 	},
 	handleMethodChange: function(component, event, helper) {
@@ -34,6 +49,11 @@
 		if(!component.get('v.userInteracted')){
 			helper.clickCalculateHelper(component, true);
 		}
+	},
+	disableCalcButton: function(component, event, helper){
+		var btn = component.find('calcButton');
+		btn.set('v.disabled', true);
+		component.set('v.calcButtonDisabled', true);
 	},
 	handleMessage: function(component, event, helper){
 		var channel = event.getParam('channel');

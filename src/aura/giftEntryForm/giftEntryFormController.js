@@ -11,17 +11,26 @@
         if(namespace != 'c'){
             component.set('v.namespaceFieldPrefix', namespace+'__');
         }
-        helper.setOppToDiMap(component);
     },
     handlePaymentChange: function(component, event, helper){
+        console.log("Payment change"); 
+        if(component.get('v.disableBlurEvents')){
+            return;
+        }
         helper.checkForPaymentChange(component, helper);
         helper.checkValidation(component);
     },
     handleFieldChange: function(component, event, helper){
+        if(component.get('v.disableBlurEvents')){
+            return;
+        }
         // Each time a required input changes, check validation
         helper.checkValidation(component);
     },
     onDonorChange: function(component, event, helper){
+        if(component.get('v.disableBlurEvents')){
+            return;
+        }
         helper.clearDonationSelectionOptions(component);
         const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
         const lookupValue = component.find(lookupField).get('v.value');
@@ -72,6 +81,9 @@
         $A.get('e.force:refreshView').fire();
     },
     handleDonorTypeChange: function(component, event, helper){
+        if(component.get('v.disableBlurEvents')){
+            return;
+        }
         var donorType = event.getParam('value');
         // Need to clear the other donor fields
         if(donorType == 'Account1'){
@@ -90,6 +102,8 @@
             helper.handleMatchChange(component, message, helper);
         } else if(channel == 'validateEvent'){
             helper.validateForm(component, true);
+        } else if(channel == 'selectedDonation'){
+            helper.setDonation(component, message);
         }
     },
     expandTributeSection: function(component, event, helper) {

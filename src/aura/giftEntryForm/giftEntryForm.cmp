@@ -13,6 +13,7 @@
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="Map" name="objectLabels" />
     <aura:attribute type="Map" name="oppToDiFieldMap" />
+    <aura:attribute type="Map" name="diToOppFieldMap" />
 
     <aura:attribute name="bdiLabels" type="Map" description="Labels retrieved in Apex related to Schema information." access="public"/>
     <aura:attribute name="openOpportunities" type="List" description="List of open Opportunities" access="public" />
@@ -41,6 +42,7 @@
     <aura:attribute type="Boolean" name="expandMatching" default="true" />
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
     <aura:attribute type="Boolean" name="paymentAdded" default="false" />
+    <aura:attribute type="Boolean" name="disableBlurEvents" default="false" />
     <aura:attribute type="Integer" name="paymentTimer" />
 
     <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.onDonorChange}"/>
@@ -126,9 +128,6 @@
                                 disabled="{!v.donorExists == false}"
                                 label="{!$Label.c.Gift_Edit_Selected_Donor}"
                                 onclick="{!c.clickEditDonor}" />
-                            <lightning:button aura:id="matchModal"
-                                label="Match Modal"
-                                onclick="{!c.openMatchModal}" />
                         </lightning:layoutItem>
 
                         <!--BEGIN SCOPED MATCH NOTIFICATION-->
@@ -153,7 +152,7 @@
                                                 <aura:if isTrue="{!equals(v.selectedDonation, '')}">
                                                     <p>{!$Label.c.bgeFormNewDonationHelptext}</p>
                                                     <aura:set attribute="else">
-                                                        <p class="slds-m-right_x-small">{!$Label.c.bgeFormUpdateHelptext}
+                                                        <p class="slds-m-right_x-small">{!$Label.npsp.bgeFormUpdateHelptext}
                                                             <lightning:formattedUrl value="{! '/' + v.selectedDonation.Id}"
                                                                                     label="{!v.selectedDonation.Name}"
                                                                                     class="slds-m-left_x-small"
@@ -162,7 +161,7 @@
                                                     </aura:set>
                                                 </aura:if>
                                                 <p>
-                                                    <a onclick="{!c.openMatchModal}">{!$Label.c.bgeFormUpdateDonation}</a>
+                                                    <a onclick="{!c.openMatchModal}">{!$Label.npsp.bgeFormUpdateDonation}</a>
                                                 </p>
                                             </aura:set>
                                         </aura:if>
@@ -353,6 +352,7 @@
                 </lightning:layoutItem>
 
                 <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"
                     paymentList="{!v.payments}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
                     donationAmt="{!v.di.npsp__Donation_Amount__c}"
@@ -363,6 +363,7 @@
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"    
                     itemList="{!v.partialCredits}"
                     objectName="npsp__Partial_Soft_Credit__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
@@ -377,6 +378,7 @@
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"
                     itemList="{!v.allocs}"
                     objectName="npsp__Allocation__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"

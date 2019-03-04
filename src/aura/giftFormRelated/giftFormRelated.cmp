@@ -34,6 +34,7 @@
     <aura:attribute type="Boolean" name="blockItemChangeEvent" />
     <aura:attribute type="Boolean" name="expandSection" default="true" />
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
+    <aura:attribute type="Boolean" name="disablePaymentEvents" />
 
     <lightning:layoutItem size="12">
         <lightning:layout multipleRows="true">

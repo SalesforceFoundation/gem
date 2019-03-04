@@ -54,12 +54,10 @@ public with sharing class GiftEntryFormController {
         @AuraEnabled public List<npe01__OppPayment__c> matchedPayments {get;set;}
 
         @AuraEnabled public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
-
         @AuraEnabled public Map<String, String> bdiLabels;
-
         @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
-
         @AuraEnabled Map<String, Boolean> closedWonStageMap {get;set;}
+        @AuraEnabled Map<String, String> diToOppFieldMap {get;set;}
 
         public GiftFormModel() {
             this.objNameToApiToLabel = getObjNameToApiToLabel();
@@ -74,6 +72,7 @@ public with sharing class GiftEntryFormController {
             this.partialCredits = new List<npsp__Partial_Soft_Credit__c>();
             this.allocs = new List<npsp__Allocation__c>();
             this.bdiLabels = getBatchDataImportLabels();
+            this.diToOppFieldMap = getDataImportToOpportunityFieldMap();
         }
 
         public GiftFormModel(Id oppId) {
@@ -104,6 +103,38 @@ public with sharing class GiftEntryFormController {
 
         return closedWonStageMap;
     }
+
+    /*******************************************************************************************************
+     * @description Returns A map of Opp field name to corresponding Data Import field name
+     * @throws UTIL_CrudFLS.AccessException when the supplied sObject is not readable by the current user
+     * @return Map<String, String> A map of Opp field name to corresponding Data Import field name
+     */
+    public static Map<String, String> getDataImportToOpportunityFieldMap() {
+        String sObjectName = 'npsp__DataImport__c';
+        DescribeSObjectResult objectDescribe = UTIL_Describe.getObjectDescribe(sObjectName);
+        if(!objectDescribe.isAccessible()) {
+            throw new UTIL_CrudFLS.AccessException(objectDescribe, 'read');
+        }
+
+    	Map<String, Schema.DescribeFieldResult> fields = UTIL_Describe.getAllFieldsDescribe(sObjectName);
+          
+        Map<String, String> oppToDiFields = new Map<String, String>();
+
+    	for(Schema.DescribeFieldResult field : fields.values()){
+      		if(field.isAccessible()) {
+                String helpText = field.getInlineHelpText();
+                if(helpText == null){
+                    continue;
+                }
+                String[] fieldSplit = helpText.split('Opportunity.');
+                if(fieldSplit.size() > 1){
+                    oppToDiFields.put(field.getName(), fieldSplit[1]);
+                }
+            }
+    	}
+
+    	return oppToDiFields;
+  	}
 
     @AuraEnabled
     public static GiftFormModel initClass(Id oppId) {

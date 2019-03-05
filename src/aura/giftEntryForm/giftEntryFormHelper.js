@@ -203,6 +203,12 @@
                     allocations[i].handlePercentChange();
                 }
             }
+            var softcredits = this.getChildComponents(component, 'giftRelatedSoftCredit');
+            if(softcredits){
+                for(var i=0; i<softcredits.length; i++){
+                    softcredits[i].handleDonationChange();
+                }
+            }
         }
     },
     checkFields: function(component, fieldId, allMustBeValid, showErrors){

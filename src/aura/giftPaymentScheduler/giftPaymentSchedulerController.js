@@ -47,7 +47,10 @@
 		var channel = event.getParam('channel');
 		
 		if(channel == 'addRowEvent'){
-			component.set('v.userInteracted', true);
+			var objectAdded = event.getParam('message');
+			if(objectAdded == 'npe01__OppPayment__c'){
+				component.set('v.userInteracted', true);
+			}
 		}
 	}
 })

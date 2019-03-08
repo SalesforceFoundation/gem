@@ -67,7 +67,7 @@
         <lightning:spinner class="slds-is-fixed" />
     </aura:if>
     <aura:if isTrue="{!v.showForm}">
-        <div class="slds-card" style="margin-bottom: 200px" aura:id="formWrapper">
+        <div class="slds-card cardMargin" aura:id="formWrapper">
             <lightning:layout
                 multipleRows="true">
                 <aura:if isTrue="{!v.oppClosed}">

@@ -38,7 +38,6 @@
 
     <lightning:layoutItem size="12">
         <lightning:layout multipleRows="true">
-
             <aura:if isTrue="{!v.sectionTitle}">
                 <lightning:layoutItem size="12">
                     <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 

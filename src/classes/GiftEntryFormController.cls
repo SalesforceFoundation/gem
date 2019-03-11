@@ -466,7 +466,7 @@ public with sharing class GiftEntryFormController {
                                 'Amount ' +
                                 'FROM Opportunity ' +
                                 'WHERE ' + relationshipField + ' = :donorId ' +
-                                'AND IsClosed = false';
+                                'AND (IsClosed = false';
 
         String paymentSOQL = 'SELECT Id, ' +
                                 'Name, ' +
@@ -479,22 +479,29 @@ public with sharing class GiftEntryFormController {
                                 'AND npe01__Paid__c = false';
 
         try {
-            List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
             List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);
 
+            Set<Id> oppIds = new Set<Id>();
+            for (npe01__OppPayment__c payment : unpaidPayments) {
+                oppIds.add(payment.npe01__Opportunity__c);
+            }
+
+            // We want to include closed Opportunities with unpaid payments
+            opportunitySOQL += ' OR Id in :oppIds)';
+            List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
             Map<Id, Opportunity> openOpportunitiesById = new Map<Id, Opportunity>(openOpportunities);
 
             // openOpportunities should only include opps with NO UNPAID PAYMENTS for BDI to process donations correctly
-            for (npe01__OppPayment__c payment : unpaidPayments) {
-                Id idOfCurrentOpportunity = payment.npe01__Opportunity__c;
-                if (openOpportunitiesById.containsKey(idOfCurrentOpportunity)) {
-                    openOpportunitiesById.remove(idOfCurrentOpportunity);
-                }
-            }
+            // for (npe01__OppPayment__c payment : unpaidPayments) {
+            //     Id idOfCurrentOpportunity = payment.npe01__Opportunity__c;
+            //     if (openOpportunitiesById.containsKey(idOfCurrentOpportunity)) {
+            //         openOpportunitiesById.remove(idOfCurrentOpportunity);
+            //     }
+            // }
 
             Map<String, List<SObject>> response = new Map<String, List<SObject>>{
                 'openOpportunities' => openOpportunitiesById.values(),
-                'unpaidPayments' => unpaidPayments
+                'unpaidPayments' => null
             };
             return JSON.serialize(response);
         } catch (Exception ex){

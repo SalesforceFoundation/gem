@@ -47,8 +47,6 @@
 
     <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.onDonorChange}"/>
     <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.onDonorChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Donation_Amount__c}" action="{!c.handlePaymentChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Donation_Date__c}" action="{!c.handlePaymentChange}"/>
 
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 
@@ -131,9 +129,9 @@
                         </lightning:layoutItem>
 
                         <!--BEGIN SCOPED MATCH NOTIFICATION-->
-                        <lightning:layoutItem padding="around-small" size="12" mediumDeviceSize="12">
+                        <lightning:layoutItem size="12" mediumDeviceSize="12">
                         <aura:if isTrue="{!or(not(empty(v.openOpportunities)), not(empty(v.unpaidPayments)))}">
-                            <lightning:layoutItem size="12" smallDeviceSize="12" class="slds-p-horizontal_small">
+                            <lightning:layoutItem padding="around-small" size="12" smallDeviceSize="12" class="slds-p-horizontal_small">
                                 <div class="slds-scoped-notification slds-media slds-media_center slds-scoped-notification_light slds-m-bottom_small"
                                     role="alert">
                                     <div class="slds-media__figure slds-text-align_center">
@@ -150,7 +148,7 @@
                                             </p>
                                             <aura:set attribute="else">
                                                 <aura:if isTrue="{!equals(v.selectedDonation, '')}">
-                                                    <p>{!$Label.c.bgeFormNewDonationHelptext}</p>
+                                                    <p>{!$Label.npsp.bgeFormNewDonationHelptext}</p>
                                                     <aura:set attribute="else">
                                                         <p class="slds-m-right_x-small">{!$Label.npsp.bgeFormUpdateHelptext}
                                                             <lightning:formattedUrl value="{! '/' + v.selectedDonation.Id}"
@@ -199,6 +197,7 @@
                                 required="true"
                                 variant="label-hidden"
                                 type="date"
+                                onblur="{!c.handlePaymentChange}"
                                 value="{!v.di.npsp__Donation_Date__c}" />
                         </lightning:layoutItem>
 
@@ -211,6 +210,7 @@
                                 variant="label-hidden"
                                 type="number"
                                 formatter="currency" step="0.01"
+                                onblur="{!c.handlePaymentChange}"
                                 value="{!v.di.npsp__Donation_Amount__c}" />
                         </lightning:layoutItem>
 

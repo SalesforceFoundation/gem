@@ -4,6 +4,11 @@
         if(oppId){
             this.changeSubmitText(component, $A.get('$Label.c.Gift_Update'));
             component.set('v.editMode', true);
+        } else {
+            this.changeSubmitText(component, $A.get('$Label.c.Gift_Create'));
+            component.set('v.editMode', false);
+
+            // TODO: Clear form values? Delete Payments and related objects? Reset the form?
         }
 
         var getModelAction = component.get('c.initClass');
@@ -15,7 +20,7 @@
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
 
-                console.log(giftModel); 
+                // console.log(giftModel); 
                 component.set('v.giftModel', giftModel);
 
                 // An Opportunity was matched, update the form to reflect that
@@ -36,9 +41,10 @@
                     component.set('v.disableBlurEvents', false);
                 }
 
+                var bdiLabels = component.get('v.bdiLabels');
                 // This is the initial call, set helper variables
                 // If using this page to load edits directly, we may need a separate variable
-                if(!oppId){
+                if(!bdiLabels){
                     component.set('v.bdiLabels', giftModel.bdiLabels);
                     component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
                     component.set('v.objectFieldData.closedWonStageMap', giftModel.closedWonStageMap);
@@ -204,7 +210,6 @@
     checkForPaymentChange: function(component, helper){
         // Delay payment creation to avoid duplicate events
         var timer = component.get('v.paymentTimer');
-        console.log(timer); 
         clearTimeout(timer);
 
         var timer = window.setTimeout(
@@ -284,6 +289,20 @@
     setDonation: function(component, selectedDonation) {
         component.set('v.selectedDonation', selectedDonation);
         var selection = this.proxyToObj(selectedDonation);
+
+        // "create a new Opportunity" was selected
+        if(!selection){
+            this.getDonationInformation(component, null);
+            console.log('reset form?'); 
+            return;
+        }
+
+        // TODO: Implement new payment logic
+        // Just scroll to Payment scheduler after loading?
+        if (selection.applyPayment) {
+            console.log("Apply new payment!"); 
+        }
+
         /*
         Id: "a011100000hDmNvAAK"
         Name: "PMT-00000"
@@ -293,6 +312,7 @@
         npe01__Payment_Amount__c: 250
         npe01__Scheduled_Date__c: "2019-02-27"
         */
+
         // Check if a Payment was selected, and get the Opportunity Id
         var oppId = selection["npe01__Opportunity__c"];
         if(!oppId){
@@ -381,10 +401,10 @@
         });
         toastEvent.fire();
     },
-    showErrorToast: function(msgText){
+    showErrorToast: function(msgText, title){
         var toastEvent = $A.get('e.force:showToast');
         toastEvent.setParams({
-            title : $A.get('$Label.c.Error'),
+            title : title ? title : $A.get('$Label.c.Error'),
             message: msgText,
             type: 'error',
             mode: 'sticky'

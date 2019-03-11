@@ -2,19 +2,12 @@
 	handlePaymentsChange: function(component, event, helper){
 		// Gets called twice (once while bubbling up, once from the parent change)
 		// We only want to event to fire once, boolean is toggled to handle this
-		// var blockChange = component.get('v.blockItemChangeEvent');
-		// component.set('v.blockItemChangeEvent', !blockChange);
+		var blockChange = component.get('v.blockItemChangeEvent');
+		component.set('v.blockItemChangeEvent', !blockChange);
+		if(!blockChange){
+			return;
+		}
 		var paymentList = component.get('v.paymentList');
-
-		paymentList = helper.proxyToObj(paymentList);
-
-		// This is coming through correctly, but isn't showing on the page? Force the reveal?
-		console.log('paymentList: '); 
-		console.log(paymentList); 
-		// console.log(paymentList.length); 
-
-		// component.set('v.paymentList', paymentList);
-		
 		if(paymentList.length > 0){
 			console.log("Show payments!"); 
 			component.set('v.showPayments', true);

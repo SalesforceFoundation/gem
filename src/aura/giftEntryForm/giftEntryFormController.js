@@ -104,6 +104,8 @@
             helper.validateForm(component, true);
         } else if(channel == 'selectedDonation'){
             helper.setDonation(component, message);
+        } else if (channel === 'onError') {
+            helper.showErrorToast(message.errorMessage, message.title);
         }
     },
     expandTributeSection: function(component, event, helper) {
@@ -131,13 +133,13 @@
                     });
                 } else if (status === 'INCOMPLETE') {
                     const message = {
-                        title: $A.get('$Label.c.PageMessagesError'),
-                        errorMessage: $A.get('$Label.c.stgUnknownError')
+                        title: $A.get('$Label.npsp.PageMessagesError'),
+                        errorMessage: $A.get('$Label.npsp.stgUnknownError')
                     };
                     helper.sendMessage('onError', message);
 
                 } else if (status === 'ERROR') {
-                    const message = {title: $A.get('$Label.c.PageMessagesError'), errorMessage: errorMessage};
+                    const message = {title: $A.get('$Label.npsp.PageMessagesError'), errorMessage: errorMessage};
                     helper.sendMessage('onError', message);
                 }
             });

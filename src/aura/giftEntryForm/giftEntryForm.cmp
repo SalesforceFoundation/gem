@@ -312,7 +312,7 @@
                     oppField="npsp__Opportunity__c"
                     amtField="npsp__Amount__c"
                     donationAmt="{!v.di.npsp__Donation_Amount__c}"
-                    preventAmountSurplus="true"
+                    preventAmountSurplus="false"
                     preventAmountDeficit="false"
                     objectFieldData="{!v.objectFieldData}"
                     modelAttribute="partialCredits"

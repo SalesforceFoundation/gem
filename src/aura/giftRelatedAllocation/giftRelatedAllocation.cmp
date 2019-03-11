@@ -1,4 +1,6 @@
 <aura:component extends="c:giftFormRelatedRow">
+
+    <aura:method name="handlePercentChange" />
     
     <aura:attribute name="item" 
         type="npsp__Allocation__c" 

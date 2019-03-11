@@ -67,7 +67,7 @@
         }
         component.set('v.showAmountError', false);
     },
-    handleAmtChangeHelper: function(component){
+    handleAmtChangeHelper: function(component, checkForZero){
         var amountTotal = this.getAmtTotal(component);
 
         var preventAmountSurplus = component.get('v.preventAmountSurplus');
@@ -76,7 +76,12 @@
         // If there is a donation amount and a total, and they do not match, show message
         var amtError = '';
         component.set('v.messageIsError', false);
-        var amountsDoNotMatch = donationAmt && amountTotal && (donationAmt != amountTotal);
+
+        var amtIsNumber = amountTotal;
+        if(checkForZero){
+            amtIsNumber = amtIsNumber || amountTotal === 0;
+        }
+        var amountsDoNotMatch = donationAmt && amtIsNumber && (donationAmt != amountTotal);
         var preventSubmit = false;
         if(amountTotal > donationAmt){
             if(preventAmountSurplus){

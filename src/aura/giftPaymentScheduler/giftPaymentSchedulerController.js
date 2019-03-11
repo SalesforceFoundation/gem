@@ -8,7 +8,7 @@
 		if(paymentList.length > 0){
 			component.set('v.showPayments', true);
 		}
-    },
+	},
 	clickCalculate: function(component, event, helper) {
 		component.set('v.userInteracted', true);
 		helper.clickCalculateHelper(component, false);
@@ -27,19 +27,30 @@
 		component.set('v.selectedPaymentMethod', paymentMethod);
 	},
 	toggleRelatedSection: function(component, event, helper) {
-        component.set('v.expandSection', !component.get('v.expandSection'));
+		component.set('v.expandSection', !component.get('v.expandSection'));
 	},
 	createDefaultPayment: function(component, event, helper){
-		// Only overwrite the payment if the user has not used the scheduler
+		var params = event.getParam('arguments');
+		var amtWasChanged = false;
+		if(params){
+			amtWasChanged = params.amtWasChanged;
+		}
+
+		// Only overwrite the payment if the user has not used the scheduler yet
 		if(!component.get('v.userInteracted')){
 			helper.clickCalculateHelper(component, true);
+		} else if(amtWasChanged) {
+			helper.clearPaymentAmts(component, helper);
 		}
 	},
 	handleMessage: function(component, event, helper){
 		var channel = event.getParam('channel');
 		
-        if(channel == 'addRowEvent'){
-            component.set('v.userInteracted', true);
-        }
-    }
+		if(channel == 'addRowEvent'){
+			var objectAdded = event.getParam('message');
+			if(objectAdded == 'npe01__OppPayment__c'){
+				component.set('v.userInteracted', true);
+			}
+		}
+	}
 })

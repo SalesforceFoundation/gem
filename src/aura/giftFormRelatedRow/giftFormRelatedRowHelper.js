@@ -84,11 +84,11 @@
     },
     validateField: function(component, inputCmp, validationInfo, checkDupes, helper){
         var fieldVal = inputCmp.get('v.value');
-        var isValid = fieldVal || fieldVal === false;
-
+        var isValid = (fieldVal || fieldVal === false) && fieldVal !== '0';
+        
         if(checkDupes){
             // Check for duplicate values
-            if(validationInfo.noDuplicateValueList.indexOf(fieldVal) > -1){
+            if(isValid && validationInfo.noDuplicateValueList.indexOf(fieldVal) > -1){
                 component.set('v.showError', true);
                 component.set('v.errorMessage', $A.get('$Label.c.Error_Duplicate_Value'));
                 isValid = false;
@@ -104,7 +104,7 @@
             helper.addError(inputCmp);
             validationInfo.needsError.push(inputCmp);
         } else {
-            // There is at least one valid field
+            // There is at least one field filled in, they are not all blank
             validationInfo.allBlank = false;
             helper.removeError(inputCmp);
         }

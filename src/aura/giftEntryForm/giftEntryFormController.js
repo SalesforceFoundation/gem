@@ -14,7 +14,18 @@
         helper.setOppToDiMap(component);
     },
     handlePaymentChange: function(component, event, helper){
-        helper.checkForPaymentChange(component, helper);
+        // This is run "on change" so we know that a value changed when the blur event occurs
+        component.set('v.paymentValChanged', true);
+    },
+    checkPaymentChange: function(component, event, helper){
+        // This is run "on blur" to prevent mutiple calls as the donation amount changes
+        var fieldVal = event.getSource().get('v.value');
+        var paymentValChanged = component.get('v.paymentValChanged');
+        // We only want to run this blur event if a payment related value actually changed
+        if(paymentValChanged){
+            helper.updateRelatedPaymentAmounts(component, fieldVal);
+        }
+        component.set('v.paymentValChanged', false);
         helper.checkValidation(component);
     },
     handleFieldChange: function(component, event, helper){

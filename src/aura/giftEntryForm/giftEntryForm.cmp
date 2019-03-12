@@ -314,6 +314,7 @@
                     donationAmt="{!v.di.npsp__Donation_Amount__c}"
                     preventAmountSurplus="false"
                     preventAmountDeficit="false"
+                    displayErrorOnAmountSurplus="false"
                     objectFieldData="{!v.objectFieldData}"
                     modelAttribute="partialCredits"
                     buttonTitle="Add New Soft Credit"

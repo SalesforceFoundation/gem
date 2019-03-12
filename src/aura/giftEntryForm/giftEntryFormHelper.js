@@ -7,8 +7,12 @@
         } else {
             this.changeSubmitText(component, $A.get('$Label.c.Gift_Create'));
             component.set('v.editMode', false);
-
-            // TODO: Clear form values? Delete Payments and related objects? Reset the form?
+            this.resetForm(component);
+            var bdiLabels = component.get('v.bdiLabels');
+            if(bdiLabels){
+                // The form has already been loaded, just return
+                return;
+            }
         }
 
         var getModelAction = component.get('c.initClass');
@@ -19,6 +23,7 @@
             var state = response.getState();
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
+                console.log(giftModel); 
 
                 // console.log(giftModel); 
                 component.set('v.giftModel', giftModel);
@@ -56,13 +61,19 @@
                 }
 
                 this.checkValidation(component);
-
+                component.set('v.showSpinner', false);
             } else if (state === 'ERROR') {
                 component.set('v.showForm', false);
                 this.handleError(component, response);
+                component.set('v.showSpinner', false);
             }
         });
         $A.enqueueAction(getModelAction);
+    },
+    resetForm: function(component){
+        component.set('v.allocs', []);
+        component.set('v.partialCredits', []);
+        component.set('v.payments', []);
     },
     setDiFields: function(component, di){
         var val;
@@ -109,7 +120,7 @@
         // Setting this map will update all of the picklists
         component.set('v.objectFieldData.picklistOptions', picklistOptions);
     },
-    handlePicklistChange: function(component, message) {
+    handlePicklistChange: function(component, message){
         var newVal = message['newVal'];
         var fieldId = message['fieldId'];
         if(fieldId){
@@ -144,7 +155,7 @@
             giftModelString: giftModelString
         });
 
-        action.setCallback(this, function(response) {
+        action.setCallback(this, function(response){
             var state = response.getState();
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
@@ -165,7 +176,7 @@
     checkValidation: function(component){
         this.validateForm(component);
     },
-    validateForm: function(component, showErrors) {
+    validateForm: function(component, showErrors){
         component.set('v.error', null);
         // Show error messages if required fields are blank
         var validForm = this.checkFields(component, 'requiredField', true, showErrors);
@@ -226,6 +237,14 @@
         var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
         if(paySched){
             paySched[0].disableCalcButton();
+        }
+    },
+    setupNewPaymentScroll: function(component){
+        var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
+        if(relatedCmp){
+            for(var i=0; i < relatedCmp.length; i++){
+                relatedCmp[i].setupScrollToNew();
+            }
         }
     },
     updateRelatedPaymentAmounts: function(component, fieldVal){
@@ -314,31 +333,20 @@
         }
     },
     setDonation: function(component, selectedDonation) {
+        component.set('v.showSpinner', true);
         component.set('v.selectedDonation', selectedDonation);
         var selection = this.proxyToObj(selectedDonation);
 
         // "create a new Opportunity" was selected
         if(!selection){
             this.getDonationInformation(component, null);
-            console.log('reset form?'); 
             return;
         }
 
-        // TODO: Implement new payment logic
-        // Just scroll to Payment scheduler after loading?
+        // Focus on Add New Payment button after loading this Donation
         if (selection.applyPayment) {
-            console.log("Apply new payment!"); 
+            this.setupNewPaymentScroll(component);
         }
-
-        /*
-        Id: "a011100000hDmNvAAK"
-        Name: "PMT-00000"
-        attributes: {type: "npe01__OppPayment__c", url: "/services/data/v45.0/sobjects/npe01__OppPayment__c/a011100000hDmNvAAK"}
-        npe01__Opportunity__c: "0061100000GkIFpAAN"
-        npe01__Opportunity__r: {attributes: {…}, Name: "Luke Skywalker Donation 2/27/2019", Id: "0061100000GkIFpAAN"}
-        npe01__Payment_Amount__c: 250
-        npe01__Scheduled_Date__c: "2019-02-27"
-        */
 
         // Check if a Payment was selected, and get the Opportunity Id
         var oppId = selection["npe01__Opportunity__c"];

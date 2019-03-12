@@ -2,6 +2,7 @@
     implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
     
     <aura:method name="handleJsonUpdate" />
+    <aura:method name="setupScrollToNew" />
     
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
@@ -35,6 +36,8 @@
     <aura:attribute type="Boolean" name="expandSection" default="true" />
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
     <aura:attribute type="Boolean" name="disablePaymentEvents" />
+    <aura:attribute type="Boolean" name="firstRow" default="true" />
+    <aura:attribute type="Boolean" name="scrollToNew" default="false" />
 
     <lightning:layoutItem size="12">
         <lightning:layout multipleRows="true">
@@ -71,7 +74,9 @@
                     </lightning:layoutItem>
                     {!v.body}
                     <lightning:layoutItem padding="around-small" size="12">
-                        <lightning:button label="{!v.buttonTitle}" onclick="{!c.clickAddRow}" />
+                        <lightning:button aura:id="add-button" 
+                            label="{!v.buttonTitle}" 
+                            onclick="{!c.clickAddRow}" />
                     </lightning:layoutItem>
                 </lightning:layout>
             </lightning:layoutItem>

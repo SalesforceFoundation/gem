@@ -73,5 +73,11 @@
     },
     toggleRelatedSection: function(component, event, helper) {
         component.set('v.expandSection', !component.get('v.expandSection'));
+    },
+    setupScrollToNew: function(component){
+        if(component.get('v.objectName') == 'npe01__OppPayment__c'){
+            console.log("scroll payment!"); 
+            component.set('v.scrollToNew', true);
+        }
     }
 })

@@ -10,12 +10,9 @@
         var donationAmt = component.getReference('v.donationAmt');
         var checkAmountTotals = component.getReference('v.checkAmountTotals');
         var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
-
-        console.log(rowCmpName + ", " + newRowNum + " " + index); 
     
-        var showLabels = false;
         if(newRowNum == 0){
-            showLabels = true;
+            component.set('v.firstRow', true);
         }
 
         $A.createComponent(
@@ -28,14 +25,18 @@
                 'checkAmountTotals': checkAmountTotals,
                 'noDuplicateValueList': noDuplicateValueList,
                 'amtField': amtField,
-                'showLabels': showLabels
+                'showLabels': false
             },
             function(relatedCmp, status, errorMessage){
                 if (status === 'SUCCESS') {
 
-                    // TODO: Row logic needs to go here instead?
+                    // Check if this is the first row to be added, and if yes, show field labels
+                    var firstRow = component.get('v.firstRow');
+                    if(firstRow){
+                        component.set('v.firstRow', false);
+                        relatedCmp.set('v.showLabels', true);
+                    }
 
-                    console.log('Show labels, row num: ' + showLabels + ' ' + newRowNum); 
                     // Add the component to the page
                     var body = component.get('v.body');
                     body.push(relatedCmp);
@@ -72,6 +73,17 @@
             }
         }
         component.set('v.showAmountError', false);
+        // Also check amount validation on this component
+        this.handleAmtChangeHelper(component);
+        if(component.get('v.scrollToNew')){
+            console.log('focus!'); 
+            var btn = component.find('add-button');
+            console.log(btn); 
+            if(btn){
+                btn.focus();
+            }
+            // document.getElementById("add-payment-button").focus();
+        }
     },
     handleAmtChangeHelper: function(component, checkForZero){
         var amountTotal = this.getAmtTotal(component);

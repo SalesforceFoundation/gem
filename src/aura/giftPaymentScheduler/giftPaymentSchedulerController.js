@@ -4,12 +4,11 @@
 		// We only want to event to fire once, boolean is toggled to handle this
 		var blockChange = component.get('v.blockItemChangeEvent');
 		component.set('v.blockItemChangeEvent', !blockChange);
-		if(!blockChange){
+		if(blockChange){
 			return;
 		}
 		var paymentList = component.get('v.paymentList');
 		if(paymentList.length > 0){
-			console.log("Show payments!"); 
 			component.set('v.showPayments', true);
 		}
 	},

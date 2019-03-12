@@ -44,6 +44,9 @@
         helper.clearDonationSelectionOptions(component);
         const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
         const lookupValue = component.find(lookupField).get('v.value');
+        if(!lookupValue){
+            return;
+        }
         const lookupValueIsValidId = lookupValue.length === 18;
 
         if (lookupValueIsValidId) {

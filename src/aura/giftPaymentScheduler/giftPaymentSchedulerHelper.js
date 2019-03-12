@@ -38,7 +38,7 @@
 				if(intervalFreq == 'Week'){
 					dateObject.setDate(dateObject.getDate() + interval * 7);
 				} else if(intervalFreq == 'Month'){
-					dateObject.setMonth(dateObject.getMonth() + interval);
+					dateObject.setUTCMonth(dateObject.getUTCMonth() + interval);
 				} else if(intervalFreq == 'Year'){
 					dateObject.setFullYear(dateObject.getFullYear() + interval);
 				}
@@ -76,6 +76,26 @@
 		singlePayment.npe01__Payment_Amount__c = amt;
 		singlePayment.npe01__Payment_Method__c = method;
 		return singlePayment;
+	},
+	clearPaymentAmts: function(component){
+		var paymentList = this.getChildRows(component);
+		if(paymentList.length < 1){
+			return;
+		}
+		for(var i = 0; i < paymentList.length; i++){
+			paymentList[i].clearAmount();
+		}
+		// Call validate event, handled by the parent
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+			'channel': 'amtChange'
+		});
+		sendMsgEvent.fire();
+	},
+	getChildRows: function(component){
+		var rowCmpName = component.get('v.rowCmpName');
+        var formWrapper = component.find('paymentWrap');
+        return formWrapper.find({instancesOf:rowCmpName});
 	},
 	proxyToObj: function(obj) {
 		return JSON.parse(JSON.stringify(obj))

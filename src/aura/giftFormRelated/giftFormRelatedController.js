@@ -1,9 +1,11 @@
 ({
     clickAddRow: function(component, event, helper) {
         helper.handleAddRow(component, helper);
-        // Call addRowEvent, used by the Payment Scheduler component
+        // Call addRowEvent, currently only used by the Payment Scheduler component
+        var thisObj = component.get('v.objectName');
 		var sendMsgEvent = $A.get('e.ltng:sendMessage');
 		sendMsgEvent.setParams({
+            'message': thisObj,
 			'channel': 'addRowEvent'
 		});
 		sendMsgEvent.fire();
@@ -61,6 +63,12 @@
 
         if(channel == 'deleteRowEvent'){
             helper.handleRowDelete(component, helper);
+        } else if(channel == 'amtChange'){
+            var thisObj = component.get('v.objectName');
+            // If the amount changes, we want to force validation on the Payment scheduler
+            if(thisObj == 'npe01__OppPayment__c'){
+                helper.handleAmtChangeHelper(component, true);
+            }
         }
     },
     toggleRelatedSection: function(component, event, helper) {

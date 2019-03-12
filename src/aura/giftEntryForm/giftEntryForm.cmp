@@ -43,10 +43,13 @@
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
     <aura:attribute type="Boolean" name="paymentAdded" default="false" />
     <aura:attribute type="Boolean" name="disableBlurEvents" default="false" />
+    <aura:attribute type="Boolean" name="paymentValChanged" default="false" />
     <aura:attribute type="Integer" name="paymentTimer" />
 
     <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.onDonorChange}"/>
     <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.onDonorChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Donation_Amount__c}" action="{!c.handlePaymentChange}"/>
+    <aura:handler name="change" value="{!v.di.npsp__Donation_Date__c}" action="{!c.handlePaymentChange}"/>
 
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 
@@ -197,7 +200,7 @@
                                 required="true"
                                 variant="label-hidden"
                                 type="date"
-                                onblur="{!c.handlePaymentChange}"
+                                onblur="{!c.checkPaymentChange}"
                                 value="{!v.di.npsp__Donation_Date__c}" />
                         </lightning:layoutItem>
 
@@ -210,7 +213,7 @@
                                 variant="label-hidden"
                                 type="number"
                                 formatter="currency" step="0.01"
-                                onblur="{!c.handlePaymentChange}"
+                                onblur="{!c.checkPaymentChange}"
                                 value="{!v.di.npsp__Donation_Amount__c}" />
                         </lightning:layoutItem>
 

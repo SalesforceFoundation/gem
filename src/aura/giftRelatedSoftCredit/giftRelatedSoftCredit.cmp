@@ -1,4 +1,6 @@
 <aura:component extends="c:giftFormRelatedRow">
+
+    <aura:method name="handleDonationChange" />
     
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleDonationChange}"/>
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />

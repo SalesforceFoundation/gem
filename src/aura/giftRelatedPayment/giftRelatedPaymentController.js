@@ -1,5 +1,5 @@
 ({
-	handlePaid : function(component, event, helper) {
+	handlePaid: function(component, event, helper) {
 		var paymentDate = component.find('paymentDate');
 		if(!paymentDate){
 			return;
@@ -17,5 +17,8 @@
 		if(methodInput){
 			methodInput.set("v.required", isPaid);
 		}
+	},
+	clearAmount: function(component, event, helper){
+		component.set('v.item.npe01__Payment_Amount__c', 0);
 	}
 })

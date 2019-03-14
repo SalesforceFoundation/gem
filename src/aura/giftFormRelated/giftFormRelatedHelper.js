@@ -10,6 +10,7 @@
         var donationAmt = component.getReference('v.donationAmt');
         var checkAmountTotals = component.getReference('v.checkAmountTotals');
         var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
+        var editMode = component.getReference('v.editMode');
     
         if(newRowNum == 0){
             component.set('v.firstRow', true);
@@ -25,7 +26,8 @@
                 'checkAmountTotals': checkAmountTotals,
                 'noDuplicateValueList': noDuplicateValueList,
                 'amtField': amtField,
-                'showLabels': false
+                'showLabels': false,
+                'editMode': editMode
             },
             function(relatedCmp, status, errorMessage){
                 if (status === 'SUCCESS') {
@@ -73,17 +75,9 @@
             }
         }
         component.set('v.showAmountError', false);
+
         // Also check amount validation on this component
         this.handleAmtChangeHelper(component);
-        if(component.get('v.scrollToNew')){
-            console.log('focus!'); 
-            var btn = component.find('add-button');
-            console.log(btn); 
-            if(btn){
-                btn.focus();
-            }
-            // document.getElementById("add-payment-button").focus();
-        }
     },
     handleAmtChangeHelper: function(component, checkForZero){
         var amountTotal = this.getAmtTotal(component);

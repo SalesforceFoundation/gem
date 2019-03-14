@@ -48,11 +48,6 @@ public with sharing class GiftEntryFormController {
         @AuraEnabled public List<npsp__Allocation__c> allocs {get;set;}
         @AuraEnabled public List<npsp__Partial_Soft_Credit__c> partialCredits {get;set;}
 
-        @AuraEnabled public List<Opportunity> matchedOpps {get;set;}
-        @AuraEnabled public List<Account> matchedAccts {get;set;}
-        @AuraEnabled public List<Contact> matchedContacts {get;set;}
-        @AuraEnabled public List<npe01__OppPayment__c> matchedPayments {get;set;}
-
         @AuraEnabled public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
         @AuraEnabled public Map<String, String> bdiLabels;
         @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
@@ -64,10 +59,6 @@ public with sharing class GiftEntryFormController {
             this.picklistValues = getPickListValues();
             this.closedWonStageMap = getClosedWonStageMap();
             this.di = new npsp__DataImport__c();
-            this.matchedOpps = new List<Opportunity>();
-            this.matchedContacts = new List<Contact>();
-            this.matchedAccts = new List<Account>();
-            this.matchedPayments = new List<npe01__OppPayment__c>();
             this.payments = new List<npe01__OppPayment__c>();
             this.partialCredits = new List<npsp__Partial_Soft_Credit__c>();
             this.allocs = new List<npsp__Allocation__c>();
@@ -269,6 +260,8 @@ public with sharing class GiftEntryFormController {
             }
 
             String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
+            // Data Import uses the Record Type name instead of ID, so we need to set that before processing
+            allOppFields += ', RecordType.Name';
             String allAccountFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Account');
             String allContactFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Contact');
             List<Opportunity> opps = 
@@ -322,6 +315,7 @@ public with sharing class GiftEntryFormController {
                                 npe01__Paid__c
                         FROM npe01__OppPayment__c
                         WHERE npe01__Opportunity__c = :oppId
+                        ORDER BY npe01__Scheduled_Date__c asc, npe01__Payment_Date__c asc
                 ];
                 if(!payments.isEmpty()) {
                     giftModel.payments = payments;
@@ -389,11 +383,12 @@ public with sharing class GiftEntryFormController {
     private static GiftFormModel saveDonationInformation(GiftFormModel giftModel) {
         Savepoint sp = Database.setSavepoint();
         // Upsert or Delete the provided Donor and Donation information
-        List<Database.SaveResult> saveResults = new List<Database.SaveResult>();
+        List<Database.UpsertResult> saveResults = new List<Database.UpsertResult>();
         try {
             // Insert or Update the provided Donation information
             if(giftModel.di != null) {
-                saveResults.addAll(UTIL_CrudFLS.create(giftModel.di));
+                UTIL_CrudFLS.checkUpsert(giftModel.di);
+                saveResults.addAll(Database.upsert(new List<npsp__DataImport__c>{giftModel.di}));
             } else {
                 System.debug('No DataImport object was provided'); 
                 return null;
@@ -408,7 +403,8 @@ public with sharing class GiftEntryFormController {
                 for(npsp__Allocation__c a : giftModel.allocs){
                     a.npsp__Opportunity__c = oppId;
                 }
-                saveResults.addAll(UTIL_CrudFLS.create(giftModel.allocs));
+                UTIL_CrudFLS.checkUpsert(giftModel.allocs);
+                saveResults.addAll(Database.upsert(giftModel.allocs));
             }
 
             if(giftModel.payments != null && !giftModel.payments.isEmpty()) {
@@ -417,7 +413,8 @@ public with sharing class GiftEntryFormController {
                         p.npe01__Opportunity__c = oppId;
                     }
                 }
-                saveResults.addAll(UTIL_CrudFLS.create(giftModel.payments));
+                UTIL_CrudFLS.checkUpsert(giftModel.payments);
+                saveResults.addAll(Database.upsert(giftModel.payments));
             }
 
             if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()){
@@ -426,12 +423,13 @@ public with sharing class GiftEntryFormController {
                         c.npsp__Opportunity__c = oppId;
                     }
                 }
-                saveResults.addAll(UTIL_CrudFLS.create(giftModel.partialCredits));
+                UTIL_CrudFLS.checkUpsert(giftModel.partialCredits);
+                saveResults.addAll(Database.upsert(giftModel.partialCredits));
             }
 
             giftModel.oppId = oppId;
 
-            for(Database.SaveResult result : saveResults) {
+            for(Database.UpsertResult result : saveResults) {
                 if(!result.isSuccess()) {
                     DmlException dmlException = new DmlException();
                     dmlException.setMessage(result.getErrors()[0].getMessage());

@@ -1,5 +1,6 @@
 ({
     getDonationInformation: function(component, oppId){
+        component.set('v.oppClosed', false);
         // Make changes if a recordId was provided (Edit mode)
         if(oppId){
             this.changeSubmitText(component, $A.get('$Label.c.Gift_Update'));
@@ -31,6 +32,9 @@
                 // An Opportunity was matched, update the form to reflect that
                 if(giftModel.oppId){
                     component.set('v.disableBlurEvents', true);
+                    if(giftModel.opp.ForecastCategory == 'Closed'){
+                        component.set('v.oppClosed', true);
+                    }
                     this.disablePaymentCalculateButton(component);
                     // var opp = this.proxyToObj(giftModel.opp);
                     var di = this.proxyToObj(component.get('v.di'));
@@ -39,6 +43,9 @@
                     this.mapOppToDi(component, di, giftModel.opp);
                     component.set('v.opp', giftModel.opp);
                     this.setDiFields(component, di);
+
+                    console.log(di);
+
                     // console.log(giftModel.payments); 
                     component.set('v.allocs', giftModel.allocs);
                     component.set('v.partialCredits', giftModel.partialCredits);
@@ -239,11 +246,14 @@
             paySched[0].disableCalcButton();
         }
     },
-    setupNewPaymentScroll: function(component){
+    focusOnAddPayment: function(component){
         var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
         if(relatedCmp){
             for(var i=0; i < relatedCmp.length; i++){
-                relatedCmp[i].setupScrollToNew();
+                var objectName = relatedCmp[i].getRelatedObject();
+                if(objectName == 'npe01__OppPayment__c'){
+                    relatedCmp[i].focusOnAddButton();
+                }
             }
         }
     },
@@ -345,7 +355,7 @@
 
         // Focus on Add New Payment button after loading this Donation
         if (selection.applyPayment) {
-            this.setupNewPaymentScroll(component);
+            this.focusOnAddPayment(component);
         }
 
         // Check if a Payment was selected, and get the Opportunity Id
@@ -361,15 +371,21 @@
         // component.set('v.payments', [selection]);
     },
     mapOppToDi: function(component, di, opp){
+        console.log(opp); 
         var fieldMap = component.get('v.objectFieldData.diToOppFieldMap');
         fieldMap = this.proxyToObj(fieldMap);
         for(var field in fieldMap){
-            // var diField = fieldMap[field];
             var oppField = fieldMap[field];
             var oppValue = opp[oppField];
-            if(oppValue){
-                di[field] = opp[oppField];
+            if(oppField == 'RecordTypeId' && opp['RecordType']){
+                oppValue = opp['RecordType'].Name;
             }
+            if(oppValue){
+                di[field] = oppValue;
+            }
+        }
+        if(opp.Id){
+            di['npsp__DonationImported__c'] = opp.Id;
         }
     },
     clearDonationSelectionOptions: function(component) {

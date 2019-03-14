@@ -189,6 +189,7 @@
                                 {!v.objectFieldData.objectLabels.Opportunity.Name}
                             </label>
                             <lightning:input variant="label-hidden"
+                                disabled="{!v.oppClosed}"
                                 value="{!v.di.npsp__Donation_Name__c}" />
                         </lightning:layoutItem>
 
@@ -201,6 +202,7 @@
                                 variant="label-hidden"
                                 type="date"
                                 onblur="{!c.checkPaymentChange}"
+                                disabled="{!v.oppClosed}"
                                 value="{!v.di.npsp__Donation_Date__c}" />
                         </lightning:layoutItem>
 
@@ -214,18 +216,21 @@
                                 type="number"
                                 formatter="currency" step="0.01"
                                 onblur="{!c.checkPaymentChange}"
+                                disabled="{!v.oppClosed}"
                                 value="{!v.di.npsp__Donation_Amount__c}" />
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}"
                                 fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}"
+                                disabled="{!v.oppClosed}"
                                 selectedVal="{!v.di.npsp__Donation_Stage__c}" />
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}"
                                 fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
+                                disabled="{!v.oppClosed}"
                                 selectedVal="{!v.di.npsp__Payment_Method__c}" />
                         </lightning:layoutItem>
 
@@ -233,23 +238,29 @@
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}
                             </label>
-                            <lightning:input disabled="{!v.di.npsp__Payment_Method__c != 'Check'}"
+                            <lightning:input disabled="{!v.di.npsp__Payment_Method__c != 'Check' || v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.di.npsp__Payment_Check_Reference_Number__c}" />
                         </lightning:layoutItem>
 
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            >
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.CampaignId}
                             </label>
-                            <force:inputField value="{!v.opp.CampaignId}" />
+                            <div class="{!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:inputField value="{!v.opp.CampaignId}" />
+                            </div>
+                            <div class="{!!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:outputField value="{!v.opp.CampaignId}" />
+                            </div>
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.Description}
                             </label>
-                            <lightning:textarea
+                            <lightning:textarea disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.di.npsp__Donation_Description__c}" />
                         </lightning:layoutItem>
@@ -268,37 +279,55 @@
 
                 <lightning:layoutItem size="12">
                     <lightning:layout multipleRows="true" class="{!v.expandTribute == true ? '' : 'slds-hidden'}">
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Tribute_Type__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Tribute_Type__c}" />
+                            <div class="{!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:inputField value="{!v.opp.npsp__Tribute_Type__c}" />
+                            </div>
+                            <div class="{!!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:outputField value="{!v.opp.npsp__Tribute_Type__c}" />
+                            </div>
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3" 
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Acknowledgment_Status__c}" />
+                            <div class="{!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:inputField value="{!v.opp.npsp__Acknowledgment_Status__c}" />
+                            </div>
+                            <div class="{!!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:outputField value="{!v.opp.npsp__Acknowledgment_Status__c}" />
+                            </div>
                         </lightning:layoutItem>
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Name__c}
                             </label>
-                            <lightning:input
+                            <lightning:input disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.opp.npsp__Honoree_Name__c}" />
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Contact__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Honoree_Contact__c}" />
+                            <div class="{!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:inputField value="{!v.opp.npsp__Honoree_Contact__c}" />
+                            </div>
+                            <div class="{!!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:outputField value="{!v.opp.npsp__Honoree_Contact__c}" />
+                            </div>
                         </lightning:layoutItem>
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Recipient_Name__c}
                             </label>
-                            <lightning:input
+                            <lightning:input disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.opp.npsp__Notification_Recipient_Name__c}" />
                         </lightning:layoutItem>
@@ -306,7 +335,7 @@
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Message__c}
                             </label>
-                            <lightning:input
+                            <lightning:input disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.opp.npsp__Notification_Message__c}" />
                         </lightning:layoutItem>
@@ -329,32 +358,51 @@
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Employer__c}
                             </label>
-                            <lightning:input
+                            <lightning:input disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.opp.npsp__Matching_Gift_Employer__c}" />
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Account__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Matching_Gift_Account__c}" />
+                            <div class="{!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:inputField value="{!v.opp.npsp__Matching_Gift_Account__c}" />
+                            </div>
+                            <div class="{!!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:outputField value="{!v.opp.npsp__Matching_Gift_Account__c}" />
+                            </div>
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Matching_Gift__c}" />
+                            <div class="{!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:inputField value="{!v.opp.npsp__Matching_Gift__c}" />
+                            </div>
+                            <div class="{!!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:outputField value="{!v.opp.npsp__Matching_Gift__c}" />
+                            </div>
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Status__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Matching_Gift_Status__c}" />
+                            <div class="{!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:inputField value="{!v.opp.npsp__Matching_Gift_Status__c}" />
+                            </div>
+                            <div class="{!!v.oppClosed ? 'slds-hidden' : ''}">
+                                <force:outputField value="{!v.opp.npsp__Matching_Gift_Status__c}" />
+                            </div>
                         </lightning:layoutItem>
                     </lightning:layout>
                 </lightning:layoutItem>
 
                 <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
+                    editMode="{!v.editMode}"
                     disablePaymentEvents="{!v.disableBlurEvents}"
                     paymentList="{!v.payments}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
@@ -366,6 +414,7 @@
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
+                    editMode="{!v.editMode}"    
                     disablePaymentEvents="{!v.disableBlurEvents}"    
                     itemList="{!v.partialCredits}"
                     objectName="npsp__Partial_Soft_Credit__c"
@@ -381,6 +430,7 @@
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
+                    editMode="{!v.editMode}"
                     disablePaymentEvents="{!v.disableBlurEvents}"
                     itemList="{!v.allocs}"
                     objectName="npsp__Allocation__c"

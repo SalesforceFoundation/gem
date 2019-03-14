@@ -31,7 +31,6 @@
         var blockChange = component.get('v.blockItemChangeEvent');
         var thisObj = component.get('v.objectName');
         var rowList = component.get('v.rowList');
-        var itemList = component.get('v.itemList');
 
         // If Payments are being overwritten, call delete on each of them first
         if(thisObj == 'npe01__OppPayment__c' && rowList.length > 0){
@@ -74,10 +73,13 @@
     toggleRelatedSection: function(component, event, helper) {
         component.set('v.expandSection', !component.get('v.expandSection'));
     },
-    setupScrollToNew: function(component){
-        if(component.get('v.objectName') == 'npe01__OppPayment__c'){
-            console.log("scroll payment!"); 
-            component.set('v.scrollToNew', true);
+    getRelatedObject: function(component){
+        return component.get("v.objectName");
+    },
+    focusOnAddButton: function(component){
+        var btn = component.find('add-button');
+        if(btn){
+            btn.focus();
         }
     }
 })

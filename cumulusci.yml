@@ -4,7 +4,7 @@ project:
         - github: https://github.com/SalesforceFoundation/HEDAP
     name: Advancement
     package:
-        name: GEM
+        name: Gift Entry Manager
         namespace: gem0
         api_version: 42.0
     git:

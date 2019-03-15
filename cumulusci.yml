@@ -125,9 +125,9 @@ flows:
             5:
                 task: update_admin_profile
             6:
-                flow: test_data_setup
-            7:
                 flow: test_data_dev_org
+            7:
+                flow: test_data_setup
 
     config_managed:
         steps:

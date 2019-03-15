@@ -1,4 +1,13 @@
 ({
+	handlePaymentsChange: function(component, event, helper){
+		// Gets called twice (once while bubbling up, once from the parent change)
+		// We only want to event to fire once, boolean is toggled to handle this
+		var blockChange = component.get('v.blockItemChangeEvent');
+		component.set('v.blockItemChangeEvent', !blockChange);
+		if(blockChange){
+			return;
+		}
+	},
 	clickCalculate: function(component, event, helper) {
 		component.set('v.userInteracted', true);
 		helper.clickCalculateHelper(component, false);

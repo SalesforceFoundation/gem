@@ -535,7 +535,9 @@ public with sharing class GiftEntryFormController {
             'paymentScheduledDate' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Scheduled_Date__c.getLabel(),
             'paymentImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImported__c.getName(),
             'paymentImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImportStatus__c.getName(),
-            'requireTotalMatch' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__RequireTotalMatch__c.getName()
+            'requireTotalMatch' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__RequireTotalMatch__c.getName(),
+            'userSelectedNewOpp' => System.Label.npsp.bdiMatchedByUserNewOpp,
+            'userSelectedMatch' => System.Label.npsp.bdiMatchedByUser
         };
 
         return labels;
@@ -660,7 +662,7 @@ public with sharing class GiftEntryFormController {
     */
     private static npsp__Data_Import_Settings__c getGiftEntrySettings() {
         npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
-        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.DoNotMatch;
+        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
         return diSettings;
     }
 

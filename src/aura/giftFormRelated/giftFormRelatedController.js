@@ -1,6 +1,6 @@
 ({
     clickAddRow: function(component, event, helper) {
-        helper.handleAddRow(component, helper);
+        helper.addSingleRow(component, helper);
         // Call addRowEvent, currently only used by the Payment Scheduler component
         var thisObj = component.get('v.objectName');
 		var sendMsgEvent = $A.get('e.ltng:sendMessage');

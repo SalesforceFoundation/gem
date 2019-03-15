@@ -24,36 +24,11 @@
             var state = response.getState();
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
-                console.log(giftModel); 
-
                 // console.log(giftModel); 
                 component.set('v.giftModel', giftModel);
 
-                // An Opportunity was matched, update the form to reflect that
-                if(giftModel.oppId){
-                    component.set('v.disableBlurEvents', true);
-                    if(giftModel.opp.ForecastCategory == 'Closed'){
-                        component.set('v.oppClosed', true);
-                    }
-                    this.disablePaymentCalculateButton(component);
-                    // var opp = this.proxyToObj(giftModel.opp);
-                    var di = this.proxyToObj(component.get('v.di'));
-
-                    // Map fields from Opportunity to DataImport
-                    this.mapOppToDi(component, di, giftModel.opp);
-                    component.set('v.opp', giftModel.opp);
-                    this.setDiFields(component, di);
-
-                    console.log(di);
-
-                    // console.log(giftModel.payments); 
-                    component.set('v.allocs', giftModel.allocs);
-                    component.set('v.partialCredits', giftModel.partialCredits);
-                    component.set('v.payments', giftModel.payments);
-                    component.set('v.disableBlurEvents', false);
-                }
-
                 var bdiLabels = component.get('v.bdiLabels');
+
                 // This is the initial call, set helper variables
                 // If using this page to load edits directly, we may need a separate variable
                 if(!bdiLabels){
@@ -65,6 +40,36 @@
                     this.handlePicklistSetup(component, giftModel.picklistValues);
                     // Setup any default form values
                     this.setDefaults(component, giftModel.opp);
+                }
+
+                // An Opportunity was matched, update the form to reflect that
+                if(giftModel.oppId){
+                    component.set('v.disableBlurEvents', true);
+                    if(giftModel.opp.ForecastCategory == 'Closed' || giftModel.opp.npe01__Number_of_Payments__c){
+                        component.set('v.oppClosed', true);
+                    }
+                    this.disablePaymentCalculateButton(component);
+                    // var opp = this.proxyToObj(giftModel.opp);
+                    var di = this.proxyToObj(component.get('v.di'));
+
+                    // Update the Data Import status to user-matched
+                    di[bdiLabels.opportunityImportedStatusField] = bdiLabels.userSelectedMatch;
+
+                    // Map fields from Opportunity to DataImport
+                    this.mapOppToDi(component, di, giftModel.opp);
+                    component.set('v.opp', giftModel.opp);
+                    this.setDiFields(component, di);
+
+                    component.set('v.campaignId', giftModel.opp.CampaignId);
+                    component.set('v.opp.npsp__Matching_Gift__c', giftModel.opp.npsp__Matching_Gift__c);
+
+                    console.log(di);
+
+                    // console.log(giftModel.payments); 
+                    component.set('v.allocs', giftModel.allocs);
+                    component.set('v.partialCredits', giftModel.partialCredits);
+                    component.set('v.payments', giftModel.payments);
+                    component.set('v.disableBlurEvents', false);
                 }
 
                 this.checkValidation(component);
@@ -377,6 +382,7 @@
         for(var field in fieldMap){
             var oppField = fieldMap[field];
             var oppValue = opp[oppField];
+            // Small exception for record type, Data Import wants the name, not the ID
             if(oppField == 'RecordTypeId' && opp['RecordType']){
                 oppValue = opp['RecordType'].Name;
             }
@@ -408,7 +414,6 @@
             } else {
                 this.handleError(component, response);
             }
-            // this.sendMessage('hideFormSpinner', '');
         });
         $A.enqueueAction(action);
     },

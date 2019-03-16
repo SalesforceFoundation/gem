@@ -13,9 +13,9 @@
         <members>Post_Install_Script</members>
         <members>Post_Install_Script_TEST</members>
         <members>TDTM_Glue</members>
-        <members>UTIL_CustomSettingsFacade</members>
         <members>UTIL_CrudFLS</members>
         <members>UTIL_CrudFLS_TEST</members>
+        <members>UTIL_CustomSettingsFacade</members>
         <members>UTIL_Describe</members>
         <members>UTIL_Describe_TEST</members>
         <members>UTIL_Namespace</members>
@@ -86,12 +86,12 @@
         <members>Gift_Donor_Required</members>
         <members>Gift_Donor_Type</members>
         <members>Gift_Edit_Selected_Donor</members>
+        <members>Gift_Entry</members>
         <members>Gift_Form_Error</members>
         <members>Gift_Matching_Gift</members>
         <members>Gift_Payment_Scheduler</members>
         <members>Gift_Save_Message_Detail</members>
         <members>Gift_Save_Message_Title</members>
-        <members>Gift_Saved_Message</members>
         <members>Gift_Show_Matching</members>
         <members>Gift_Soft_Credits</members>
         <members>Gift_Tribute_Information</members>
@@ -100,8 +100,11 @@
         <members>Number_of_Payments</members>
         <members>Partial</members>
         <members>Remove</members>
-        <members>Warning</members>
         <name>CustomLabel</name>
+    </types>
+    <types>
+        <members>CustomLabels</members>
+        <name>CustomLabels</name>
     </types>
     <types>
         <members>Advancement_Setting.Adv_config</members>
@@ -113,10 +116,6 @@
         <members>GEM_Settings__c</members>
         <members>Tag__c</members>
         <name>CustomObject</name>
-    </types>
-    <types>
-        <members>Gift_Entry</members>
-        <name>CustomTab</name>
     </types>
     <types>
         <members>Gift_Entry</members>

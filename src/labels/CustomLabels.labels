@@ -120,18 +120,18 @@
         <value>Donation Information</value>
     </labels>
     <labels>
-        <fullName>Gift_Donor_Information</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Donor Information</shortDescription>
-        <value>Donor Information</value>
-    </labels>
-    <labels>
         <fullName>Gift_Donation_Locked</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Gift Donation Locked</shortDescription>
         <value>The matched donation is locked, changes can only be made on the record itself.</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Donor_Information</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Information</shortDescription>
+        <value>Donor Information</value>
     </labels>
     <labels>
         <fullName>Gift_Donor_Required</fullName>
@@ -155,6 +155,13 @@
         <value>Edit Selected Donor</value>
     </labels>
     <labels>
+        <fullName>Gift_Entry</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Entry Form Header</shortDescription>
+        <value>Single Gift Entry</value>
+    </labels>
+    <labels>
         <fullName>Gift_Form_Error</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -174,13 +181,6 @@
         <protected>true</protected>
         <shortDescription>Payment Scheduler</shortDescription>
         <value>Payment Scheduler</value>
-    </labels>
-    <labels>
-        <fullName>Gift_Saved_Message</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Gift Saved Message</shortDescription>
-        <value>Gift saved, but not created, here are the results of data matching:</value>
     </labels>
     <labels>
         <fullName>Gift_Save_Message_Detail</fullName>
@@ -251,12 +251,5 @@
         <protected>true</protected>
         <shortDescription>Remove</shortDescription>
         <value>Remove</value>
-    </labels>
-    <labels>
-        <fullName>Warning</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Warning</shortDescription>
-        <value>Warning</value>
     </labels>
 </CustomLabels>

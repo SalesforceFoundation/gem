@@ -1,4 +1,4 @@
-<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" controller="GiftEntryFormController">
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable" access="global" controller="GiftEntryFormController">
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
@@ -68,6 +68,20 @@
         <lightning:spinner class="slds-is-fixed" />
     </aura:if>
     <aura:if isTrue="{!v.showForm}">
+        <header role="banner" class="header slds-p-bottom_medium">
+            <div class="slds-page-header">
+                <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate slds-align-middle">
+                        <h1>
+                            <span class="slds-page-header__title" title="Gift Entry">
+                                <h1>{!$Label.c.Gift_Entry}</h1>
+                            </span>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
         <div class="slds-card" aura:id="formWrapper">
             <lightning:layout
                 multipleRows="true">
@@ -81,7 +95,7 @@
 
                 <lightning:layoutItem size="12">
                     <div class="slds-page-header slds-page-header__title">
-                        {!$Label.c.Gift_Donor_Information}
+                        <h2>{!$Label.c.Gift_Donor_Information}</h2>
                     </div>
                 </lightning:layoutItem>
 
@@ -122,7 +136,7 @@
 
                 <lightning:layoutItem size="12">
                     <div class="slds-page-header slds-page-header__title">
-                        {!$Label.c.Gift_Donation_Information}
+                        <h2>{!$Label.c.Gift_Donation_Information}</h2>
                     </div>
                 </lightning:layoutItem>
 
@@ -204,9 +218,9 @@
                     <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
                         aria-expanded="true"
                         onclick="{!c.expandTributeSection}">
-                        <lightning:icon iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}"
+                        <h2><lightning:icon iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}"
                             size="x-small"
-                            alternativeText="Toggle Tribute Information" />{!$Label.c.Gift_Tribute_Information}
+                            alternativeText="Toggle Tribute Information" />{!$Label.c.Gift_Tribute_Information}</h2>
                     </button>
                 </lightning:layoutItem>
 
@@ -261,9 +275,9 @@
                     <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
                         aria-expanded="true"
                         onclick="{!c.expandMatchingSection}">
-                        <lightning:icon iconName="{!v.expandMatching == true ? 'utility:chevrondown' : 'utility:chevronright'}"
+                        <h2><lightning:icon iconName="{!v.expandMatching == true ? 'utility:chevrondown' : 'utility:chevronright'}"
                             size="x-small"
-                            alternativeText="Toggle Matching Gift Information" />{!$Label.c.Gift_Matching_Gift}
+                            alternativeText="Toggle Matching Gift Information" />{!$Label.c.Gift_Matching_Gift}</h2>
                     </button>
                 </lightning:layoutItem>
 

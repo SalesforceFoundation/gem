@@ -30,6 +30,7 @@
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
     <aura:attribute type="String" name="oppId" />
+    <aura:attribute type="String" name="oppLockedStatus" />
     <aura:attribute type="Boolean" name="showForm" default="true" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disableCreate" default="false" />
@@ -87,7 +88,7 @@
                 <aura:if isTrue="{!v.oppClosed}">
                     <div class="slds-col slds-size_1-of-1">
                         <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-                            <h2>{!$Label.c.Gift_Donation_Locked}</h2>
+                            <h2>{!v.oppLockedStatus}</h2>
                         </div>
                     </div>
                 </aura:if>

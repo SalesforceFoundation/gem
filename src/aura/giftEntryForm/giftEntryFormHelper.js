@@ -45,9 +45,15 @@
                 // An Opportunity was matched, update the form to reflect that
                 if(giftModel.oppId){
                     component.set('v.disableBlurEvents', true);
-                    if(giftModel.opp.ForecastCategory == 'Closed' || giftModel.opp.npe01__Number_of_Payments__c){
+                    var oppStatus = '';
+                    if(giftModel.opp.ForecastCategory == 'Closed'){
                         component.set('v.oppClosed', true);
+                        oppStatus = $A.get('$Label.c.Gift_Donation_Locked');
+                    } else if(giftModel.opp.npe01__Number_of_Payments__c){
+                        component.set('v.oppClosed', true);
+                        oppStatus = $A.get('$Label.c.Gift_Donation_Locked_Payments');
                     }
+                    component.set('v.oppLockedStatus', oppStatus);
                     this.disablePaymentCalculateButton(component);
                     // var opp = this.proxyToObj(giftModel.opp);
                     var di = this.proxyToObj(component.get('v.di'));

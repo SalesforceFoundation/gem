@@ -131,7 +131,14 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Gift Donation Locked</shortDescription>
-        <value>The matched donation is locked, changes can only be made on the record itself.</value>
+        <value>The matched opportunity is locked, changes can only be made on the record itself.</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Donation_Locked_Payments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Donation Locked</shortDescription>
+        <value>The matched opportunity is open, but has associated payments. Changes can only be made on the record itself.</value>
     </labels>
     <labels>
         <fullName>Gift_Donor_Required</fullName>

@@ -4,8 +4,8 @@ project:
         - github: https://github.com/SalesforceFoundation/HEDAP
     name: Advancement
     package:
-        name: Advancement
-        namespace: adv1
+        name: Gift Entry Manager
+        namespace: gem0
         api_version: 42.0
     git:
         prefix_release: rel/
@@ -94,14 +94,14 @@ tasks:
 flows:
     config_apextest:
         steps:
-            3: 
+            3:
                 task: deploy_dev_config
 
     config_dev:
         steps:
-            3: 
+            3:
                 task: deploy_dev_config_delete
-            4: 
+            4:
                 task: deploy_dev_config
             5:
                 flow: test_data_setup
@@ -110,9 +110,9 @@ flows:
         steps:
             2:
                 task: None
-            3: 
+            3:
                 task: deploy_dev_config_delete
-            4: 
+            4:
                 task: deploy_dev_config
             5:
                 task: update_admin_profile
@@ -123,7 +123,7 @@ flows:
 
     config_managed:
         steps:
-            3: 
+            3:
                 task: deploy_dev_config
                 options:
                     unmanaged: False
@@ -159,9 +159,9 @@ flows:
         steps:
             1:
                 flow: beta_dependencies
-            2: 
+            2:
                 flow: deploy_unmanaged
-            3: 
+            3:
                 flow: config_dev
 
     test_data_setup:
@@ -202,11 +202,11 @@ flows:
 
     install_pilot_settings:
         steps:
-            1: 
+            1:
                 task: test_data_default_settings
                 options:
                     managed: True
-            2: 
+            2:
                 task: deploy_abacus_settings
                 options:
                     managed: True

@@ -114,6 +114,15 @@ public with sharing class GiftEntryFormController {
     	for(Schema.DescribeFieldResult field : fields.values()){
       		if(field.isAccessible()) {
                 String helpText = field.getInlineHelpText();
+                String fieldName = field.getName();
+                if(fieldName == 
+                    Schema.SObjectType.npsp__DataImport__c.fields.npsp__Account1Imported__c.getName()){
+                        helpText = 'Opportunity.AccountId';
+                } else if(fieldName ==
+                    Schema.SObjectType.npsp__DataImport__c.fields.npsp__Contact1Imported__c.getName()){
+                        helpText = 'Opportunity.npsp__Primary_Contact__c';
+                }
+
                 if(helpText == null){
                     continue;
                 }

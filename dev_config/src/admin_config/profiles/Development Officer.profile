@@ -58,11 +58,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Primary_Campaign__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Tribute_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>

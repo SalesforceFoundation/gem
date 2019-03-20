@@ -44,27 +44,29 @@
         helper.clearDonationSelectionOptions(component);
         const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
         const lookupValue = component.find(lookupField).get('v.value');
-        if(!lookupValue){
+        const lookupId = helper.getIdFromLookupValue(lookupValue);
+        if(!lookupId){
             return;
         }
-        const lookupValueIsValidId = lookupValue.length === 18;
+        const lookupValueIsValidId = lookupId.length === 18;
 
         if (lookupValueIsValidId) {
             // TODO: Add loading spinner during query
             // helper.sendMessage('showFormSpinner', '');
-            helper.queryOpenDonations(component, lookupValue);
+            helper.queryOpenDonations(component, lookupId);
         }
 
         helper.checkValidation(component);
     },
     clickEditDonor: function(component, event, helper) {
         var donorType = component.get('v.di.npsp__Donation_Donor__c');
-        var donorId;
+        var lookupValue;
         if(donorType == 'Account1'){
-            donorId = component.get('v.di.npsp__Account1Imported__c');
+            lookupValue = component.get('v.opp.AccountId');
         } else {
-            donorId = component.get('v.di.npsp__Contact1Imported__c');
+            lookupValue = component.get('v.opp.npsp__Primary_Contact__c');
         }
+        var donorId = helper.getIdFromLookupValue(lookupValue);
         helper.showEditRecordModal(component, donorId);
     },
     clickCreate: function(component, event, helper) {

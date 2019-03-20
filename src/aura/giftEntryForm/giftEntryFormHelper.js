@@ -7,13 +7,8 @@
             component.set('v.editMode', true);
         } else {
             this.changeSubmitText(component, $A.get('$Label.c.Gift_Create'));
-            component.set('v.editMode', false);
             this.resetForm(component);
-            var bdiLabels = component.get('v.bdiLabels');
-            if(bdiLabels){
-                // The form has already been loaded, just return
-                return;
-            }
+            component.set('v.editMode', false);
         }
 
         var getModelAction = component.get('c.initClass');
@@ -38,8 +33,6 @@
                     component.set('v.objectFieldData.diToOppFieldMap', giftModel.diToOppFieldMap);
 
                     this.handlePicklistSetup(component, giftModel.picklistValues);
-                    // Setup any default form values
-                    this.setDefaults(component, giftModel.opp);
                 }
 
                 // An Opportunity was matched, update the form to reflect that
@@ -52,6 +45,9 @@
                     } else if(giftModel.opp.npe01__Number_of_Payments__c){
                         component.set('v.oppClosed', true);
                         oppStatus = $A.get('$Label.c.Gift_Donation_Locked_Payments');
+                    } else {
+                        // This Opportunity is open with no payments, don't make one automatically
+                        this.preventDefaultPayment();
                     }
                     component.set('v.oppLockedStatus', oppStatus);
                     this.disablePaymentCalculateButton(component);
@@ -69,15 +65,16 @@
                     component.set('v.campaignId', giftModel.opp.CampaignId);
                     component.set('v.opp.npsp__Matching_Gift__c', giftModel.opp.npsp__Matching_Gift__c);
 
-                    console.log(di);
-
                     // console.log(giftModel.payments); 
                     component.set('v.allocs', giftModel.allocs);
                     component.set('v.partialCredits', giftModel.partialCredits);
                     component.set('v.payments', giftModel.payments);
                     component.set('v.disableBlurEvents', false);
+                    // Hide and show lookup fields to update them
+                    this.rerenderInputs(component, 'renderInputs');
                 }
 
+                this.setDefaults(component, giftModel.opp);
                 this.checkValidation(component);
                 component.set('v.showSpinner', false);
             } else if (state === 'ERROR') {
@@ -92,6 +89,26 @@
         component.set('v.allocs', []);
         component.set('v.partialCredits', []);
         component.set('v.payments', []);
+
+        this.resetObjectFields(component, 'opp');
+        this.resetObjectFields(component, 'di');
+        this.rerenderInputs(component, 'renderInputs');
+    },
+    resetObjectFields: function(component, varName){
+        var objVarString = 'v.' + varName;
+        var opp = component.get(objVarString);
+        var vField;
+        // TODO: Clean this up, we don't want to reset these fields
+        for(var field in opp){
+            if(field == 'sobjectType'
+                || field == 'npe01__Do_Not_Automatically_Create_Payment__c'
+                || field == 'AccountId'
+                || field == 'npsp__Primary_Contact__c'){
+                continue;
+            }
+            vField = objVarString + '.' + field;
+            component.set(vField, null);
+        }
     },
     setDiFields: function(component, di){
         var val;
@@ -278,8 +295,9 @@
 
         var amtWasChanged = false;
 		if(fieldVal){
-			// Check if the change was made to the amount field and not the date field
-			amtWasChanged = fieldVal.indexOf('-') < 0;
+            // Check if the change was made to the amount field and not the date field
+            var valStr = ''+fieldVal;
+			amtWasChanged = valStr.indexOf('-') < 0;
 		}
         
         // If the amount and date are set, check if the Payment Schedule should be updated
@@ -382,7 +400,6 @@
         // component.set('v.payments', [selection]);
     },
     mapOppToDi: function(component, di, opp){
-        console.log(opp); 
         var fieldMap = component.get('v.objectFieldData.diToOppFieldMap');
         fieldMap = this.proxyToObj(fieldMap);
         for(var field in fieldMap){
@@ -391,6 +408,11 @@
             // Small exception for record type, Data Import wants the name, not the ID
             if(oppField == 'RecordTypeId' && opp['RecordType']){
                 oppValue = opp['RecordType'].Name;
+            }
+            if(oppValue instanceof Array){
+                // Lookup values are stored as arrays for some reason
+                oppValue = oppValue[0];
+                opp[oppField] = oppValue;
             }
             if(oppValue){
                 di[field] = oppValue;
@@ -414,7 +436,6 @@
             const state = response.getState();
             if (state === 'SUCCESS') {
                 const openDonations = JSON.parse(response.getReturnValue());
-                console.log(openDonations); 
                 component.set('v.openOpportunities', openDonations.openOpportunities);
                 component.set('v.unpaidPayments', openDonations.unpaidPayments);
             } else {
@@ -441,8 +462,9 @@
         // Map fields from Opportunity to DataImport
         // This is done to avoid referencing GEM namespace fields in markup
         this.mapOppToDi(component, di, opp);
-        
         giftModel['di'] = di;
+        // Lookup values are converted from array to ID during mapOppToDi, so we need to update
+        giftModel['opp'] = opp;
 
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};
@@ -482,10 +504,25 @@
     scrollToTop: function(){
         window.scrollTo(0, 0);
     },
-    updateFieldUI: function(field){
-        var inputBody = field.get('v.body')[0];
-        if(inputBody.updateValues){
-            inputBody.updateValues();
+    preventDefaultPayment: function(){
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+            'message': 'npe01__OppPayment__c',
+			'channel': 'addRowEvent'
+		});
+		sendMsgEvent.fire();
+    },
+    rerenderInputs: function(component, booleanAttr){
+        var boolString = 'v.'+booleanAttr;
+        component.set(boolString, false);
+        setTimeout($A.getCallback(() => component.set(boolString, true)));
+    },
+    getIdFromLookupValue: function(lookupValue){
+        var idArray = this.proxyToObj(lookupValue);
+        if(!idArray || !idArray.length){
+            return null;
+        } else {
+            return idArray[0];
         }
     },
     clearInputs: function(component, fieldId){
@@ -493,8 +530,8 @@
         findResult = this.singleInputToArray(findResult);
         for(var i in findResult){
             findResult[i].set('v.value', '');
-            this.updateFieldUI(findResult[i]);
         }
+        this.rerenderInputs(component, 'renderDonorInputs');
     },
     convertDateToString: function(dateObj){
 		return dateObj.toISOString().split('T')[0];

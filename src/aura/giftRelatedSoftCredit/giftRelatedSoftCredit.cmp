@@ -24,7 +24,7 @@
                 <label class="slds-form-element__label">{!$Label.c.Gift_Credit_Type}</label>
             </aura:if>
 
-            <lightning:radioGroup name="creditType"
+            <lightning:radioGroup
                 value="{!v.creditType}"
                 options="{!v.typeOptions}"
                 type="button"

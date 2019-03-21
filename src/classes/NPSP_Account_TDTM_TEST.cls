@@ -98,4 +98,39 @@ private class NPSP_Account_TDTM_TEST {
         System.assertEquals(true, updateModel, 'The setting is turned on, there should be an udpate');
     }
 
+    /*******************************************************************************************************
+    * @description Test the correct fields are set when switching an Account from the administrative record type
+    * to the Household record type. 
+    */
+    @isTest
+    static void testAccountChangedToHousehold() {
+        
+        //Set HEDA custom setting
+        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID()));
+        
+        // Get the household record type
+        String householdRecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
+
+        Contact testContact = UTIL_UnitTestData_TEST.getContact();
+
+        insert testContact;
+
+        // Query for the account that was created. 
+        Contact queriedContact = [Select Id, AccountId, Account.RecordTypeId from Contact Where Id =: testContact.Id];
+        Account queriedAccount = queriedContact.Account;
+
+        Test.startTest();
+        System.assert(queriedAccount.RecordTypeId != householdRecordTypeId, 'The created account should not already be a household record type');
+        queriedAccount.RecordTypeId = householdRecordTypeId;
+
+        update queriedAccount;
+
+        Account updatedAccount = [Select Id, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c, Type from Account where Id =: queriedAccount.Id];
+        System.assert(updatedAccount.npe01__SYSTEM_AccountType__c == 'Household Account', 'The npe01__SYSTEM_AccountType__c is not set to Household, actual value is: ' + updatedAccount.npe01__SYSTEM_AccountType__c);
+        System.assert(updatedAccount.npe01__SYSTEMISINDIVIDUAL__c == true, 'The npe01__SYSTEMISINDIVIDUAL__c is not set to true, actual value is: ' + updatedAccount.npe01__SYSTEMISINDIVIDUAL__c);
+        System.assert(updatedAccount.Type == 'Household', 'The type is not set to Household, actual value is: ' + updatedAccount.Type);
+
+        Test.stopTest();
+    }
+
 }

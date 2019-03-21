@@ -530,6 +530,10 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>npsp__DonationCampaignImportStatus__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>npsp__Campaign_Member_Status__c</field>
             </layoutItems>
         </layoutColumns>

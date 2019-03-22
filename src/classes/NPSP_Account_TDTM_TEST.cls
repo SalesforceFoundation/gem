@@ -100,14 +100,22 @@ private class NPSP_Account_TDTM_TEST {
 
     /*******************************************************************************************************
     * @description Test the correct fields are set when switching an Account from the administrative record type
-    * to the Household record type. 
+    * to the Household record type and back. 
     */
     @isTest
-    static void testAccountChangedToHousehold() {
+    static void testAccountSwitchRecordTypeBetweenHouseholdAndAdmin() {
         
-        //Set HEDA custom setting
-        UTIL_CustomSettingsFacade.setHEDASettingForTest(new hed__Hierarchy_Settings__c(hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID()));
-        
+        //Set HEDA custom setting with Household
+        hed__Hierarchy_Settings__c hedaSettings = hed.UTIL_CustomSettings_API.getOrgSettings();
+        hedaSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+
+        hed.UTIL_CustomSettings_API.getSettingsForTests(hedaSettings);
+
+        // Create the NPSP custom setting that is necessary for the code to run properly. 
+        npe01__Contacts_And_Orgs_Settings__c contactAndOrgSetting = npsp.UTIL_CustomSettings_API.getContactsSettings();
+        contactAndOrgSetting.npe01__One_to_One_RecordTypeID__c = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+        insert contactAndOrgSetting;
+
         // Get the household record type
         String householdRecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
 
@@ -126,11 +134,18 @@ private class NPSP_Account_TDTM_TEST {
         update queriedAccount;
 
         Account updatedAccount = [Select Id, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c, Type from Account where Id =: queriedAccount.Id];
-        System.assert(updatedAccount.npe01__SYSTEM_AccountType__c == 'Household Account', 'The npe01__SYSTEM_AccountType__c is not set to Household, actual value is: ' + updatedAccount.npe01__SYSTEM_AccountType__c);
+        System.assert(updatedAccount.npe01__SYSTEM_AccountType__c == npsp.CAO_Constants_API.HH_ACCOUNT_TYPE, 'The npe01__SYSTEM_AccountType__c is not set to ' + npsp.CAO_Constants_API.HH_ACCOUNT_TYPE + ', actual value is: ' + updatedAccount.npe01__SYSTEM_AccountType__c);
         System.assert(updatedAccount.npe01__SYSTEMISINDIVIDUAL__c == true, 'The npe01__SYSTEMISINDIVIDUAL__c is not set to true, actual value is: ' + updatedAccount.npe01__SYSTEMISINDIVIDUAL__c);
-        System.assert(updatedAccount.Type == 'Household', 'The type is not set to Household, actual value is: ' + updatedAccount.Type);
-
+        System.assert(updatedAccount.Type == npsp.CAO_Constants_API.HH_TYPE, 'The type is not set to ' + npsp.CAO_Constants_API.HH_TYPE + ', actual value is: ' + updatedAccount.Type);
+       
+        queriedAccount.RecordTypeId = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+        
+        update queriedAccount;
+        
+        updatedAccount = [Select Id, npe01__SYSTEM_AccountType__c, npe01__SYSTEMISINDIVIDUAL__c, Type, RecordTypeId from Account where Id =: queriedAccount.Id];
+        System.assert(updatedAccount.npe01__SYSTEM_AccountType__c == npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE, 'The npe01__SYSTEM_AccountType__c is not set to ' + npsp.CAO_Constants_API.ONE_TO_ONE_ORGANIZATION_TYPE +', actual value is: ' + updatedAccount.npe01__SYSTEM_AccountType__c);
+        System.assert(updatedAccount.npe01__SYSTEMISINDIVIDUAL__c == true, 'The npe01__SYSTEMISINDIVIDUAL__c is not set to true, actual value is: ' + updatedAccount.npe01__SYSTEMISINDIVIDUAL__c);
+        System.assert(updatedAccount.Type == null, 'The type is not set to null, actual value is: ' + updatedAccount.Type);
         Test.stopTest();
     }
-
 }

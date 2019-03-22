@@ -8,7 +8,8 @@ project:
         namespace: gem0
         api_version: 42.0
     git:
-        prefix_release: rel/
+        prefix_release: rel/gem0/
+        prefix_beta: beta/gem0/
         repo_url: https://github.com/SalesforceFoundation/gem
 
 tasks:

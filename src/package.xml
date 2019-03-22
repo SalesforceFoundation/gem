@@ -139,5 +139,5 @@
         <members>Donations_with_tags</members>
         <name>ReportType</name>
     </types>
-    <version>42.0</version>
+    <version>45.0</version>
 </Package>

@@ -326,41 +326,6 @@ public with sharing class UTIL_Describe {
     }
 
     /*******************************************************************************************************
-     * @description Returns the ID of the Administrative Account record type, if it exists.
-     * @return String The ID of the Administrative Account record type as a String.
-     */
-    public static String getAdminAccRecTypeID() {
-        String recTypeId = getRecTypesMapByDevName('Account').get('Administrative');
-        if(String.isBlank(recTypeId) && Test.isRunningTest()) {
-            if(getRecTypesMapByDevName('Account').values().size() > 0) {
-                return getRecTypesMapByDevName('Account').values()[0];
-            }
-            else {
-                return null;
-            }
-        } else {
-            return recTypeId;
-        }
-    }
-
-    /*******************************************************************************************************
-     * @description Returns the ID of the Household Account record type, if it exists.
-     * @return String The ID of the Household Account record type as a String.
-     */
-    public static String getHhAccRecTypeID() {
-        String recTypeId = getRecTypesMapByDevName('Account').get('HH_Account');
-        if(String.isBlank(recTypeId) && Test.isRunningTest()) {
-            if(getRecTypesMapByDevName('Account').values().size() > 1) {
-                return getRecTypesMapByDevName('Account').values()[1];
-            } else {
-                return null;
-            }
-        } else {
-            return recTypeId;
-        }
-    }
-
-    /*******************************************************************************************************
      * @description Returns a comma delimited string with all accessible fields of an object, used for queries.
      * @param sobjectname Name of the object to retrieve field list for.
      * @throws UTIL_CrudFLS.AccessException when the supplied sObject is not readable by the current user

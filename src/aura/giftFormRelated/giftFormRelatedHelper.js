@@ -72,6 +72,7 @@
 
         var preventAmountSurplus = component.get('v.preventAmountSurplus');
         var preventAmountDeficit = component.get('v.preventAmountDeficit');
+        var displayErrorOnAmountSurplus = component.get('v.displayErrorOnAmountSurplus');
         var donationAmt = component.get('v.donationAmt');
         // If there is a donation amount and a total, and they do not match, show message
         var amtError = '';
@@ -83,12 +84,14 @@
         }
         var amountsDoNotMatch = donationAmt && amtIsNumber && (donationAmt != amountTotal);
         var preventSubmit = false;
-        if(amountTotal > donationAmt){
-            if(preventAmountSurplus){
-                component.set('v.messageIsError', true);
-                preventSubmit = true;
+        if (amountTotal > donationAmt) {
+            if (displayErrorOnAmountSurplus) {
+                if (preventAmountSurplus) {
+                    component.set('v.messageIsError', true);
+                    preventSubmit = true;
+                }
+                amtError += $A.get('$Label.c.Gift_Amounts_Greater_than_Donation');
             }
-            amtError += $A.get('$Label.c.Gift_Amounts_Greater_than_Donation');
         } else if(amountsDoNotMatch){
             if(preventAmountDeficit){
                 component.set('v.messageIsError', true);

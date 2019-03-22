@@ -78,10 +78,10 @@ global class NPSP_Account_TDTM extends hed.TDTM_Runnable {
             
             // If the account's record type is being changed to household, 
             // Clear the two fields so that NPSP's code will execute. 
-            if (oldAccount.RecordTypeId != newAccount.RecordTypeId && 
-                newAccount.RecordTypeId == householdRecordTypeId) {
+            if (oldAccount.RecordTypeId != newAccount.RecordTypeId) {
                 newAccount.npe01__SYSTEM_AccountType__c = null;
                 newAccount.npe01__SYSTEMISINDIVIDUAL__c = false;
+                newAccount.Type = null;
             }
         }
     }

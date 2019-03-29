@@ -76,7 +76,7 @@ global class NPSP_Account_TDTM extends hed.TDTM_Runnable {
             Account newAccount = (Account)accountSobj;
             Account oldAccount = (Account)oldMap.get(newAccount.Id);
             
-            // If the account's record type is being changed to household, 
+            // If the account's record type is being changed, 
             // Clear the two fields so that NPSP's code will execute. 
             if (oldAccount.RecordTypeId != newAccount.RecordTypeId) {
                 newAccount.npe01__SYSTEM_AccountType__c = null;

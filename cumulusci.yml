@@ -5,11 +5,11 @@ project:
     name: Advancement
     package:
         name: Gift Entry Manager
-        namespace: gem0
+        namespace: gem
         api_version: 42.0
     git:
-        prefix_release: rel/gem0/
-        prefix_beta: beta/gem0/
+        prefix_release: rel/gem/
+        prefix_beta: beta/gem/
         repo_url: https://github.com/SalesforceFoundation/gem
 
 tasks:

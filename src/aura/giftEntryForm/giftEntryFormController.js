@@ -1,5 +1,6 @@
 ({
     doInit: function(component, event, helper) {
+        component.set('v.showSpinner', true);
         var recordId = component.get('v.recordId');
         // Get the data model class for the form
         // Includes picklist options, field labels, and objects if loading an existing record

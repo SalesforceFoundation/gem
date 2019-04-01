@@ -455,8 +455,9 @@ public with sharing class GiftEntryFormController {
     }
 
     /*******************************************************************************************************
-    * @description Retrieves all open Opportunities and unpaid Payments for the selected Donor (Account or Contact)
-    * @return JSON stringified Map<String, List<SObject>> of all openOpportunities and unpaidPayments for the given donor
+    * @description Retrieves all open Opportunities, and Opportunities with unpaid Payments, for the 
+    * selected Donor (Account or Contact)
+    * @return JSON stringified Map<String, List<SObject>> of all openOpportunities for the given donor
     */
     @AuraEnabled
     public static String getOpenDonations(Id donorId, String donorType) {
@@ -497,14 +498,6 @@ public with sharing class GiftEntryFormController {
             opportunitySOQL += ' OR Id in :oppIds)';
             List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
             Map<Id, Opportunity> openOpportunitiesById = new Map<Id, Opportunity>(openOpportunities);
-
-            // openOpportunities should only include opps with NO UNPAID PAYMENTS for BDI to process donations correctly
-            // for (npe01__OppPayment__c payment : unpaidPayments) {
-            //     Id idOfCurrentOpportunity = payment.npe01__Opportunity__c;
-            //     if (openOpportunitiesById.containsKey(idOfCurrentOpportunity)) {
-            //         openOpportunitiesById.remove(idOfCurrentOpportunity);
-            //     }
-            // }
 
             Map<String, List<SObject>> response = new Map<String, List<SObject>>{
                 'openOpportunities' => openOpportunitiesById.values(),

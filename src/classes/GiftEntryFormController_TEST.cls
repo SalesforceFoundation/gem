@@ -330,6 +330,38 @@ private class GiftEntryFormController_TEST {
         System.assertEquals(1, paymentList.size());
     }
 
+    @isTest
+    private static void testGetOpenDonations() {
+        Contact con1 = UTIL_UnitTestData_TEST.getContact();
+        insert con1;
+
+        Opportunity opp = UTIL_UnitTestData_TEST.getOpenOpportunity(con1, 100);
+        Opportunity opp2 = UTIL_UnitTestData_TEST.getOpenOpportunity(con1, 100);
+        opp2.StageName = UTIL_UnitTestData_TEST.getClosedWonStage();
+        insert new List<Opportunity>{opp, opp2};
+
+        // Add an unpaid payment to the closed Opp, which should be found by matching query
+        npe01__OppPayment__c p1 = UTIL_UnitTestData_TEST.getUnpaidPayment(opp2, 100);
+        insert p1;
+
+        Test.startTest();
+        String openDonations = GiftEntryFormController.getOpenDonations(con1.Id, 'Contact1');
+        Test.stopTest();
+
+        System.assert(openDonations.contains(opp.Name));
+        System.assert(openDonations.contains(opp2.Name));
+        System.assert(openDonations.contains(opp.Id));
+        System.assert(openDonations.contains(opp2.Id));
+
+        con1 = [SELECT Id, AccountId FROM Contact WHERE Id =:con1.Id];
+        String openAccountDonations = GiftEntryFormController.getOpenDonations(con1.AccountId, 'Account1');
+
+        System.assert(openAccountDonations.contains(opp.Name));
+        System.assert(openAccountDonations.contains(opp2.Name));
+        System.assert(openAccountDonations.contains(opp.Id));
+        System.assert(openAccountDonations.contains(opp2.Id));
+    }
+
     private static npsp__DataImport__c getTestDI(){
         return new npsp__DataImport__c(
             npsp__Contact1_Firstname__c = cFirst,

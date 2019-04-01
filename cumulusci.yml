@@ -4,11 +4,12 @@ project:
         - github: https://github.com/SalesforceFoundation/HEDAP
     name: Advancement
     package:
-        name: Advancement
-        namespace: adv1
+        name: Gift Entry Manager
+        namespace: gem0
         api_version: 42.0
     git:
-        prefix_release: rel/
+        prefix_release: rel/gem0/
+        prefix_beta: beta/gem0/
         repo_url: https://github.com/SalesforceFoundation/gem
 
 tasks:
@@ -76,32 +77,17 @@ tasks:
             path: dev_config/scripts/configure_default_settings.cls
             method: AddGiftProcessor();
 
-    publish_installer:
-        class_path: cumulusci.tasks.metadeploy.Publish
-        options:
-            product_id: DBL2xmV
-            flow: install_pilot
-            title: Install Pilot
-            description: Installs the Gift Entry Manager pilot
-            slug: pilot
-            tier: primary
-            group: Release Management
-            preflight_message: Gift Entry Manager (GEM)
-            post_install_message: |
-                Thanks for installing Gift Entry Manager (GEM)!
-
-                Please post any feedback in the Power of Us Hub (<https://sfdc.co/bjJ33p>). Your feedback is valued and will help us improve the product.
 flows:
     config_apextest:
         steps:
-            3: 
+            3:
                 task: deploy_dev_config
 
     config_dev:
         steps:
-            3: 
+            3:
                 task: deploy_dev_config_delete
-            4: 
+            4:
                 task: deploy_dev_config
             5:
                 flow: test_data_setup
@@ -110,9 +96,9 @@ flows:
         steps:
             2:
                 task: None
-            3: 
+            3:
                 task: deploy_dev_config_delete
-            4: 
+            4:
                 task: deploy_dev_config
             5:
                 task: update_admin_profile
@@ -123,7 +109,7 @@ flows:
 
     config_managed:
         steps:
-            3: 
+            3:
                 task: deploy_dev_config
                 options:
                     unmanaged: False
@@ -159,9 +145,9 @@ flows:
         steps:
             1:
                 flow: beta_dependencies
-            2: 
+            2:
                 flow: deploy_unmanaged
-            3: 
+            3:
                 flow: config_dev
 
     test_data_setup:
@@ -181,7 +167,6 @@ flows:
                 task: test_data_delete
             2:
                 task: test_data_dev_org
-
     install_pilot:
       steps:
           1:
@@ -200,17 +185,58 @@ flows:
           5:
               flow: install_pilot_settings
 
+
     install_pilot_settings:
         steps:
-            1: 
+            1:
                 task: test_data_default_settings
                 options:
                     managed: True
-            2: 
+            2:
                 task: deploy_abacus_settings
                 options:
                     managed: True
 
+plans:
+    limited_release:
+        slug: limited-release
+        title: Install Limited Release
+        tier: primary
+        description: Installs the Gift Entry Manager Limited Release
+        steps:
+            1:
+                task: update_dependencies
+                options:
+                    dependencies:
+                        - github: https://github.com/SalesforceFoundation/Cumulus
+                        - github: https://github.com/SalesforceFoundation/HEDAP
+                        - github: https://github.com/SalesforceFoundation/Abacus
+                ui_options:
+                    1:
+                        name: NPSP - Account Record Types
+                    2:
+                        name: NPSP - Opportunity Record Types
+                    9:
+                        name: NPSP Config for Salesforce Mobile App
+                    10:
+                        name: HEDA - Account Record Types
+                    11:
+                        name: HEDA - Contact Key Affiliation Fields
+                    13:
+                        name: HEDA - Deploy Course Connection Record Types
+            2:
+                task: deploy_pre
+            3:
+                task: install_managed
+            4:
+                flow: config_managed
+            5:
+                flow: install_pilot_settings
+                ui_options:
+                    test_data_default_settings:
+                        name: Configure the default NPSP Settings for Gift Processing
+                    deploy_abacus_settings:
+                        name: Deploy Abacus Settings
 
 orgs:
     scratch:

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>API_HEDA_Class__c</fullName>
+        <defaultValue>&apos;API_HEDA&apos;</defaultValue>
+        <description>The name of the class that enables HEDA to access the Gift Entry Management TDTM interface. Do not change the default value for this field.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>The name of the class that enables HEDA to access the Gift Entry Management TDTM interface. Do not change the default value for this field.</inlineHelpText>
+        <label>API HEDA Class</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>API_NPSP_Class__c</fullName>
+        <defaultValue>&apos;API_NPSP&apos;</defaultValue>
+        <description>The name of the class that enables NPSP to access the Gift Entry Management TDTM interface. Do not change the default value for this field.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>The name of the class that enables NPSP to access the Gift Entry Management TDTM interface. Do not change the default value for this field.</inlineHelpText>
+        <label>API NPSP Class</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Use_GEM__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>Enable Gift Entry Management managed package in HEDA and NPSP. Do not change the default value for this field.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Enable Gift Entry Management managed package in HEDA and NPSP. Do not change the default value for this field.</inlineHelpText>
+        <label>Use GEM</label>
+        <type>Checkbox</type>
+    </fields>
+    <label>GEM API Settings</label>
+    <pluralLabel>GEM API Settings</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

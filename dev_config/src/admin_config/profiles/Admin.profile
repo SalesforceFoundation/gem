@@ -53,11 +53,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Primary_Campaign__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>npsp__DataImport__c.%%%NAMESPACE%%%Donation_Tribute_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -215,7 +210,7 @@
     </recordTypeVisibilities>
 
     <tabVisibilities>
-        <tab>%%%NAMESPACE%%%Gift_Entry</tab>
+        <tab>%%%NAMESPACE%%%Single_Gift_Entry</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
 </Profile>

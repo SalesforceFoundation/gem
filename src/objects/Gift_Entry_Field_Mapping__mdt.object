@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This mapping determines which fields are displayed when a specific</description>
+    <fields>
+        <fullName>Controlling_Field__c</fullName>
+        <description>The field on the controlling object whose value will control which fields are dynamically displayed.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <label>Controlling Field</label>
+        <metadataRelationshipControllingField>Gift_Entry_Field_Mapping__mdt.Controlling_Object__c</metadataRelationshipControllingField>
+        <referenceTo>FieldDefinition</referenceTo>
+        <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+        <relationshipName>Gift_Entry_Field_Mappings</relationshipName>
+        <required>false</required>
+        <type>MetadataRelationship</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Controlling_Object__c</fullName>
+        <description>The controlling object whose field value will control which fields are dynamically displayed.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <label>Controlling Object</label>
+        <referenceTo>EntityDefinition</referenceTo>
+        <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+        <relationshipName>Gift_Entry_Field_Mappings</relationshipName>
+        <required>false</required>
+        <type>MetadataRelationship</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Dependent_Field_List__c</fullName>
+        <description>The list of fields which are dynamically displayed based on the specified field values.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <label>Dependent Field List</label>
+        <length>32768</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <label>Gift Entry Field Mapping</label>
+    <pluralLabel>Gift Entry Field Mappings</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

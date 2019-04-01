@@ -107,6 +107,7 @@
     <types>
         <members>GEM_Settings__c</members>
         <members>GEM_API_Settings__mdt</members>
+        <members>Gift_Entry_Field_Mapping__mdt</members>
         <name>CustomObject</name>
     </types>
     <types>

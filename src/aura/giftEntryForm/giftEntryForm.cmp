@@ -91,14 +91,6 @@
 
             <lightning:layout
                 multipleRows="true">
-                <aura:if isTrue="{!v.oppClosed}">
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-                            <h2>{!v.oppLockedStatus}</h2>
-                        </div>
-                    </div>
-                </aura:if>
-
                 <lightning:layoutItem size="12">
                     <div class="slds-page-header slds-page-header__title">
                         {!$Label.c.Gift_Donor_Information}
@@ -190,6 +182,14 @@
                         
                     </lightning:layout>
                 </lightning:layoutItem>
+
+                <aura:if isTrue="{!v.oppClosed}">
+                    <div class="slds-col slds-size_1-of-1">
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>{!v.oppLockedStatus}</h2>
+                        </div>
+                    </div>
+                </aura:if>
 
                 <lightning:layoutItem size="12">
                     <div class="slds-page-header slds-page-header__title">

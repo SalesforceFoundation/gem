@@ -9,7 +9,7 @@
         value="{!v.item.npe01__Scheduled_Date__c}" 
         action="{!c.handlePaid}"/>
 
-    <lightning:layout>
+    <lightning:layout multipleRows="true">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <aura:if isTrue="{!v.showLabels}">
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Amount__c}</label>
@@ -24,7 +24,7 @@
                 step="0.01"
                 value="{!v.item.npe01__Payment_Amount__c}" />
         </lightning:layoutItem>
-        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <aura:if isTrue="{!v.showLabels}">
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}</label>
             </aura:if>
@@ -32,7 +32,7 @@
                 value="{!v.item.npe01__Scheduled_Date__c}" 
                 displayDatePicker="true" />
         </lightning:layoutItem>
-        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <aura:if isTrue="{!v.showLabels}">
                 <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}</label>
             </aura:if>
@@ -57,6 +57,16 @@
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Paid__c}" 
                 variant="label-hidden"
                 checked="{!v.item.npe01__Paid__c}" />
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
+            <aura:if isTrue="{!v.showLabels}">
+                <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Written_Off__c}</label>
+            </aura:if>
+            <lightning:input name="paymentWriteoff" 
+                type="checkbox" 
+                label="{!v.objectFieldData.objectLabels.Payment.npe01__Written_Off__c}" 
+                variant="label-hidden"
+                checked="{!v.item.npe01__Written_Off__c}" />
         </lightning:layoutItem>
 
         <div class="slds-hidden">

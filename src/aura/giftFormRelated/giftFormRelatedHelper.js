@@ -18,7 +18,7 @@
             var donationAmt = component.getReference('v.donationAmt');
             var checkAmountTotals = component.getReference('v.checkAmountTotals');
             var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
-            var editMode = component.getReference('v.editMode');
+            var editMode = component.get('v.editMode');
             var showLabels = (index == 0 || newRowNum == 0) ? true : false;
 
             $A.createComponent(
@@ -67,6 +67,9 @@
 
         // Check amount validation on this section
         this.handleAmtChangeHelper(component);
+        
+        // This way, new rows will not be locked
+        component.set('v.editMode', false);
     },
     createRowsFromItemList: function(component, helper){
         // Called when the item list is completely overwritten

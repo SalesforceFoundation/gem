@@ -47,23 +47,23 @@
     <lightning:layoutItem size="12" class="{!v.expandSection == true ? '' : 'slds-hidden'}">
         <lightning:layout multipleRows="true" horizontalAlign="spread">
 
-            <lightning:layoutItem padding="around-small" size="2">
+            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 {!v.objectFieldData.objectLabels.Opportunity.Amount}:<br/>
                 <ui:outputCurrency value="{!v.donationAmt}"/>
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="2">
+            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 <lightning:input type="number" 
                     value="{!v.paymentNum}" 
                     label="{!$Label.c.Number_of_Payments}" 
                     step="1" />
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="3">
+            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                 <ui:inputDate class="show-required"
                     label="{!$Label.c.Date_of_First_Payment}"
                     value="{!v.startDate}" 
                     displayDatePicker="true" />
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="1">
+            <lightning:layoutItem padding="around-small" size="3" mediumDeviceSize="1">
                 <lightning:select name="interval" 
                     label="{!$Label.c.Interval}" 
                     value="{!v.intervalNum}">
@@ -81,7 +81,7 @@
                     <option value="12">12</option>
                 </lightning:select>
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="2">
+            <lightning:layoutItem padding="around-small" size="3" mediumDeviceSize="2">
                 <lightning:select name="frequency" 
                     label="{!$Label.c.Frequency}" 
                     value="{!v.intervalFreq}">
@@ -90,7 +90,7 @@
                     <option value="Week">Week</option>
                 </lightning:select>
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="2">
+            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
                     fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
                     selectedVal="{!v.selectedPaymentMethod}" />

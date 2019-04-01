@@ -5,7 +5,7 @@ project:
     name: Advancement
     package:
         name: Gift Entry Manager
-        namespace: gem0
+        namespace: gem
         api_version: 42.0
     git:
         prefix_release: rel/gem0/

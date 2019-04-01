@@ -98,4 +98,19 @@ private class NPSP_Account_TDTM_TEST {
         System.assertEquals(true, updateModel, 'The setting is turned on, there should be an udpate');
     }
 
+    /**
+     * @description Test situation when gem namespace not correctly configured. Should catch an exception.
+     */
+    @isTest
+    static void tdtmRunnableTest() {
+        Account acc = UTIL_UnitTestData_TEST.getAccount(hed.UTIL_Describe_API.getAdminAccRecTypeID());
+        NPSP_Account_TDTM tdtm = new NPSP_Account_TDTM();
+        try {
+            tdtm.run(new List<Account>{acc}, new List<Account>(), hed.TDTM_Runnable.Action.BeforeInsert, Schema.Account.SObjectType.getDescribe());
+        } catch(Exception ex) {
+            // always throws adapter exception if namespace not correctly detected.
+            System.assertEquals('npsp.ADV_Adapter.AdapterException', ex.getTypeName(), 'Got wrong type of exception');
+        }
+    }
+
 }

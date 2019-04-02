@@ -109,20 +109,6 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
-        <fullName>Donation_Primary_Campaign__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
-        <description>Lookup to the related Campaign</description>
-        <externalId>false</externalId>
-        <inlineHelpText>Opportunity.CampaignId</inlineHelpText>
-        <label>Donation Primary Campaign</label>
-        <referenceTo>Campaign</referenceTo>
-        <relationshipLabel>NPSP Data Imports</relationshipLabel>
-        <relationshipName>NPSP_Data_Imports</relationshipName>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Lookup</type>
-    </fields>
-    <fields>
         <fullName>Donation_Tribute_Type__c</fullName>
         <description>Donation Tribute Type</description>
         <externalId>false</externalId>

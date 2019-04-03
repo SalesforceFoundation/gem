@@ -207,6 +207,19 @@ flows:
                 options:
                     managed: True
 
+    # Temporary workaround for deployment issue introduced in 1c00b3c
+    deploy_packaging:
+        steps:
+            6:
+                options:
+                    ignore:
+                        FlexiPage:
+                            - Gift_Entry
+                        CustomTab:
+                            - Gift_Entry
+                        CustomField:
+                            - npsp__DataImport__c.Donation_Primary_Campaign__c
+
 plans:
     limited_release:
         slug: limited-release

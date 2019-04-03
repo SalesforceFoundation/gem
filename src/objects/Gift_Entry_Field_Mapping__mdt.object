@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>This mapping determines which fields are displayed when a specific</description>
+    <description>This mapping determines which fields are displayed when a specific value of a picklist is selected.</description>
     <fields>
         <fullName>Controlling_Field__c</fullName>
         <description>The field on the controlling object whose value will control which fields are dynamically displayed.</description>

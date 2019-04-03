@@ -16,6 +16,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Prospecting</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Closed Won</fullName>
             <default>false</default>
         </values>

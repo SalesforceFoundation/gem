@@ -33,3 +33,13 @@
     bottom: 50px;
     left: 0;
 }
+
+.THIS.outerDivContainer {
+    padding: 0px 0px 240px 0px;
+}
+
+@supports (-ms-ime-align:auto) {
+    .THIS.outerDivContainer {
+        padding: 0px 0px 240px 0px;
+    }
+  }

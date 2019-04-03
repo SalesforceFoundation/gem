@@ -34,12 +34,12 @@
     left: 0;
 }
 
-.THIS.cardMargin { 
-    margin: 0px 0px 240px 0px;
+.THIS.outerDivContainer {
+    padding: 0px 0px 240px 0px;
 }
 
 @supports (-ms-ime-align:auto) {
-    .THIS.cardMargin { 
-        margin: 0px 0px 747px 0px;
-    } 
+    .THIS.outerDivContainer {
+        padding: 0px 0px 240px 0px;
+    }
   }

@@ -20,9 +20,9 @@
         <won>true</won>
     </standardValue>
     <standardValue>
-        <fullName>Declined</fullName>
+        <fullName>Closed Lost</fullName>
         <default>false</default>
-        <label>Declined</label>
+        <label>Closed Lost</label>
         <closed>true</closed>
         <forecastCategory>Omitted</forecastCategory>
         <probability>0</probability>

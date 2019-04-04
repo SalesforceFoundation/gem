@@ -120,13 +120,6 @@
         <value>Donation Information</value>
     </labels>
     <labels>
-        <fullName>Gift_Donor_Information</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Donor Information</shortDescription>
-        <value>Donor Information</value>
-    </labels>
-    <labels>
         <fullName>Gift_Donation_Locked</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -137,8 +130,15 @@
         <fullName>Gift_Donation_Locked_Payments</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Gift Donation Locked</shortDescription>
+        <shortDescription>Gift with Payments Locked</shortDescription>
         <value>The matched opportunity is open, but has associated payments. Changes can only be made on the record itself.</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Donor_Information</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Information</shortDescription>
+        <value>Donor Information</value>
     </labels>
     <labels>
         <fullName>Gift_Donor_Required</fullName>
@@ -160,6 +160,13 @@
         <protected>true</protected>
         <shortDescription>Edit Selected Donor</shortDescription>
         <value>Edit Selected Donor</value>
+    </labels>
+    <labels>
+        <fullName>Gift_Entry_Header</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Entry Header</shortDescription>
+        <value>Single Gift Entry</value>
     </labels>
     <labels>
         <fullName>Gift_Form_Error</fullName>

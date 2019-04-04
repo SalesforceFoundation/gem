@@ -333,7 +333,7 @@
     </recordTypeVisibilities>
 
     <tabVisibilities>
-        <tab>%%%NAMESPACE%%%Gift_Entry</tab>
+        <tab>%%%NAMESPACE%%%Single_Gift_Entry</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
 </Profile>

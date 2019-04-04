@@ -512,6 +512,14 @@
 		});
 		sendMsgEvent.fire();
     },
+    sendMessage: function(channel, message){
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+            'message': message,
+			'channel': channel
+		});
+		sendMsgEvent.fire();
+    },
     rerenderInputs: function(component, booleanAttr){
         var boolString = 'v.'+booleanAttr;
         component.set(boolString, false);

@@ -48,10 +48,10 @@
                     <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
                         aria-expanded="{!v.expandSection}"
                         onclick="{!c.toggleRelatedSection}">
-                        <lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
+                        <h2><lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
                             size="x-small"
                             alternativeText="Toggle Section" />
-                            {!v.sectionTitle}
+                            {!v.sectionTitle}</h2>
                     </button>
                 </lightning:layoutItem>
             </aura:if>

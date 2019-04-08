@@ -62,7 +62,7 @@ public with sharing class GiftEntryFormController {
             this.payments = new List<npe01__OppPayment__c>();
             this.partialCredits = new List<npsp__Partial_Soft_Credit__c>();
             this.allocs = new List<npsp__Allocation__c>();
-            this.bdiLabels = getBatchDataImportLabels();
+            this.bdiLabels = batchDataImportLabels;
             this.diToOppFieldMap = getDataImportToOpportunityFieldMap();
         }
 
@@ -403,10 +403,19 @@ public with sharing class GiftEntryFormController {
                 return null;
             }
 
-            // After saving, need to process
-            runGiftProcess(giftModel.di.Id, false);
+            // TODO: Rewrite this logic
+            // After saving the DI, if the related Opportunity is Open and has no Payments, process it
+            if((giftModel.opp.ForecastCategory == null || giftModel.opp.ForecastCategory != 'Closed') && 
+                (giftModel.opp.npe01__Number_of_Payments__c == null || giftModel.opp.npe01__Number_of_Payments__c < 1)){
+                    runGiftProcess(giftModel.di.Id, false);
+            }
 
-            Id oppId = getOpportunityIdFromImport(giftModel.di.Id);
+            Id oppId = giftModel.di.npsp__DonationImported__c != null ?
+                giftModel.di.npsp__DonationImported__c : getOpportunityIdFromImport(giftModel.di.Id);
+            
+            if(oppId == null){
+                throw returnAuraException('No Opportunity was created or matched');
+            }
 
             if(giftModel.allocs != null && !giftModel.allocs.isEmpty()){
                 for(npsp__Allocation__c a : giftModel.allocs){
@@ -513,36 +522,40 @@ public with sharing class GiftEntryFormController {
     * @description Retrieves required schema information for the component.
     * @return Map of DataImport__c object and field name keys to their labels.
     */
-    private static Map<String, String> getBatchDataImportLabels() {
-
-        Map<String, String> labels = new Map<String, String> {
-            'accountObject' => Schema.SObjectType.Account.getLabel(),
-            'accountLookup' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Account1Imported__c.getName(),
-            'batchIdField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__NPSP_Data_Import_Batch__c.getName(),
-            'contactLookup' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Contact1Imported__c.getName(),
-            'contactObject' => Schema.SObjectType.Contact.getLabel(),
-            'dataImportObject' => Schema.SObjectType.npsp__DataImport__c.getName(),
-            'donationDonor' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Donation_Donor__c.getName(),
-            'donationAmountField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Donation_Amount__c.getName(),
-            'expectedCountField' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__Expected_Count_of_Gifts__c.getName(),
-            'expectedTotalField' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__Expected_Total_Batch_Amount__c.getName(),
-            'opportunityImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__DonationImported__c.getName(),
-            'opportunityImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__DonationImportStatus__c.getName(),
-            'opportunityAmount' => Schema.SObjectType.Opportunity.fields.Amount.getLabel(),
-            'opportunityObject' => Schema.SObjectType.Opportunity.getLabel(),
-            'opportunityName' => Schema.SObjectType.Opportunity.getLabel(),
-            'opportunityStage' => Schema.SObjectType.Opportunity.fields.StageName.getLabel(),
-            'paymentAmount' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Payment_Amount__c.getLabel(),
-            'paymentObject' => Schema.SObjectType.npe01__OppPayment__c.getLabel(),
-            'paymentScheduledDate' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Scheduled_Date__c.getLabel(),
-            'paymentImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImported__c.getName(),
-            'paymentImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImportStatus__c.getName(),
-            'requireTotalMatch' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__RequireTotalMatch__c.getName(),
-            'userSelectedNewOpp' => System.Label.npsp.bdiMatchedByUserNewOpp,
-            'userSelectedMatch' => System.Label.npsp.bdiMatchedByUser
-        };
-
-        return labels;
+    private static Map<String, String> batchDataImportLabels {
+        get {
+            if(batchDataImportLabels == null){
+                batchDataImportLabels = new Map<String, String> {
+                    'accountObject' => Schema.SObjectType.Account.getLabel(),
+                    'accountLookup' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Account1Imported__c.getName(),
+                    'batchIdField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__NPSP_Data_Import_Batch__c.getName(),
+                    'contactLookup' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Contact1Imported__c.getName(),
+                    'contactObject' => Schema.SObjectType.Contact.getLabel(),
+                    'dataImportObject' => Schema.SObjectType.npsp__DataImport__c.getName(),
+                    'donationDonor' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Donation_Donor__c.getName(),
+                    'donationAmountField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Donation_Amount__c.getName(),
+                    'expectedCountField' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__Expected_Count_of_Gifts__c.getName(),
+                    'expectedTotalField' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__Expected_Total_Batch_Amount__c.getName(),
+                    'opportunityImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__DonationImported__c.getName(),
+                    'opportunityImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__DonationImportStatus__c.getName(),
+                    'opportunityAmount' => Schema.SObjectType.Opportunity.fields.Amount.getLabel(),
+                    'opportunityObject' => Schema.SObjectType.Opportunity.getLabel(),
+                    'opportunityName' => Schema.SObjectType.Opportunity.getLabel(),
+                    'opportunityStage' => Schema.SObjectType.Opportunity.fields.StageName.getLabel(),
+                    'paymentAmount' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Payment_Amount__c.getLabel(),
+                    'paymentObject' => Schema.SObjectType.npe01__OppPayment__c.getLabel(),
+                    'paymentScheduledDate' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Scheduled_Date__c.getLabel(),
+                    'paymentImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImported__c.getName(),
+                    'paymentImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImportStatus__c.getName(),
+                    'requireTotalMatch' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__RequireTotalMatch__c.getName(),
+                    'userSelectedNewOpp' => System.Label.npsp.bdiMatchedByUserNewOpp,
+                    'userSelectedNewPayment' => System.Label.npsp.bdiMatchedApplyNewPayment,
+                    'userSelectedMatch' => System.Label.npsp.bdiMatchedByUser
+                };
+            }
+            return batchDataImportLabels;
+        }
+        set;
     }
 
     /*******************************************************************************************************

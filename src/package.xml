@@ -126,9 +126,5 @@
         <members>npsp__DataImport__c-GEM Gift Layout</members>
         <name>Layout</name>
     </types>
-    <types>
-        <members>New_Household_Account</members>
-        <name>QuickAction</name>
-    </types>
     <version>42.0</version>
 </Package>

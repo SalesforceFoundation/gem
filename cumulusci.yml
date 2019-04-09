@@ -34,6 +34,14 @@ tasks:
         options:
             path: dev_config/delete
 
+    deploy_pilot_config:
+        description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
+        class_path: cumulusci.tasks.salesforce.DeployBundles
+        options:
+            namespace_inject: $project_config.project__package__namespace
+            path: pilot_config
+            unmanaged: False
+
     execute_install_apex:
         description: Runs most of the install script methods from Post_Install_Script class
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
@@ -103,9 +111,9 @@ flows:
             5:
                 task: update_admin_profile
             6:
-                flow: test_data_setup
-            7:
                 flow: test_data_dev_org
+            7:
+                flow: test_data_setup
 
     config_managed:
         steps:
@@ -184,6 +192,8 @@ flows:
               flow: config_managed
           5:
               flow: install_pilot_settings
+          6:
+              task: deploy_pilot_config
 
 
     install_pilot_settings:

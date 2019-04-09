@@ -174,19 +174,6 @@ Insert OpportunityContactRoles:
             table: opportunities
             join_field: id
             value_field: sf_id
-Insert Payments:
-    sf_object: npe01__OppPayment__c
-    table: payments
-    fields:
-        Id: sf_id
-        npe01__Payment_Amount__c: amount
-        npe01__Payment_Date__c: payment_date
-    lookups:
-        npe01__Opportunity__c:
-            key_field: opportunity_id
-            table: opportunities
-            join_field: id
-            value_field: sf_id
 Insert Partial Soft Credits:
     sf_object: npsp__Partial_Soft_Credit__c
     table: partialsoftcredits
@@ -226,6 +213,19 @@ Insert Allocations:
         npsp__General_Accounting_Unit__c:
             key_field: gau_id
             table: gaus
+            join_field: id
+            value_field: sf_id
+Insert Payments:
+    sf_object: npe01__OppPayment__c
+    table: payments
+    fields:
+        Id: sf_id
+        npe01__Payment_Amount__c: amount
+        npe01__Payment_Date__c: payment_date
+    lookups:
+        npe01__Opportunity__c:
+            key_field: opportunity_id
+            table: opportunities
             join_field: id
             value_field: sf_id
 Insert Relationships:

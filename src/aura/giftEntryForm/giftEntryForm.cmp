@@ -1,4 +1,4 @@
-<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable" access="global" controller="GiftEntryFormController">
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable" access="public" controller="GiftEntryFormController">
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />

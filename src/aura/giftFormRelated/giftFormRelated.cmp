@@ -1,5 +1,4 @@
-<aura:component access="global"
-    implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
+<aura:component>
     
     <aura:method name="handleJsonUpdate" />
     <aura:method name="focusOnAddButton" /> 

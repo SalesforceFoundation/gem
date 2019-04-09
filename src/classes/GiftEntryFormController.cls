@@ -394,20 +394,34 @@ public with sharing class GiftEntryFormController {
         // Upsert or Delete the provided Donor and Donation information
         List<Database.UpsertResult> saveResults = new List<Database.UpsertResult>();
         try {
-            // Insert or Update the provided Donation information
-            if(giftModel.di != null) {
-                UTIL_CrudFLS.checkUpsert(giftModel.di);
-                saveResults.addAll(Database.upsert(new List<npsp__DataImport__c>{giftModel.di}));
-            } else {
-                System.debug('No DataImport object was provided'); 
-                return null;
+            Boolean processDI = true;
+            // If the Opportunity is closed or has payments, the DataImport cannot be processed
+            if((giftModel.opp.ForecastCategory != null && giftModel.opp.ForecastCategory == 'Closed') || 
+                (giftModel.opp.npe01__Number_of_Payments__c != null && giftModel.opp.npe01__Number_of_Payments__c > 0)){
+                    processDI = false;
             }
 
-            // TODO: Rewrite this logic
-            // After saving the DI, if the related Opportunity is Open and has no Payments, process it
-            if((giftModel.opp.ForecastCategory == null || giftModel.opp.ForecastCategory != 'Closed') && 
-                (giftModel.opp.npe01__Number_of_Payments__c == null || giftModel.opp.npe01__Number_of_Payments__c < 1)){
-                    runGiftProcess(giftModel.di.Id, false);
+            if(!processDI){
+                // If we can't process the DataImport, check for an existing one instead of creating a new one
+                List<npsp__DataImport__c> dataImports = [SELECT Id, npsp__DonationImported__c 
+                    FROM npsp__DataImport__c 
+                    WHERE npsp__DonationImported__c = :giftModel.opp.Id
+                    LIMIT 1];
+
+                // TODO: Could add a comment on the DI record to show it was used to update?
+                if(!dataImports.isEmpty()){
+                    giftModel.di = dataImports[0];
+                }
+            }
+
+            // Insert or Update the provided Donation information
+            if(giftModel.di != null && giftModel.di.Id == null){
+                UTIL_CrudFLS.checkUpsert(giftModel.di);
+                saveResults.addAll(Database.upsert(new List<npsp__DataImport__c>{giftModel.di}));
+            }
+
+            if(processDI){
+                runGiftProcess(giftModel.di.Id, false);
             }
 
             Id oppId = giftModel.di.npsp__DonationImported__c != null ?

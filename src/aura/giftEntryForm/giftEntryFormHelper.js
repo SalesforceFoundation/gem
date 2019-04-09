@@ -438,6 +438,11 @@
                 const openDonations = JSON.parse(response.getReturnValue());
                 component.set('v.openOpportunities', openDonations.openOpportunities);
                 component.set('v.unpaidPayments', openDonations.unpaidPayments);
+                // If currently editing an existing Opportunity, clear the form
+                var oppId = component.get('v.giftModel.oppId');
+                if(oppId){
+                    this.getDonationInformation(component, null);
+                }
             } else {
                 this.handleError(component, response);
             }

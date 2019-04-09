@@ -82,6 +82,8 @@
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
+        <customButtons>npsp__Manage_Allocations</customButtons>
+        <excludeButtons>New</excludeButtons>
         <fields>NAME</fields>
         <fields>npsp__General_Accounting_Unit__c</fields>
         <fields>npsp__Amount__c</fields>
@@ -91,8 +93,8 @@
     <relatedLists>
         <fields>NAME</fields>
         <fields>aba1__Amount__c</fields>
-        <fields>aba1__Date__c</fields>
         <fields>aba1__General_Accounting_Unit__c</fields>
+        <fields>aba1__Date__c</fields>
         <fields>aba1__Type__c</fields>
         <relatedList>aba1__Ledger_Entry__c.aba1__Payment__c</relatedList>
     </relatedLists>

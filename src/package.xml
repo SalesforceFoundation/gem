@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Advancement</fullName>
+    <fullName>GEM</fullName>
     <types>
         <members>API_HEDA</members>
         <members>API_HEDA_TEST</members>
@@ -13,9 +13,9 @@
         <members>Post_Install_Script</members>
         <members>Post_Install_Script_TEST</members>
         <members>TDTM_Glue</members>
-        <members>UTIL_CustomSettingsFacade</members>
         <members>UTIL_CrudFLS</members>
         <members>UTIL_CrudFLS_TEST</members>
+        <members>UTIL_CustomSettingsFacade</members>
         <members>UTIL_Describe</members>
         <members>UTIL_Describe_TEST</members>
         <members>UTIL_Namespace</members>
@@ -29,7 +29,6 @@
         <members>giftFormRelatedRow</members>
         <members>giftPaymentScheduler</members>
         <members>giftPicklist</members>
-        <members>giftPicklistChangeEvent</members>
         <members>giftRelatedAllocation</members>
         <members>giftRelatedPayment</members>
         <members>giftRelatedSoftCredit</members>
@@ -40,14 +39,10 @@
         <name>CustomApplication</name>
     </types>
     <types>
-        <members>Advancement_Setting__mdt.API_HEDA_Class__c</members>
-        <members>Advancement_Setting__mdt.API_NPSP_Class__c</members>
-        <members>Advancement_Setting__mdt.Use_Advancement__c</members>
-        <members>Donation_Tag__c.Donation_Opportunity__c</members>
-        <members>Donation_Tag__c.Tag_Name__c</members>
-        <members>Donation_Tag__c.Tag__c</members>
+        <members>GEM_API_Settings__mdt.API_HEDA_Class__c</members>
+        <members>GEM_API_Settings__mdt.API_NPSP_Class__c</members>
+        <members>GEM_API_Settings__mdt.Use_GEM__c</members>
         <members>GEM_Settings__c.Sync_Account_Models__c</members>
-        <members>Opportunity.Tags__c</members>
         <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
         <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
@@ -57,7 +52,6 @@
         <members>npsp__DataImport__c.Donation_Matching_Gift_Status__c</members>
         <members>npsp__DataImport__c.Donation_Matching_Gift__c</members>
         <members>npsp__DataImport__c.Donation_Notification_Message__c</members>
-        <members>npsp__DataImport__c.Donation_Primary_Campaign__c</members>
         <members>npsp__DataImport__c.Donation_Tribute_Type__c</members>
         <members>npsp__DataImport__c.Notification_Recipient_Name__c</members>
         <members>npsp__DataImport__c.Post_Process_Object_JSON__c</members>
@@ -86,12 +80,12 @@
         <members>Gift_Donor_Required</members>
         <members>Gift_Donor_Type</members>
         <members>Gift_Edit_Selected_Donor</members>
+        <members>Gift_Entry_Header</members>
         <members>Gift_Form_Error</members>
         <members>Gift_Matching_Gift</members>
         <members>Gift_Payment_Scheduler</members>
         <members>Gift_Save_Message_Detail</members>
         <members>Gift_Save_Message_Title</members>
-        <members>Gift_Saved_Message</members>
         <members>Gift_Show_Matching</members>
         <members>Gift_Soft_Credits</members>
         <members>Gift_Tribute_Information</members>
@@ -100,44 +94,37 @@
         <members>Number_of_Payments</members>
         <members>Partial</members>
         <members>Remove</members>
-        <members>Warning</members>
         <name>CustomLabel</name>
     </types>
     <types>
-        <members>Advancement_Setting.Adv_config</members>
+        <members>CustomLabels</members>
+        <name>CustomLabels</name>
+    </types>
+    <types>
+        <members>GEM_API_Settings.GEM_config</members>
         <name>CustomMetadata</name>
     </types>
     <types>
-        <members>Advancement_Setting__mdt</members>
-        <members>Donation_Tag__c</members>
+        <members>GEM_API_Settings__mdt</members>
         <members>GEM_Settings__c</members>
-        <members>Tag__c</members>
         <name>CustomObject</name>
     </types>
     <types>
-        <members>Gift_Entry</members>
+        <members>Single_Gift_Entry</members>
         <name>CustomTab</name>
     </types>
     <types>
-        <members>Gift_Entry</members>
-        <members>Gift_Update</members>
         <members>Opportunity_Record_Page</members>
         <name>FlexiPage</name>
     </types>
     <types>
-        <members>Account-Advancement Household Layout</members>
-        <members>Account-Advancement Organization Layout</members>
-        <members>Advancement_Setting__mdt-Advancement Setting Layout</members>
-        <members>Contact-Advancement Contact Layout</members>
-        <members>Donation_Tag__c-Donation Opportunity Layout</members>
-        <members>Opportunity-Advancement Gift Layout</members>
-        <members>Tag__c-All Layout</members>
-        <members>npsp__DataImport__c-Advancement Gift Layout</members>
+        <members>Account-GEM Household Layout</members>
+        <members>Account-GEM Organization Layout</members>
+        <members>Contact-GEM Contact Layout</members>
+        <members>GEM_API_Settings__mdt-GEM API Settings Layout</members>
+        <members>Opportunity-GEM Gift Layout</members>
+        <members>npsp__DataImport__c-GEM Gift Layout</members>
         <name>Layout</name>
-    </types>
-    <types>
-        <members>Donations_with_tags</members>
-        <name>ReportType</name>
     </types>
     <version>45.0</version>
 </Package>

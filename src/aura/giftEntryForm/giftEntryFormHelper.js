@@ -266,7 +266,7 @@
             'npsp__Matching_Gift_Employer__c': nsFieldPrefix + 'Donation_Matching_Gift_Employer__c',
             'npsp__Matching_Gift_Status__c': nsFieldPrefix + 'Donation_Matching_Gift_Status__c',
             'npsp__Notification_Message__c': nsFieldPrefix + 'Donation_Notification_Message__c',
-            'CampaignId': nsFieldPrefix + 'Donation_Primary_Campaign__c',
+            'CampaignId': 'npsp__DonationCampaignImported__c',
             'npsp__Tribute_Type__c': nsFieldPrefix + 'Donation_Tribute_Type__c',
             'npsp__Notification_Recipient_Name__c': nsFieldPrefix + 'Notification_Recipient_Name__c'
         };

@@ -6,6 +6,7 @@
         <description>The field on the controlling object that controls which fields are dynamically displayed.</description>
         <externalId>false</externalId>
         <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>The field on the controlling object that controls which fields are dynamically displayed.</inlineHelpText>
         <label>Controlling Field</label>
         <metadataRelationshipControllingField>Gift_Entry_Field_Mapping__mdt.Controlling_Object__c</metadataRelationshipControllingField>
         <referenceTo>FieldDefinition</referenceTo>
@@ -20,6 +21,7 @@
         <description>The object containing the field that controls which fields are dynamically displayed.</description>
         <externalId>false</externalId>
         <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>The object containing the field that controls which fields are dynamically displayed.</inlineHelpText>
         <label>Controlling Object</label>
         <referenceTo>EntityDefinition</referenceTo>
         <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
@@ -33,6 +35,7 @@
         <description>JSON-formatted metadata that identifies the Controlling Field values for the form layout and the fields those values expose.</description>
         <externalId>false</externalId>
         <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>JSON-formatted metadata that identifies the Controlling Field values for the form layout and the fields those values expose.</inlineHelpText>
         <label>Dependent Field List</label>
         <length>32768</length>
         <type>LongTextArea</type>

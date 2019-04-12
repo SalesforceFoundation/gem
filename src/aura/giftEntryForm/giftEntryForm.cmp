@@ -53,6 +53,7 @@
     <aura:handler name="change" value="{!v.opp.npsp__Primary_Contact__c}" action="{!c.onDonorChange}"/>
     <aura:handler name="change" value="{!v.di.npsp__Donation_Amount__c}" action="{!c.handlePaymentChange}"/>
     <aura:handler name="change" value="{!v.di.npsp__Donation_Date__c}" action="{!c.handlePaymentChange}"/>
+    <aura:handler event="force:showToast" action="{!c.handleToast}"/>
 
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 

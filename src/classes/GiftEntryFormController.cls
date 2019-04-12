@@ -197,19 +197,20 @@ public with sharing class GiftEntryFormController {
                         'npsp__Account1Imported__c',
                         'npsp__Contact1Imported__c',
                         'npsp__Donation_Donor__c',
-                        'npsp__Donation_Name__c',
-                        'npsp__Donation_Amount__c',
-                        'npsp__Donation_Stage__c',
                         'npsp__Payment_Method__c',
-                        'npsp__Payment_Check_Reference_Number__c',
-                        'npsp__Donation_Description__c'
+                        'npsp__Payment_Check_Reference_Number__c'
                 }
         );
         UTIL_CrudFLS.checkAccess(
                 UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
                 'Opportunity',
                 new List<String>{
+                        'Amount',
                         'CampaignId',
+                        'CloseDate',
+                        'Description',
+                        'Name',
+                        'StageName',
                         'npsp__Tribute_Type__c',
                         'npsp__Acknowledgment_Status__c',
                         'npsp__Honoree_Name__c',

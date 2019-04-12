@@ -492,14 +492,7 @@ public with sharing class GiftEntryFormController {
             relationshipField = 'npsp__Primary_Contact__c';
         }
 
-        String opportunitySOQL = 'SELECT Id, ' +
-                                'Name, ' +
-                                'StageName, ' +
-                                'Amount ' +
-                                'FROM Opportunity ' +
-                                'WHERE ' + relationshipField + ' = :donorId ' +
-                                'AND (IsClosed = false';
-
+        // Can be used to display unpaid payments on the donation matching modal
         String paymentSOQL = 'SELECT Id, ' +
                                 'Name, ' +
                                 'npe01__Scheduled_Date__c, ' +
@@ -513,13 +506,20 @@ public with sharing class GiftEntryFormController {
         try {
             List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);
 
-            Set<Id> oppIds = new Set<Id>();
+            Set<Id> oppIdsWithUnpaidPayments = new Set<Id>();
             for (npe01__OppPayment__c payment : unpaidPayments) {
-                oppIds.add(payment.npe01__Opportunity__c);
+                oppIdsWithUnpaidPayments.add(payment.npe01__Opportunity__c);
             }
 
-            // We want to include closed Opportunities with unpaid payments
-            opportunitySOQL += ' OR Id in :oppIds)';
+            // We want to include Open Opportunities, as well as Closed Opportunities with unpaid payments
+            String opportunitySOQL = 'SELECT Id, ' +
+                                    'Name, ' +
+                                    'StageName, ' +
+                                    'Amount ' +
+                                    'FROM Opportunity ' +
+                                    'WHERE ' + relationshipField + ' = :donorId ' +
+                                    'AND (IsClosed = false OR Id in :oppIdsWithUnpaidPayments)';
+
             List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
             Map<Id, Opportunity> openOpportunitiesById = new Map<Id, Opportunity>(openOpportunities);
 

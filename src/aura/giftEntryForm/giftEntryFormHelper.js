@@ -121,12 +121,12 @@
     },
     setDefaults: function(component, opp){
         // For new forms, set Date to Today, otherwise use existing value
-        var curDate = component.get('v.di.npsp__Donation_Date__c');
+        var curDate = component.get('v.opp.CloseDate');
         if(!curDate){
             // Set Close Date to Today
             var closeDate = new Date();
             closeDate = this.convertDateToString(closeDate);
-            component.set('v.di.npsp__Donation_Date__c', closeDate);
+            component.set('v.opp.CloseDate', closeDate);
         }
 
         // Also check whether the Contact or Account information should be shown
@@ -286,8 +286,8 @@
         }
     },
     updateRelatedPaymentAmounts: function(component, fieldVal){
-        var amt = component.get('v.di.npsp__Donation_Amount__c');
-        var date = component.get('v.di.npsp__Donation_Date__c');
+        var amt = component.get('v.opp.Amount');
+        var date = component.get('v.opp.CloseDate');
 
         if(!amt){
             return;

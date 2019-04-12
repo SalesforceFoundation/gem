@@ -1,4 +1,4 @@
-<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable" access="public" controller="GiftEntryFormController">
+<aura:component implements="force:hasRecordId,force:appHostable" access="public" controller="GiftEntryFormController">
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
@@ -51,10 +51,10 @@
 
     <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.onDonorChange}"/>
     <aura:handler name="change" value="{!v.opp.npsp__Primary_Contact__c}" action="{!c.onDonorChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Donation_Amount__c}" action="{!c.handlePaymentChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Donation_Date__c}" action="{!c.handlePaymentChange}"/>
+    <aura:handler name="change" value="{!v.opp.Amount}" action="{!c.handlePaymentChange}"/>
+    <aura:handler name="change" value="{!v.opp.CloseDate}" action="{!c.handlePaymentChange}"/>
     <aura:handler event="force:showToast" action="{!c.handleToast}"/>
-
+    
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 
         default="{sobjectType:'npsp__DataImport__c'}"/>
@@ -220,7 +220,7 @@
                             </label>
                             <lightning:input variant="label-hidden"
                                 disabled="{!v.oppClosed}"
-                                value="{!v.di.npsp__Donation_Name__c}" />
+                                value="{!v.opp.Name}" />
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
@@ -233,7 +233,7 @@
                                 type="date"
                                 onblur="{!c.checkPaymentChange}"
                                 disabled="{!v.oppClosed}"
-                                value="{!v.di.npsp__Donation_Date__c}" />
+                                value="{!v.opp.CloseDate}" />
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
@@ -247,14 +247,14 @@
                                 formatter="currency" step="0.01"
                                 onblur="{!c.checkPaymentChange}"
                                 disabled="{!v.oppClosed}"
-                                value="{!v.di.npsp__Donation_Amount__c}" />
+                                value="{!v.opp.Amount}" />
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}"
                                 fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}"
                                 disabled="{!v.oppClosed}"
-                                selectedVal="{!v.di.npsp__Donation_Stage__c}" />
+                                selectedVal="{!v.opp.StageName}" />
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
@@ -292,7 +292,7 @@
                             </label>
                             <lightning:textarea disabled="{!v.oppClosed}"
                                 variant="label-hidden"
-                                value="{!v.di.npsp__Donation_Description__c}" />
+                                value="{!v.opp.Description}" />
                         </lightning:layoutItem>
                     </lightning:layout>
                 </lightning:layoutItem>
@@ -436,10 +436,10 @@
                     disablePaymentEvents="{!v.disableBlurEvents}"
                     paymentList="{!v.payments}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
-                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    donationAmt="{!v.opp.Amount}"
                     paymentMethod="{!v.di.npsp__Payment_Method__c}"
-                    donationStage="{!v.di.npsp__Donation_Stage__c}"
-                    startDate="{!v.di.npsp__Donation_Date__c}"
+                    donationStage="{!v.opp.StageName}"
+                    startDate="{!v.opp.CloseDate}"
                     objectFieldData="{!v.objectFieldData}"
                     giftModel="{!v.giftModel}" />
 
@@ -451,7 +451,7 @@
                     rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
                     oppField="npsp__Opportunity__c"
                     amtField="npsp__Amount__c"
-                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    donationAmt="{!v.opp.Amount}"
                     preventAmountSurplus="false"
                     preventAmountDeficit="false"
                     displayErrorOnAmountSurplus="false"
@@ -468,7 +468,7 @@
                     rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
                     oppField="npsp__Opportunity__c"
                     amtField="npsp__Amount__c"
-                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    donationAmt="{!v.opp.Amount}"
                     preventAmountSurplus="true"
                     preventAmountDeficit="false"
                     objectFieldData="{!v.objectFieldData}"

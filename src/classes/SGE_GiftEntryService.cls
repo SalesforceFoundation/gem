@@ -1,11 +1,22 @@
 public with sharing class SGE_GiftEntryService {
 
+    @AuraEnabled(cacheable=true)
     public static SGE_GiftEntryService.Layout readOpportunityLayout() {
-        return null;
+        return readOpportunityLayoutByName('Gift_Entry');
+    }
+
+    private static SGE_GiftEntryService.Layout readOpportunityLayoutByName(String layoutName) {
+        Metadata.Metadata metadata = Metadata.Operations.retrieve(Metadata.MetadataType.Layout, new List<String>{
+                'Opportunity-' + layoutName
+        })[0];
+
+        Metadata.Layout layout = (Metadata.Layout)metadata;
+
+        return new SGE_GiftEntryService.Layout(Schema.Opportunity.SObjectType, layout);
     }
 
     public class Layout {
-        public List<Section> sections;
+        @AuraEnabled public List<Section> sections;
         public Layout(Schema.SObjectType sObjectType, Metadata.Layout layout) {
             this.sections = new List<Section>();
             for(Metadata.LayoutSection section : layout.layoutSections) {
@@ -15,8 +26,8 @@ public with sharing class SGE_GiftEntryService {
     }
 
     public class Section {
-        public String label;
-        public List<Column> columns;
+        @AuraEnabled public String label;
+        @AuraEnabled public List<Column> columns;
 
         public Section(Metadata.LayoutSection section) {
             this.label = section.label;
@@ -28,7 +39,7 @@ public with sharing class SGE_GiftEntryService {
     }
 
     public class Column {
-        public List<Field> fields;
+        @AuraEnabled public List<Field> fields;
         public Column(Metadata.LayoutColumn column) {
             this.fields = new List<Field>();
             for(Metadata.LayoutItem item : column.layoutItems) {
@@ -40,10 +51,10 @@ public with sharing class SGE_GiftEntryService {
     }
 
     public class Field {
-        public String label;
-        public String name;
-        public String sObjectType;
-        public String helpText;
+        @AuraEnabled public String label;
+        @AuraEnabled public String name;
+        @AuraEnabled public String sObjectType;
+        @AuraEnabled public String helpText;
 
         public Field( Schema.SObjectField field) {
             this(field.getDescribe());

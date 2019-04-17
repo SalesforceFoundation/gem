@@ -98,7 +98,7 @@ public static void AddGiftProcessor() {
         ];
 
         List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :giftProfile.Id AND IsActive = true];
-
+        if(giftProcessors.size() == 0) {
             String randomPad = EncodingUtil.convertToHex(Crypto.generateAesKey(128)).subString(0, 8);
 
             User goUser = new User(
@@ -115,7 +115,7 @@ public static void AddGiftProcessor() {
             );
             users.add(goUser);
             insert users;
-
+        }
     } catch (System.DmlException e) {
         Database.rollback(sp);
         throw new System.DmlException(e.getMessage());

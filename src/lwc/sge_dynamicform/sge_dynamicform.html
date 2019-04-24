@@ -1,11 +1,21 @@
 <template>
     <lightning-card title='User-defined Fields'>
-        <lightning-layout>
             <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
-                <lightning-accordion-section>
-
-                </lightning-accordion-section>
+                <div if:true={ready}>
+                    <template for:each={layout.sections} for:item='section'>
+                        <lightning-accordion-section name={section.label} label={section.label} key={section.key}>
+                            <lightning-layout multiple-rows='true'>
+                                <template for:each={section.columns} for:item='column'>
+                                    <template for:each={column.fields} for:item='field' key={column.key}>
+                                        <lightning-layout-item size='6' padding='around-small' key={field.name}>
+                                            {field.name}
+                                        </lightning-layout-item>
+                                    </template>
+                                </template>
+                            </lightning-layout>
+                        </lightning-accordion-section>
+                    </template>
+                </div>
             </lightning-accordion>
-        </lightning-layout>
     </lightning-card>
 </template>

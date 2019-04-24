@@ -1,7 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>45.0</apiVersion>
-    <description>layoutService</description>
-    <isExposed>false</isExposed>
-    <masterLabel>layoutService</masterLabel>
-</LightningComponentBundle>
+import {LightningElement, api, wire} from 'lwc';
+import readOpportunityLayout from '@salesforce/apex/SGE_GiftEntryService.readOpportunityLayout';
+
+const getOpportunityLayout = () => {
+    return new Promise((resolve, reject) => {
+        readOpportunityLayout()
+            .then(resolve)
+            .catch(error => console.error(JSON.stringify(error)));
+    });
+}
+
+export { getOpportunityLayout }

@@ -6,7 +6,7 @@ project:
     package:
         name: Gift Entry Manager
         namespace: gem0
-        api_version: 42.0
+        api_version: 45.0
     git:
         prefix_release: rel/gem0/
         prefix_beta: beta/gem0/
@@ -188,6 +188,8 @@ flows:
               task: deploy_pre
           3:
               task: install_managed
+              options:
+                  version: 1.1
           4:
               flow: config_managed
           5:

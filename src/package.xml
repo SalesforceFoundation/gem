@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>GEM</fullName>
+    <fullName>Gift Entry Manager</fullName>
     <types>
         <members>API_HEDA</members>
         <members>API_HEDA_TEST</members>
@@ -40,10 +40,10 @@
         <name>CustomApplication</name>
     </types>
     <types>
+        <members>GEM_Settings__c.Sync_Account_Models__c</members>
         <members>GEM_API_Settings__mdt.API_HEDA_Class__c</members>
         <members>GEM_API_Settings__mdt.API_NPSP_Class__c</members>
         <members>GEM_API_Settings__mdt.Use_GEM__c</members>
-        <members>GEM_Settings__c.Sync_Account_Models__c</members>
         <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
         <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
@@ -106,8 +106,8 @@
         <name>CustomMetadata</name>
     </types>
     <types>
-        <members>GEM_API_Settings__mdt</members>
         <members>GEM_Settings__c</members>
+        <members>GEM_API_Settings__mdt</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -122,10 +122,15 @@
         <members>Account-GEM Household Layout</members>
         <members>Account-GEM Organization Layout</members>
         <members>Contact-GEM Contact Layout</members>
-        <members>GEM_API_Settings__mdt-GEM API Settings Layout</members>
         <members>Opportunity-GEM Gift Layout</members>
+        <members>GEM_API_Settings__mdt-GEM API Settings Layout</members>
         <members>npsp__DataImport__c-GEM Gift Layout</members>
         <name>Layout</name>
+    </types>
+    <types>
+        <members>layoutService</members>
+        <members>sge_dynamicform</members>
+        <name>LightningComponentBundle</name>
     </types>
     <version>45.0</version>
 </Package>

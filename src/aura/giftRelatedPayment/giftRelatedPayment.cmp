@@ -8,6 +8,9 @@
     <aura:handler name="change" 
         value="{!v.item.npe01__Scheduled_Date__c}" 
         action="{!c.handlePaid}"/>
+    <aura:handler name="change" 
+        value="{!v.item.npe01__Written_Off__c}" 
+        action="{!c.preventPaidAndWrittenOff}"/>
 
     <lightning:layout multipleRows="true">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">

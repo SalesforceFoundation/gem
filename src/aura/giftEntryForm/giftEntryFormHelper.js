@@ -37,6 +37,9 @@
 
                 // An Opportunity was matched, update the form to reflect that
                 if(giftModel.oppId){
+                    // Updates fields that are using built-in validation to remove error messages
+                    this.rerenderInputs(component, 'renderRequiredInputs');
+
                     component.set('v.disableBlurEvents', true);
                     var oppStatus = '';
                     if(giftModel.opp.ForecastCategory == 'Closed'){

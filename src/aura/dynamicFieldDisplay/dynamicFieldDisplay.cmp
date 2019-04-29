@@ -1,0 +1,8 @@
+<aura:component>
+<!--Take in Custom metadata record-->
+<!-- Take in field name to populate on parent component {!name}-->
+<!--Take in DI record-->
+<!--In the do init, dynamically create the fields based on the metadata-->
+
+
+</aura:component>	

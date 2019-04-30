@@ -46,6 +46,8 @@
         <members>Gift_Entry_Field_Mapping__mdt.Controlling_Field__c</members>
         <members>Gift_Entry_Field_Mapping__mdt.Controlling_Object__c</members>
         <members>Gift_Entry_Field_Mapping__mdt.Dependent_Field_List__c</members>
+        <members>hed__Affiliation__c.Related_Opportunity_Contact_Role__c</members>
+        <members>hed__Relationship__c.Related_Opportunity_Contact_Role__c</members>
         <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
         <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
@@ -109,8 +111,8 @@
     </types>
     <types>
         <members>GEM_API_Settings__mdt</members>
-        <members>Gift_Entry_Field_Mapping__mdt</members>
         <members>GEM_Settings__c</members>
+        <members>Gift_Entry_Field_Mapping__mdt</members>
         <name>CustomObject</name>
     </types>
     <types>

@@ -602,15 +602,6 @@
         <relatedList>RelatedOpportunityList</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>NAME</fields>
-        <fields>npe03__Organization__c</fields>
-        <fields>npe03__Date_Established__c</fields>
-        <fields>npe03__Installment_Period__c</fields>
-        <fields>npe03__Installments__c</fields>
-        <fields>npe03__Total__c</fields>
-        <relatedList>npe03__Recurring_Donation__c.npe03__Contact__c</relatedList>
-    </relatedLists>
-    <relatedLists>
         <fields>CAMPAIGN.NAME</fields>
         <fields>CAMPAIGN.START_DATE</fields>
         <fields>CAMPAIGN.CAMPAIGN_TYPE</fields>

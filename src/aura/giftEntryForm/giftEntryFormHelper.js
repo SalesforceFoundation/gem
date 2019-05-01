@@ -301,11 +301,17 @@
         
         giftModel['di'] = di;
 
+        console.log(this.proxyToObj(giftModel));
+
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};
         giftModel['picklistValues'] = {};
 
-        var giftModelString = JSON.stringify(giftModel);
+
+
+        const customFieldValues = this.getCustomFieldValues(component);
+
+        var giftModelString = JSON.stringify(Object.assign({}, giftModel, customFieldValues));
 
         component.set('v.giftModelString', giftModelString);
         console.log(this.proxyToObj(this.getCustomFieldValues(component)));

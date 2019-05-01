@@ -65,7 +65,6 @@
                 this.handleAddRow(component, helper, itemList[i], i);
             }
         }
-        component.set('v.showAmountError', false);
     },
     handleAmtChangeHelper: function(component, checkForZero){
         var amountTotal = this.getAmtTotal(component);

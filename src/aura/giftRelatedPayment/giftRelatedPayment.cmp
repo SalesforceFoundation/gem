@@ -44,7 +44,7 @@
                 <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}</label>
             </aura:if>
             <lightning:input disabled="{!v.item.npe01__Payment_Method__c != 'Check'}"
-                label="{!v.objectLabels.Payment.npe01__Check_Reference_Number__c}" variant="label-hidden"
+                label="{!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}" variant="label-hidden"
                 value="{!v.item.npe01__Check_Reference_Number__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="1">

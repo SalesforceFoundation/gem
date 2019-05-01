@@ -221,7 +221,7 @@
                     </lightning:layoutItem>
 
                     <lightning:layoutItem size="12">
-                        <c:sge_dynamicform></c:sge_dynamicform>
+                        <c:sge_dynamicform aura:id="sge_dynamicform"></c:sge_dynamicform>
                     </lightning:layoutItem>
 
                     <lightning:layoutItem size="12">

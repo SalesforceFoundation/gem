@@ -306,7 +306,10 @@
         giftModel['picklistValues'] = {};
 
         var giftModelString = JSON.stringify(giftModel);
+
         component.set('v.giftModelString', giftModelString);
+        console.log(this.proxyToObj(this.getCustomFieldValues(component)));
+        debugger;
         return allRowsValid;
     },
     showSaveToast: function(titleTxt, msgText){
@@ -368,5 +371,11 @@
     },
     doToggleSection: function changeState (component, sectionBool){
         component.set('v.' + sectionBool, !component.get('v.' + sectionBool));
+    },
+
+    getCustomFieldValues: function(component) {
+        const dynamicForm = component.find('sge_dynamicform');
+        const values = dynamicForm.get('v.values');
+        return values;
     }
 })

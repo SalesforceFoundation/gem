@@ -215,6 +215,16 @@
                     </lightning:layoutItem>
 
                     <lightning:layoutItem size="12">
+                        <div class="slds-page-header slds-page-header__title">
+                            <h2>Custom Fields</h2>
+                        </div>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="12">
+                        <c:sge_dynamicform></c:sge_dynamicform>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="12">
                         <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
                             aria-expanded="true"
                             onclick="{!c.expandTributeSection}">

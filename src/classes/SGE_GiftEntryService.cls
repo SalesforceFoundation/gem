@@ -29,7 +29,7 @@ public with sharing class SGE_GiftEntryService {
             this.sObjectName = sObjectType.getDescribe().getName();
             this.sections = new List<Section>();
             for(Metadata.LayoutSection section : layout.layoutSections) {
-                if(section.editHeading && section.label.toLowerCase() != 'hidden') {
+                if(section.editHeading && section.label.toLowerCase() != 'hidden - do not edit this section') {
                     this.sections.add(new Section(sObjectType, section));
                 }
             }

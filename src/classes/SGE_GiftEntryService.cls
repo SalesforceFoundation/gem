@@ -16,9 +16,17 @@ public with sharing class SGE_GiftEntryService {
         return new SGE_GiftEntryService.Layout(Schema.Opportunity.SObjectType, layout);
     }
 
+    private static SGE_GiftEntryService.Layout readOpportunityFieldSetByName(String fieldSetName) {
+        FieldSet gemFieldSet = Schema.SOBjectType.Opportunity.fieldSets.getMap().get(fieldSetName);
+
+        return new SGE_GiftEntryService.Layout(gemFieldSet);
+    }
+
     public class Layout {
         @AuraEnabled public List<Section> sections;
+        @AuraEnabled public String sObjectName;
         public Layout(Schema.SObjectType sObjectType, Metadata.Layout layout) {
+            this.sObjectName = sObjectType.getDescribe().getName();
             this.sections = new List<Section>();
             for(Metadata.LayoutSection section : layout.layoutSections) {
                 if(section.editHeading && section.label.toLowerCase() != 'hidden') {
@@ -26,12 +34,17 @@ public with sharing class SGE_GiftEntryService {
                 }
             }
         }
+
+        public Layout(FieldSet gemFieldSet) {
+            this.sObjectName = gemFieldSet.getSObjectType().getDescribe().getName();
+            this.sections = new List<Section>();
+            this.sections.add(new Section(gemFieldSet)); //fieldset layout only has one section
+        }
     }
 
     public class Section extends HashKey {
         @AuraEnabled public String label;
         @AuraEnabled public List<Column> columns;
-        @AuraEnabled public String key;
 
         public Section(Schema.SObjectType sObjectType, Metadata.LayoutSection section) {
             super(section);
@@ -41,11 +54,29 @@ public with sharing class SGE_GiftEntryService {
                 columns.add(new Column(sObjectType, column));
             }
         }
+
+        public Section(FieldSet gemFieldSet) {
+            this.key = gemFieldSet.getName() + 'section';
+            this.columns = new List<Column>();
+            List<Schema.FieldSetMember> leftFields = new List<Schema.FieldSetMember>();
+            List<Schema.FieldSetMember> rightFields = new List<Schema.FieldSetMember>();
+            List<Schema.FieldSetMember> allFields = gemFieldSet.getFields();
+            for(Integer i = 0; i < allFields.size(); i++) {
+               if(Math.mod(i, 2) == 0) {
+                   leftFields.add(allFields[i]);
+               } else {
+                   rightFields.add(allFields[i]);
+               }
+            }
+
+            this.columns.add(new Column(leftFields));
+            this.columns.add(new Column(rightFields));
+        }
     }
 
     public class Column extends HashKey {
         @AuraEnabled public List<Field> fields;
-        @AuraEnabled public String key;
+
         public Column(Schema.SObjectType sObjectType, Metadata.LayoutColumn column) {
             super(column);
             this.fields = new List<Field>();
@@ -55,6 +86,10 @@ public with sharing class SGE_GiftEntryService {
                     this.fields.add(new Field(sObjectType, item));
                 }
             }
+        }
+
+        public Column(List<Schema.FieldSetMember> members) {
+
         }
 
         private Boolean isRenderable(Metadata.LayoutItem item) {
@@ -84,5 +119,7 @@ public with sharing class SGE_GiftEntryService {
         public HashKey(Object anyObject) {
             this.key = String.valueOf(System.hashCode(anyObject));
         }
+
+        public HashKey() {}
     }
 }

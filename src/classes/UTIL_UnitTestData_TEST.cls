@@ -172,4 +172,47 @@ public class UTIL_UnitTestData_TEST {
         }
         return u;
     }
+
+    /******************************************************************************************************
+    * @description Helper method to return an Opportunity, contactId is optional
+    * @return void
+    *******************************************************************************************************/
+    
+    public static Opportunity getTestOpportunity(Id accountId, Id contactId){
+
+        return new Opportunity(
+            Name = 'Test Opp',
+            AccountId = accountId,
+            npsp__Primary_Contact__c = contactId,
+            CloseDate = System.Today(),
+            Amount = 100,
+            StageName = getClosedWonStage()
+        );
+
+    }
+
+    /******************************************************************************************************
+    * @description Helper method to insert GEM related TDTM
+    * @return void
+    *******************************************************************************************************/
+    public static void insertTDTMForTest() {
+        List<hed__Trigger_Handler__c> gemTDTMTriggers = new List<hed__Trigger_Handler__c>();
+
+        String syncNPSPRecords = OPP_ManageRelatedNPSPRecords_TDTM.class.toString();
+        
+        gemTDTMTriggers.add(
+            new hed__Trigger_Handler__c(
+                hed__Class__c = syncNPSPRecords,
+                hed__Active__c = true,
+                hed__Object__c = 'Opportunity',
+                hed__Load_Order__c =  0, 
+                hed__Trigger_Action__c = 'BeforeInsert', 
+                hed__Asynchronous__c = false, 
+                hed__User_Managed__c = false, 
+                hed__Usernames_to_Exclude__c = ''
+            )
+        );
+
+        insert gemTDTMTriggers;
+    }
 }

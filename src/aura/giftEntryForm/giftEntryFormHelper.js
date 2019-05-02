@@ -294,28 +294,20 @@
         var giftModel = component.get('v.giftModel');
         var opp = this.proxyToObj(component.get('v.opp'));
         var di = this.proxyToObj(component.get('v.di'));
+        const customFieldValues = this.getCustomFieldValues(component);
 
+        Object.assign({}, di, customFieldValues);
         // Map fields from Opportunity to DataImport
         // This is done to avoid referencing Adv namespace fields in markup
         this.mapOppToDi(component, di, opp);
         
         giftModel['di'] = di;
 
-        console.log(this.proxyToObj(giftModel));
-
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};
         giftModel['picklistValues'] = {};
 
-
-
-        const customFieldValues = this.getCustomFieldValues(component);
-
-        var giftModelString = JSON.stringify(Object.assign({}, giftModel, customFieldValues));
-
         component.set('v.giftModelString', giftModelString);
-        console.log(this.proxyToObj(this.getCustomFieldValues(component)));
-        debugger;
         return allRowsValid;
     },
     showSaveToast: function(titleTxt, msgText){

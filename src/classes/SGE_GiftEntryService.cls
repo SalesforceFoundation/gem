@@ -1,11 +1,23 @@
 public with sharing class SGE_GiftEntryService {
     private static final String LAYOUT_NAME = 'Gift Entry';
 
+    /**
+     * Read an opportunity layout for use in the SGE form
+     *
+     * @return  A SGE_GiftEntryService.Layout containing information about all writeable custom fields
+     */
     @AuraEnabled(cacheable=true)
     public static SGE_GiftEntryService.Layout readOpportunityLayout() {
         return readOpportunityLayoutByName(LAYOUT_NAME);
     }
 
+    /**
+     * Read an opportunity layout for use in the SGE form
+     *
+     * @param layoutName    Name of the layout to read
+     *
+     * @return  A SGE_GiftEntryService.Layout containing information about all writeable custom fields in the specified layout
+     */
     private static SGE_GiftEntryService.Layout readOpportunityLayoutByName(String layoutName) {
         Metadata.Metadata metadata = Metadata.Operations.retrieve(Metadata.MetadataType.Layout, new List<String>{
                 'Opportunity-' + layoutName
@@ -81,9 +93,11 @@ public with sharing class SGE_GiftEntryService {
             super(column);
             this.fields = new List<Field>();
             this.key = String.valueOf(System.hashCode(column));
-            for(Metadata.LayoutItem item : column.layoutItems) {
-                if(isRenderable(item)) {
-                    this.fields.add(new Field(sObjectType, item));
+            if(column.layoutItems != null) {
+                for (Metadata.LayoutItem item : column.layoutItems) {
+                    if (isRenderable(item)) {
+                        this.fields.add(new Field(sObjectType, item));
+                    }
                 }
             }
         }
@@ -92,6 +106,13 @@ public with sharing class SGE_GiftEntryService {
 
         }
 
+        /**
+         * Check to make sure this is input-able field. We don't want to render formula fields etc...
+         *
+         * @param item  Field to check
+         *
+         * @return      TRUE when field can receive input
+         */
         private Boolean isRenderable(Metadata.LayoutItem item) {
             Boolean editable = item.behavior == Metadata.UiBehavior.Edit || item.behavior == Metadata.UiBehavior.Required;
             return editable && item.field != null;

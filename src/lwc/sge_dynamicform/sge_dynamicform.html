@@ -1,5 +1,4 @@
 <template>
-    <lightning-button onclick={handleClick} variant='brand' label='Check Values'></lightning-button>
     <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
         <div if:true={ready}>
             <lightning-record-edit-form object-api-name={layout.sObjectName}>

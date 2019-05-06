@@ -12,7 +12,11 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Declined</fullName>
+            <fullName>Closed Lost</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Prospecting</fullName>
             <default>false</default>
         </values>
         <values>

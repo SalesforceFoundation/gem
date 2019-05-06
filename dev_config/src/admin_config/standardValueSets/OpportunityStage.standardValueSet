@@ -20,9 +20,9 @@
         <won>true</won>
     </standardValue>
     <standardValue>
-        <fullName>Declined</fullName>
+        <fullName>Closed Lost</fullName>
         <default>false</default>
-        <label>Declined</label>
+        <label>Closed Lost</label>
         <closed>true</closed>
         <forecastCategory>Omitted</forecastCategory>
         <probability>0</probability>
@@ -36,5 +36,14 @@
         <forecastCategory>Closed</forecastCategory>
         <probability>100</probability>
         <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Prospecting</fullName>
+        <default>false</default>
+        <label>Prospecting</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
     </standardValue>
 </StandardValueSet>

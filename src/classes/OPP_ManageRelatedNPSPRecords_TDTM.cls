@@ -59,7 +59,23 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         'hed__Status__c' => 'npe5__Status__c'
     };
 
+    public Map<String, String> hedaToNpspAfflMatchMap = new Map<String, String>{
+        'hed__Contact__c' => 'npe5__Contact__c',
+        'hed__Account__c' => 'npe5__Organization__c',
+        'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c',
+        'hed__Status__c' => 'npe5__Status__c'
+    };
+
+    public Map<String, String> hedaToNpspRelMatchMap = new Map<String, String>{
+        'hed__Contact__c' => 'npe4__Contact__c',
+        'hed__RelatedContact__c' => 'npe4__RelatedContact__c',
+        'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c',
+        'hed__Status__c' => 'npe4__Status__c'
+    };
+
 	public final String RELATED_OPPORTUNITY_CONTACT_ROLE_NONE = '--None--';
+	public final String NPSP_RELATIONSHIP_API_NAME = 'npe4__Relationship__c';
+	public final String NPSP_AFFILIATION_API_NAME = 'npe5__Affiliation__c';
 
 	/*******************************************************************************************************
     * @description Trigger Handler on Opportunities that syncs donor Relationship and Affiliations records 
@@ -95,7 +111,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
 			}
 		}
 
-		// Query EDA Relationships and Affiliations to this Donor
+		// Query HEDA Relationships and Affiliations to this Donor
 		String allHedaRelFields = UTIL_Describe.getAllFieldsQueryStringFromObject('hed__Relationship__c');
         List<hed__Relationship__c> hedRelationships = 
             Database.query('SELECT '
@@ -114,7 +130,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
                 + 'AND Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND hed__Account__c in :donorAccountIds ');
 
-		// Check for existing NPSP versions of these records
+		// Query existing NPSP versions of these records
 		String allNpspRelFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npe4__Relationship__c');
         List<npe4__Relationship__c> currentNpspRelationships = 
             Database.query('SELECT '
@@ -133,15 +149,17 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
                 + 'AND npsp__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND npe5__Organization__c in :donorAccountIds ');
 
-        Map<Id, List<SObject>> donorToHEDARelationships = convertListToMap( hedRelationships, 'hed__RelatedContact__c' );
-        Map<Id, List<SObject>> donorToHEDAAffiliations = convertListToMap( hedAffiliations, 'hed__Account__c' );
-        Map<Id, List<SObject>> donorToNPSPRelationships = convertListToMap( currentNpspRelationships, 'npe4__RelatedContact__c' );
-        Map<Id, List<SObject>> donorToNPSPAffiliations = convertListToMap( currentNpspAffiliations, 'npe5__Organization__c' );
+        Map<Id, List<SObject>> donorToHedaRelationships = convertListToMap( hedRelationships, 'hed__RelatedContact__c' );
+        Map<Id, List<SObject>> donorToHedaAffiliations = convertListToMap( hedAffiliations, 'hed__Account__c' );
+        Map<Id, List<SObject>> donorToNpspRelationships = convertListToMap( currentNpspRelationships, 'npe4__RelatedContact__c' );
+        Map<Id, List<SObject>> donorToNpspAffiliations = convertListToMap( currentNpspAffiliations, 'npe5__Organization__c' );
 
-        List<npe4__Relationship__c> newNpspRelationships = returnSyncedRelationships(donorToHEDARelationships,
-            donorToNPSPRelationships);
-        List<npe5__Affiliation__c> newNpspAffiliations = returnSyncedAffiliations(donorToHEDAAffiliations,
-            donorToNPSPRelationships);
+        // Compare the lists and return any new, or updated, NPSP Relationships
+        List<npe4__Relationship__c> newNpspRelationships = returnSyncedList(donorToHEDARelationships,
+            donorToNPSPRelationships, NPSP_RELATIONSHIP_API_NAME);
+
+        List<npe5__Affiliation__c> newNpspAffiliations = returnSyncedList(donorToHEDAAffiliations,
+            donorToNpspAffiliations, NPSP_AFFILIATION_API_NAME);
 
         // System.debug(newNpspRelationships); 
         // System.debug(hedAffiliations); 
@@ -168,88 +186,63 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         return donorMap;
     }
 
-    private List<npe4__Relationship__c> returnSyncedRelationships(Map<Id, List<SObject>> hedaRelationshipMap, 
-        Map<Id, List<SObject>> npspRelationshipMap){
-            List<npe4__Relationship__c> syncedNpspRelationships = new List<npe4__Relationship__c>();
-            for(Id donorId : hedaRelationshipMap.keySet()){
-                List<hed__Relationship__c> hedaRels = (List<hed__Relationship__c>)hedaRelationshipMap.get(donorId);
-                for(hed__Relationship__c hedaRel : hedaRels){
+    private List<SObject> returnSyncedList(Map<Id, List<SObject>> sourceMap, 
+        Map<Id, List<SObject>> copyMap, String destObjectName){
+
+            SObject[] toUpsert = (SObject[])Type.forName('List<'+destObjectName+'>').newInstance();
+
+            for(Id donorId : sourceMap.keySet()){
+                List<SObject> sourceList = sourceMap.get(donorId);
+                for(SObject sourceRecord : sourceList){
                     Boolean foundMatch = false;
-                    if(npspRelationshipMap.containsKey(donorId)){
-                        List<npe4__Relationship__c> npspRels = 
-                            (List<npe4__Relationship__c>)npspRelationshipMap.get(donorId);
-                        for(npe4__Relationship__c npspRel : npspRels){
-                            foundMatch = foundMatch || relationshipsMatch(hedaRel, npspRel);
+                    if(copyMap.containsKey(donorId)){
+                        List<SObject> copyList = copyMap.get(donorId);
+                        for(SObject copyRecord : copyList){
+                            foundMatch = foundMatch || 
+                                checkRecordMatch(sourceRecord, copyRecord, destObjectName);
                         }
                     }
-
                     if(!foundMatch){
-                        syncedNpspRelationships.add(returnRelationshipCopy(hedaRel));
+                        toUpsert.add(returnCopy(sourceRecord, destObjectName));
                     }
                 }
-
             }
-            return syncedNpspRelationships;
+            return toUpsert;
     }
 
-    private List<npe5__Affiliation__c> returnSyncedAffiliations(Map<Id, List<SObject>> hedaAffiliationMap, 
-        Map<Id, List<SObject>> npspAffiliationMap){
-            List<npe5__Affiliation__c> syncedNpspAffiliations = new List<npe5__Affiliation__c>();
-            for(Id donorId : hedaAffiliationMap.keySet()){
-                List<hed__Affiliation__c> hedaAffls = (List<hed__Affiliation__c>)hedaAffiliationMap.get(donorId);
-                for(hed__Affiliation__c hedaAffl : hedaAffls){
-                    Boolean foundMatch = false;
-                    if(npspAffiliationMap.containsKey(donorId)){
-                        List<npe5__Affiliation__c> npspRels = 
-                            (List<npe5__Affiliation__c>)npspAffiliationMap.get(donorId);
-                        for(npe5__Affiliation__c npspRel : npspRels){
-                            foundMatch = foundMatch || affiliationsMatch(hedaAffl, npspRel);
-                        }
-                    }
+    private SObject returnCopy(SObject srcRecord, String destObjectName){
+        Schema.SObjectType targetType = Schema.getGlobalDescribe().get(destObjectName);
+        SObject destRecord = targetType.newSObject();
 
-                    if(!foundMatch){
-                        syncedNpspAffiliations.add(returnAffiliationCopy(hedaAffl));
-                    }
-                }
+        Map<String, String> fieldMap = (destObjectName == NPSP_RELATIONSHIP_API_NAME) 
+            ? hedaToNpspRelFieldMap : hedaToNpspAfflFieldMap;
 
+        for(String srcFieldName : fieldMap.keySet()){
+            String destFieldName = fieldMap.get(srcFieldName);
+            destRecord.put(destFieldName, srcRecord.get(srcFieldName));
+        }
+        return destRecord;
+    }
+
+    private Boolean checkRecordMatch(SObject srcRecord, SObject copyRecord, String destObjectName){
+        Map<String, String> fieldMatchMap = (destObjectName == NPSP_RELATIONSHIP_API_NAME) 
+            ? hedaToNpspRelMatchMap : hedaToNpspAfflMatchMap;
+
+        // TODO: Also check if other fields are out of sync and update them instead of creating
+        // a new record
+        
+        // Map<String, String> fieldMap = (destObjectName == NPSP_RELATIONSHIP_API_NAME) 
+        //     ? hedaToNpspRelFieldMap : hedaToNpspAfflFieldMap;
+
+        Boolean recordsMatch = true;
+        for(String srcFieldName : fieldMatchMap.keySet()){
+            String destFieldName = fieldMatchMap.get(srcFieldName);
+            if(srcRecord.get(srcFieldName) != copyRecord.get(destFieldName)){
+                recordsMatch = false;
+                break;
             }
-            return syncedNpspAffiliations;
-    }
-
-    private npe4__Relationship__c returnRelationshipCopy(hed__Relationship__c hedaRel){
-        npe4__Relationship__c newNpspRel = new npe4__Relationship__c();
-        for(String hedaFieldName : hedaToNpspRelFieldMap.keySet()){
-            String npspFieldName = hedaToNpspRelFieldMap.get(hedaFieldName);
-            newNpspRel.put(npspFieldName, hedaRel.get(hedaFieldName));
         }
-        return newNpspRel;
-    }
-
-    private npe5__Affiliation__c returnAffiliationCopy(hed__Affiliation__c hedaRel){
-        npe5__Affiliation__c newNpspAffl = new npe5__Affiliation__c();
-        for(String hedaFieldName : hedaToNpspAfflFieldMap.keySet()){
-            String npspFieldName = hedaToNpspAfflFieldMap.get(hedaFieldName);
-            newNpspAffl.put(npspFieldName, hedaRel.get(hedaFieldName));
-        }
-        return newNpspAffl;
-    }
-
-    private Boolean affiliationsMatch(hed__Affiliation__c hedaAffl, npe5__Affiliation__c npspAffl){
-        if(hedaAffl.hed__Contact__c == npspAffl.npe5__Contact__c
-            && hedaAffl.hed__Account__c == npspAffl.npe5__Organization__c
-            && hedaAffl.Related_Opportunity_Contact_Role__c == npspAffl.npsp__Related_Opportunity_Contact_Role__c){
-                return true;
-        }
-        return false; 
-    }
-
-    private Boolean relationshipsMatch(hed__Relationship__c hedaRel, npe4__Relationship__c npspRel){
-        if(hedaRel.hed__Contact__c == npspRel.npe4__Contact__c
-            && hedaRel.hed__RelatedContact__c == npspRel.npe4__RelatedContact__c
-            && hedaRel.Related_Opportunity_Contact_Role__c == npspRel.npsp__Related_Opportunity_Contact_Role__c){
-                return true;
-        }
-        return false;
+        return recordsMatch;
     }
 	
 }

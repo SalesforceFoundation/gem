@@ -47,6 +47,13 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         'hed__Type__c' => 'npe4__Type__c'
     };
 
+    public Map<String, String> hedaToNpspRelMatchMap = new Map<String, String>{
+        'hed__Contact__c' => 'npe4__Contact__c',
+        'hed__RelatedContact__c' => 'npe4__RelatedContact__c',
+        'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c',
+        'hed__Status__c' => 'npe4__Status__c'
+    };
+
     public Map<String, String> hedaToNpspAfflFieldMap = new Map<String, String>{
         'hed__Contact__c' => 'npe5__Contact__c',
         'hed__Description__c' => 'npe5__Description__c',
@@ -64,13 +71,6 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         'hed__Account__c' => 'npe5__Organization__c',
         'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c',
         'hed__Status__c' => 'npe5__Status__c'
-    };
-
-    public Map<String, String> hedaToNpspRelMatchMap = new Map<String, String>{
-        'hed__Contact__c' => 'npe4__Contact__c',
-        'hed__RelatedContact__c' => 'npe4__RelatedContact__c',
-        'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c',
-        'hed__Status__c' => 'npe4__Status__c'
     };
 
 	public final String RELATED_OPPORTUNITY_CONTACT_ROLE_NONE = '--None--';
@@ -189,60 +189,131 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     private List<SObject> returnSyncedList(Map<Id, List<SObject>> sourceMap, 
         Map<Id, List<SObject>> copyMap, String destObjectName){
 
+
+            // TODO: Need to keep track of a "best match" map?
+            // Make sure that 1 rel isn't the best match for 2 different source records?
+            Map<Id,SObject> sourceToBestMatch = new Map<Id,SObject>();
+
+            Map<String, String> fullFieldMap;
+            Map<String, String> matchFieldMap;
+            if(destObjectName == NPSP_RELATIONSHIP_API_NAME){
+                fullFieldMap = hedaToNpspRelFieldMap;
+                matchFieldMap = hedaToNpspRelMatchMap;
+            } else {
+                fullFieldMap = hedaToNpspAfflFieldMap;
+                matchFieldMap = hedaToNpspAfflMatchMap;
+            }
+
+            
             SObject[] toUpsert = (SObject[])Type.forName('List<'+destObjectName+'>').newInstance();
+            SObject destRecordTemplate = Schema.getGlobalDescribe().get(destObjectName).newSObject();
 
             for(Id donorId : sourceMap.keySet()){
                 List<SObject> sourceList = sourceMap.get(donorId);
+            
+                // Each source record needs to find an existing match, or create a copy of itself
                 for(SObject sourceRecord : sourceList){
+
+                    SObject destRecord = destRecordTemplate.clone(false, true, false, false);
+
                     Boolean foundMatch = false;
+
                     if(copyMap.containsKey(donorId)){
+
                         List<SObject> copyList = copyMap.get(donorId);
+
+                        // This list only exists if a sync has already occurred on these records
                         for(SObject copyRecord : copyList){
-                            foundMatch = foundMatch || 
-                                checkRecordMatch(sourceRecord, copyRecord, destObjectName);
+
+                            /*
+                            Need to know if:
+                                1. There is an existing match
+                                    1a. That match needs an update
+                                2. There is no existing match
+                                    2a. Should this replace an out of sync copy
+                            */
+
+                            if(returnFieldsMatch(sourceRecord, copyRecord, matchFieldMap)){
+                                foundMatch = true;
+                                // The records match, but does the copy need an update?
+                                if(returnFieldsMatch(sourceRecord, copyRecord, fullFieldMap)){
+                                    toUpsert.add(returnCopy(sourceRecord, copyRecord));
+                                }
+                                break;
+                            }
                         }
                     }
+
                     if(!foundMatch){
-                        toUpsert.add(returnCopy(sourceRecord, destObjectName));
+                        // The NPSP record either needs to be created as a copy, or updated
+                        toUpsert.add(returnCopy(sourceRecord, destRecord));
                     }
+
                 }
             }
+
+            // Now check for any unmatched copies and see if there should be a match
+            // Use the Map of src to best match?
+
+
+
             return toUpsert;
     }
 
-    private SObject returnCopy(SObject srcRecord, String destObjectName){
-        Schema.SObjectType targetType = Schema.getGlobalDescribe().get(destObjectName);
-        SObject destRecord = targetType.newSObject();
-
-        Map<String, String> fieldMap = (destObjectName == NPSP_RELATIONSHIP_API_NAME) 
-            ? hedaToNpspRelFieldMap : hedaToNpspAfflFieldMap;
-
+    /*******************************************************************************************************
+    * @description Take a HEDA version of Relationship or Affiliation and check if it matches with a NPSP version
+    * @param srcRecord the HEDA version of the record
+    * @param copyRecord the potential NPSP version of the record
+    * @param fieldMap A map of String to String of fields to compare between objects
+    * @return Boolean true if all field values match, false otherwise
+    ********************************************************************************************************/
+    private Boolean returnFieldsMatch(SObject srcRecord, SObject copyRecord, Map<String, String> fieldMap){
+        Boolean recordsMatch = true;
         for(String srcFieldName : fieldMap.keySet()){
             String destFieldName = fieldMap.get(srcFieldName);
-            destRecord.put(destFieldName, srcRecord.get(srcFieldName));
-        }
-        return destRecord;
-    }
-
-    private Boolean checkRecordMatch(SObject srcRecord, SObject copyRecord, String destObjectName){
-        Map<String, String> fieldMatchMap = (destObjectName == NPSP_RELATIONSHIP_API_NAME) 
-            ? hedaToNpspRelMatchMap : hedaToNpspAfflMatchMap;
-
-        // TODO: Also check if other fields are out of sync and update them instead of creating
-        // a new record
-        
-        // Map<String, String> fieldMap = (destObjectName == NPSP_RELATIONSHIP_API_NAME) 
-        //     ? hedaToNpspRelFieldMap : hedaToNpspAfflFieldMap;
-
-        Boolean recordsMatch = true;
-        for(String srcFieldName : fieldMatchMap.keySet()){
-            String destFieldName = fieldMatchMap.get(srcFieldName);
             if(srcRecord.get(srcFieldName) != copyRecord.get(destFieldName)){
                 recordsMatch = false;
                 break;
             }
         }
         return recordsMatch;
+    }
+
+    private SObject returnCopy(SObject srcRecord, SObject destRecord){
+        String destObjName = destRecord.getSObjectType().getDescribe().getLocalName();
+
+        Map<String, String> fieldMap = (destObjName == NPSP_RELATIONSHIP_API_NAME) 
+            ? hedaToNpspRelFieldMap : hedaToNpspAfflFieldMap;
+
+        for(String srcFieldName : fieldMap.keySet()){
+            String destFieldName = fieldMap.get(srcFieldName);
+
+            // Avoids trying to edit Master-Detail fields
+            if(srcRecord.get(srcFieldName) != destRecord.get(destFieldName)){
+                destRecord.put(destFieldName, srcRecord.get(srcFieldName));
+            }
+
+        }
+
+        return destRecord;
+    }
+
+    /*******************************************************************************************************
+    * @description Returns a unique string key that represents the data of a Relationship, which can be used
+    * to detect duplicate Relationships. 
+    * @param rel The Relationship 
+    * @return String The relKey
+    ********************************************************************************************************/
+    private static string getRelKey(npe4__Relationship__c rel) {
+        if (rel == null)
+            return null;
+        string relKey = 
+            rel.npe4__Contact__c + ':' + 
+            rel.npe4__RelatedContact__c + ':' +
+            rel.npe4__Type__c + ':' +
+            rel.npe4__Status__c + ':' +
+            rel.npe4__Description__c;
+        return relKey;
     }
 	
 }

@@ -31,8 +31,10 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
     }
 
     /*******************************************************************************************************
-    * @description Test creating, then updating, NPSP Affiliation and Relationship records
-    * based on existing EDA records
+    * @description Create a HEDA Relationship and Affiliation. 
+    * Create a Donation with the Primary Contact and Accountas the donor. 
+    * Check that NPSP versions of the Relationship and Affiliation were created.
+    * Create another donation and make sure that additional copies are not created.
     */ 
     @isTest
     private static void testOppRelatedRecordSync() {
@@ -66,34 +68,58 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             hed__Description__c = descriptionNotes);
         insert affl;
 
+        Test.startTest();
         Opportunity opp1 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
         insert opp1;
+        Test.stopTest();
 
-        List<npe4__Relationship__c> newNPSPRelationships = [SELECT Id, 
+        List<npe4__Relationship__c> newNPSPRelationships = getRelationships(donorContact1.id);
+
+        // Note: A reciprocal relationship is also created
+        System.assertEquals(1, newNPSPRelationships.size(), 
+            'There should be 1 new Relationship for this Contact, there are : ' + newNPSPRelationships.size());
+
+        List<npe5__Affiliation__c> newNPSPAffiliations = getAffiliations(donorContact1.AccountId);
+
+        System.assertEquals(1, newNPSPAffiliations.size(), 
+            'There should be 1 new Affiliation, there are : ' + newNPSPAffiliations.size());
+
+
+        // Make sure adding another Opportunity doesn't create duplicate Relationship and Affiliation records
+        Opportunity opp2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
+        insert opp2;
+
+        newNPSPRelationships = getRelationships(donorContact1.id);
+
+        // A reciprocal relationship is also created
+        System.assertEquals(1, newNPSPRelationships.size(), 
+            'There should still be only 1 Relationship, there are : ' + newNPSPRelationships.size());
+
+        newNPSPAffiliations = getAffiliations(donorContact1.AccountId);
+
+        System.assertEquals(1, newNPSPAffiliations.size(), 
+            'There should still be only 1 new Affiliation, there are : ' + newNPSPAffiliations.size());
+
+    }
+
+    private static List<npe4__Relationship__c> getRelationships(Id primaryContactId){
+        return [SELECT Id, 
             npsp__Related_Opportunity_Contact_Role__c, 
             npe4__Contact__c,
             npe4__ReciprocalRelationship__c,
             npe4__RelatedContact__c,
             npe4__Type__c
-            FROM npe4__Relationship__c];
+            FROM npe4__Relationship__c
+            WHERE npe4__Contact__c =: primaryContactId];
+    }
 
-        // System.debug(newNPSPRelationships); 
-
-        // A reciprocal relationship is also created
-        System.assertEquals(2, newNPSPRelationships.size(), 
-            'There should be 2 new Relationships, there are : ' + newNPSPRelationships.size());
-
-        List<npe5__Affiliation__c> newNPSPAffiliations = [SELECT Id, 
+    private static List<npe5__Affiliation__c> getAffiliations(Id accountId){
+        return [SELECT Id, 
             npsp__Related_Opportunity_Contact_Role__c, 
             npe5__Contact__c,
             npe5__Organization__c
             FROM npe5__Affiliation__c
-            WHERE npe5__Contact__c =: relatedToContact2.Id];
-
-        // System.debug(newNPSPAffiliations); 
-
-        System.assertEquals(1, newNPSPAffiliations.size(), 
-            'There should be 1 new Affiliation, there are : ' + newNPSPAffiliations.size());
+            WHERE npe5__Organization__c =: accountId];
     }
 
 }

@@ -49,7 +49,7 @@
 
             <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 {!v.objectFieldData.objectLabels.Opportunity.Amount}:<br/>
-                <ui:outputCurrency value="{!v.donationAmt}"/>
+                <lightning:formattedNumber value="{!v.donationAmt}" style="currency" />
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 <lightning:input type="number" 
@@ -58,10 +58,9 @@
                     step="1" />
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                <ui:inputDate class="show-required"
+                <lightning:input type="date"
                     label="{!$Label.c.Date_of_First_Payment}"
-                    value="{!v.startDate}" 
-                    displayDatePicker="true" />
+                    value="{!v.startDate}" /> 
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="3" mediumDeviceSize="1">
                 <lightning:select name="interval" 

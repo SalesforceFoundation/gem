@@ -9,7 +9,7 @@
 		}
 
 		var paymentDateField = component.find('paymentDate');
-        if(!paymentDateField){
+        if(paymentDateField){
             // Set the hidden Payment Date field if marked paid
             paymentDateField.set('v.value', payDate);
         }

@@ -59,10 +59,13 @@
                 checked="{!v.item.npe01__Paid__c}" />
         </lightning:layoutItem>
 
+
         <div class="slds-hidden">
             <lightning:input name="oppId" type="text" label="Opportunity" value="{!v.item.npe01__Opportunity__c}" />
             <ui:inputDate aura:id="paymentDate" value="{!v.item.npe01__Payment_Date__c}" />
         </div>
     </lightning:layout>
+
+    <c:dynamicFieldDisplay metadataRecordName='Payment'/>
 
 </aura:component>

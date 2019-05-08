@@ -87,12 +87,6 @@
                     <option value="Week">Week</option>
                 </lightning:select>
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="2">
-                <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
-                    fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
-                    selectedVal="{!v.selectedPaymentMethod}" />
-            </lightning:layoutItem>
-            
             <lightning:layoutItem padding="around-small" size="12">
                 <lightning:button aura:id="calcButton" disabled="true" label="{!v.calculateButtonLabel}" 
                     onclick="{!c.clickCalculate}" />

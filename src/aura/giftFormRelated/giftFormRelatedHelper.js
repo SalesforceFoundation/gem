@@ -59,7 +59,8 @@
         //var itemList = event.getParam('value');
         var itemList = component.get('v.itemList');
         itemList = this.proxyToObj(itemList);
-
+        console.log('item list is: ' );
+        console.log(itemList);
         if(itemList instanceof Array){
             for(var i=0; i<itemList.length; i++){
                 this.handleAddRow(component, helper, itemList[i], i);

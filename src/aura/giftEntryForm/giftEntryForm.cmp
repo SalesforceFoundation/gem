@@ -180,67 +180,33 @@
                                     fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}"
                                     selectedVal="{!v.di.npsp__Donation_Stage__c}" />
                             </lightning:layoutItem>
-
-                            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                                <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}"
-                                    fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
-                                    selectedVal="{!v.di.npsp__Payment_Method__c}" />
-                            </lightning:layoutItem>
-
-                            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                                <label class="slds-form-element__label">
-                                    {!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}
-                                </label>
-                                <lightning:input disabled="{!v.di.npsp__Payment_Method__c != 'Check'}"
-                                    variant="label-hidden"
-                                    value="{!v.di.npsp__Payment_Check_Reference_Number__c}" />
-                            </lightning:layoutItem>
-
-                            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                                <label class="slds-form-element__label">
-                                    {!v.objectFieldData.objectLabels.Opportunity.CampaignId}
-                                </label>
-                                <force:inputField value="{!v.opp.CampaignId}" />
-                            </lightning:layoutItem>
-
-                            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                                <label class="slds-form-element__label">
-                                    {!v.objectFieldData.objectLabels.Opportunity.Description}
-                                </label>
-                                <lightning:textarea
-                                    variant="label-hidden"
-                                    value="{!v.di.npsp__Donation_Description__c}" />
-                            </lightning:layoutItem>
-                        </lightning:layout>
-
-                        <!--KIET: Temporary location of various fields for payment method-->
-                        <aura:if isTrue="{!v.di.npsp__Payment_Method__c == 'Check'}">
-                            <lightning:layout multipleRows="true">
-                                <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                                    <label class="show-required slds-form-element__label">
-                                        {!v.objectFieldData.objectLabels.Opportunity.Amount}
-                                    </label>
-                                    <lightning:input aura:id="requiredField"
-                                        required="true"
-                                        variant="label-hidden"
-                                        type="number"
-                                        formatter="currency" step="0.01"
-                                        onblur="{!c.checkPaymentChange}"
-                                        value="{!v.di.npsp__Donation_Amount__c}" />
-                                </lightning:layoutItem>
-
-                                <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                                    <label class="slds-form-element__label">
-                                        {!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}
-                                    </label>
-                                    <lightning:input disabled="{!v.di.npsp__Payment_Method__c != 'Check'}"
-                                        variant="label-hidden"
-                                        value="{!v.di.npsp__Payment_Check_Reference_Number__c}" />
-                                </lightning:layoutItem>
-                            </lightning:layout>
-                        </aura:if>
-                        
+                        </lightning:layout>                        
                     </lightning:layoutItem>
+
+                    <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
+                        paymentList="{!v.payments}"
+                        rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
+                        donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                        paymentMethod="{!v.di.npsp__Payment_Method__c}"
+                        donationStage="{!v.di.npsp__Donation_Stage__c}"
+                        startDate="{!v.di.npsp__Donation_Date__c}"
+                        objectFieldData="{!v.objectFieldData}"
+                        giftModel="{!v.giftModel}" />
+
+                    <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
+                        itemList="{!v.partialCredits}"
+                        objectName="npsp__Partial_Soft_Credit__c"
+                        rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
+                        oppField="npsp__Opportunity__c"
+                        amtField="npsp__Amount__c"
+                        donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                        preventAmountSurplus="false"
+                        preventAmountDeficit="false"
+                        displayErrorOnAmountSurplus="false"
+                        objectFieldData="{!v.objectFieldData}"
+                        modelAttribute="partialCredits"
+                        buttonTitle="Add New Soft Credit"
+                        giftModel="{!v.giftModel}" />
 
                     <lightning:layoutItem size="12">
                         <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
@@ -339,31 +305,6 @@
                             </lightning:layoutItem>
                         </lightning:layout>
                     </lightning:layoutItem>
-
-                    <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
-                        paymentList="{!v.payments}"
-                        rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
-                        donationAmt="{!v.di.npsp__Donation_Amount__c}"
-                        paymentMethod="{!v.di.npsp__Payment_Method__c}"
-                        donationStage="{!v.di.npsp__Donation_Stage__c}"
-                        startDate="{!v.di.npsp__Donation_Date__c}"
-                        objectFieldData="{!v.objectFieldData}"
-                        giftModel="{!v.giftModel}" />
-
-                    <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
-                        itemList="{!v.partialCredits}"
-                        objectName="npsp__Partial_Soft_Credit__c"
-                        rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
-                        oppField="npsp__Opportunity__c"
-                        amtField="npsp__Amount__c"
-                        donationAmt="{!v.di.npsp__Donation_Amount__c}"
-                        preventAmountSurplus="false"
-                        preventAmountDeficit="false"
-                        displayErrorOnAmountSurplus="false"
-                        objectFieldData="{!v.objectFieldData}"
-                        modelAttribute="partialCredits"
-                        buttonTitle="Add New Soft Credit"
-                        giftModel="{!v.giftModel}" />
 
                     <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                         itemList="{!v.allocs}"

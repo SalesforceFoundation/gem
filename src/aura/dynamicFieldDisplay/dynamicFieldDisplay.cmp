@@ -1,8 +1,17 @@
-<aura:component>
-<!--Take in Custom metadata record-->
-<!-- Take in field name to populate on parent component {!name}-->
-<!--Take in DI record-->
-<!--In the do init, dynamically create the fields based on the metadata-->
+<aura:component controller="dynamicFieldDisplayController">
+    <!--Take in Custom metadata record-->
+    <!-- Take in field name to populate on parent component {!name}-->
+    <!--Take in DI record-->
+    <!--In the do init, dynamically create the fields based on the metadata-->
 
+    <aura:attribute type="String" name="metadataRecordName" />
+    <aura:attribute type="String" name="divToAppendTo" />
+    <aura:attribute type="Map" name="objectFieldData" />
+    <aura:attribute type="Object" name="retrievedMetadataRecordWrapper"/>
 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <lightning:layout>
+        {!v.body}
+    </lightning:layout>
 </aura:component>	

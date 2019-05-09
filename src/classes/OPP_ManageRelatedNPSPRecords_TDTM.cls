@@ -76,6 +76,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
 	public final String RELATED_OPPORTUNITY_CONTACT_ROLE_NONE = '--None--';
 	public final String NPSP_RELATIONSHIP_API_NAME = 'npe4__Relationship__c';
 	public final String NPSP_AFFILIATION_API_NAME = 'npe5__Affiliation__c';
+    private static List<SObject> toDelete = new List<SObject>();
 
 	/*******************************************************************************************************
     * @description Trigger Handler on Opportunities that syncs donor Relationship and Affiliations records 
@@ -95,10 +96,16 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         }
 
     	return null;
-			
+
     }
 
-	private void synchronizeRelatedDonorRecords(List<Opportunity> oppList){
+	/*******************************************************************************************************
+    * @description Take a list of Opportunities and sync Donor HEDA Relationships and Affiliations to their 
+    * NPSP versions
+    * @param objectList a list of opportunities being inserted
+    * @return void
+    ********************************************************************************************************/
+    private void synchronizeRelatedDonorRecords(List<Opportunity> oppList){
 		
         Set<Id> donorContactIds = new Set<Id>();
 		Set<Id> donorAccountIds = new Set<Id>();
@@ -157,13 +164,10 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         // Compare the lists and return any new, or updated, NPSP Relationships
         List<npe4__Relationship__c> newNpspRelationships = returnSyncedList(donorToHEDARelationships,
             donorToNPSPRelationships, NPSP_RELATIONSHIP_API_NAME);
-
+        
+        // Compare the lists and return any new, or updated, NPSP Affiliations
         List<npe5__Affiliation__c> newNpspAffiliations = returnSyncedList(donorToHEDAAffiliations,
             donorToNpspAffiliations, NPSP_AFFILIATION_API_NAME);
-
-        // System.debug(newNpspRelationships); 
-        // System.debug(hedAffiliations); 
-        // System.debug(newNpspAffiliations); 
 
         if(!newNpspRelationships.isEmpty()){
             upsert newNpspRelationships;
@@ -172,8 +176,19 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         if(!newNpspAffiliations.isEmpty()){
             upsert newNpspAffiliations;
         }
+
+        if(!toDelete.isEmpty()){
+            delete toDelete;
+        }
+
 	}
 
+    /*******************************************************************************************************
+    * @description Take a list of records and create a map using the provided Id field as the key values
+    * @param objectList a list of records
+    * @param donorIdField the field name that should become the map key
+    * @return Map<Id, List<SObject>> a map of Donor Id to a list of its related records
+    ********************************************************************************************************/
     private Map<Id, List<SObject>> convertListToMap(List<SObject> objectList, String donorIdField){
         Map<Id, List<SObject>> donorMap = new Map<Id, List<SObject>>();
         for(SObject rel : objectList){
@@ -186,16 +201,20 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         return donorMap;
     }
 
+    /*******************************************************************************************************
+    * @description Take a map of Donor Id to HEDA Relationship or Affiliations records and return a list of 
+    * synced Relationship or Affiliations NPSP records
+    * @param sourceMap map of Donor Id to the HEDA versions of the records
+    * @param copyMap map of Donor Id to existing NPSP versions of the records
+    * @param destObjectName the API name of the NPSP version of the copies
+    * @return List<SObject> synced NPSP versions of the records
+    ********************************************************************************************************/
     private List<SObject> returnSyncedList(Map<Id, List<SObject>> sourceMap, 
         Map<Id, List<SObject>> copyMap, String destObjectName){
 
-
-            // TODO: Need to keep track of a "best match" map?
-            // Make sure that 1 rel isn't the best match for 2 different source records?
-            Map<Id,SObject> sourceToBestMatch = new Map<Id,SObject>();
-
             Map<String, String> fullFieldMap;
             Map<String, String> matchFieldMap;
+
             if(destObjectName == NPSP_RELATIONSHIP_API_NAME){
                 fullFieldMap = hedaToNpspRelFieldMap;
                 matchFieldMap = hedaToNpspRelMatchMap;
@@ -203,59 +222,50 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
                 fullFieldMap = hedaToNpspAfflFieldMap;
                 matchFieldMap = hedaToNpspAfflMatchMap;
             }
-
             
             SObject[] toUpsert = (SObject[])Type.forName('List<'+destObjectName+'>').newInstance();
             SObject destRecordTemplate = Schema.getGlobalDescribe().get(destObjectName).newSObject();
 
             for(Id donorId : sourceMap.keySet()){
                 List<SObject> sourceList = sourceMap.get(donorId);
-            
+                List<SObject> copyList = new List<SObject>();
+                if(copyMap.containsKey(donorId)){
+                    copyList = copyMap.get(donorId);
+                }
+                
                 // Each source record needs to find an existing match, or create a copy of itself
                 for(SObject sourceRecord : sourceList){
 
                     SObject destRecord = destRecordTemplate.clone(false, true, false, false);
-
                     Boolean foundMatch = false;
 
-                    if(copyMap.containsKey(donorId)){
+                    // This list only exists if a sync has already occurred on these records
+                    for(Integer i = 0; i < copyList.size(); i++){
+                        SObject copyRecord = copyList[i];
 
-                        List<SObject> copyList = copyMap.get(donorId);
-
-                        // This list only exists if a sync has already occurred on these records
-                        for(SObject copyRecord : copyList){
-
-                            /*
-                            Need to know if:
-                                1. There is an existing match
-                                    1a. That match needs an update
-                                2. There is no existing match
-                                    2a. Should this replace an out of sync copy
-                            */
-
-                            if(returnFieldsMatch(sourceRecord, copyRecord, matchFieldMap)){
-                                foundMatch = true;
-                                // The records match, but does the copy need an update?
-                                if(returnFieldsMatch(sourceRecord, copyRecord, fullFieldMap)){
-                                    toUpsert.add(returnCopy(sourceRecord, copyRecord));
-                                }
-                                break;
+                        if(returnFieldsMatch(sourceRecord, copyRecord, matchFieldMap)){
+                            foundMatch = true;
+                            // The records match, but does the copy need an update?
+                            if(returnFieldsMatch(sourceRecord, copyRecord, fullFieldMap)){
+                                toUpsert.add(returnCopy(sourceRecord, copyRecord));
                             }
+                            // Remove this copy as a candidate for matching
+                            copyList.remove(i);
+                            break;
                         }
                     }
 
                     if(!foundMatch){
-                        // The NPSP record either needs to be created as a copy, or updated
+                        // No match was found, the NPSP record needs to be created as a copy
                         toUpsert.add(returnCopy(sourceRecord, destRecord));
                     }
+                }
 
+                // If there are items in the copyMap that haven't been matched, delete them
+                if(!copyList.isEmpty()){
+                    toDelete.addAll(copyList);
                 }
             }
-
-            // Now check for any unmatched copies and see if there should be a match
-            // Use the Map of src to best match?
-
-
 
             return toUpsert;
     }
@@ -279,6 +289,13 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         return recordsMatch;
     }
 
+    /*******************************************************************************************************
+    * @description Take a HEDA version of Relationship or Affiliation and copy its values into the provided 
+    * NPSP version
+    * @param srcRecord the HEDA version of the record to copy from
+    * @param destRecord the NPSP version of the record to copy to
+    * @return SObject the NPSP version of the record with all fields copied over
+    ********************************************************************************************************/
     private SObject returnCopy(SObject srcRecord, SObject destRecord){
         String destObjName = destRecord.getSObjectType().getDescribe().getLocalName();
 
@@ -298,22 +315,4 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         return destRecord;
     }
 
-    /*******************************************************************************************************
-    * @description Returns a unique string key that represents the data of a Relationship, which can be used
-    * to detect duplicate Relationships. 
-    * @param rel The Relationship 
-    * @return String The relKey
-    ********************************************************************************************************/
-    private static string getRelKey(npe4__Relationship__c rel) {
-        if (rel == null)
-            return null;
-        string relKey = 
-            rel.npe4__Contact__c + ':' + 
-            rel.npe4__RelatedContact__c + ':' +
-            rel.npe4__Type__c + ':' +
-            rel.npe4__Status__c + ':' +
-            rel.npe4__Description__c;
-        return relKey;
-    }
-	
 }

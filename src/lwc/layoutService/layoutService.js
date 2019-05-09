@@ -1,4 +1,3 @@
-import {LightningElement, api, wire} from 'lwc';
 import readOpportunityLayout from '@salesforce/apex/SGE_GiftEntryService.readOpportunityLayout';
 
 const getOpportunityLayout = () => {

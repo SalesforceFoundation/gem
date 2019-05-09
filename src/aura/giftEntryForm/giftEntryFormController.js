@@ -8,7 +8,7 @@
         // Set the namespace var so components load in managed package
         var namespace = component.getType().split(':')[0];
         component.set('v.namespacePrefix', namespace);
-        if(namespace != 'c'){
+        if(namespace !== 'c'){
             component.set('v.namespaceFieldPrefix', namespace+'__');
         }
         helper.setOppToDiMap(component);
@@ -39,7 +39,7 @@
     clickEditDonor: function(component, event, helper) {
         var donorType = component.get('v.di.npsp__Donation_Donor__c');
         var donorId;
-        if(donorType == 'Account1'){
+        if(donorType === 'Account1'){
             donorId = component.get('v.di.npsp__Account1Imported__c');
         } else {
             donorId = component.get('v.di.npsp__Contact1Imported__c');
@@ -75,9 +75,9 @@
     handleDonorTypeChange: function(component, event, helper){
         var donorType = event.getParam('value');
         // Need to clear the other donor fields
-        if(donorType == 'Account1'){
+        if(donorType === 'Account1'){
             helper.clearInputs(component, 'contactLookup');
-        } else if(donorType == 'Contact1'){
+        } else if(donorType === 'Contact1'){
             helper.clearInputs(component, 'accountLookup');
         }
     },
@@ -85,12 +85,19 @@
         var message = event.getParam('message');
         var channel = event.getParam('channel');
 
-        if(channel == 'picklistChangeEvent'){
+        if(channel === 'picklistChangeEvent'){
             helper.handlePicklistChange(component, message);
-        } else if(channel == 'matchChangeEvent'){
-            helper.handleMatchChange(component, message, helper);
-        } else if(channel == 'validateEvent'){
+        } else if(channel === 'validateEvent'){
             helper.validateForm(component, true);
+        }
+    },
+    handleCustomFieldsLoaded: function(component, event, helper) {
+        const hasFields = event.getParam('hasFields');
+        if(hasFields) {
+            const header = component.find('dynamicFormHeader');
+            const container = component.find('dynamicFormContainer');
+            $A.util.removeClass(header, 'slds-hidden');
+            $A.util.removeClass(container, 'slds-hidden');
         }
     },
     expandTributeSection: function(component, event, helper) {

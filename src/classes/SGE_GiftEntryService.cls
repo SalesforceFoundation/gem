@@ -1,5 +1,5 @@
 public with sharing class SGE_GiftEntryService {
-    private static final String LAYOUT_NAME = 'Gift Entry';
+    private static final String LAYOUT_NAME = 'SGE Custom Fields';
 
     /**
      * Read an opportunity layout for use in the SGE form
@@ -19,17 +19,21 @@ public with sharing class SGE_GiftEntryService {
      * @return  A SGE_GiftEntryService.Layout containing information about all writeable custom fields in the specified layout
      */
     private static SGE_GiftEntryService.Layout readOpportunityLayoutByName(String layoutName) {
-        Metadata.Metadata metadata = Metadata.Operations.retrieve(Metadata.MetadataType.Layout, new List<String>{
-                'Opportunity-' + layoutName
-        })[0];
+        List<String> layouts = new List<String>{'Opportunity-' + layoutName};
+        Metadata.Metadata rawMetadata;
 
-        Metadata.Layout layout = (Metadata.Layout)metadata;
+        try {
+            rawMetadata = Metadata.Operations.retrieve(Metadata.MetadataType.Layout, layouts)[0];
+        } catch(Exception ex) {
+            throw new AuraHandledException('No Opportunity layout named ' + layoutName + ' found');
+        }
+        Metadata.Layout layout = (Metadata.Layout)rawMetadata;
 
         return new SGE_GiftEntryService.Layout(Schema.Opportunity.SObjectType, layout);
     }
 
     private static SGE_GiftEntryService.Layout readOpportunityFieldSetByName(String fieldSetName) {
-        FieldSet gemFieldSet = Schema.SOBjectType.Opportunity.fieldSets.getMap().get(fieldSetName);
+        FieldSet gemFieldSet = Schema.SObjectType.Opportunity.fieldSets.getMap().get(fieldSetName);
 
         return new SGE_GiftEntryService.Layout(gemFieldSet);
     }

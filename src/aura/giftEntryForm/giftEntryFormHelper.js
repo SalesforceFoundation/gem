@@ -135,10 +135,10 @@
         var donorExists = false;
 
         // Make sure a donor has been provided
-        if(donorType == 'Account1' || !donorType){ 
+        if(donorType === 'Account1' || !donorType){
             donorExists = donorExists || this.checkFields(component, 'accountLookup', true);
         }
-        if(donorType == 'Contact1' || !donorType) {
+        if(donorType === 'Contact1' || !donorType) {
             donorExists = donorExists || this.checkFields(component, 'contactLookup', true);
         }
 
@@ -274,11 +274,12 @@
         component.set('v.oppToDiFieldMap', fieldMap);
     },
     mapOppToDi: function(component, di, opp){
-        var fieldMap = component.get('v.oppToDiFieldMap');
-        for(var field in fieldMap){
-            var diField = fieldMap[field];
-            di[diField] = opp[field];
-        }
+        var fieldsMap = component.get('v.oppToDiFieldMap');
+        // key = opportunity field name
+        // value = data import object field name
+        Object.entries(fieldsMap).forEach(([key,value]) => {
+            di[value] = key;
+        });
     },
     fillJsonField: function(component) {
         var relatedCmp = this.getChildComponents(component, 'giftFormRelated');

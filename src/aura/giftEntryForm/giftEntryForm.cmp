@@ -214,14 +214,14 @@
                         </lightning:layout>
                     </lightning:layoutItem>
 
-                    <lightning:layoutItem size="12">
+                    <lightning:layoutItem size="12" class="slds-hidden" aura:id="dynamicFormHeader">
                         <div class="slds-page-header slds-page-header__title">
                             <h2>Custom Fields</h2>
                         </div>
                     </lightning:layoutItem>
 
-                    <lightning:layoutItem size="12">
-                        <c:sge_dynamicform aura:id="sge_dynamicform"></c:sge_dynamicform>
+                    <lightning:layoutItem size="12" class="slds-hidden" aura:id="dynamicFormContainer">
+                        <c:sge_dynamicform aura:id="sge_dynamicform" onload="{!c.handleCustomFieldsLoaded}"></c:sge_dynamicform>
                     </lightning:layoutItem>
 
                     <lightning:layoutItem size="12">

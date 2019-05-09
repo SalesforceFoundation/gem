@@ -501,7 +501,8 @@ public with sharing class GiftEntryFormController {
                                 'npe01__Payment_Amount__c ' +
                                 'FROM npe01__OppPayment__c ' +
                                 'WHERE npe01__Opportunity__r.' + relationshipField + ' = :donorId ' +
-                                'AND npe01__Paid__c = false';
+                                'AND npe01__Paid__c = false ' +
+                                'AND npe01__Written_Off__c = false';
 
         try {
             List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);

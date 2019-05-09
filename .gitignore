@@ -3,6 +3,7 @@
 .appcloud
 .project
 .settings
+.cci
 build.properties
 salesforce.schema
 Referenced Packages

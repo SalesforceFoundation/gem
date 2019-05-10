@@ -26,7 +26,7 @@
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
     <aura:attribute type="String" name="submitError" />
-    <aura:attribute type="String" name="batchId" />
+    <aura:attribute type="String" name="selectedDonorType" />
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
     <aura:attribute type="String" name="oppId" />
@@ -115,7 +115,7 @@
                 <lightning:layoutItem size="12">
                     <lightning:layout multipleRows="true">
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                            <c:giftPicklist picklistValues="[{value:'Account1',label:'Account'},{value:'Contact1',label:'Contact'}]"
+                            <c:giftPicklist picklistValues="[{value:'Contact1',label:'Contact'},{value:'Account1',label:'Account'}]"
                                 fieldLabel="{!$Label.c.Gift_Donor_Type}"
                                 selectedVal="{!v.di.npsp__Donation_Donor__c}" />
                         </lightning:layoutItem>

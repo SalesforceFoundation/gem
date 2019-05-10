@@ -22,6 +22,11 @@
                 // console.log(giftModel); 
                 component.set('v.giftModel', giftModel);
 
+                var selectedDonorType = component.get('v.selectedDonorType');
+                if(selectedDonorType){
+                    component.set('v.di.npsp__Donation_Donor__c', selectedDonorType);
+                }
+
                 var bdiLabels = component.get('v.bdiLabels');
 
                 // This is the initial call, set helper variables
@@ -53,7 +58,14 @@
                         this.preventDefaultPayment();
                     }
                     component.set('v.oppLockedStatus', oppStatus);
-                    this.disablePaymentCalculateButton(component);
+
+                    // If there are existing payments, do not allow re-calculating the schedule
+                    if(giftModel.payments.length > 0){
+                        this.disablePaymentCalculateButton(component, true);
+                    } else {
+                        this.disablePaymentCalculateButton(component, false);
+                    }
+                    
                     // var opp = this.proxyToObj(giftModel.opp);
                     var di = this.proxyToObj(component.get('v.di'));
 
@@ -131,13 +143,6 @@
             closeDate = this.convertDateToString(closeDate);
             component.set('v.opp.CloseDate', closeDate);
         }
-
-        // Also check whether the Contact or Account information should be shown
-        if(opp && opp.AccountId && !opp.npsp__Primary_Contact__c){
-            component.set('v.di.npsp__Donation_Donor__c', 'Account1');
-        } else {
-            component.set('v.di.npsp__Donation_Donor__c', 'Contact1');
-        }
     },
     handlePicklistSetup: function(component, picklistOptions){
         // Add 'None' option to start of each picklist
@@ -172,6 +177,7 @@
         }
     },
     redirectToSobject: function(component, objId){
+        $A.get('e.force:refreshView').fire();
         var event = $A.get('e.force:navigateToSObject');
         event.setParams({
             recordId: objId
@@ -271,10 +277,10 @@
 
         component.set('v.paymentTimer', timer);
     },
-    disablePaymentCalculateButton: function(component){
+    disablePaymentCalculateButton: function(component, disabled){
         var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
         if(paySched){
-            paySched[0].disableCalcButton();
+            paySched[0].disableCalcButton(disabled);
         }
     },
     focusOnAddPayment: function(component){
@@ -378,6 +384,10 @@
         component.set('v.showSpinner', true);
         component.set('v.selectedDonation', selectedDonation);
         var selection = this.proxyToObj(selectedDonation);
+
+        // Need to keep track of the selected donor type to keep it the same after loading a match
+        var selectedDonorType = component.get('v.di.npsp__Donation_Donor__c');
+        component.set('v.selectedDonorType', selectedDonorType);
 
         // "create a new Opportunity" was selected
         if(!selection){

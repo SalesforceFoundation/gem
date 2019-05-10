@@ -313,6 +313,7 @@ public with sharing class GiftEntryFormController {
                                 'npe01__Payment_Date__c',
                                 'npe01__Payment_Method__c',
                                 'npe01__Check_Reference_Number__c',
+                                'npe01__Written_Off__c',
                                 'npe01__Paid__c'
                         });
                 List<npe01__OppPayment__c> payments = [
@@ -322,6 +323,7 @@ public with sharing class GiftEntryFormController {
                                 npe01__Payment_Date__c,
                                 npe01__Payment_Method__c,
                                 npe01__Check_Reference_Number__c,
+                                npe01__Written_Off__c,
                                 npe01__Paid__c
                         FROM npe01__OppPayment__c
                         WHERE npe01__Opportunity__c = :oppId

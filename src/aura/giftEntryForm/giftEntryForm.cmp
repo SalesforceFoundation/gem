@@ -37,6 +37,7 @@
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
     <aura:attribute type="Boolean" name="showMatchSpinner" default="true" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
+    <aura:attribute type="Boolean" name="editModePaidPayments" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
     <aura:attribute type="Boolean" name="donorExists" default="false" />
     <aura:attribute type="Boolean" name="expandTribute" default="true" />
@@ -437,6 +438,7 @@
 
                 <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
                     editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
                     disablePaymentEvents="{!v.disableBlurEvents}"
                     paymentList="{!v.payments}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
@@ -448,8 +450,9 @@
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
-                    editMode="{!v.editMode}"    
-                    disablePaymentEvents="{!v.disableBlurEvents}"    
+                    editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"
                     itemList="{!v.partialCredits}"
                     objectName="npsp__Partial_Soft_Credit__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
@@ -466,6 +469,7 @@
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                     editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
                     disablePaymentEvents="{!v.disableBlurEvents}"
                     itemList="{!v.allocs}"
                     objectName="npsp__Allocation__c"

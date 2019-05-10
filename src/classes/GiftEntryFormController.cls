@@ -346,6 +346,7 @@ public with sharing class GiftEntryFormController {
                     SELECT Id,
                             npsp__Amount__c,
                             npsp__General_Accounting_Unit__c,
+                            npsp__General_Accounting_Unit__r.Name,
                             npsp__Percent__c,
                             npsp__Recurring_Donation__c,
                             npsp__Opportunity__c
@@ -756,20 +757,7 @@ public with sharing class GiftEntryFormController {
             if(giftModelString == null) {
                 return new GiftFormModel(null);
             }
-
-            // First, remove attributes passed from Lightning that can't be deserialized
-            String sObjectTypeRegex = '"sobjectType":.+?(?=,),';
-            // Now remove related lookup object attributes, we can't upsert with the Id AND the object
-            // NOTE: If this stops working, it may be best to loop through the object and remove
-            // any objects at a certain "depth"
-            String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
-
-            giftModelString = giftModelString.replaceAll(sObjectTypeRegex, '');
-            giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
-
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
-            // TODO: Loop through and remove objects of a certain depth
-
             return giftModel;
 
         } catch(Exception e) {

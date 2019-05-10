@@ -18,7 +18,8 @@
             var donationAmt = component.getReference('v.donationAmt');
             var checkAmountTotals = component.getReference('v.checkAmountTotals');
             var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
-            var editMode = component.get('v.editMode');
+            var editMode = component.get('v.editModeOverride');
+            var editModePaidPayments = component.get('v.editModePaidPayments');
             var showLabels = (index == 0 || newRowNum == 0) ? true : false;
 
             $A.createComponent(
@@ -32,7 +33,8 @@
                     'noDuplicateValueList': noDuplicateValueList,
                     'amtField': amtField,
                     'showLabels': showLabels,
-                    'editMode': editMode
+                    'editMode': editMode,
+                    'editModePaidPayments': editModePaidPayments
                 },
                 function(relatedCmp, status, errorMessage){
                     if (status === 'SUCCESS') {
@@ -69,11 +71,16 @@
         this.handleAmtChangeHelper(component);
         
         // This way, new rows will not be locked
-        component.set('v.editMode', false);
+        component.set('v.editModeOverride', false);
     },
     createRowsFromItemList: function(component, helper){
         // Called when the item list is completely overwritten
         // Ex. Calculating Payment schedule, or loading existing data
+
+        // We want a separate editMode variable for this component to override the "lock"
+        // on new rows
+        var formEditMode = component.get('v.editMode');
+        component.set('v.editModeOverride', formEditMode);
 
         // First, clear the existing rows
         component.set('v.body', []);
@@ -185,6 +192,16 @@
         arrayList = this.proxyToObj(arrayList);
         if(!arrayList){
             arrayList = null;
+        }
+        // Remove any related object info, it causes errors during JSON parsing in Apex
+        for(var i in arrayList){
+            var relatedObj = arrayList[i];
+            for(var j in relatedObj){
+                var fieldVal = relatedObj[j];
+                if(fieldVal instanceof Object){
+                    delete arrayList[i][j];
+                }
+            }
         }
         component.set('v.giftModel.'+attrName, arrayList);
     },

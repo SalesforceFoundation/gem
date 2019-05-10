@@ -21,6 +21,7 @@
     <aura:attribute type="Boolean" name="calcButtonDisabled" default="false" />
     <aura:attribute type="Boolean" name="disablePaymentEvents" />
     <aura:attribute type="Boolean" name="editMode" />
+    <aura:attribute type="Boolean" name="editModePaidPayments" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String" name="intervalFreq" />
     <aura:attribute type="Integer" name="intervalNum" />

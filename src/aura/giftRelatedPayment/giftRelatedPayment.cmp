@@ -51,7 +51,7 @@
             <aura:if isTrue="{!!v.rowDisabled}">
                 <force:inputField aura:id="methodField" value="{!v.item.npe01__Payment_Method__c}" />
                 <aura:set attribute="else">
-                    {!v.item.npe01__Payment_Method__c}
+                    <p>{!v.item.npe01__Payment_Method__c}</p>
                 </aura:set>
             </aura:if>
         </lightning:layoutItem>

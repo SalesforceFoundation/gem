@@ -1,6 +1,12 @@
 ({
     getDonationInformation: function(component, oppId){
+
+        // Need to keep track of the selected donor type to keep it the same after loading a match
+        var selectedDonorType = component.get('v.di.npsp__Donation_Donor__c');
+        component.set('v.selectedDonorType', selectedDonorType);
+
         component.set('v.oppClosed', false);
+        component.set('v.editModePaidPayments', false);
         // Make changes if a recordId was provided (Edit mode)
         if(oppId){
             this.changeSubmitText(component, $A.get('$Label.c.Gift_Update'));
@@ -26,6 +32,10 @@
                 if(selectedDonorType){
                     component.set('v.di.npsp__Donation_Donor__c', selectedDonorType);
                 }
+
+                // Reset buttons
+                this.disablePaymentCalculateButton(component, false);
+                this.disableAddAllocation(component, false);
 
                 var bdiLabels = component.get('v.bdiLabels');
 
@@ -61,9 +71,11 @@
 
                     // If there are existing payments, do not allow re-calculating the schedule
                     if(giftModel.payments.length > 0){
+                        if(this.hasPaidPayments(giftModel.payments)){
+                            component.set('v.editModePaidPayments', true);
+                            this.disableAddAllocation(component, true);
+                        }
                         this.disablePaymentCalculateButton(component, true);
-                    } else {
-                        this.disablePaymentCalculateButton(component, false);
                     }
                     
                     // var opp = this.proxyToObj(giftModel.opp);
@@ -99,6 +111,15 @@
             }
         });
         $A.enqueueAction(getModelAction);
+    },
+    hasPaidPayments: function(paymentList){
+        for(var i in paymentList){
+            var payment = paymentList[i];
+            if(payment.npe01__Paid__c || payment.npe01__Written_Off__c){
+                return true;
+            }
+        }
+        return false;
     },
     resetForm: function(component){
         component.set('v.allocs', []);
@@ -277,10 +298,10 @@
 
         component.set('v.paymentTimer', timer);
     },
-    disablePaymentCalculateButton: function(component, disabled){
+    disablePaymentCalculateButton: function(component, isDisabled){
         var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
         if(paySched){
-            paySched[0].disableCalcButton(disabled);
+            paySched[0].disableCalcButton(isDisabled);
         }
     },
     focusOnAddPayment: function(component){
@@ -290,6 +311,17 @@
                 var objectName = relatedCmp[i].getRelatedObject();
                 if(objectName == 'npe01__OppPayment__c'){
                     relatedCmp[i].focusOnAddButton();
+                }
+            }
+        }
+    },
+    disableAddAllocation: function(component, addBtnDisabled){
+        var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
+        if(relatedCmp){
+            for(var i=0; i < relatedCmp.length; i++){
+                var objectName = relatedCmp[i].getRelatedObject();
+                if(objectName == 'npsp__Allocation__c'){
+                    relatedCmp[i].disableAddButton(addBtnDisabled);
                 }
             }
         }
@@ -385,10 +417,6 @@
         component.set('v.selectedDonation', selectedDonation);
         var selection = this.proxyToObj(selectedDonation);
 
-        // Need to keep track of the selected donor type to keep it the same after loading a match
-        var selectedDonorType = component.get('v.di.npsp__Donation_Donor__c');
-        component.set('v.selectedDonorType', selectedDonorType);
-
         // "create a new Opportunity" was selected
         if(!selection){
             this.getDonationInformation(component, null);
@@ -408,9 +436,6 @@
         }
         // Update the form to edit the selected Opportunity
         this.getDonationInformation(component, oppId);
-
-        // TODO: Add, and lock, this payment in the scheduler
-        // component.set('v.payments', [selection]);
     },
     mapOppToDi: function(component, di, opp){
         var fieldMap = component.get('v.objectFieldData.diToOppFieldMap');

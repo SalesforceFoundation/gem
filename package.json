@@ -1,0 +1,23 @@
+{
+  "name": "gem",
+  "version": "1.0.0",
+  "description": "Salesforce.org Gift Entry Manager (“GEM”) is an open source, extensible application that leverages existing fundraising capabilities, built on HEDA, with new code to address the unique core needs of higher education gift entry management. GEM  utilizes a Salesforce.com (“Salesforce”) managed package to give higher education users the ability to record gifts and pledges. In addition, GEM developers and administrators can benefit from insights beyond gift records, manage extensible pledge and gift management in the cloud, and utilize a robust framework for gift entry from single to batch workflows.",
+  "scripts": {
+    "test:unit": "lwc-jest",
+    "test:unit:watch": "lwc-jest --watch",
+    "test:unit:debug": "lwc-jest --debug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SalesforceFoundation/gem.git"
+  },
+  "author": "",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/SalesforceFoundation/gem/issues"
+  },
+  "homepage": "https://github.com/SalesforceFoundation/gem#readme",
+  "devDependencies": {
+    "@salesforce/lwc-jest": "^0.4.14"
+  }
+}

@@ -4,6 +4,7 @@
 .project
 .settings
 .cci
+node_modules/
 build.properties
 salesforce.schema
 Referenced Packages

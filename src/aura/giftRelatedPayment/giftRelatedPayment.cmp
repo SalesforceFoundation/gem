@@ -1,5 +1,6 @@
 <aura:component extends="c:giftFormRelatedRow">
     
+    <aura:dependency resource="markup://c:dynamicFieldDisplay"/>
     <aura:method name="clearAmount" />
 
     <aura:attribute name="item" 
@@ -67,5 +68,8 @@
     </lightning:layout>
 
     <c:dynamicFieldDisplay metadataRecordName='Payment'/>
+
+    ---------------------------------------------
+    <!--<c:dynamicFieldDisplaySection objectName="npe01__OppPayment__c" fieldList="['npe01__Check_Reference_Number__c', 'npe01__Paid__c','npe01__Payment_Amount__c']" fieldNameToFieldLabel="{'npe01__Check_Reference_Number__c': 'Check/Reference Number', 'npe01__Paid__c': 'Paid', 'npe01__Payment_Amount__c': 'Payment Amount'}" pickListValue="check"/>-->
 
 </aura:component>

@@ -17,6 +17,7 @@
     <aura:attribute type="Boolean" name="showError" default="false" />
     <aura:attribute type="Boolean" name="editMode" />
     <aura:attribute type="Boolean" name="editModePaidPayments" />
+    <aura:attribute type="Boolean" name="removeButtonDisabled" default="true" />
     <aura:attribute type="String" name="errorMessage" />
     
     <div class="{!v.showError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
@@ -32,7 +33,7 @@
         <aura:if isTrue="{!v.showLabels}">
             <label class="slds-form-element__label">&nbsp;</label><br/>
         </aura:if>
-        <lightning:button disabled="{!v.editMode}" 
+        <lightning:button disabled="{!and(v.editMode, v.removeButtonDisabled)}" 
             label="{!$Label.c.Remove}" 
             onclick="{!c.clickDeleteRow}" />
     </lightning:layoutItem>

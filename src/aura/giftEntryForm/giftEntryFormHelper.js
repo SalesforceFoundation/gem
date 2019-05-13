@@ -92,7 +92,6 @@
                     component.set('v.campaignId', giftModel.opp.CampaignId);
                     component.set('v.opp.npsp__Matching_Gift__c', giftModel.opp.npsp__Matching_Gift__c);
 
-                    // console.log(giftModel.payments); 
                     component.set('v.allocs', giftModel.allocs);
                     component.set('v.partialCredits', giftModel.partialCredits);
                     component.set('v.payments', giftModel.payments);

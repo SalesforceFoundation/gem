@@ -9,6 +9,11 @@
 
 		// If loading data, checks the amounts
 		helper.handleAmountCheckHelper(component);
+
+		// TODO: Add ability to delete existing rows when editing a Donation
+		// This is partially figured out by using the 'markedForDelete' attribute
+		// Partial Soft Credits can always been removed, even in edit mode
+		// component.set('v.removeButtonDisabled', false);
 	},
 	handleTypeChange: function(component, event, helper) {
 		var newType = event.getParam('value');

@@ -369,6 +369,7 @@ public with sharing class GiftEntryFormController {
                     SELECT Id,
                             npsp__Amount__c,
                             npsp__Contact__c,
+                            npsp__Contact__r.Name,
                             npsp__Contact_Name__c,
                             npsp__Role_Name__c,
                             npsp__Opportunity__c

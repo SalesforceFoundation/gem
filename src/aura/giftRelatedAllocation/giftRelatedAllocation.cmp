@@ -12,7 +12,7 @@
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Allocation.npsp__General_Accounting_Unit__c}</label>
             </aura:if>
             <aura:if isTrue="{!v.editModePaidPayments}">
-                <p>
+                <p class="slds-p-left_small slds-p-top_x-small">
                     <lightning:formattedText value="{!v.item.npsp__General_Accounting_Unit__r.Name}" />
                 </p>
                 <aura:set attribute="else">

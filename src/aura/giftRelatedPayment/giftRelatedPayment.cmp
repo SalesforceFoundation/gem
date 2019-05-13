@@ -51,7 +51,7 @@
             <aura:if isTrue="{!!v.rowDisabled}">
                 <force:inputField aura:id="methodField" value="{!v.item.npe01__Payment_Method__c}" />
                 <aura:set attribute="else">
-                    <p>{!v.item.npe01__Payment_Method__c}</p>
+                    <p class="slds-p-left_small slds-p-top_x-small">{!v.item.npe01__Payment_Method__c}</p>
                 </aura:set>
             </aura:if>
         </lightning:layoutItem>
@@ -59,7 +59,7 @@
             <aura:if isTrue="{!v.showLabels}">
                 <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}</label>
             </aura:if>
-            <lightning:input disabled="{!v.rowDisabled}"
+            <lightning:input disabled="{!or(v.rowDisabled,v.item.npe01__Payment_Method__c != 'Check')}"
                 label="{!v.objectLabels.Payment.npe01__Check_Reference_Number__c}" variant="label-hidden"
                 value="{!v.item.npe01__Check_Reference_Number__c}" />
         </lightning:layoutItem>

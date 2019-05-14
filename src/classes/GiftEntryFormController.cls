@@ -520,10 +520,12 @@ public with sharing class GiftEntryFormController {
             String opportunitySOQL = 'SELECT Id, ' +
                                     'Name, ' +
                                     'StageName, ' +
+                                    'CloseDate, ' +
                                     'Amount ' +
                                     'FROM Opportunity ' +
                                     'WHERE ' + relationshipField + ' = :donorId ' +
-                                    'AND (IsClosed = false OR Id in :oppIdsWithUnpaidPayments)';
+                                    'AND (IsClosed = false OR Id in :oppIdsWithUnpaidPayments) ' + 
+                                    'ORDER BY CloseDate ASC ';
 
             List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
             Map<Id, Opportunity> openOpportunitiesById = new Map<Id, Opportunity>(openOpportunities);

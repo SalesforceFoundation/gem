@@ -571,8 +571,10 @@
         var idArray = this.proxyToObj(lookupValue);
         if(!idArray || !idArray.length){
             return null;
-        } else {
+        } else if(idArray instanceof Array) {
             return idArray[0];
+        } else {
+            return idArray;
         }
     },
     clearInputs: function(component, fieldId){

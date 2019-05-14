@@ -92,6 +92,19 @@ tasks:
             path: dev_config/scripts/configure_default_settings.cls
             method: AddGiftProcessor();
 
+    npm_install:
+        description: Install NPM packages
+        class_path: cumulusci.tasks.command.Command
+        options:
+            command: npm install
+            pass_env: true
+    jest_tests:
+        description: Run Jest Tests
+        class_path: cumulusci.tasks.command.Command
+        options:
+            command: 'npm run test:unit'
+            pass_env: true
+
 flows:
     config_apextest:
         steps:
@@ -140,6 +153,8 @@ flows:
                 options:
                     managed: True
                     namespace: npsp
+            7.3:
+                flow: jest_tests
 
     ci_feature_beta_deps:
         description: When run, the latest version (including betas) of Cumulus and HEDA are installed, and all tests are run.
@@ -154,6 +169,8 @@ flows:
                 options:
                     managed: True
                     namespace: npsp
+            7:
+                flow: jest_tests
 
     dev_org_beta_deps:
         description: Set up an org as a development environment for unmanaged metadata based on the latest version (including betas).
@@ -164,6 +181,14 @@ flows:
                 flow: deploy_unmanaged
             3:
                 flow: config_dev
+    jest_tests:
+        description: Set up and run jest unit tests
+        steps:
+            1:
+                task: npm_install
+            2:
+                task: jest_tests
+
 
     test_data_setup:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'

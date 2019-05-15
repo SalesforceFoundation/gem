@@ -4,9 +4,8 @@
 		// We only want to event to fire once, boolean is toggled to handle this
 		var blockChange = component.get('v.blockItemChangeEvent');
 		component.set('v.blockItemChangeEvent', !blockChange);
-		var paymentList = component.get('v.paymentList');
-		if(paymentList.length > 0){
-			component.set('v.showPayments', true);
+		if(blockChange){
+			return;
 		}
 	},
 	clickCalculate: function(component, event, helper) {
@@ -14,12 +13,16 @@
 		helper.clickCalculateHelper(component, false);
 	},
 	handleAmtChange: function(component, event, helper) {
+		if(component.get('v.disablePaymentEvents')){
+            return;
+        }
 		var donationAmt = component.get('v.donationAmt');
 		var btn = component.find('calcButton');
+		var calcDisabled = component.get('v.calcButtonDisabled');
 		// Enable the calculate button if a valid amount is entered
-		if(btn){
+		if(btn && !calcDisabled){
 			var validAmount = (donationAmt > 0);
-			btn.set('v.disabled',!validAmount);
+			btn.set('v.disabled', !validAmount);
 		}
 	},
 	handleMethodChange: function(component, event, helper) {
@@ -42,6 +45,17 @@
 		} else if(amtWasChanged) {
 			helper.clearPaymentAmts(component, helper);
 		}
+	},
+	disableCalcButton: function(component, event, helper){
+		var params = event.getParam('arguments');
+		var disableBtn = false;
+		if(params){
+			disableBtn = params.disableBtn;
+		}
+
+		var btn = component.find('calcButton');
+		btn.set('v.disabled', disableBtn);
+		component.set('v.calcButtonDisabled', disableBtn);
 	},
 	handleMessage: function(component, event, helper){
 		var channel = event.getParam('channel');

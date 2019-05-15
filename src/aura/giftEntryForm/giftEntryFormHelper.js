@@ -1,9 +1,20 @@
 ({
     getDonationInformation: function(component, oppId){
+
+        // Need to keep track of the selected donor type to keep it the same after loading a match
+        var selectedDonorType = component.get('v.di.npsp__Donation_Donor__c');
+        component.set('v.selectedDonorType', selectedDonorType);
+
+        component.set('v.oppClosed', false);
+        component.set('v.editModePaidPayments', false);
         // Make changes if a recordId was provided (Edit mode)
         if(oppId){
             this.changeSubmitText(component, $A.get('$Label.c.Gift_Update'));
             component.set('v.editMode', true);
+        } else {
+            this.changeSubmitText(component, $A.get('$Label.c.Gift_Create'));
+            this.resetForm(component);
+            component.set('v.editMode', false);
         }
 
         var getModelAction = component.get('c.initClass');
@@ -14,39 +25,143 @@
             var state = response.getState();
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
-
+                // console.log(giftModel); 
                 component.set('v.giftModel', giftModel);
-                component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
-                component.set('v.objectFieldData.closedWonStageMap', giftModel.closedWonStageMap);
 
-                this.handlePicklistSetup(component, giftModel.picklistValues);
+                var selectedDonorType = component.get('v.selectedDonorType');
+                if(selectedDonorType){
+                    component.set('v.di.npsp__Donation_Donor__c', selectedDonorType);
+                }
 
-                // Setup any default form values
+                // Reset buttons
+                this.disablePaymentCalculateButton(component, false);
+                this.disableAddAllocation(component, false);
+
+                var bdiLabels = component.get('v.bdiLabels');
+
+                // This is the initial call, set helper variables
+                // If using this page to load edits directly, we may need a separate variable
+                if(!bdiLabels){
+                    component.set('v.bdiLabels', giftModel.bdiLabels);
+                    component.set('v.objectFieldData.objectLabels', giftModel.objNameToApiToLabel);
+                    component.set('v.objectFieldData.closedWonStageMap', giftModel.closedWonStageMap);
+                    component.set('v.objectFieldData.diToOppFieldMap', giftModel.diToOppFieldMap);
+
+                    this.handlePicklistSetup(component, giftModel.picklistValues);
+                }
+
+                // An Opportunity was matched, update the form to reflect that
+                if(giftModel.oppId){
+                    // Updates fields that are using built-in validation to remove error messages
+                    this.rerenderInputs(component, 'renderRequiredInputs');
+
+                    component.set('v.disableBlurEvents', true);
+                    var oppStatus = '';
+                    if(giftModel.opp.ForecastCategory == 'Closed'){
+                        component.set('v.oppClosed', true);
+                        oppStatus = $A.get('$Label.c.Gift_Donation_Locked');
+                    } else if(giftModel.opp.npe01__Number_of_Payments__c){
+                        component.set('v.oppClosed', true);
+                        oppStatus = $A.get('$Label.c.Gift_Donation_Locked_Payments');
+                    } else {
+                        // This Opportunity is open with no payments, don't make one automatically
+                        this.preventDefaultPayment();
+                    }
+                    component.set('v.oppLockedStatus', oppStatus);
+
+                    // If there are existing payments, do not allow re-calculating the schedule
+                    if(giftModel.payments.length > 0){
+                        if(this.hasPaidPayments(giftModel.payments)){
+                            component.set('v.editModePaidPayments', true);
+                            this.disableAddAllocation(component, true);
+                        }
+                        this.disablePaymentCalculateButton(component, true);
+                    }
+                    
+                    // var opp = this.proxyToObj(giftModel.opp);
+                    var di = this.proxyToObj(component.get('v.di'));
+
+                    // Update the Data Import status to user-matched
+                    di[bdiLabels.opportunityImportedStatusField] = bdiLabels.userSelectedMatch;
+
+                    // Map fields from Opportunity to DataImport
+                    this.mapOppToDi(component, di, giftModel.opp);
+                    component.set('v.opp', giftModel.opp);
+                    this.setDiFields(component, di);
+
+                    component.set('v.campaignId', giftModel.opp.CampaignId);
+                    component.set('v.opp.npsp__Matching_Gift__c', giftModel.opp.npsp__Matching_Gift__c);
+
+                    component.set('v.allocs', giftModel.allocs);
+                    component.set('v.partialCredits', giftModel.partialCredits);
+                    component.set('v.payments', giftModel.payments);
+                    component.set('v.disableBlurEvents', false);
+                    // Hide and show lookup fields to update them
+                    this.rerenderInputs(component, 'renderInputs');
+                }
+
                 this.setDefaults(component, giftModel.opp);
                 this.checkValidation(component);
-
+                component.set('v.showSpinner', false);
             } else if (state === 'ERROR') {
                 component.set('v.showForm', false);
                 this.handleError(component, response);
+                component.set('v.showSpinner', false);
             }
         });
         $A.enqueueAction(getModelAction);
     },
+    hasPaidPayments: function(paymentList){
+        for(var i in paymentList){
+            var payment = paymentList[i];
+            if(payment.npe01__Paid__c || payment.npe01__Written_Off__c){
+                return true;
+            }
+        }
+        return false;
+    },
+    resetForm: function(component){
+        component.set('v.allocs', []);
+        component.set('v.partialCredits', []);
+        component.set('v.payments', []);
+
+        this.resetObjectFields(component, 'opp');
+        this.resetObjectFields(component, 'di');
+        this.rerenderInputs(component, 'renderInputs');
+    },
+    resetObjectFields: function(component, varName){
+        var objVarString = 'v.' + varName;
+        var opp = component.get(objVarString);
+        var vField;
+        // TODO: Clean this up, we don't want to reset these fields
+        for(var field in opp){
+            if(field == 'sobjectType'
+                || field == 'npe01__Do_Not_Automatically_Create_Payment__c'
+                || field == 'AccountId'
+                || field == 'npsp__Primary_Contact__c'){
+                continue;
+            }
+            vField = objVarString + '.' + field;
+            component.set(vField, null);
+        }
+    },
+    setDiFields: function(component, di){
+        var val;
+        var vField;
+        for(var field in di){
+            vField = 'v.di.' + field;
+            val = di[field];
+            component.set(vField, val);
+        }
+    },
     setDefaults: function(component, opp){
         // For new forms, set Date to Today, otherwise use existing value
-        var curDate = component.get('v.di.npsp__Donation_Date__c');
+        var curDate = component.get('v.opp.CloseDate');
         if(!curDate){
             // Set Close Date to Today
             var closeDate = new Date();
             closeDate = this.convertDateToString(closeDate);
-            component.set('v.di.npsp__Donation_Date__c', closeDate);
-        }
-
-        // Also check whether the Contact or Account information should be shown
-        if(opp && opp.AccountId && !opp.npsp__Primary_Contact__c){
-            component.set('v.di.npsp__Donation_Donor__c', 'Account1');
-        } else {
-            component.set('v.di.npsp__Donation_Donor__c', 'Contact1');
+            component.set('v.opp.CloseDate', closeDate);
         }
     },
     handlePicklistSetup: function(component, picklistOptions){
@@ -68,7 +183,7 @@
         // Setting this map will update all of the picklists
         component.set('v.objectFieldData.picklistOptions', picklistOptions);
     },
-    handlePicklistChange: function(component, message) {
+    handlePicklistChange: function(component, message){
         var newVal = message['newVal'];
         var fieldId = message['fieldId'];
         if(fieldId){
@@ -82,6 +197,7 @@
         }
     },
     redirectToSobject: function(component, objId){
+        $A.get('e.force:refreshView').fire();
         var event = $A.get('e.force:navigateToSObject');
         event.setParams({
             recordId: objId
@@ -103,7 +219,7 @@
             giftModelString: giftModelString
         });
 
-        action.setCallback(this, function(response) {
+        action.setCallback(this, function(response){
             var state = response.getState();
             if (state === 'SUCCESS') {
                 var giftModel = response.getReturnValue();
@@ -124,7 +240,7 @@
     checkValidation: function(component){
         this.validateForm(component);
     },
-    validateForm: function(component, showErrors) {
+    validateForm: function(component, showErrors){
         component.set('v.error', null);
         // Show error messages if required fields are blank
         var validForm = this.checkFields(component, 'requiredField', true, showErrors);
@@ -166,9 +282,52 @@
             component.set('v.disableCreate', false);
         }
     },
+    checkForPaymentChange: function(component, helper){
+        // Delay payment creation to avoid duplicate events
+        var timer = component.get('v.paymentTimer');
+        clearTimeout(timer);
+
+        var timer = window.setTimeout(
+            $A.getCallback(function(){
+                helper.createDefaultPayment(component);
+                clearTimeout(timer);
+                component.set('v.paymentTimer', null);
+            }), 200
+        );
+
+        component.set('v.paymentTimer', timer);
+    },
+    disablePaymentCalculateButton: function(component, isDisabled){
+        var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
+        if(paySched){
+            paySched[0].disableCalcButton(isDisabled);
+        }
+    },
+    focusOnAddPayment: function(component){
+        var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
+        if(relatedCmp){
+            for(var i=0; i < relatedCmp.length; i++){
+                var objectName = relatedCmp[i].getRelatedObject();
+                if(objectName == 'npe01__OppPayment__c'){
+                    relatedCmp[i].focusOnAddButton();
+                }
+            }
+        }
+    },
+    disableAddAllocation: function(component, addBtnDisabled){
+        var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
+        if(relatedCmp){
+            for(var i=0; i < relatedCmp.length; i++){
+                var objectName = relatedCmp[i].getRelatedObject();
+                if(objectName == 'npsp__Allocation__c'){
+                    relatedCmp[i].disableAddButton(addBtnDisabled);
+                }
+            }
+        }
+    },
     updateRelatedPaymentAmounts: function(component, fieldVal){
-        var amt = component.get('v.di.npsp__Donation_Amount__c');
-        var date = component.get('v.di.npsp__Donation_Date__c');
+        var amt = component.get('v.opp.Amount');
+        var date = component.get('v.opp.CloseDate');
 
         if(!amt){
             return;
@@ -176,8 +335,9 @@
 
         var amtWasChanged = false;
 		if(fieldVal){
-			// Check if the change was made to the amount field and not the date field
-			amtWasChanged = fieldVal.indexOf('-') < 0;
+            // Check if the change was made to the amount field and not the date field
+            var valStr = ''+fieldVal;
+			amtWasChanged = valStr.indexOf('-') < 0;
 		}
         
         // If the amount and date are set, check if the Payment Schedule should be updated
@@ -251,34 +411,80 @@
             this.showErrorToast($A.get('$Label.c.Error_Unknown'));
         }
     },
-    setOppToDiMap: function(component){
-        // This map is used to take field values from the Opportunity object and set them on the DataImport object
-        // Note: this is only needed to avoid a bug in force:inputField that requires hard-coding the fieldname,
-        // which made including an optional namespace impossible
-        var nsFieldPrefix = component.get('v.namespaceFieldPrefix');
-        var fieldMap = {
-            'npe01__Do_Not_Automatically_Create_Payment__c': nsFieldPrefix + 'Do_Not_Automatically_Create_Payment__c',
-            'npsp__Acknowledgment_Status__c': nsFieldPrefix + 'Donation_Acknowledgment_Status__c',
-            'npsp__Honoree_Contact__c': nsFieldPrefix + 'Donation_Honoree_Contact__c',
-            'npsp__Honoree_Name__c': nsFieldPrefix + 'Donation_Honoree_Name__c',
-            'npsp__Matching_Gift__c': nsFieldPrefix + 'Donation_Matching_Gift__c',
-            'npsp__Matching_Gift_Account__c': nsFieldPrefix + 'Donation_Matching_Gift_Account__c',
-            'npsp__Matching_Gift_Employer__c': nsFieldPrefix + 'Donation_Matching_Gift_Employer__c',
-            'npsp__Matching_Gift_Status__c': nsFieldPrefix + 'Donation_Matching_Gift_Status__c',
-            'npsp__Notification_Message__c': nsFieldPrefix + 'Donation_Notification_Message__c',
-            'CampaignId': 'npsp__DonationCampaignImported__c',
-            'npsp__Tribute_Type__c': nsFieldPrefix + 'Donation_Tribute_Type__c',
-            'npsp__Notification_Recipient_Name__c': nsFieldPrefix + 'Notification_Recipient_Name__c'
-        };
+    setDonation: function(component, selectedDonation) {
+        component.set('v.showSpinner', true);
+        component.set('v.selectedDonation', selectedDonation);
+        var selection = this.proxyToObj(selectedDonation);
 
-        component.set('v.oppToDiFieldMap', fieldMap);
+        // "create a new Opportunity" was selected
+        if(!selection){
+            this.getDonationInformation(component, null);
+            return;
+        }
+
+        // Focus on Add New Payment button after loading this Donation
+        if (selection.applyPayment) {
+            this.focusOnAddPayment(component);
+        }
+
+        // Check if a Payment was selected, and get the Opportunity Id
+        var oppId = selection["npe01__Opportunity__c"];
+        if(!oppId){
+            // An Opportunity was selected, set the Id
+            oppId = selection["Id"];
+        }
+        // Update the form to edit the selected Opportunity
+        this.getDonationInformation(component, oppId);
     },
     mapOppToDi: function(component, di, opp){
-        var fieldMap = component.get('v.oppToDiFieldMap');
+        var fieldMap = component.get('v.objectFieldData.diToOppFieldMap');
+        fieldMap = this.proxyToObj(fieldMap);
         for(var field in fieldMap){
-            var diField = fieldMap[field];
-            di[diField] = opp[field];
+            var oppField = fieldMap[field];
+            var oppValue = opp[oppField];
+            // Small exception for record type, Data Import wants the name, not the ID
+            if(oppField == 'RecordTypeId' && opp['RecordType']){
+                oppValue = opp['RecordType'].Name;
+            }
+            if(oppValue instanceof Array){
+                // Lookup values are stored as arrays for some reason
+                oppValue = oppValue[0];
+                opp[oppField] = oppValue;
+            }
+            if(oppValue){
+                di[field] = oppValue;
+            }
         }
+        if(opp.Id){
+            di['npsp__DonationImported__c'] = opp.Id;
+        }
+    },
+    clearDonationSelectionOptions: function(component) {
+        component.set('v.selectedDonation', null);
+        component.set('v.openOpportunities', null);
+        component.set('v.unpaidPayments', null);
+    },
+    queryOpenDonations: function(component, donorId) {
+        const donorType = component.get('v.di.npsp__Donation_Donor__c');
+
+        let action = component.get('c.getOpenDonations');
+        action.setParams({donorId: donorId, donorType: donorType});
+        action.setCallback(this, function (response) {
+            const state = response.getState();
+            if (state === 'SUCCESS') {
+                const openDonations = JSON.parse(response.getReturnValue());
+                component.set('v.openOpportunities', openDonations.openOpportunities);
+                component.set('v.unpaidPayments', openDonations.unpaidPayments);
+                // If currently editing an existing Opportunity, clear the form
+                var oppId = component.get('v.giftModel.oppId');
+                if(oppId){
+                    this.getDonationInformation(component, null);
+                }
+            } else {
+                this.handleError(component, response);
+            }
+        });
+        $A.enqueueAction(action);
     },
     fillJsonField: function(component) {
         var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
@@ -296,10 +502,11 @@
         var di = this.proxyToObj(component.get('v.di'));
 
         // Map fields from Opportunity to DataImport
-        // This is done to avoid referencing Adv namespace fields in markup
+        // This is done to avoid referencing GEM namespace fields in markup
         this.mapOppToDi(component, di, opp);
-        
         giftModel['di'] = di;
+        // Lookup values are converted from array to ID during mapOppToDi, so we need to update
+        giftModel['opp'] = opp;
 
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};
@@ -320,10 +527,10 @@
         });
         toastEvent.fire();
     },
-    showErrorToast: function(msgText){
+    showErrorToast: function(msgText, title){
         var toastEvent = $A.get('e.force:showToast');
         toastEvent.setParams({
-            title : $A.get('$Label.c.Error'),
+            title : title ? title : $A.get('$Label.c.Error'),
             message: msgText,
             type: 'error',
             mode: 'sticky'
@@ -339,10 +546,35 @@
     scrollToTop: function(){
         window.scrollTo(0, 0);
     },
-    updateFieldUI: function(field){
-        var inputBody = field.get('v.body')[0];
-        if(inputBody.updateValues){
-            inputBody.updateValues();
+    preventDefaultPayment: function(){
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+            'message': 'npe01__OppPayment__c',
+			'channel': 'addRowEvent'
+		});
+		sendMsgEvent.fire();
+    },
+    sendMessage: function(channel, message){
+		var sendMsgEvent = $A.get('e.ltng:sendMessage');
+		sendMsgEvent.setParams({
+            'message': message,
+			'channel': channel
+		});
+		sendMsgEvent.fire();
+    },
+    rerenderInputs: function(component, booleanAttr){
+        var boolString = 'v.'+booleanAttr;
+        component.set(boolString, false);
+        setTimeout($A.getCallback(() => component.set(boolString, true)));
+    },
+    getIdFromLookupValue: function(lookupValue){
+        var idArray = this.proxyToObj(lookupValue);
+        if(!idArray || !idArray.length){
+            return null;
+        } else if(idArray instanceof Array) {
+            return idArray[0];
+        } else {
+            return idArray;
         }
     },
     clearInputs: function(component, fieldId){
@@ -350,8 +582,8 @@
         findResult = this.singleInputToArray(findResult);
         for(var i in findResult){
             findResult[i].set('v.value', '');
-            this.updateFieldUI(findResult[i]);
         }
+        this.rerenderInputs(component, 'renderDonorInputs');
     },
     convertDateToString: function(dateObj){
 		return dateObj.toISOString().split('T')[0];

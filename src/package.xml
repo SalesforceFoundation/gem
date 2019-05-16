@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>GEM</fullName>
+    <fullName>Gift Entry Manager</fullName>
     <types>
         <members>API_HEDA</members>
         <members>API_HEDA_TEST</members>
@@ -21,9 +21,12 @@
         <members>UTIL_Namespace</members>
         <members>UTIL_Namespace_TEST</members>
         <members>UTIL_UnitTestData_TEST</members>
+        <members>dynamicFieldDisplayController</members>
         <name>ApexClass</name>
     </types>
     <types>
+        <members>dynamicFieldDisplay</members>
+        <members>dynamicFieldDisplaySection</members>
         <members>giftEntryForm</members>
         <members>giftFormRelated</members>
         <members>giftFormRelatedRow</members>
@@ -39,10 +42,10 @@
         <name>CustomApplication</name>
     </types>
     <types>
+        <members>GEM_Settings__c.Sync_Account_Models__c</members>
         <members>GEM_API_Settings__mdt.API_HEDA_Class__c</members>
         <members>GEM_API_Settings__mdt.API_NPSP_Class__c</members>
         <members>GEM_API_Settings__mdt.Use_GEM__c</members>
-        <members>GEM_Settings__c.Sync_Account_Models__c</members>
         <members>Gift_Entry_Field_Mapping__mdt.Controlling_Field__c</members>
         <members>Gift_Entry_Field_Mapping__mdt.Controlling_Object__c</members>
         <members>Gift_Entry_Field_Mapping__mdt.Dependent_Field_List__c</members>
@@ -105,12 +108,13 @@
     </types>
     <types>
         <members>GEM_API_Settings.GEM_config</members>
+        <members>Gift_Entry_Field_Mapping.Payment</members>
         <name>CustomMetadata</name>
     </types>
     <types>
+        <members>GEM_Settings__c</members>
         <members>GEM_API_Settings__mdt</members>
         <members>Gift_Entry_Field_Mapping__mdt</members>
-        <members>GEM_Settings__c</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -125,9 +129,9 @@
         <members>Account-GEM Household Layout</members>
         <members>Account-GEM Organization Layout</members>
         <members>Contact-GEM Contact Layout</members>
+        <members>Opportunity-GEM Gift Layout</members>
         <members>GEM_API_Settings__mdt-GEM API Settings Layout</members>
         <members>Gift_Entry_Field_Mapping__mdt-Gift Entry Field Mapping Layout</members>
-        <members>Opportunity-GEM Gift Layout</members>
         <members>npsp__DataImport__c-GEM Gift Layout</members>
         <name>Layout</name>
     </types>

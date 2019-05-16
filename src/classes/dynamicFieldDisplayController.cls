@@ -1,17 +1,18 @@
 public with sharing class dynamicFieldDisplayController {
-    public dynamicFieldDisplayController() {
-
-    }
 
     @AuraEnabled
     public static GiftEntryFieldMappingWrapper getCustomMetadataRecord(String recordName) {
+
+        // Query for the custom metadata type record via the record's API Name. 
         List<Gift_Entry_Field_Mapping__mdt> fieldMappingRecordList = [Select Id, Controlling_Field__r.QualifiedAPIName, Controlling_Object__r.QualifiedAPIName, Dependent_Field_List__c From Gift_Entry_Field_Mapping__mdt where QualifiedApiName =: recordName];
         GiftEntryFieldMappingWrapper mappingRecordWrapper; 
-        System.debug(loggingLevel.ERROR, 'inside of get custom metadata record');
+        
         if (!fieldMappingRecordList.isEmpty()) {
+
+            // Build the wrapper, which just puts the fields/values into an easy to access fields
             mappingRecordWrapper = new GiftEntryFieldMappingWrapper(fieldMappingRecordList.get(0));
         }
-        System.debug(loggingLevel.ERROR, 'mapping record: ' + mappingRecordWrapper);
+
         return mappingRecordWrapper;
     }
 
@@ -35,6 +36,10 @@ public with sharing class dynamicFieldDisplayController {
             
         }
 
+        // This builds a mapping of 
+        // Object API Name -> Field API Name -> Field Label
+        // This was originally built because field labels were not being shown (Before learning that the CSS was being suppressed). 
+        // We may not need this if we decide to keep the default/standard labels being shown. 
         public Map<String, Map<String, String>> buildObjectToFieldNameToLabelMap(Map<String, Map<String, List<String>>> dependentFieldList) {
             Map<String, Map<String, String>> objectToFieldNameToLabel = new Map<String, Map<String, String>>();
             List<Map<String, List<String>>> allObjectToFieldList = dependentFieldList.values();

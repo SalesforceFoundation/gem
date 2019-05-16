@@ -1,6 +1,5 @@
 ({
     doInit : function(component, event, helper) {
-        console.log('dynamic field display section controller');
         helper.processSobjectRecord(component);
         var picklistValue = component.get('v.pickListValue');
         var fieldList = component.get('v.fieldList');

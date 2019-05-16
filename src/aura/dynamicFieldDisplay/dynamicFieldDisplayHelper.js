@@ -1,5 +1,8 @@
 ({
     getCustomMetadata : function(component, customMetadataRecordName) {
+
+        // Query for custom metadata type record and get a wrapper with the 
+        // values ready to go. 
         var action = component.get('c.getCustomMetadataRecord');
         var recordName = component.get('v.metadataRecordName');
 
@@ -34,6 +37,9 @@
         var existingItem = component.getReference('v.existingRecord');
         var objectNameToSobject = component.get("v.objectNameToSobject");
 
+        // For each picklist value and for each object, create a new dynamic section
+        // It has to be for each object because the dynamic section has the 
+        // RecordEditForm, which can only be one object name at a time. 
         for (var pickListValue in dependentFieldList) {
             var objectToFieldList = dependentFieldList[pickListValue];
             var componentList = [];
@@ -44,7 +50,7 @@
                 var fieldNameToFieldLabel = objectToFieldNameToFieldLabel[objectName];
 
                // Build dynamic field section
-               // NAMESPACE???
+               // TBD: Do we need to consider NAMESPACE???
                var dynamicSection = ["c:DynamicFieldDisplaySection", {
                                     "objectName" : objectName,
                                     "fieldList" : fieldList,
@@ -61,8 +67,8 @@
 
             $A.createComponents(componentList, function(createdComponentsList, status, errorMessage) {
                 if (status == "SUCCESS") {
-                    // Add all the dynamic field sections into the body
 
+                    // Just add the created components into the body and set it. 
                     component.set("v.body", createdComponentsList);
                 } else if (status == "INCOMPLETE") {
 

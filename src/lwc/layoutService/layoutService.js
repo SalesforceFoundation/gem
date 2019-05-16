@@ -4,7 +4,9 @@ const getOpportunityLayout = () => {
     return new Promise((resolve, reject) => {
         readOpportunityLayout()
             .then(resolve)
-            .catch(error => console.error(JSON.stringify(error)));
+            .catch(error => {
+                console.error(JSON.stringify(error));
+            });
     });
 }
 

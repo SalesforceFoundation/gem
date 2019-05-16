@@ -1,5 +1,5 @@
-import {LightningElement, track, api} from 'lwc';
-import {getOpportunityLayout} from 'c/layoutService';
+import { LightningElement, track, api } from 'lwc';
+import { getOpportunityLayout } from 'c/layoutService';
 
 export default class SGE_DynamicForm extends LightningElement {
     @track layout;
@@ -12,11 +12,12 @@ export default class SGE_DynamicForm extends LightningElement {
     connectedCallback() {
         getOpportunityLayout().then(response => {
             this.layout = response;
-            if(this.layout.sections)
-            this.activeSections = this.layout.sections.map(s => s.label);
-            this.ready = true;
-            if(this.hasCustomFields()) {
-                this.dispatchEvent(new CustomEvent('load', {detail: {hasFields: true}}));
+            if(this.layout !== null && typeof this.layout !== 'undefined' && Array.isArray(this.layout.sections)) {
+                this.activeSections = this.layout.sections.map(s => s.label);
+                this.ready = true;
+                if (this.hasCustomFields()) {
+                    this.dispatchEvent(new CustomEvent('load', {detail: {hasFields: true}}));
+                }
             }
         });
     }

@@ -9,11 +9,10 @@
     <aura:attribute type="String" name="divToAppendTo" />
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="Object" name="retrievedMetadataRecordWrapper"/>
-    <aura:attribute type="Map" name="objectNameToSobject"/>
+    <aura:attribute type="Map" name="objectNameToSobject" default="{}"/>
+    <aura:attribute type="Sobject" name="existingRecord" />
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
 
-    Dynamic Field Display
     {!v.body}    
-           
 </aura:component>	

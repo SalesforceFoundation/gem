@@ -3,6 +3,7 @@
     <aura:dependency resource="markup://c:dynamicFieldDisplay"/>
     <aura:method name="clearAmount" />
 
+    <aura:attribute type="Map" name="objectNameToSobject" default="{}" />
     <aura:attribute name="item" 
         type="npe01__OppPayment__c" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
@@ -67,9 +68,6 @@
         </div>
     </lightning:layout>
 
-    <c:dynamicFieldDisplay metadataRecordName='Payment'/>
-
-    ---------------------------------------------
-    <!--<c:dynamicFieldDisplaySection objectName="npe01__OppPayment__c" fieldList="['npe01__Check_Reference_Number__c', 'npe01__Paid__c','npe01__Payment_Amount__c']" fieldNameToFieldLabel="{'npe01__Check_Reference_Number__c': 'Check/Reference Number', 'npe01__Paid__c': 'Paid', 'npe01__Payment_Amount__c': 'Payment Amount'}" pickListValue="check"/>-->
+    <c:dynamicFieldDisplay objectNameToSobject='{!v.objectNameToSobject}' existingRecord='{!v.item}' metadataRecordName='Payment'/>
 
 </aura:component>

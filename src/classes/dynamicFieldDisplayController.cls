@@ -5,7 +5,7 @@ public with sharing class dynamicFieldDisplayController {
 
     @AuraEnabled
     public static GiftEntryFieldMappingWrapper getCustomMetadataRecord(String recordName) {
-        List<Gift_Entry_Field_Mapping__mdt> fieldMappingRecordList = [Select Id, Controlling_Field__c, Controlling_Object__c, Dependent_Field_List__c From Gift_Entry_Field_Mapping__mdt where QualifiedApiName =: recordName];
+        List<Gift_Entry_Field_Mapping__mdt> fieldMappingRecordList = [Select Id, Controlling_Field__r.QualifiedAPIName, Controlling_Object__r.QualifiedAPIName, Dependent_Field_List__c From Gift_Entry_Field_Mapping__mdt where QualifiedApiName =: recordName];
         GiftEntryFieldMappingWrapper mappingRecordWrapper; 
         System.debug(loggingLevel.ERROR, 'inside of get custom metadata record');
         if (!fieldMappingRecordList.isEmpty()) {
@@ -27,8 +27,8 @@ public with sharing class dynamicFieldDisplayController {
 
         public GiftEntryFieldMappingWrapper(Gift_Entry_Field_Mapping__mdt originalMetadataRecord) {
             this.originalMetadataRecord = originalMetadataRecord;
-            controllingObject = originalMetadataRecord.Controlling_Object__c;
-            controllingField = originalMetadataRecord.Controlling_Field__c;
+            controllingObject = originalMetadataRecord.Controlling_Object__r.QualifiedAPIName;
+            controllingField = originalMetadataRecord.Controlling_Field__r.QualifiedAPIName;
             dependentFieldList = (Map<String, Map<String, List<String>>>)JSON.deserialize(originalMetadataRecord.Dependent_Field_List__c, Map<String, Map<String, List<String>>>.class);
 
             objectToFieldNameToLabel = buildObjectToFieldNameToLabelMap(dependentFieldList);

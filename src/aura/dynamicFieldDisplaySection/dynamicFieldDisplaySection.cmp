@@ -4,14 +4,21 @@
     <aura:attribute type="Map" name="fieldNameToFieldLabel" />
     <aura:attribute type="String" name="pickListValue" />
     <aura:attribute type="Map" name="objectNameToSobject"/>
+    <aura:attribute type="String" name="controllingField"/>
+    <aura:attribute type="String" name="controllingObject"/>
+    <aura:attribute type="Boolean" name="displaySection" />
     
-    <aura:attribute type="Sobject" name="sobjectRecord" />
+    <aura:attribute type="Sobject" name="sobjectRecord" default="{}" />
+    <aura:handler name="change" value="{!v.sobjectRecord}" action="{!c.handleSobjectChange}"/>
+
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
 
     <lightning:recordEditForm objectApiName="{!v.objectName}">
         <lightning:layout>
-            {!v.body}    
+            <aura:if isTrue="{!v.displaySection}">
+                {!v.body}
+            </aura:if>
         </lightning:layout>
     </lightning:recordEditForm>
 </aura:component>	

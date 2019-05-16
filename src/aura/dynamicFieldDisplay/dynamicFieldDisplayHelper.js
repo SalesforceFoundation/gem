@@ -29,6 +29,9 @@
     createDynamicDisplaySections: function (component, metadataRecordWrapper) {
         var dependentFieldList = metadataRecordWrapper.dependentFieldList;
         var objectToFieldNameToFieldLabel = metadataRecordWrapper.objectToFieldNameToLabel;
+        var controllingObject = metadataRecordWrapper.controllingObject;
+        var controllingField = metadataRecordWrapper.controllingField;
+        var existingItem = component.getReference('v.existingRecord');
         var objectNameToSobject = component.get("v.objectNameToSobject");
 
         for (var pickListValue in dependentFieldList) {
@@ -47,29 +50,20 @@
                                     "fieldList" : fieldList,
                                     "fieldNameToFieldLabel" : fieldNameToFieldLabel,
                                     "pickListValue" : pickListValue,
-                                    "objectNameToSobject" : objectNameToSobject
+                                    "objectNameToSobject" : objectNameToSobject,
+                                    "controllingField" : controllingField,
+                                    "controllingObject" : controllingObject,
+                                    "sobjectRecord" : existingItem
                                     }];
                 
                 componentList.push(dynamicSection);
             }
 
-            console.log('component list is: ');
-            console.log(componentList);
             $A.createComponents(componentList, function(createdComponentsList, status, errorMessage) {
                 if (status == "SUCCESS") {
                     // Add all the dynamic field sections into the body
-                    console.log('success here creating the sections');
-                    var body = component.get("v.body");
-                    var dynamicSection = [];
 
-                    for (var i = 0; i < createdComponentsList.length; i++) {
-                        dynamicSection.push(createdComponentsList[i]);
-                    }
-
-
-                    body.push(dynamicSection);
-                    component.set("v.body", body);
-                    console.log('pushed into body for dynamic field display helper');
+                    component.set("v.body", createdComponentsList);
                 } else if (status == "INCOMPLETE") {
 
                 } else if (status == "ERROR") {

@@ -47,9 +47,15 @@
 		}
 	},
 	disableCalcButton: function(component, event, helper){
+		var params = event.getParam('arguments');
+		var disableBtn = false;
+		if(params){
+			disableBtn = params.disableBtn;
+		}
+
 		var btn = component.find('calcButton');
-		btn.set('v.disabled', true);
-		component.set('v.calcButtonDisabled', true);
+		btn.set('v.disabled', disableBtn);
+		component.set('v.calcButtonDisabled', disableBtn);
 	},
 	handleMessage: function(component, event, helper){
 		var channel = event.getParam('channel');

@@ -16,8 +16,15 @@
             <aura:if isTrue="{!v.showLabels}">
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Contact__c}</label>
             </aura:if>
-            <force:inputField aura:id="noDuplicates"
-                value="{!v.item.npsp__Contact__c}" />
+            <aura:if isTrue="{!v.editMode}">
+                <p class="slds-p-left_small slds-p-top_x-small">
+                    <lightning:formattedText value="{!v.item.npsp__Contact__r.Name}" />
+                </p>
+                <aura:set attribute="else">
+                    <force:inputField aura:id="noDuplicates"
+                        value="{!v.item.npsp__Contact__c}" />
+                </aura:set>
+            </aura:if>
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <aura:if isTrue="{!v.showLabels}">
@@ -25,6 +32,7 @@
             </aura:if>
 
             <lightning:radioGroup
+                disabled="{!v.editMode}"
                 value="{!v.creditType}"
                 options="{!v.typeOptions}"
                 type="button"
@@ -36,6 +44,7 @@
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Amount__c}</label>
             </aura:if>
             <lightning:input aura:id="requiredField"
+                disabled="{!v.editMode}"
                 onblur="{!c.handleAmountCheck}"
                 name="allocationAmt" 
                 type="number" 
@@ -50,6 +59,7 @@
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Role_Name__c}</label>
             </aura:if>
             <lightning:select name="select" 
+                disabled="{!v.editMode}"
                 aura:id="requiredField"
                 label="{!v.objectFieldData.objectLabels.PSC.npsp__Role_Name__c}"
                 variant="label-hidden"

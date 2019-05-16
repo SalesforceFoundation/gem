@@ -26,7 +26,7 @@
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
     <aura:attribute type="String" name="submitError" />
-    <aura:attribute type="String" name="batchId" />
+    <aura:attribute type="String" name="selectedDonorType" />
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
     <aura:attribute type="String" name="oppId" />
@@ -37,6 +37,7 @@
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
     <aura:attribute type="Boolean" name="showMatchSpinner" default="true" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
+    <aura:attribute type="Boolean" name="editModePaidPayments" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
     <aura:attribute type="Boolean" name="donorExists" default="false" />
     <aura:attribute type="Boolean" name="expandTribute" default="true" />
@@ -47,6 +48,7 @@
     <aura:attribute type="Boolean" name="paymentValChanged" default="false" />
     <aura:attribute type="Boolean" name="renderInputs" default="true" />
     <aura:attribute type="Boolean" name="renderDonorInputs" default="true" />
+    <aura:attribute type="Boolean" name="renderRequiredInputs" default="true" />
     <aura:attribute type="Integer" name="paymentTimer" />
 
     <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.onDonorChange}"/>
@@ -115,7 +117,7 @@
                 <lightning:layoutItem size="12">
                     <lightning:layout multipleRows="true">
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                            <c:giftPicklist picklistValues="[{value:'Account1',label:'Account'},{value:'Contact1',label:'Contact'}]"
+                            <c:giftPicklist picklistValues="[{value:'Contact1',label:'Contact'},{value:'Account1',label:'Account'}]"
                                 fieldLabel="{!$Label.c.Gift_Donor_Type}"
                                 selectedVal="{!v.di.npsp__Donation_Donor__c}" />
                         </lightning:layoutItem>
@@ -227,27 +229,31 @@
                             <label class="show-required slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.CloseDate}
                             </label>
-                            <lightning:input aura:id="requiredField"
-                                required="true"
-                                variant="label-hidden"
-                                type="date"
-                                onblur="{!c.checkPaymentChange}"
-                                disabled="{!v.oppClosed}"
-                                value="{!v.opp.CloseDate}" />
+                            <aura:if isTrue="{!v.renderRequiredInputs}">
+                                <lightning:input aura:id="requiredField"
+                                    required="true"
+                                    variant="label-hidden"
+                                    type="date"
+                                    onblur="{!c.checkPaymentChange}"
+                                    disabled="{!v.oppClosed}"
+                                    value="{!v.opp.CloseDate}" />
+                            </aura:if>
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="show-required slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.Amount}
                             </label>
-                            <lightning:input aura:id="requiredField"
-                                required="true"
-                                variant="label-hidden"
-                                type="number"
-                                formatter="currency" step="0.01"
-                                onblur="{!c.checkPaymentChange}"
-                                disabled="{!v.oppClosed}"
-                                value="{!v.opp.Amount}" />
+                            <aura:if isTrue="{!v.renderRequiredInputs}">
+                                <lightning:input aura:id="requiredField"
+                                    required="true"
+                                    variant="label-hidden"
+                                    type="number"
+                                    formatter="currency" step="0.01"
+                                    onblur="{!c.checkPaymentChange}"
+                                    disabled="{!v.oppClosed}"
+                                    value="{!v.opp.Amount}" />
+                            </aura:if>
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
@@ -433,6 +439,7 @@
 
                 <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
                     editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
                     disablePaymentEvents="{!v.disableBlurEvents}"
                     paymentList="{!v.payments}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
@@ -444,8 +451,9 @@
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
-                    editMode="{!v.editMode}"    
-                    disablePaymentEvents="{!v.disableBlurEvents}"    
+                    editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"
                     itemList="{!v.partialCredits}"
                     objectName="npsp__Partial_Soft_Credit__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
@@ -462,6 +470,7 @@
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                     editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
                     disablePaymentEvents="{!v.disableBlurEvents}"
                     itemList="{!v.allocs}"
                     objectName="npsp__Allocation__c"

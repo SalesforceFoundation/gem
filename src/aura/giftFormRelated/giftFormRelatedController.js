@@ -81,5 +81,13 @@
         if(btn){
             btn.focus();
         }
+    },
+    disableAddButton: function(component, event, helper){
+        var params = event.getParam('arguments');
+		var disableBtn = false;
+		if(params){
+			disableBtn = params.disableBtn;
+        }
+        component.set("v.addButtonDisabled", disableBtn);
     }
 })

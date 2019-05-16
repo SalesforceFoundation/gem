@@ -313,6 +313,7 @@ public with sharing class GiftEntryFormController {
                                 'npe01__Payment_Date__c',
                                 'npe01__Payment_Method__c',
                                 'npe01__Check_Reference_Number__c',
+                                'npe01__Written_Off__c',
                                 'npe01__Paid__c'
                         });
                 List<npe01__OppPayment__c> payments = [
@@ -322,6 +323,7 @@ public with sharing class GiftEntryFormController {
                                 npe01__Payment_Date__c,
                                 npe01__Payment_Method__c,
                                 npe01__Check_Reference_Number__c,
+                                npe01__Written_Off__c,
                                 npe01__Paid__c
                         FROM npe01__OppPayment__c
                         WHERE npe01__Opportunity__c = :oppId
@@ -344,6 +346,7 @@ public with sharing class GiftEntryFormController {
                     SELECT Id,
                             npsp__Amount__c,
                             npsp__General_Accounting_Unit__c,
+                            npsp__General_Accounting_Unit__r.Name,
                             npsp__Percent__c,
                             npsp__Recurring_Donation__c,
                             npsp__Opportunity__c
@@ -366,6 +369,7 @@ public with sharing class GiftEntryFormController {
                     SELECT Id,
                             npsp__Amount__c,
                             npsp__Contact__c,
+                            npsp__Contact__r.Name,
                             npsp__Contact_Name__c,
                             npsp__Role_Name__c,
                             npsp__Opportunity__c
@@ -492,14 +496,7 @@ public with sharing class GiftEntryFormController {
             relationshipField = 'npsp__Primary_Contact__c';
         }
 
-        String opportunitySOQL = 'SELECT Id, ' +
-                                'Name, ' +
-                                'StageName, ' +
-                                'Amount ' +
-                                'FROM Opportunity ' +
-                                'WHERE ' + relationshipField + ' = :donorId ' +
-                                'AND (IsClosed = false';
-
+        // Can be used to display unpaid payments on the donation matching modal
         String paymentSOQL = 'SELECT Id, ' +
                                 'Name, ' +
                                 'npe01__Scheduled_Date__c, ' +
@@ -508,18 +505,28 @@ public with sharing class GiftEntryFormController {
                                 'npe01__Payment_Amount__c ' +
                                 'FROM npe01__OppPayment__c ' +
                                 'WHERE npe01__Opportunity__r.' + relationshipField + ' = :donorId ' +
-                                'AND npe01__Paid__c = false';
+                                'AND npe01__Paid__c = false ' +
+                                'AND npe01__Written_Off__c = false';
 
         try {
             List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);
 
-            Set<Id> oppIds = new Set<Id>();
+            Set<Id> oppIdsWithUnpaidPayments = new Set<Id>();
             for (npe01__OppPayment__c payment : unpaidPayments) {
-                oppIds.add(payment.npe01__Opportunity__c);
+                oppIdsWithUnpaidPayments.add(payment.npe01__Opportunity__c);
             }
 
-            // We want to include closed Opportunities with unpaid payments
-            opportunitySOQL += ' OR Id in :oppIds)';
+            // We want to include Open Opportunities, as well as Closed Opportunities with unpaid payments
+            String opportunitySOQL = 'SELECT Id, ' +
+                                    'Name, ' +
+                                    'StageName, ' +
+                                    'CloseDate, ' +
+                                    'Amount ' +
+                                    'FROM Opportunity ' +
+                                    'WHERE ' + relationshipField + ' = :donorId ' +
+                                    'AND (IsClosed = false OR Id in :oppIdsWithUnpaidPayments) ' + 
+                                    'ORDER BY CloseDate ASC ';
+
             List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
             Map<Id, Opportunity> openOpportunitiesById = new Map<Id, Opportunity>(openOpportunities);
 
@@ -753,20 +760,7 @@ public with sharing class GiftEntryFormController {
             if(giftModelString == null) {
                 return new GiftFormModel(null);
             }
-
-            // First, remove attributes passed from Lightning that can't be deserialized
-            String sObjectTypeRegex = '"sobjectType":.+?(?=,),';
-            // Now remove related lookup object attributes, we can't upsert with the Id AND the object
-            // NOTE: If this stops working, it may be best to loop through the object and remove
-            // any objects at a certain "depth"
-            String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
-
-            giftModelString = giftModelString.replaceAll(sObjectTypeRegex, '');
-            giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
-
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
-            // TODO: Loop through and remove objects of a certain depth
-
             return giftModel;
 
         } catch(Exception e) {

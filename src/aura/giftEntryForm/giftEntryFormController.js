@@ -52,8 +52,6 @@
         const lookupValueIsValidId = lookupId.length === 18;
 
         if (lookupValueIsValidId) {
-            // TODO: Add loading spinner during query
-            // helper.sendMessage('showFormSpinner', '');
             helper.queryOpenDonations(component, lookupId);
         }
 
@@ -97,7 +95,8 @@
         $A.get('e.force:refreshView').fire();
     },
     handleDonorTypeChange: function(component, event, helper){
-        if(component.get('v.disableBlurEvents')){
+        // Ignore this if currently loading a Donation, or if a Donation it being edited
+        if(component.get('v.disableBlurEvents') || component.get('v.editMode')){
             return;
         }
         var donorType = event.getParam('value');

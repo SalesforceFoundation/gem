@@ -11,8 +11,15 @@
             <aura:if isTrue="{!v.showLabels}">
                 <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Allocation.npsp__General_Accounting_Unit__c}</label>
             </aura:if>
-            <force:inputField aura:id="noDuplicates"
-                value="{!v.item.npsp__General_Accounting_Unit__c}" />
+            <aura:if isTrue="{!v.editModePaidPayments}">
+                <p class="slds-p-left_small slds-p-top_x-small">
+                    <lightning:formattedText value="{!v.item.npsp__General_Accounting_Unit__r.Name}" />
+                </p>
+                <aura:set attribute="else">
+                    <force:inputField aura:id="noDuplicates"
+                        value="{!v.item.npsp__General_Accounting_Unit__c}" />
+                </aura:set>
+            </aura:if>
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
             <aura:if isTrue="{!v.showLabels}">
@@ -26,7 +33,7 @@
                 variant="label-hidden"
                 step="0.01"
                 formatter="currency"
-                disabled="{!v.item.npsp__Percent__c ? true : false}"
+                disabled="{!or((v.item.npsp__Percent__c ? true : false),v.editModePaidPayments)}"
                 value="{!v.item.npsp__Amount__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
@@ -40,6 +47,7 @@
                 variant="label-hidden"
                 step="any"
                 max="100" min="0" 
+                disabled="{!v.editModePaidPayments}"
                 value="{!v.item.npsp__Percent__c}" />
         </lightning:layoutItem>
     </lightning:layout>

@@ -3,6 +3,9 @@
     <aura:method name="handleJsonUpdate" />
     <aura:method name="focusOnAddButton" /> 
     <aura:method name="getRelatedObject" /> 
+    <aura:method name="disableAddButton" action="{!c.disableAddButton}"> 
+        <aura:attribute name="disableBtn" type="Boolean" />
+    </aura:method>
     
     <aura:handler name="change" value="{!v.itemList}" action="{!c.handleItemListChange}"/>
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
@@ -39,6 +42,9 @@
     <aura:attribute type="Boolean" name="disablePaymentEvents" />
     <aura:attribute type="Boolean" name="firstRow" default="true" />
     <aura:attribute type="Boolean" name="editMode" />
+    <aura:attribute type="Boolean" name="editModeOverride" default="false" />
+    <aura:attribute type="Boolean" name="editModePaidPayments" />
+    <aura:attribute type="Boolean" name="addButtonDisabled" default="false" />
 
     <lightning:layoutItem size="12">
         <lightning:layout multipleRows="true">
@@ -76,6 +82,7 @@
                     {!v.body}
                     <lightning:layoutItem padding="around-small" size="12">
                         <lightning:button aura:id="add-button" 
+                            disabled="{!v.addButtonDisabled}" 
                             label="{!v.buttonTitle}" 
                             onclick="{!c.clickAddRow}" />
                     </lightning:layoutItem>

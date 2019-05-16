@@ -1,6 +1,8 @@
 <aura:component>
 
-    <aura:method name="disableCalcButton" />
+    <aura:method name="disableCalcButton" action="{!c.disableCalcButton}"> 
+        <aura:attribute name="disableBtn" type="Boolean" />
+    </aura:method>
     <aura:method name="createDefaultPayment" action="{!c.createDefaultPayment}"> 
         <aura:attribute name="amtWasChanged" type="Boolean" />
     </aura:method>
@@ -19,6 +21,7 @@
     <aura:attribute type="Boolean" name="calcButtonDisabled" default="false" />
     <aura:attribute type="Boolean" name="disablePaymentEvents" />
     <aura:attribute type="Boolean" name="editMode" />
+    <aura:attribute type="Boolean" name="editModePaidPayments" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String" name="intervalFreq" />
     <aura:attribute type="Integer" name="intervalNum" />
@@ -49,7 +52,7 @@
 
             <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 {!v.objectFieldData.objectLabels.Opportunity.Amount}:<br/>
-                <ui:outputCurrency value="{!v.donationAmt}"/>
+                <lightning:formattedNumber value="{!v.donationAmt}" style="currency" />
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 <lightning:input type="number" 
@@ -58,10 +61,9 @@
                     step="1" />
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                <ui:inputDate class="show-required"
+                <lightning:input type="date"
                     label="{!$Label.c.Date_of_First_Payment}"
-                    value="{!v.startDate}" 
-                    displayDatePicker="true" />
+                    value="{!v.startDate}" /> 
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="3" mediumDeviceSize="1">
                 <lightning:select name="interval" 

@@ -1,6 +1,12 @@
 ({
     getDonationInformation: function(component, oppId){
+
+        // Need to keep track of the selected donor type to keep it the same after loading a match
+        var selectedDonorType = component.get('v.di.npsp__Donation_Donor__c');
+        component.set('v.selectedDonorType', selectedDonorType);
+
         component.set('v.oppClosed', false);
+        component.set('v.editModePaidPayments', false);
         // Make changes if a recordId was provided (Edit mode)
         if(oppId){
             this.changeSubmitText(component, $A.get('$Label.c.Gift_Update'));
@@ -22,6 +28,15 @@
                 // console.log(giftModel); 
                 component.set('v.giftModel', giftModel);
 
+                var selectedDonorType = component.get('v.selectedDonorType');
+                if(selectedDonorType){
+                    component.set('v.di.npsp__Donation_Donor__c', selectedDonorType);
+                }
+
+                // Reset buttons
+                this.disablePaymentCalculateButton(component, false);
+                this.disableAddAllocation(component, false);
+
                 var bdiLabels = component.get('v.bdiLabels');
 
                 // This is the initial call, set helper variables
@@ -37,6 +52,9 @@
 
                 // An Opportunity was matched, update the form to reflect that
                 if(giftModel.oppId){
+                    // Updates fields that are using built-in validation to remove error messages
+                    this.rerenderInputs(component, 'renderRequiredInputs');
+
                     component.set('v.disableBlurEvents', true);
                     var oppStatus = '';
                     if(giftModel.opp.ForecastCategory == 'Closed'){
@@ -50,7 +68,16 @@
                         this.preventDefaultPayment();
                     }
                     component.set('v.oppLockedStatus', oppStatus);
-                    this.disablePaymentCalculateButton(component);
+
+                    // If there are existing payments, do not allow re-calculating the schedule
+                    if(giftModel.payments.length > 0){
+                        if(this.hasPaidPayments(giftModel.payments)){
+                            component.set('v.editModePaidPayments', true);
+                            this.disableAddAllocation(component, true);
+                        }
+                        this.disablePaymentCalculateButton(component, true);
+                    }
+                    
                     // var opp = this.proxyToObj(giftModel.opp);
                     var di = this.proxyToObj(component.get('v.di'));
 
@@ -65,7 +92,6 @@
                     component.set('v.campaignId', giftModel.opp.CampaignId);
                     component.set('v.opp.npsp__Matching_Gift__c', giftModel.opp.npsp__Matching_Gift__c);
 
-                    // console.log(giftModel.payments); 
                     component.set('v.allocs', giftModel.allocs);
                     component.set('v.partialCredits', giftModel.partialCredits);
                     component.set('v.payments', giftModel.payments);
@@ -84,6 +110,15 @@
             }
         });
         $A.enqueueAction(getModelAction);
+    },
+    hasPaidPayments: function(paymentList){
+        for(var i in paymentList){
+            var payment = paymentList[i];
+            if(payment.npe01__Paid__c || payment.npe01__Written_Off__c){
+                return true;
+            }
+        }
+        return false;
     },
     resetForm: function(component){
         component.set('v.allocs', []);
@@ -128,13 +163,6 @@
             closeDate = this.convertDateToString(closeDate);
             component.set('v.opp.CloseDate', closeDate);
         }
-
-        // Also check whether the Contact or Account information should be shown
-        if(opp && opp.AccountId && !opp.npsp__Primary_Contact__c){
-            component.set('v.di.npsp__Donation_Donor__c', 'Account1');
-        } else {
-            component.set('v.di.npsp__Donation_Donor__c', 'Contact1');
-        }
     },
     handlePicklistSetup: function(component, picklistOptions){
         // Add 'None' option to start of each picklist
@@ -169,6 +197,7 @@
         }
     },
     redirectToSobject: function(component, objId){
+        $A.get('e.force:refreshView').fire();
         var event = $A.get('e.force:navigateToSObject');
         event.setParams({
             recordId: objId
@@ -268,10 +297,10 @@
 
         component.set('v.paymentTimer', timer);
     },
-    disablePaymentCalculateButton: function(component){
+    disablePaymentCalculateButton: function(component, isDisabled){
         var paySched = this.getChildComponents(component, 'giftPaymentScheduler');
         if(paySched){
-            paySched[0].disableCalcButton();
+            paySched[0].disableCalcButton(isDisabled);
         }
     },
     focusOnAddPayment: function(component){
@@ -281,6 +310,17 @@
                 var objectName = relatedCmp[i].getRelatedObject();
                 if(objectName == 'npe01__OppPayment__c'){
                     relatedCmp[i].focusOnAddButton();
+                }
+            }
+        }
+    },
+    disableAddAllocation: function(component, addBtnDisabled){
+        var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
+        if(relatedCmp){
+            for(var i=0; i < relatedCmp.length; i++){
+                var objectName = relatedCmp[i].getRelatedObject();
+                if(objectName == 'npsp__Allocation__c'){
+                    relatedCmp[i].disableAddButton(addBtnDisabled);
                 }
             }
         }
@@ -395,9 +435,6 @@
         }
         // Update the form to edit the selected Opportunity
         this.getDonationInformation(component, oppId);
-
-        // TODO: Add, and lock, this payment in the scheduler
-        // component.set('v.payments', [selection]);
     },
     mapOppToDi: function(component, di, opp){
         var fieldMap = component.get('v.objectFieldData.diToOppFieldMap');
@@ -534,8 +571,10 @@
         var idArray = this.proxyToObj(lookupValue);
         if(!idArray || !idArray.length){
             return null;
-        } else {
+        } else if(idArray instanceof Array) {
             return idArray[0];
+        } else {
+            return idArray;
         }
     },
     clearInputs: function(component, fieldId){

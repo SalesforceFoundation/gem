@@ -181,7 +181,7 @@ public class UTIL_UnitTestData_TEST {
     public static Opportunity getTestOpportunity(Id accountId, Id contactId){
 
         return new Opportunity(
-            Name = 'Test Opp',
+            Name = 'Test Opp ' + Datetime.now().getTime(),
             AccountId = accountId,
             npsp__Primary_Contact__c = contactId,
             CloseDate = System.Today(),

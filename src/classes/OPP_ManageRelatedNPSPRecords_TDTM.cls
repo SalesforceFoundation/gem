@@ -107,6 +107,8 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     ********************************************************************************************************/
     private void synchronizeRelatedDonorRecords(List<Opportunity> oppList){
 		
+        // Make sure this static list is cleared
+        toDelete.clear();
         Set<Id> donorContactIds = new Set<Id>();
 		Set<Id> donorAccountIds = new Set<Id>();
 		for(Opportunity opp : oppList){
@@ -246,7 +248,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
                         if(returnFieldsMatch(sourceRecord, copyRecord, matchFieldMap)){
                             foundMatch = true;
                             // The records match, but does the copy need an update?
-                            if(returnFieldsMatch(sourceRecord, copyRecord, fullFieldMap)){
+                            if(!returnFieldsMatch(sourceRecord, copyRecord, fullFieldMap)){
                                 toUpsert.add(returnCopy(sourceRecord, copyRecord));
                             }
                             // Remove this copy as a candidate for matching

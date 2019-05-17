@@ -1,5 +1,8 @@
 <aura:component>
 
+    <aura:method name="disableCalcButton" action="{!c.disableCalcButton}"> 
+        <aura:attribute name="disableBtn" type="Boolean" />
+    </aura:method>
     <aura:method name="createDefaultPayment" action="{!c.createDefaultPayment}"> 
         <aura:attribute name="amtWasChanged" type="Boolean" />
     </aura:method>
@@ -12,10 +15,13 @@
     <aura:attribute type="Map" name="objectFieldData" />
     <aura:attribute type="Decimal" name="donationAmt" />
     <aura:attribute type="String" name="donationStage" />
-    <aura:attribute type="Boolean" name="showPayments" default="false" />
     <aura:attribute type="Boolean" name="blockItemChangeEvent" default="true" />
     <aura:attribute type="Boolean" name="expandSection" default="true" />
     <aura:attribute type="Boolean" name="userInteracted" default="false" />
+    <aura:attribute type="Boolean" name="calcButtonDisabled" default="false" />
+    <aura:attribute type="Boolean" name="disablePaymentEvents" />
+    <aura:attribute type="Boolean" name="editMode" />
+    <aura:attribute type="Boolean" name="editModePaidPayments" />
     <aura:attribute type="String" name="selectedPaymentMethod" />
     <aura:attribute type="String" name="intervalFreq" />
     <aura:attribute type="Integer" name="intervalNum" />
@@ -44,23 +50,22 @@
     <lightning:layoutItem size="12" class="{!v.expandSection == true ? '' : 'slds-hidden'}">
         <lightning:layout multipleRows="true" horizontalAlign="spread">
 
-            <lightning:layoutItem padding="around-small" size="2">
+            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 {!v.objectFieldData.objectLabels.Opportunity.Amount}:<br/>
-                <ui:outputCurrency value="{!v.donationAmt}"/>
+                <lightning:formattedNumber value="{!v.donationAmt}" style="currency" />
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="2">
+            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 <lightning:input type="number" 
                     value="{!v.paymentNum}" 
                     label="{!$Label.c.Number_of_Payments}" 
                     step="1" />
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="3">
-                <ui:inputDate class="show-required"
+            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                <lightning:input type="date"
                     label="{!$Label.c.Date_of_First_Payment}"
-                    value="{!v.startDate}" 
-                    displayDatePicker="true" />
+                    value="{!v.startDate}" /> 
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="1">
+            <lightning:layoutItem padding="around-small" size="3" mediumDeviceSize="1">
                 <lightning:select name="interval" 
                     label="{!$Label.c.Interval}" 
                     value="{!v.intervalNum}">
@@ -78,7 +83,7 @@
                     <option value="12">12</option>
                 </lightning:select>
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="2">
+            <lightning:layoutItem padding="around-small" size="3" mediumDeviceSize="2">
                 <lightning:select name="frequency" 
                     label="{!$Label.c.Frequency}" 
                     value="{!v.intervalFreq}">
@@ -87,21 +92,24 @@
                     <option value="Week">Week</option>
                 </lightning:select>
             </lightning:layoutItem>
-            <lightning:layoutItem padding="around-small" size="2">
+            <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
                 <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}" 
                     fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
                     selectedVal="{!v.selectedPaymentMethod}" />
             </lightning:layoutItem>
             
             <lightning:layoutItem padding="around-small" size="12">
-                <lightning:button aura:id="calcButton" disabled="true" label="{!v.calculateButtonLabel}" 
+                <lightning:button aura:id="calcButton" 
+                    disabled="true" 
+                    label="{!v.calculateButtonLabel}" 
                     onclick="{!c.clickCalculate}" />
             </lightning:layoutItem>
 
             <!-- Show a row for each payment -->
-            <div aura:id="paymentWrap" 
-                class="{!v.showPayments ? 'slds-size_1-of-1 slds-border_top' : 'slds-hidden'}">
+            <div aura:id="paymentWrap" class="slds-size_1-of-1 slds-border_top">
                 <c:giftFormRelated objectName="npe01__OppPayment__c"
+                    editMode="{!v.editMode}"
+                    disablePaymentEvents="{!v.disablePaymentEvents}"    
                     itemList="{!v.paymentList}"
                     blockItemChangeEvent="{!v.blockItemChangeEvent}"
                     rowCmpName="{!v.rowCmpName}"

@@ -42,6 +42,7 @@ public class UTIL_UnitTestData_TEST {
     * @description The opportunity closed won stage
     *******************************************************************************************************/
     private static string closedWonStage;
+    private static string openStage;
 
     /*******************************************************************************************************
     * @description Returns opportunity closed won stage
@@ -59,6 +60,24 @@ public class UTIL_UnitTestData_TEST {
         }
 
         return closedWonStage;
+    }
+
+    /*******************************************************************************************************
+    * @description Returns opportunity open stage
+    * @return String the opportunity open stage
+    *******************************************************************************************************/
+    public static String getOpenStage(){
+        if (openStage == null){
+            List<OpportunityStage> openStages = [select masterlabel from opportunitystage where isActive = true and isclosed = false];
+
+            if(openStages.size()>0){
+                openStage = openStages[0].masterlabel;
+            } else {
+                openStage = '';
+            }
+        }
+
+        return openStage;
     }
 
     /*******************************************************************************************************
@@ -141,6 +160,36 @@ public class UTIL_UnitTestData_TEST {
             insert u;
         }
         return u;
+    }
+
+    /*******************************************************************************************************
+    * @description Returns a new User
+    * @param strUsername the name of the new User
+    * @return User the new user
+    *******************************************************************************************************/
+    public static Opportunity getOpenOpportunity(Contact donor, Decimal amt) {
+        Opportunity opp = new Opportunity(
+            name = 'Opp ' + Datetime.now().getTime(),
+            npsp__Primary_Contact__c = donor.Id,
+            StageName = getOpenStage(),
+            CloseDate = System.Today(),
+            Amount = amt
+        );
+        return opp;
+    }
+
+    /*******************************************************************************************************
+    * @description Returns a new User
+    * @param strUsername the name of the new User
+    * @return User the new user
+    *******************************************************************************************************/
+    public static npe01__OppPayment__c getUnpaidPayment(Opportunity opp, Decimal amt) {
+        npe01__OppPayment__c payment = new npe01__OppPayment__c(
+            npe01__Opportunity__c = opp.Id,
+            npe01__Scheduled_Date__c = System.Today(),
+            npe01__Payment_Amount__c = amt
+        );
+        return payment;
     }
 
 

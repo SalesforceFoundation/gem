@@ -50,8 +50,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     public Map<String, String> hedaToNpspRelMatchMap = new Map<String, String>{
         'hed__Contact__c' => 'npe4__Contact__c',
         'hed__RelatedContact__c' => 'npe4__RelatedContact__c',
-        'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c',
-        'hed__Status__c' => 'npe4__Status__c'
+        'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c'
     };
 
     public Map<String, String> hedaToNpspAfflFieldMap = new Map<String, String>{
@@ -69,14 +68,13 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     public Map<String, String> hedaToNpspAfflMatchMap = new Map<String, String>{
         'hed__Contact__c' => 'npe5__Contact__c',
         'hed__Account__c' => 'npe5__Organization__c',
-        'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c',
-        'hed__Status__c' => 'npe5__Status__c'
+        'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c'
     };
 
 	public final String RELATED_OPPORTUNITY_CONTACT_ROLE_NONE = '--None--';
 	public final String NPSP_RELATIONSHIP_API_NAME = 'npe4__Relationship__c';
 	public final String NPSP_AFFILIATION_API_NAME = 'npe5__Affiliation__c';
-    private static List<SObject> toDelete = new List<SObject>();
+    private List<SObject> toDelete = new List<SObject>();
 
 	/*******************************************************************************************************
     * @description Trigger Handler on Opportunities that syncs donor Relationship and Affiliations records 
@@ -107,8 +105,6 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     ********************************************************************************************************/
     private void synchronizeRelatedDonorRecords(List<Opportunity> oppList){
 		
-        // Make sure this static list is cleared
-        toDelete.clear();
         Set<Id> donorContactIds = new Set<Id>();
 		Set<Id> donorAccountIds = new Set<Id>();
 		for(Opportunity opp : oppList){
@@ -120,7 +116,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
 			}
 		}
 
-		// Query HEDA Relationships and Affiliations to this Donor
+		// Query HEDA Relationships and Affiliations to these Donors
 		String allHedaRelFields = UTIL_Describe.getAllFieldsQueryStringFromObject('hed__Relationship__c');
         List<hed__Relationship__c> hedRelationships = 
             Database.query('SELECT '
@@ -139,7 +135,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
                 + 'AND Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND hed__Account__c in :donorAccountIds ');
 
-		// Query existing NPSP versions of these records
+		// Query existing NPSP Relationships and Affiliations to these Donors
 		String allNpspRelFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npe4__Relationship__c');
         List<npe4__Relationship__c> currentNpspRelationships = 
             Database.query('SELECT '
@@ -158,6 +154,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
                 + 'AND npsp__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND npe5__Organization__c in :donorAccountIds ');
 
+        //Organize records by Donor ID, which for Relationships is a Contact, for Affiliations an Account
         Map<Id, List<SObject>> donorToHedaRelationships = convertListToMap( hedRelationships, 'hed__RelatedContact__c' );
         Map<Id, List<SObject>> donorToHedaAffiliations = convertListToMap( hedAffiliations, 'hed__Account__c' );
         Map<Id, List<SObject>> donorToNpspRelationships = convertListToMap( currentNpspRelationships, 'npe4__RelatedContact__c' );
@@ -179,6 +176,8 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
             upsert newNpspAffiliations;
         }
 
+        // If an existing NPSP record couldn't be matched to an EDA record, a new copy gets created, 
+        // and the un-synced record gets deleted
         if(!toDelete.isEmpty()){
             delete toDelete;
         }
@@ -204,7 +203,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     }
 
     /*******************************************************************************************************
-    * @description Take a map of Donor Id to HEDA Relationship or Affiliations records and return a list of 
+    * @description Take a map of Donor Id to HEDA Relationship or Affiliation records and return a list of 
     * synced Relationship or Affiliations NPSP records
     * @param sourceMap map of Donor Id to the HEDA versions of the records
     * @param copyMap map of Donor Id to existing NPSP versions of the records

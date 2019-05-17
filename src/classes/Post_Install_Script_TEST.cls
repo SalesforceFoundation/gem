@@ -65,5 +65,23 @@ public with sharing class Post_Install_Script_TEST {
           npspOrgSettings.npe01__Account_Processor__c);
         system.assertEquals(hedaOrgSettings.hed__Account_Processor__c,
           npspOrgSettings.npe01__One_to_One_RecordTypeID__c);
+
+        //Verify that Data Import settings have been added
+        npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
+        System.assertEquals(npsp.BDI_DataImport_API.ExactMatchOrCreate, diSettings.npsp__Donation_Matching_Behavior__c);
+        System.assertEquals('npsp__donation_date__c;npsp__donation_name__c', diSettings.npsp__Donation_Matching_Rule__c);
+
+        //Check that default TDTM triggers were added
+        List<hed__Trigger_Handler__c> hedaTriggers = [SELECT hed__Class__c, hed__Object__c,
+            hed__Active__c, hed__Load_Order__c
+            FROM hed__Trigger_Handler__c];
+        hed__Trigger_Handler__c oppRelAfflSync = hedaTriggers[0];
+        
+        String syncNPSPRecords = OPP_ManageRelatedNPSPRecords_TDTM.class.toString();
+        System.assertEquals(1, hedaTriggers.size());
+        System.assertEquals('Opportunity', oppRelAfflSync.hed__Object__c);
+        System.assertEquals(syncNPSPRecords, oppRelAfflSync.hed__Class__c);
+        System.assertEquals(true, oppRelAfflSync.hed__Active__c);
+        System.assertEquals(0, oppRelAfflSync.hed__Load_Order__c);
     }
 }

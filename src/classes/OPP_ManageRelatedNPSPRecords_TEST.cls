@@ -16,6 +16,10 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
     static final String credit2FirstName = 'Credit2';
     static final String donorAccountName = 'DonorAccount1';
     
+    /*******************************************************************************************************
+    * @description Create a HEDA Relationship and Affiliation. 
+    * Create 2 Donations, one that uses the Affiliation Account, one that uses the Primary Relationship Contact
+    */ 
     @testSetup static void setupTriggersAndData() {
         GEM_Settings__c gemSettings = UTIL_CustomSettingsFacade.getOrgGemSettings();
         gemSettings.Sync_Account_Models__c = true;
@@ -90,10 +94,10 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
     }
 
     /*******************************************************************************************************
-    * @description Create a HEDA Relationship and Affiliation. 
-    * Create 1 Donation with the Primary Contact and Account Donor. 
-    * Check that NPSP versions of the Relationship and Affiliation were created.
+    * @description Check that NPSP versions of the Relationship and Affiliation were created.
+    * Update the EDA Relationship and Affiliation, and make sure the copy stays sycned.
     * Check that multiple copies were not created.
+    * Check that the correct Opportunity Contact Roles are created from the NPSP records.
     */ 
     @isTest
     private static void testOppRelatedRecordSync() {
@@ -114,7 +118,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             FROM Opportunity 
             WHERE AccountId = :donorAccount.Id];
 
-        // Part 1: Test that NPSP copies of Relationships and Affiliations got created when adding a new Opportunity
+        // Test that NPSP copies of Relationships and Affiliations got created when adding a new Opportunity
         List<npe4__Relationship__c> newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
 
         System.assertEquals(1, newNPSPRelationships.size(), 
@@ -132,9 +136,8 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
         System.assertEquals(softCreditRole, newNPSPAffl.npsp__Related_Opportunity_Contact_Role__c);
         System.assertEquals(creditContact2.Id, newNPSPAffl.npe5__Contact__c);
 
-        // Part 2: Test update of existing NPSP Relationship and Affiliation copies
+        // Test update of existing NPSP Relationship and Affiliation copies
         // One of them will be changed, the other should be deleted and replaced with a new copy
-
         List<hed__Relationship__c> hedaRels = [SELECT Id, hed__Description__c, hed__Status__c
             FROM hed__Relationship__c
             WHERE hed__Contact__c =: donorContact1.Id];
@@ -197,7 +200,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
                 AND Role = :softCreditRole
                 ORDER BY CreatedDate ASC];
 
-        // There should be 1 per Opportunity created that used this Relationship
+        // There should be 1 OCR per Opportunity created that used this Relationship
         System.assertEquals(2, retrievedOCR.size());
         System.assertEquals(oppTestRel1.Id, retrievedOCR[0].OpportunityId);
         System.assertEquals(oppTestRel2.Id, retrievedOCR[1].OpportunityId);

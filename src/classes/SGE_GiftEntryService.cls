@@ -1,3 +1,41 @@
+/*
+    © 2019, Salesforce.org.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    * Neither the name of Salesforce.org nor the names of
+      its contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
+*/
+/**
+* @author Salesforce.org
+* @date 2019
+* @group
+* @group-content
+* @description This class handles the custom fields section of the Single Gift Entry form
+**/
 public with sharing class SGE_GiftEntryService {
     private static final String LAYOUT_NAME = 'SGE Custom Fields';
 
@@ -18,6 +56,7 @@ public with sharing class SGE_GiftEntryService {
      *
      * @return  A SGE_GiftEntryService.Layout containing information about all writeable custom fields in the specified layout
      */
+    @TestVisible
     private static SGE_GiftEntryService.Layout readOpportunityLayoutByName(String layoutName) {
         List<String> layouts = new List<String>{'Opportunity-' + layoutName};
         Metadata.Metadata rawMetadata;
@@ -32,32 +71,27 @@ public with sharing class SGE_GiftEntryService {
         return new SGE_GiftEntryService.Layout(Schema.Opportunity.SObjectType, layout);
     }
 
-    private static SGE_GiftEntryService.Layout readOpportunityFieldSetByName(String fieldSetName) {
-        FieldSet gemFieldSet = Schema.SObjectType.Opportunity.fieldSets.getMap().get(fieldSetName);
-
-        return new SGE_GiftEntryService.Layout(gemFieldSet);
-    }
-
+    /**
+     * Class representing a simple page layout
+     */
     public class Layout {
         @AuraEnabled public List<Section> sections;
         @AuraEnabled public String sObjectName;
         public Layout(Schema.SObjectType sObjectType, Metadata.Layout layout) {
             this.sObjectName = sObjectType.getDescribe().getName();
             this.sections = new List<Section>();
+            System.debug(layout);
             for(Metadata.LayoutSection section : layout.layoutSections) {
                 if(section.editHeading && section.label.toLowerCase() != 'hidden - do not edit this section') {
                     this.sections.add(new Section(sObjectType, section));
                 }
             }
         }
-
-        public Layout(FieldSet gemFieldSet) {
-            this.sObjectName = gemFieldSet.getSObjectType().getDescribe().getName();
-            this.sections = new List<Section>();
-            this.sections.add(new Section(gemFieldSet)); //fieldset layout only has one section
-        }
     }
 
+    /**
+     * Class representing a section within a page layout
+     */
     public class Section extends HashKey {
         @AuraEnabled public String label;
         @AuraEnabled public List<Column> columns;
@@ -70,26 +104,11 @@ public with sharing class SGE_GiftEntryService {
                 columns.add(new Column(sObjectType, column));
             }
         }
-
-        public Section(FieldSet gemFieldSet) {
-            this.key = gemFieldSet.getName() + 'section';
-            this.columns = new List<Column>();
-            List<Schema.FieldSetMember> leftFields = new List<Schema.FieldSetMember>();
-            List<Schema.FieldSetMember> rightFields = new List<Schema.FieldSetMember>();
-            List<Schema.FieldSetMember> allFields = gemFieldSet.getFields();
-            for(Integer i = 0; i < allFields.size(); i++) {
-               if(Math.mod(i, 2) == 0) {
-                   leftFields.add(allFields[i]);
-               } else {
-                   rightFields.add(allFields[i]);
-               }
-            }
-
-            this.columns.add(new Column(leftFields));
-            this.columns.add(new Column(rightFields));
-        }
     }
 
+    /**
+     * Class represeting a column within a page layout
+     */
     public class Column extends HashKey {
         @AuraEnabled public List<Field> fields;
 
@@ -106,10 +125,6 @@ public with sharing class SGE_GiftEntryService {
             }
         }
 
-        public Column(List<Schema.FieldSetMember> members) {
-
-        }
-
         /**
          * Check to make sure this is input-able field. We don't want to render formula fields etc...
          *
@@ -123,6 +138,9 @@ public with sharing class SGE_GiftEntryService {
         }
     }
 
+    /**
+     * Class representing a field on a page layout
+     */
     public class Field {
         @AuraEnabled public String label;
         @AuraEnabled public String name;
@@ -139,6 +157,11 @@ public with sharing class SGE_GiftEntryService {
         }
     }
 
+    /**
+     * Lightning web components require a key for individual members of a collection.
+     * Normally that'd be the Id of the SObject or some other built-in unique identifier.
+     * Since most of the metadata here doesn't have a unique Id, we generate one.
+     */
     abstract class HashKey {
         @AuraEnabled public String key;
         public HashKey(Object anyObject) {

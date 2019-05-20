@@ -165,5 +165,8 @@
         if (isRecordEdit == true) {
             helper.rerenderInputs(component, 'renderDonorInputs');
         }
+    },
+    handleSubmit: function(component, event, helper) {
+        event.preventDefault();
     }
 })

@@ -158,5 +158,8 @@
                     helper.sendMessage('onError', message);
                 }
             });
+    },
+    handleSubmit: function(component, event, helper) {
+        event.preventDefault();
     }
 })

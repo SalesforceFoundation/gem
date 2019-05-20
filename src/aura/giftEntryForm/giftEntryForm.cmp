@@ -102,6 +102,7 @@
         <div class="outerDivContainer">
         <div class="slds-card" aura:id="formWrapper">
             <lightning:recordEditForm objectApiName="Opportunity"
+                onsubmit="{!c.handleSubmit}"
                 recordId="{!v.opp.Id}">
             <lightning:messages />
 

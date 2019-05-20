@@ -7,12 +7,10 @@
     <aura:attribute type="String" name="controllingField"/>
     <aura:attribute type="String" name="controllingObject"/>
     <aura:attribute type="Boolean" name="displaySection" />
-    
-    <aura:attribute type="Sobject" name="sobjectRecord" default="{}" />
-    <aura:handler name="change" value="{!v.sobjectRecord}" action="{!c.handleSobjectChange}"/>
-
+    <aura:attribute type="SObject" name="sobjectRecord" default="{}" />
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.sobjectRecord}" action="{!c.handleSobjectChange}"/>
 
     <lightning:recordEditForm objectApiName="{!v.objectName}">
         <lightning:layout>

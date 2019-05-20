@@ -40,10 +40,9 @@
         // For each picklist value and for each object, create a new dynamic section
         // It has to be for each object because the dynamic section has the 
         // RecordEditForm, which can only be one object name at a time. 
+        var componentList = [];
         for (var pickListValue in dependentFieldList) {
             var objectToFieldList = dependentFieldList[pickListValue];
-            var componentList = [];
-            var layoutItemList = [];
 
             for (var objectName in objectToFieldList) {
                 var fieldList = objectToFieldList[objectName];
@@ -64,19 +63,19 @@
                 
                 componentList.push(dynamicSection);
             }
-
-            $A.createComponents(componentList, function(createdComponentsList, status, errorMessage) {
-                if (status == "SUCCESS") {
-
-                    // Just add the created components into the body and set it. 
-                    component.set("v.body", createdComponentsList);
-                } else if (status == "INCOMPLETE") {
-
-                } else if (status == "ERROR") {
-                    console.log('error here');
-                    console.log(errorMessage);
-                }
-            });
         }
+
+        $A.createComponents(componentList, function(createdComponentsList, status, errorMessage) {
+            if (status == "SUCCESS") {
+                // Just add the created components into the body and set it. 
+                component.set("v.body", createdComponentsList);
+            } else if (status == "INCOMPLETE") {
+
+            } else if (status == "ERROR") {
+                console.log('error here');
+                console.log(errorMessage);
+            }
+        });
+
     }
 })

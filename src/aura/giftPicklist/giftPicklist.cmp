@@ -6,7 +6,7 @@
     <aura:attribute type="String" name="inputFieldId" />
     <aura:attribute type="String" name="fieldLabel" />
     <aura:attribute type="String" name="selectedVal" />
-    <aura:attribute type="Boolean" name="isDisabled" default="false" />
+    <aura:attribute type="Boolean" name="disabled" default="false" />
     <aura:attribute type="Boolean" name="isRequired" default="false" />
     <aura:attribute type="Boolean" name="callEvent" default="true" />
 
@@ -14,7 +14,7 @@
         name="select" 
         label="{!v.fieldLabel}" 
         required="{!v.isRequired}"
-        disabled="{!v.isDisabled}"
+        disabled="{!v.disabled}"
         value="{!v.selectedVal}">
         <aura:iteration items="{!v.picklistValues}" var="plWrapper">
             <option value="{!plWrapper.value}" 

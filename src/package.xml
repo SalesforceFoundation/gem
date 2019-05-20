@@ -83,6 +83,7 @@
         <members>Gift_Donation_ID_Placeholder</members>
         <members>Gift_Donation_Information</members>
         <members>Gift_Donation_Locked</members>
+        <members>Gift_Donation_Locked_Payments</members>
         <members>Gift_Donor_Information</members>
         <members>Gift_Donor_Required</members>
         <members>Gift_Donor_Type</members>

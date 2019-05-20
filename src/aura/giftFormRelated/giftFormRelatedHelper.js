@@ -1,76 +1,107 @@
 ({
+    addRows: function(component, helper, newRowList){
+        // Collect all new rows in an array, and add them to the page after they're all created
+        Promise.all(newRowList).then($A.getCallback(function(values) {
+            helper.setBody(component, helper, values);
+        })); 
+    },
     handleAddRow: function(component, helper, item, index){
-        // Now, create the component that contains the fields and pass it the list of data
-        var rowList = component.getReference('v.rowList');
-        var rowListArray = component.get('v.rowList');
-        var newRowNum = index ? index : rowListArray.length;
-        var rowCmpName = component.get('v.rowCmpName');
-        var objectFieldData = component.get('v.objectFieldData');
-        var amtField = component.getReference('v.amtField');
-        var donationAmt = component.getReference('v.donationAmt');
-        var checkAmountTotals = component.getReference('v.checkAmountTotals');
-        var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
-    
-        var showLabels = false;
-        if(newRowNum == 0){
-            showLabels = true;
+
+        return new Promise(function(resolve, reject){
+            // Now, create the component that contains the fields and pass it the list of data
+            var rowList = component.getReference('v.rowList');
+            var rowListArray = component.get('v.rowList');
+            var newRowNum = index ? index : rowListArray.length;
+            var rowCmpName = component.get('v.rowCmpName');
+            var objectFieldData = component.get('v.objectFieldData');
+            var amtField = component.getReference('v.amtField');
+            var donationAmt = component.getReference('v.donationAmt');
+            var checkAmountTotals = component.getReference('v.checkAmountTotals');
+            var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
+            var editMode = component.get('v.editModeOverride');
+            var editModePaidPayments = component.get('v.editModePaidPayments');
+            var showLabels = (index == 0 || newRowNum == 0) ? true : false;
+
+            $A.createComponent(
+                rowCmpName, {
+                    'rowList': rowList,
+                    'rowComponent': rowCmpName,
+                    'objectFieldData': objectFieldData,
+                    'item': item,
+                    'donationAmt': donationAmt,
+                    'checkAmountTotals': checkAmountTotals,
+                    'noDuplicateValueList': noDuplicateValueList,
+                    'amtField': amtField,
+                    'showLabels': showLabels,
+                    'editMode': editMode,
+                    'editModePaidPayments': editModePaidPayments
+                },
+                function(relatedCmp, status, errorMessage){
+                    if (status === 'SUCCESS') {
+                        resolve(relatedCmp);
+                    }
+                    else if (status === 'INCOMPLETE') {
+                        errorMessage = $A.get('$Label.c.Error_Offline');
+                        reject(errorMessage);
+                    }
+                    else if (status === 'ERROR') {
+                        reject(errorMessage);
+                    }
+                }
+            );
+        });
+    },
+    addSingleRow: function(component, helper){
+        var cmp = this.handleAddRow(component, helper);
+        this.addRows(component, helper, [cmp]);
+    },
+    setBody: function(component, helper, cmpList){
+        var body = component.get('v.body');
+        for(var i=0; i<cmpList.length; i++){
+            body.push(cmpList[i]);
         }
 
-        $A.createComponent(
-            rowCmpName, {
-                'rowList': rowList,
-                'rowComponent': rowCmpName,
-                'objectFieldData': objectFieldData,
-                'item': item,
-                'donationAmt': donationAmt,
-                'checkAmountTotals': checkAmountTotals,
-                'noDuplicateValueList': noDuplicateValueList,
-                'amtField': amtField,
-                'showLabels': showLabels
-            },
-            function(relatedCmp, status, errorMessage){
-                if (status === 'SUCCESS') {
-                    // Add the component to the page
-                    var body = component.get('v.body');
-                    body.push(relatedCmp);
-                    component.set('v.body', body);
+        // Add the new rows to the page
+        component.set('v.body', body);
+        
+        component.set('v.showAmountError', false);
+        helper.getAmtTotal(component);
 
-                    // TODO Could clean this up by only calling after final row is added
-                    helper.getAmtTotal(component);
-                }
-                else if (status === 'INCOMPLETE') {
-                    console.log($A.get('$Label.c.Error_Offline'));
-                }
-                else if (status === 'ERROR') {
-                    console.log($A.get('$Label.c.Error') + ': ' + errorMessage);
-                }
-            }
-        );
+        // Check amount validation on this section
+        this.handleAmtChangeHelper(component);
+        
+        // This way, new rows will not be locked
+        component.set('v.editModeOverride', false);
     },
     createRowsFromItemList: function(component, helper){
         // Called when the item list is completely overwritten
         // Ex. Calculating Payment schedule, or loading existing data
+
+        // We want a separate editMode variable for this component to override the "lock"
+        // on new rows
+        var formEditMode = component.get('v.editMode');
+        component.set('v.editModeOverride', formEditMode);
 
         // First, clear the existing rows
         component.set('v.body', []);
         component.set('v.rowList', []);
         
         // Now add the passed in objects to the rowList
-        //var itemList = event.getParam('value');
         var itemList = component.get('v.itemList');
         itemList = this.proxyToObj(itemList);
-        console.log('item list is: ' );
-        console.log(itemList);
+
+        var cmpList = [];
         if(itemList instanceof Array){
             for(var i=0; i<itemList.length; i++){
-                this.handleAddRow(component, helper, itemList[i], i);
+                var newCmp = this.handleAddRow(component, helper, itemList[i], i);
+                cmpList.push(newCmp);
             }
         }
-        component.set('v.showAmountError', false);
+
+        this.addRows(component, helper, cmpList);
     },
     handleAmtChangeHelper: function(component, checkForZero){
         var amountTotal = this.getAmtTotal(component);
-
         var preventAmountSurplus = component.get('v.preventAmountSurplus');
         var preventAmountDeficit = component.get('v.preventAmountDeficit');
         var displayErrorOnAmountSurplus = component.get('v.displayErrorOnAmountSurplus');
@@ -161,6 +192,16 @@
         arrayList = this.proxyToObj(arrayList);
         if(!arrayList){
             arrayList = null;
+        }
+        // Remove any related object info, it causes errors during JSON parsing in Apex
+        for(var i in arrayList){
+            var relatedObj = arrayList[i];
+            for(var j in relatedObj){
+                var fieldVal = relatedObj[j];
+                if(fieldVal instanceof Object){
+                    delete arrayList[i][j];
+                }
+            }
         }
         component.set('v.giftModel.'+attrName, arrayList);
     },

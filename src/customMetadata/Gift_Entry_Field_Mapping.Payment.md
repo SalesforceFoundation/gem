@@ -26,7 +26,6 @@
   },
 &quot;Check&quot;: {
     &quot;npe01__OppPayment__c&quot;: [
-      &quot;npe01__Payment_Method__c&quot;,
       &quot;npe01__Check_Reference_Number__c&quot;,
       &quot;npe01__Paid__c&quot;,
       &quot;npe01__Payment_Amount__c&quot;

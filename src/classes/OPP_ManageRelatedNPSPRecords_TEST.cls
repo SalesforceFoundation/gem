@@ -72,7 +72,17 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             hed__Type__c = friendType,
             Related_Opportunity_Contact_Role__c = softCreditRole,
             hed__Description__c = descriptionNotes);
-        insert rel;
+
+        // Create a second relationship to make sure syncing still works
+        hed__Relationship__c rel2 = new hed__Relationship__c(
+            hed__Contact__c = donorContact1.Id,
+            hed__Relatedcontact__c = creditContact1.Id,
+            hed__Status__c = statusCurrent,
+            hed__Type__c = friendType,
+            Related_Opportunity_Contact_Role__c = solicitorRole,
+            hed__Description__c = descriptionNotes);
+
+        insert new List<hed__Relationship__c>{rel, rel2};
 
         // Create a Soft Credit affiliation between Donor2 and Related2
         hed__Affiliation__c affl = new hed__Affiliation__c(
@@ -82,7 +92,17 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             hed__Status__c = statusCurrent,
             Related_Opportunity_Contact_Role__c = softCreditRole,
             hed__Description__c = descriptionNotes);
-        insert affl;
+
+        // Create another Affiliation to test syncing edge cases
+        hed__Affiliation__c affl2 = new hed__Affiliation__c(
+            hed__Contact__c = creditContact2.Id,
+            hed__Account__c = donorAccount.Id,
+            hed__Role__c = familyRole,
+            hed__Status__c = statusCurrent,
+            Related_Opportunity_Contact_Role__c = solicitorRole,
+            hed__Description__c = descriptionNotes);
+
+        insert new List<hed__Affiliation__c>{affl, affl2};
 
         // Add Opportunities to test if the NPSP versions of Relationship and Affiliation get created
         Opportunity oppTestRel1 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
@@ -121,28 +141,32 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
         // Test that NPSP copies of Relationships and Affiliations got created when adding a new Opportunity
         List<npe4__Relationship__c> newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
 
-        System.assertEquals(1, newNPSPRelationships.size(), 
-            'There should be 1 new Relationship for this Contact, there are : ' + newNPSPRelationships.size());
+        System.assertEquals(2, newNPSPRelationships.size(), 
+            'There should be 2 new Relationships for this Contact, there are : ' + newNPSPRelationships.size());
         npe4__Relationship__c newNPSPRel = newNPSPRelationships[0];
+        npe4__Relationship__c newNPSPRel2 = newNPSPRelationships[1];
         System.assertEquals(friendType, newNPSPRel.npe4__Type__c);
         System.assertEquals(softCreditRole, newNPSPRel.npsp__Related_Opportunity_Contact_Role__c);
+        System.assertEquals(solicitorRole, newNPSPRel2.npsp__Related_Opportunity_Contact_Role__c);
 
         List<npe5__Affiliation__c> newNPSPAffiliations = getNPSPAffiliations(donorAccount.Id);
 
-        System.assertEquals(1, newNPSPAffiliations.size(), 
-            'There should be 1 new Affiliation, there are : ' + newNPSPAffiliations.size());
+        System.assertEquals(2, newNPSPAffiliations.size(), 
+            'There should be 2 new Affiliations, there are : ' + newNPSPAffiliations.size());
         npe5__Affiliation__c newNPSPAffl = newNPSPAffiliations[0];
+        npe5__Affiliation__c newNPSPAffl2 = newNPSPAffiliations[1];
         System.assertEquals(familyRole, newNPSPAffl.npe5__Role__c);
         System.assertEquals(softCreditRole, newNPSPAffl.npsp__Related_Opportunity_Contact_Role__c);
         System.assertEquals(creditContact2.Id, newNPSPAffl.npe5__Contact__c);
+        System.assertEquals(solicitorRole, newNPSPAffl2.npsp__Related_Opportunity_Contact_Role__c);
 
         // Test update of existing NPSP Relationship and Affiliation copies
         // One of them will be changed, the other should be deleted and replaced with a new copy
         List<hed__Relationship__c> hedaRels = [SELECT Id, hed__Description__c, hed__Status__c
             FROM hed__Relationship__c
             WHERE hed__Contact__c =: donorContact1.Id];
-        System.assertEquals(1, hedaRels.size(), 
-            'There should still be only 1 Relationship, there are : ' + hedaRels.size());
+        System.assertEquals(2, hedaRels.size(), 
+            'There should still be only 2 Relationship, there are : ' + hedaRels.size());
 
         hedaRels[0].hed__Description__c = descriptionNotes2;
         hedaRels[0].hed__Status__c = statusFormer;
@@ -152,8 +176,8 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             hed__Description__c
             FROM hed__Affiliation__c
             WHERE hed__Account__c =: donorAccount.Id];
-        System.assertEquals(1, hedaAffls.size(), 
-            'There should still be only 1 Affiliation, there are : ' + hedaAffls.size());
+        System.assertEquals(2, hedaAffls.size(), 
+            'There should still be only 2 Affiliation, there are : ' + hedaAffls.size());
 
         // This will break the "sync", causing the existing copy to be deleted and remade
         hedaAffls[0].Related_Opportunity_Contact_Role__c = solicitorRole;
@@ -175,8 +199,8 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
         // Now test that the NPSP copies reflect the changes made to the HEDA versions
         newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
 
-        System.assertEquals(1, newNPSPRelationships.size(), 
-            'There should still be only 1 Relationship, there are : ' + newNPSPRelationships.size());
+        System.assertEquals(2, newNPSPRelationships.size(), 
+            'There should still be only 2 Relationship, there are : ' + newNPSPRelationships.size());
 
         npe4__Relationship__c updatedRel = newNPSPRelationships[0];
         System.assertEquals(descriptionNotes2, updatedRel.npe4__Description__c);
@@ -185,8 +209,8 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
 
         newNPSPAffiliations = getNPSPAffiliations(donorAccount.Id);
 
-        System.assertEquals(1, newNPSPAffiliations.size(), 
-            'There should still be only 1 new Affiliation, there are : ' + newNPSPAffiliations.size());
+        System.assertEquals(2, newNPSPAffiliations.size(), 
+            'There should still be only 2 new Affiliations, there are : ' + newNPSPAffiliations.size());
         npe5__Affiliation__c updatedAffl = newNPSPAffiliations[0];
         System.assertEquals(descriptionNotes2, updatedAffl.npe5__Description__c);
         System.assertEquals(solicitorRole, updatedAffl.npsp__Related_Opportunity_Contact_Role__c);
@@ -200,7 +224,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
                 AND Role = :softCreditRole
                 ORDER BY CreatedDate ASC];
 
-        // There should be 1 OCR per Opportunity created that used this Relationship
+        // There should be 1 Soft Credit OCR per Opportunity created using the Relationship
         System.assertEquals(2, retrievedOCR.size());
         System.assertEquals(oppTestRel1.Id, retrievedOCR[0].OpportunityId);
         System.assertEquals(oppTestRel2.Id, retrievedOCR[1].OpportunityId);
@@ -210,7 +234,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
                 WHERE ContactId = :creditContact2.Id
                 ORDER BY CreatedDate ASC];
 
-        // There should be 1 OCR per Opportunity created that used this Affiliation
+        // The first Opportunity created a Soft Credit role, the second created a Solicitor role
         System.assertEquals(2, retrievedOCR.size());
         System.assertEquals(oppTestAffl1.Id, retrievedOCR[0].OpportunityId);
         System.assertEquals(softCreditRole, retrievedOCR[0].Role);
@@ -229,7 +253,8 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             npe4__RelatedContact__c,
             npe4__Type__c
             FROM npe4__Relationship__c
-            WHERE npe4__Contact__c =: primaryContactId];
+            WHERE npe4__Contact__c =: primaryContactId
+            ORDER BY npsp__Related_Opportunity_Contact_Role__c ASC];
     }
 
     private static List<npe5__Affiliation__c> getNPSPAffiliations(Id accountId){
@@ -240,7 +265,8 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             npe5__Role__c,
             npe5__Organization__c
             FROM npe5__Affiliation__c
-            WHERE npe5__Organization__c =: accountId];
+            WHERE npe5__Organization__c =: accountId
+            ORDER BY npsp__Related_Opportunity_Contact_Role__c ASC];
     }
 
     /*********************************************************************************************************

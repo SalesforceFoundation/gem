@@ -1,10 +1,10 @@
-public with sharing class dynamicFieldDisplayController {
+public with sharing class DynamicFieldDisplayController {
 
     @AuraEnabled
     public static GiftEntryFieldMappingWrapper getCustomMetadataRecord(String recordName) {
 
         // Query for the custom metadata type record via the record's API Name. 
-        List<Gift_Entry_Field_Mapping__mdt> fieldMappingRecordList = [Select Id, Controlling_Field__r.QualifiedAPIName, Controlling_Object__r.QualifiedAPIName, Dependent_Field_List__c From Gift_Entry_Field_Mapping__mdt where QualifiedApiName =: recordName];
+        List<Gift_Entry_Field_Mapping__mdt> fieldMappingRecordList = [Select Id, Controlling_Field__r.QualifiedAPIName, Controlling_Object__r.QualifiedAPIName, Dependent_Field_List__c From Gift_Entry_Field_Mapping__mdt where Label =: recordName];
         GiftEntryFieldMappingWrapper mappingRecordWrapper; 
         
         if (!fieldMappingRecordList.isEmpty()) {

@@ -1,4 +1,4 @@
-<aura:component controller="dynamicFieldDisplayController">
+<aura:component controller="DynamicFieldDisplayController">
     <!--Take in Custom metadata record-->
     <!-- Take in field name to populate on parent component {!name}-->
     <!--Take in DI record-->

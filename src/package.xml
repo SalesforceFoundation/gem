@@ -6,6 +6,8 @@
         <members>API_HEDA_TEST</members>
         <members>API_NPSP</members>
         <members>API_NPSP_TEST</members>
+        <members>DynamicFieldDisplayController</members>
+        <members>DynamicFieldDisplayController_TEST</members>
         <members>GiftEntryFormController</members>
         <members>GiftEntryFormController_TEST</members>
         <members>NPSP_Account_TDTM</members>
@@ -21,7 +23,6 @@
         <members>UTIL_Namespace</members>
         <members>UTIL_Namespace_TEST</members>
         <members>UTIL_UnitTestData_TEST</members>
-        <members>dynamicFieldDisplayController</members>
         <name>ApexClass</name>
     </types>
     <types>

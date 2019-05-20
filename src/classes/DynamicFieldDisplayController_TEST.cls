@@ -4,7 +4,7 @@ public with sharing class DynamicFieldDisplayController_TEST {
     public static void testDynamicFieldDisplayController() {
 
         Test.startTest();
-        dynamicFieldDisplayController.GiftEntryFieldMappingWrapper wrapper = dynamicFieldDisplayController.getCustomMetadataRecord('Payment');
+        DynamicFieldDisplayController.GiftEntryFieldMappingWrapper wrapper = DynamicFieldDisplayController.getCustomMetadataRecord('Payment');
 
         System.assert(wrapper.controllingObject == 'npe01__OppPayment__c', 'The actual controlling object is: ' + wrapper.controllingObject);
         System.assert(wrapper.controllingField == 'npe01__Payment_Method__c', 'The actual controlling field is: ' + wrapper.controllingField);

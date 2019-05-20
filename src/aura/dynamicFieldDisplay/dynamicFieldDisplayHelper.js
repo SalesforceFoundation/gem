@@ -51,7 +51,7 @@
 
                // Build dynamic field section
                // TBD: Do we need to consider NAMESPACE???
-               var dynamicSection = ["c:DynamicFieldDisplaySection", {
+               var dynamicSection = ["c:dynamicFieldDisplaySection", {
                                     "objectName" : objectName,
                                     "fieldList" : fieldList,
                                     "fieldNameToFieldLabel" : fieldNameToFieldLabel,

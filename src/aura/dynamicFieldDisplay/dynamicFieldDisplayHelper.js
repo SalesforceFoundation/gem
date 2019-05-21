@@ -34,25 +34,34 @@
         var objectToFieldNameToFieldLabel = metadataRecordWrapper.objectToFieldNameToLabel;
         var controllingObject = metadataRecordWrapper.controllingObject;
         var controllingField = metadataRecordWrapper.controllingField;
-        var existingItem = component.getReference('v.existingRecord');
+        var existingItem = component.getReference("v.existingRecord");
         var objectNameToSobject = component.get("v.objectNameToSobject");
 
         // For each picklist value and for each object, create a new dynamic section
         // It has to be for each object because the dynamic section has the 
         // RecordEditForm, which can only be one object name at a time. 
         var componentList = [];
+        var permanentFieldList = component.get("v.permanentFieldList");
         for (var pickListValue in dependentFieldList) {
             var objectToFieldList = dependentFieldList[pickListValue];
 
             for (var objectName in objectToFieldList) {
                 var fieldList = objectToFieldList[objectName];
+                var fieldListNoDefaults = [];
+
+                // Remove fields that are part of the default, non-dynamic list
+                for(var i in fieldList){
+                    var field = fieldList[i];
+                    if(permanentFieldList.indexOf(field) < 0){
+                        fieldListNoDefaults.push(field);
+                    }
+                }
                 var fieldNameToFieldLabel = objectToFieldNameToFieldLabel[objectName];
 
                // Build dynamic field section
-               // TBD: Do we need to consider NAMESPACE???
                var dynamicSection = ["c:dynamicFieldDisplaySection", {
                                     "objectName" : objectName,
-                                    "fieldList" : fieldList,
+                                    "fieldList" : fieldListNoDefaults,
                                     "fieldNameToFieldLabel" : fieldNameToFieldLabel,
                                     "pickListValue" : pickListValue,
                                     "objectNameToSobject" : objectNameToSobject,

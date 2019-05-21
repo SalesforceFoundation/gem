@@ -20,6 +20,12 @@
     <aura:attribute type="Boolean" name="removeButtonDisabled" default="true" />
     <aura:attribute type="String" name="errorMessage" />
     
+    <aura:if isTrue="{!!v.showLabels}">
+        <lightning:layoutItem size="12" padding="horizontal-small">
+            <hr class="slds-m-top_small" />
+        </lightning:layoutItem>
+    </aura:if>
+
     <div class="{!v.showError ? 'slds-col slds-size_1-of-1' : 'slds-hidden'}">
         <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
             <h2>{!v.errorMessage}</h2>

@@ -9,7 +9,7 @@
         for (var j = 0; j < fieldList.length; j++) {
             var fieldRecordValue = component.getReference('v.sobjectRecord.' + fieldList[j]);
             var layoutItem = ["lightning:layoutItem", {
-                            "padding" : "around-small",
+                            "padding" : "horizontal-small",
                             "size": "6",
                             "mediumDeviceSize": "3"
             }];
@@ -27,7 +27,6 @@
 
             componentList.push(inputField);
         }
-
 
         $A.createComponents(componentList, function(createdComponentsList, status, errorMessage) {
             if (status == "SUCCESS") {
@@ -71,7 +70,6 @@
         toastEvent.fire();
     },
     processSobjectRecord: function(component) {
-
         // Check to see if the sobject Record is empty or not. 
         // If it is empty, that means that an existing record was not passed in
         // If that is the case, give it an sobject type
@@ -110,9 +108,5 @@
             component.set('v.displaySection', false);
         }
         
-    },
-    proxyToObj: function(attr){
-        // Used to convert a Proxy object to an actual Javascript object
-        return JSON.parse(JSON.stringify(attr));
     }
 })

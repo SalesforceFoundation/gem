@@ -17,10 +17,13 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:handler name="change" 
         value="{!v.item.npe01__Scheduled_Date__c}" 
-        action="{!c.handlePaid}"/>
+        action="{!c.handlePaidOrWriteOff}"/>
+    <aura:handler name="change" 
+        value="{!v.item.npe01__Paid__c}" 
+        action="{!c.handlePaidOrWriteOff}"/>
     <aura:handler name="change" 
         value="{!v.item.npe01__Written_Off__c}" 
-        action="{!c.preventPaidAndWrittenOff}"/>
+        action="{!c.handlePaidOrWriteOff}"/>
 
     <lightning:layout multipleRows="true">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
@@ -55,7 +58,6 @@
             <lightning:input name="paymentPaid" 
                 disabled="{!v.rowDisabled}"
                 type="checkbox" 
-                onchange="{!c.handlePaid}" 
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Paid__c}" 
                 variant="label-hidden"
                 checked="{!v.item.npe01__Paid__c}" />

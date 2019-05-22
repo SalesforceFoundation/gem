@@ -1,5 +1,5 @@
 @isTest 
-public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
+public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
 
     static final String softCreditRole = 'Soft Credit';
     static final String solicitorRole = 'Solicitor';
@@ -8,7 +8,8 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
     static final String statusCurrent = 'Current';
     static final String statusFormer = 'Former';
     static final String descriptionNotes = 'notes';
-    static final String descriptionNotes2 = 'notes update';
+    static final String descriptionNotes2 = 'notes2';
+    static final String descriptionNotesUpdate = 'notes update';
 
     static final String donor1FirstName = 'Donor1';
     static final String donor2FirstName = 'Donor2';
@@ -80,7 +81,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             hed__Status__c = statusCurrent,
             hed__Type__c = friendType,
             Related_Opportunity_Contact_Role__c = solicitorRole,
-            hed__Description__c = descriptionNotes);
+            hed__Description__c = descriptionNotes2);
 
         insert new List<hed__Relationship__c>{rel, rel2};
 
@@ -100,7 +101,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             hed__Role__c = familyRole,
             hed__Status__c = statusCurrent,
             Related_Opportunity_Contact_Role__c = solicitorRole,
-            hed__Description__c = descriptionNotes);
+            hed__Description__c = descriptionNotes2);
 
         insert new List<hed__Affiliation__c>{affl, affl2};
 
@@ -138,7 +139,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             FROM Opportunity 
             WHERE AccountId = :donorAccount.Id];
 
-        // Test that NPSP copies of Relationships and Affiliations got created when adding a new Opportunity
+        // Test that NPSP copies of Relationships and Affiliations got created
         List<npe4__Relationship__c> newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
 
         System.assertEquals(2, newNPSPRelationships.size(), 
@@ -168,7 +169,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
         System.assertEquals(2, hedaRels.size(), 
             'There should still be only 2 Relationship, there are : ' + hedaRels.size());
 
-        hedaRels[0].hed__Description__c = descriptionNotes2;
+        hedaRels[0].hed__Description__c = descriptionNotesUpdate;
         hedaRels[0].hed__Status__c = statusFormer;
         update hedaRels;
 
@@ -181,7 +182,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
 
         // This will break the "sync", causing the existing copy to be deleted and remade
         hedaAffls[0].Related_Opportunity_Contact_Role__c = solicitorRole;
-        hedaAffls[0].hed__Description__c = descriptionNotes2;
+        hedaAffls[0].hed__Description__c = descriptionNotesUpdate;
         update hedaAffls;
 
         Test.startTest();
@@ -203,7 +204,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
             'There should still be only 2 Relationship, there are : ' + newNPSPRelationships.size());
 
         npe4__Relationship__c updatedRel = newNPSPRelationships[0];
-        System.assertEquals(descriptionNotes2, updatedRel.npe4__Description__c);
+        System.assertEquals(descriptionNotesUpdate, updatedRel.npe4__Description__c);
         System.assertEquals(statusFormer, updatedRel.npe4__Status__c);
 
 
@@ -212,7 +213,7 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
         System.assertEquals(2, newNPSPAffiliations.size(), 
             'There should still be only 2 new Affiliations, there are : ' + newNPSPAffiliations.size());
         npe5__Affiliation__c updatedAffl = newNPSPAffiliations[0];
-        System.assertEquals(descriptionNotes2, updatedAffl.npe5__Description__c);
+        System.assertEquals(descriptionNotesUpdate, updatedAffl.npe5__Description__c);
         System.assertEquals(solicitorRole, updatedAffl.npsp__Related_Opportunity_Contact_Role__c);
         System.assertEquals(creditContact2.Id, updatedAffl.npe5__Contact__c);
 
@@ -240,6 +241,57 @@ public with sharing class OPP_ManageRelatedNPSPRecords_TEST {
         System.assertEquals(softCreditRole, retrievedOCR[0].Role);
         System.assertEquals(oppTestAffl2.Id, retrievedOCR[1].OpportunityId);
         System.assertEquals(solicitorRole, retrievedOCR[1].Role);
+
+    }
+
+    /*******************************************************************************************************
+    * @description Check that deleting HEDA Relationships and Affiliations also deletes the NPSP copies
+    */ 
+    @isTest
+    private static void testRelatedRecordDelete() {
+
+        Contact donorContact1 = returnContact(donor1FirstName);
+        Contact donorContact2 = returnContact(donor2FirstName);
+        Contact creditContact1 = returnContact(credit1FirstName);
+        Contact creditContact2 = returnContact(credit2FirstName);
+        Account donorAccount = [SELECT Id, Name FROM Account WHERE Name = :donorAccountName];
+
+        // Check that NPSP copies were actually created before we test deleting them!
+        List<npe4__Relationship__c> newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
+        System.assertEquals(2, newNPSPRelationships.size(), 
+            'There should be 2 new Relationships for this Contact, there are : ' + newNPSPRelationships.size());
+
+        List<npe5__Affiliation__c> newNPSPAffiliations = getNPSPAffiliations(donorAccount.Id);
+        System.assertEquals(2, newNPSPAffiliations.size(), 
+            'There should be 2 new Affiliations, there are : ' + newNPSPAffiliations.size());
+
+
+        List<hed__Relationship__c> hedaRels = [SELECT Id, hed__Description__c, hed__Status__c
+            FROM hed__Relationship__c
+            WHERE hed__Contact__c =: donorContact1.Id];
+        System.assertEquals(2, hedaRels.size(), 
+            'There should still be only 2 Relationship, there are : ' + hedaRels.size());
+
+        List<hed__Affiliation__c> hedaAffls = [SELECT Id, Related_Opportunity_Contact_Role__c,
+            hed__Description__c
+            FROM hed__Affiliation__c
+            WHERE hed__Account__c =: donorAccount.Id];
+        System.assertEquals(2, hedaAffls.size(), 
+            'There should still be only 2 Affiliation, there are : ' + hedaAffls.size());
+
+        Test.startTest();
+        delete hedaRels;
+        delete hedaAffls;
+        Test.stopTest();
+
+        // Check that NPSP copies were properly deleted
+        newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
+        System.assertEquals(0, newNPSPRelationships.size(), 
+            'There should be 0 Relationships for this Contact, there are : ' + newNPSPRelationships.size());
+
+        newNPSPAffiliations = getNPSPAffiliations(donorAccount.Id);
+        System.assertEquals(0, newNPSPAffiliations.size(), 
+            'There should be 0 Affiliations, there are : ' + newNPSPAffiliations.size());
 
     }
 

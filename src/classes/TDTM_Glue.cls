@@ -111,13 +111,6 @@ public with sharing class TDTM_Glue {
                 ) {
                 th.npsp__Active__c = false;
             }
-            else if(
-                th.npsp__Class__c == 'OPP_OpportunityContactRoles_TDTM' 
-                    && th.npsp__Object__c == 'Opportunity' 
-                    && th.npsp__Load_Order__c < 1
-                ){
-                    th.npsp__Load_Order__c = 1;
-                }
         }
 
         return listTH;

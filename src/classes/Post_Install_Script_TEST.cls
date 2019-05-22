@@ -74,14 +74,24 @@ public with sharing class Post_Install_Script_TEST {
         //Check that default TDTM triggers were added
         List<hed__Trigger_Handler__c> hedaTriggers = [SELECT hed__Class__c, hed__Object__c,
             hed__Active__c, hed__Load_Order__c
-            FROM hed__Trigger_Handler__c];
-        hed__Trigger_Handler__c oppRelAfflSync = hedaTriggers[0];
+            FROM hed__Trigger_Handler__c
+            ORDER BY hed__Class__c ASC];
+        hed__Trigger_Handler__c afflSync = hedaTriggers[0];
+        hed__Trigger_Handler__c relSync = hedaTriggers[1];
         
-        String syncNPSPRecords = OPP_ManageRelatedNPSPRecords_TDTM.class.toString();
-        System.assertEquals(1, hedaTriggers.size());
-        System.assertEquals('Opportunity', oppRelAfflSync.hed__Object__c);
-        System.assertEquals(syncNPSPRecords, oppRelAfflSync.hed__Class__c);
-        System.assertEquals(true, oppRelAfflSync.hed__Active__c);
-        System.assertEquals(0, oppRelAfflSync.hed__Load_Order__c);
+        String syncAfflRecords = AFFL_SyncToNPSP_TDTM.class.toString();
+        String syncRelRecords = REL_SyncToNPSP_TDTM.class.toString();
+
+        System.assertEquals(2, hedaTriggers.size());
+
+        System.assertEquals('Affiliation__c', afflSync.hed__Object__c);
+        System.assertEquals(syncAfflRecords, afflSync.hed__Class__c);
+        System.assertEquals(true, afflSync.hed__Active__c);
+        System.assertEquals(0, afflSync.hed__Load_Order__c);
+
+        System.assertEquals('Relationship__c', relSync.hed__Object__c);
+        System.assertEquals(syncRelRecords, relSync.hed__Class__c);
+        System.assertEquals(true, relSync.hed__Active__c);
+        System.assertEquals(0, relSync.hed__Load_Order__c);
     }
 }

@@ -32,13 +32,13 @@
 /**
 * @author Salesforce.org
 * @date 2019
-* @group TDTM
-* @group-content ../../ApexDocContent/TDTM.htm
+* @group Utilities
+* @group-content ../../ApexDocContent/Utilities.htm
 * @description This class is used to sync donor Relationship and Affiliations records from EDA to NPSP.
 **/
-global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
+public class UTIL_ManageRelatedNPSPRecords_TDTM {
 
-    public Map<String, String> hedaToNpspRelFieldMap = new Map<String, String>{
+    public static Map<String, String> hedaToNpspRelFieldMap = new Map<String, String>{
         'hed__Contact__c' => 'npe4__Contact__c',
         'hed__Description__c' => 'npe4__Description__c',
         'hed__RelatedContact__c' => 'npe4__RelatedContact__c',
@@ -47,13 +47,13 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         'hed__Type__c' => 'npe4__Type__c'
     };
 
-    public Map<String, String> hedaToNpspRelMatchMap = new Map<String, String>{
+    public static Map<String, String> hedaToNpspRelMatchMap = new Map<String, String>{
         'hed__Contact__c' => 'npe4__Contact__c',
         'hed__RelatedContact__c' => 'npe4__RelatedContact__c',
         'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c'
     };
 
-    public Map<String, String> hedaToNpspAfflFieldMap = new Map<String, String>{
+    public static Map<String, String> hedaToNpspAfflFieldMap = new Map<String, String>{
         'hed__Contact__c' => 'npe5__Contact__c',
         'hed__Description__c' => 'npe5__Description__c',
         'hed__EndDate__c' => 'npe5__EndDate__c',
@@ -65,35 +65,60 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
         'hed__Status__c' => 'npe5__Status__c'
     };
 
-    public Map<String, String> hedaToNpspAfflMatchMap = new Map<String, String>{
+    public static Map<String, String> hedaToNpspAfflMatchMap = new Map<String, String>{
         'hed__Contact__c' => 'npe5__Contact__c',
         'hed__Account__c' => 'npe5__Organization__c',
         'Related_Opportunity_Contact_Role__c' => 'npsp__Related_Opportunity_Contact_Role__c'
     };
 
-	public final String RELATED_OPPORTUNITY_CONTACT_ROLE_NONE = '--None--';
-	public final String NPSP_RELATIONSHIP_API_NAME = 'npe4__Relationship__c';
-	public final String NPSP_AFFILIATION_API_NAME = 'npe5__Affiliation__c';
-    private List<SObject> toDelete = new List<SObject>();
+    public static final String RELATED_OPPORTUNITY_CONTACT_ROLE_NONE = '--None--';
+    public static final String NPSP_RELATIONSHIP_API_NAME = 'npe4__Relationship__c';
+    public static final String NPSP_AFFILIATION_API_NAME = 'npe5__Affiliation__c';
+    private static List<SObject> toDelete = new List<SObject>();
 
-	/*******************************************************************************************************
-    * @description Trigger Handler on Opportunities that syncs donor Relationship and Affiliations records 
-    * from EDA to NPSP 
-    * @param listNew the list of Opportunities from trigger new
-    * @param listOld the list of Opportunities from trigger old
-    * @param triggerAction which trigger event (BeforeInsert, AfterInsert, etc.)
-    * @param objResult the describe for Opportunities
-    * @return dmlWrapper always null
-    ********************************************************************************************************/
-    public override hed.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
-    		hed.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
+    public static void synchronizeAffiliationRecords(List<hed__Affiliation__c> hedAffiliations){
 
-		// BEFORE INSERT
-        if (triggerAction == hed.TDTM_Runnable.Action.BeforeInsert) {
-            synchronizeRelatedDonorRecords(newlist);
+        Set<Id> donorAccountIds = new Set<Id>();
+		for(hed__Affiliation__c affl : hedAffiliations){
+		    donorAccountIds.add(affl.hed__Account__c);
+		}
+
+        // Query HEDA Affiliations to these Donors
+        String allHedaAfflFields = UTIL_Describe.getAllFieldsQueryStringFromObject('hed__Affiliation__c');
+        hedAffiliations = 
+            Database.query('SELECT '
+				+ String.escapeSingleQuotes(allHedaAfflFields) 
+				+' FROM hed__Affiliation__c '
+				+ 'WHERE Related_Opportunity_Contact_Role__c != null '
+                + 'AND Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
+				+ 'AND hed__Account__c in :donorAccountIds ');
+
+        // Query existing NPSP Affiliations to these Donors
+    	String allNpspAfflFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npe5__Affiliation__c');
+        List<npe5__Affiliation__c> currentNpspAffiliations = 
+            Database.query('SELECT '
+				+ String.escapeSingleQuotes(allNpspAfflFields) 
+				+' FROM npe5__Affiliation__c '
+				+ 'WHERE npsp__Related_Opportunity_Contact_Role__c != null '
+                + 'AND npsp__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
+				+ 'AND npe5__Organization__c in :donorAccountIds ');
+
+
+        //Organize records by Donor ID, which for Relationships is a Contact, for Affiliations an Account
+        Map<Id, List<SObject>> donorToHedaAffiliations = convertListToMap( hedAffiliations, 'hed__Account__c' );
+        Map<Id, List<SObject>> donorToNpspAffiliations = convertListToMap( currentNpspAffiliations, 'npe5__Organization__c' );
+
+        // Compare the lists and return any new, or updated, NPSP Affiliations
+        List<npe5__Affiliation__c> newNpspAffiliations = returnSyncedList(donorToHEDAAffiliations,
+            donorToNpspAffiliations, NPSP_AFFILIATION_API_NAME);
+
+        if(!newNpspAffiliations.isEmpty()){
+            upsert newNpspAffiliations;
         }
 
-    	return null;
+        // If an existing NPSP record couldn't be matched to an EDA record, a new copy gets created, 
+        // and the un-synced record gets deleted
+        checkForDelete();
 
     }
 
@@ -103,22 +128,16 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     * @param objectList a list of opportunities being inserted
     * @return void
     ********************************************************************************************************/
-    private void synchronizeRelatedDonorRecords(List<Opportunity> oppList){
+    public static void synchronizeRelationshipRecords(List<hed__Relationship__c> hedaRelationships){
 		
         Set<Id> donorContactIds = new Set<Id>();
-		Set<Id> donorAccountIds = new Set<Id>();
-		for(Opportunity opp : oppList){
-			if(opp.npsp__Primary_Contact__c != null){
-				donorContactIds.add(opp.npsp__Primary_Contact__c);
-			}
-			if(opp.AccountId != null){
-				donorAccountIds.add(opp.AccountId);
-			}
+		for(hed__Relationship__c rel : hedaRelationships){
+		    donorContactIds.add(rel.hed__Contact__c);
 		}
 
-		// Query HEDA Relationships and Affiliations to these Donors
-		String allHedaRelFields = UTIL_Describe.getAllFieldsQueryStringFromObject('hed__Relationship__c');
-        List<hed__Relationship__c> hedRelationships = 
+        // Query HEDA Relationships to these Donors
+        String allHedaRelFields = UTIL_Describe.getAllFieldsQueryStringFromObject('hed__Relationship__c');
+        hedaRelationships = 
             Database.query('SELECT '
 				+ String.escapeSingleQuotes(allHedaRelFields) 
 				+' FROM hed__Relationship__c '
@@ -126,16 +145,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
 				+ 'AND Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND hed__Contact__c in :donorContactIds ');
 
-		String allHedaAfflFields = UTIL_Describe.getAllFieldsQueryStringFromObject('hed__Affiliation__c');
-        List<hed__Affiliation__c> hedAffiliations = 
-            Database.query('SELECT '
-				+ String.escapeSingleQuotes(allHedaAfflFields) 
-				+' FROM hed__Affiliation__c '
-				+ 'WHERE Related_Opportunity_Contact_Role__c != null '
-                + 'AND Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
-				+ 'AND hed__Account__c in :donorAccountIds ');
-
-		// Query existing NPSP Relationships and Affiliations to these Donors
+		// Query existing NPSP Relationships to these Donors
 		String allNpspRelFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npe4__Relationship__c');
         List<npe4__Relationship__c> currentNpspRelationships = 
             Database.query('SELECT '
@@ -145,44 +155,31 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
                 + 'AND npsp__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND npe4__Contact__c in :donorContactIds ');
 
-		String allNpspAfflFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npe5__Affiliation__c');
-        List<npe5__Affiliation__c> currentNpspAffiliations = 
-            Database.query('SELECT '
-				+ String.escapeSingleQuotes(allNpspAfflFields) 
-				+' FROM npe5__Affiliation__c '
-				+ 'WHERE npsp__Related_Opportunity_Contact_Role__c != null '
-                + 'AND npsp__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
-				+ 'AND npe5__Organization__c in :donorAccountIds ');
-
         //Organize records by Donor ID, which for Relationships is a Contact, for Affiliations an Account
-        Map<Id, List<SObject>> donorToHedaRelationships = convertListToMap( hedRelationships, 'hed__RelatedContact__c' );
-        Map<Id, List<SObject>> donorToHedaAffiliations = convertListToMap( hedAffiliations, 'hed__Account__c' );
+        Map<Id, List<SObject>> donorToHedaRelationships = convertListToMap( hedaRelationships, 'hed__RelatedContact__c' );
         Map<Id, List<SObject>> donorToNpspRelationships = convertListToMap( currentNpspRelationships, 'npe4__RelatedContact__c' );
-        Map<Id, List<SObject>> donorToNpspAffiliations = convertListToMap( currentNpspAffiliations, 'npe5__Organization__c' );
+
 
         // Compare the lists and return any new, or updated, NPSP Relationships
         List<npe4__Relationship__c> newNpspRelationships = returnSyncedList(donorToHEDARelationships,
             donorToNPSPRelationships, NPSP_RELATIONSHIP_API_NAME);
-        
-        // Compare the lists and return any new, or updated, NPSP Affiliations
-        List<npe5__Affiliation__c> newNpspAffiliations = returnSyncedList(donorToHEDAAffiliations,
-            donorToNpspAffiliations, NPSP_AFFILIATION_API_NAME);
 
         if(!newNpspRelationships.isEmpty()){
             upsert newNpspRelationships;
         }
 
-        if(!newNpspAffiliations.isEmpty()){
-            upsert newNpspAffiliations;
-        }
-
         // If an existing NPSP record couldn't be matched to an EDA record, a new copy gets created, 
         // and the un-synced record gets deleted
+        checkForDelete();
+
+	}
+
+    // Helper to delete out of sync copies
+    private static void checkForDelete(){
         if(!toDelete.isEmpty()){
             delete toDelete;
         }
-
-	}
+    }
 
     /*******************************************************************************************************
     * @description Take a list of records and create a map using the provided Id field as the key values
@@ -190,7 +187,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     * @param donorIdField the field name that should become the map key
     * @return Map<Id, List<SObject>> a map of Donor Id to a list of its related records
     ********************************************************************************************************/
-    private Map<Id, List<SObject>> convertListToMap(List<SObject> objectList, String donorIdField){
+    private static Map<Id, List<SObject>> convertListToMap(List<SObject> objectList, String donorIdField){
         Map<Id, List<SObject>> donorMap = new Map<Id, List<SObject>>();
         for(SObject rel : objectList){
             Id donorId = (Id)rel.get(donorIdField);
@@ -210,8 +207,11 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     * @param destObjectName the API name of the NPSP version of the copies
     * @return List<SObject> synced NPSP versions of the records
     ********************************************************************************************************/
-    private List<SObject> returnSyncedList(Map<Id, List<SObject>> sourceMap, 
+    private static List<SObject> returnSyncedList(Map<Id, List<SObject>> sourceMap, 
         Map<Id, List<SObject>> copyMap, String destObjectName){
+
+            // Since the list is static, make sure it's cleared
+            toDelete.clear();
 
             Map<String, String> fullFieldMap;
             Map<String, String> matchFieldMap;
@@ -268,6 +268,14 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
                 }
             }
 
+            // Need to handle deleting, where the sourceMap is empty, but copyMap should be deleted
+            if(sourceMap.isEmpty() && !copyMap.isEmpty()){
+                for(Id donorId : copyMap.keySet()){
+                    List<SObject> copyList = copyMap.get(donorId);
+                    toDelete.addAll(copyList);
+                }
+            }
+
             return toUpsert;
     }
 
@@ -278,7 +286,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     * @param fieldMap A map of String to String of fields to compare between objects
     * @return Boolean true if all field values match, false otherwise
     ********************************************************************************************************/
-    private Boolean returnFieldsMatch(SObject srcRecord, SObject copyRecord, Map<String, String> fieldMap){
+    private static Boolean returnFieldsMatch(SObject srcRecord, SObject copyRecord, Map<String, String> fieldMap){
         Boolean recordsMatch = true;
         for(String srcFieldName : fieldMap.keySet()){
             String destFieldName = fieldMap.get(srcFieldName);
@@ -297,7 +305,7 @@ global class OPP_ManageRelatedNPSPRecords_TDTM extends hed.TDTM_Runnable {
     * @param destRecord the NPSP version of the record to copy to
     * @return SObject the NPSP version of the record with all fields copied over
     ********************************************************************************************************/
-    private SObject returnCopy(SObject srcRecord, SObject destRecord){
+    private static SObject returnCopy(SObject srcRecord, SObject destRecord){
         String destObjName = destRecord.getSObjectType().getDescribe().getLocalName();
 
         Map<String, String> fieldMap = (destObjName == NPSP_RELATIONSHIP_API_NAME) 

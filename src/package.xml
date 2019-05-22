@@ -2,6 +2,7 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>GEM</fullName>
     <types>
+        <members>AFFL_SyncToNPSP_TDTM</members>
         <members>API_HEDA</members>
         <members>API_HEDA_TEST</members>
         <members>API_NPSP</members>
@@ -10,16 +11,17 @@
         <members>GiftEntryFormController_TEST</members>
         <members>NPSP_Account_TDTM</members>
         <members>NPSP_Account_TDTM_TEST</members>
-        <members>OPP_ManageRelatedNPSPRecords_TDTM</members>
-        <members>OPP_ManageRelatedNPSPRecords_TEST</members>
         <members>Post_Install_Script</members>
         <members>Post_Install_Script_TEST</members>
+        <members>REL_SyncToNPSP_TDTM</members>
         <members>TDTM_Glue</members>
         <members>UTIL_CrudFLS</members>
         <members>UTIL_CrudFLS_TEST</members>
         <members>UTIL_CustomSettingsFacade</members>
         <members>UTIL_Describe</members>
         <members>UTIL_Describe_TEST</members>
+        <members>UTIL_ManageRelatedNPSPRecords_TDTM</members>
+        <members>UTIL_ManageRelatedNPSPRecords_TEST</members>
         <members>UTIL_Namespace</members>
         <members>UTIL_Namespace_TEST</members>
         <members>UTIL_UnitTestData_TEST</members>

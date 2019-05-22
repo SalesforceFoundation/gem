@@ -158,5 +158,12 @@
                     helper.sendMessage('onError', message);
                 }
             });
+    },
+    handleToast: function(component, event, helper) {
+        var isRecordEdit = helper.parseToast(event.getParams().message);
+
+        if (isRecordEdit == true) {
+            helper.rerenderInputs(component, 'renderDonorInputs');
+        }
     }
 })

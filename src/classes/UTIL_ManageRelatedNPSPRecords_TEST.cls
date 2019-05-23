@@ -163,9 +163,7 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
 
         // Test update of existing NPSP Relationship and Affiliation copies
         // One of them will be changed, the other should be deleted and replaced with a new copy
-        List<hed__Relationship__c> hedaRels = [SELECT Id, hed__Description__c, hed__Status__c
-            FROM hed__Relationship__c
-            WHERE hed__Contact__c =: donorContact1.Id];
+        List<hed__Relationship__c> hedaRels = getEDARElationships(donorContact1.Id);
         System.assertEquals(2, hedaRels.size(), 
             'There should still be only 2 Relationship, there are : ' + hedaRels.size());
 
@@ -173,10 +171,7 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
         hedaRels[0].hed__Status__c = statusFormer;
         update hedaRels;
 
-        List<hed__Affiliation__c> hedaAffls = [SELECT Id, Related_Opportunity_Contact_Role__c,
-            hed__Description__c
-            FROM hed__Affiliation__c
-            WHERE hed__Account__c =: donorAccount.Id];
+        List<hed__Affiliation__c> hedaAffls = getEDAAffiliations(donorAccount.Id);
         System.assertEquals(2, hedaAffls.size(), 
             'There should still be only 2 Affiliation, there are : ' + hedaAffls.size());
 
@@ -266,33 +261,48 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
             'There should be 2 new Affiliations, there are : ' + newNPSPAffiliations.size());
 
 
-        List<hed__Relationship__c> hedaRels = [SELECT Id, hed__Description__c, hed__Status__c
-            FROM hed__Relationship__c
-            WHERE hed__Contact__c =: donorContact1.Id];
+        List<hed__Relationship__c> hedaRels = getEDARElationships(donorContact1.Id);
         System.assertEquals(2, hedaRels.size(), 
             'There should still be only 2 Relationship, there are : ' + hedaRels.size());
 
-        List<hed__Affiliation__c> hedaAffls = [SELECT Id, Related_Opportunity_Contact_Role__c,
-            hed__Description__c
-            FROM hed__Affiliation__c
-            WHERE hed__Account__c =: donorAccount.Id];
+        List<hed__Affiliation__c> hedaAffls = getEDAAffiliations(donorAccount.Id);
         System.assertEquals(2, hedaAffls.size(), 
             'There should still be only 2 Affiliation, there are : ' + hedaAffls.size());
 
         Test.startTest();
-        delete hedaRels;
+        delete hedaRels[0];
         delete hedaAffls;
         Test.stopTest();
 
         // Check that NPSP copies were properly deleted
         newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
-        System.assertEquals(0, newNPSPRelationships.size(), 
-            'There should be 0 Relationships for this Contact, there are : ' + newNPSPRelationships.size());
+        System.assertEquals(1, newNPSPRelationships.size(), 
+            'There should be 1 Relationship for this Contact, there are : ' + newNPSPRelationships.size());
+        System.assertEquals(solicitorRole, newNPSPRelationships[0].npsp__Related_Opportunity_Contact_Role__c, 
+            'The remaining NPSP Relationship should be for Solicitor, not Soft Credit');
 
         newNPSPAffiliations = getNPSPAffiliations(donorAccount.Id);
         System.assertEquals(0, newNPSPAffiliations.size(), 
             'There should be 0 Affiliations, there are : ' + newNPSPAffiliations.size());
 
+    }
+
+    private static List<hed__Relationship__c> getEDARElationships(Id donorContactId){
+        return [SELECT Id, 
+            hed__Description__c, 
+            hed__Status__c
+            FROM hed__Relationship__c
+            WHERE hed__Contact__c =: donorContactId
+            ORDER BY Related_Opportunity_Contact_Role__c ASC];
+    }
+
+    private static List<hed__Affiliation__c> getEDAAffiliations(Id accountId){
+        return [SELECT Id, 
+            Related_Opportunity_Contact_Role__c,
+            hed__Description__c
+            FROM hed__Affiliation__c
+            WHERE hed__Account__c =: accountId
+            ORDER BY Related_Opportunity_Contact_Role__c ASC];
     }
 
     private static List<npe4__Relationship__c> getNPSPRelationships(Id primaryContactId){
@@ -322,7 +332,7 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     }
 
     /*********************************************************************************************************
-    * @description Returns a Contact based value passed into the method.
+    * @description Returns a Contact based on the provided FirstName
     *
     * @return Contact
     **********************************************************************************************************/

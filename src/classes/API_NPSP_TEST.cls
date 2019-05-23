@@ -59,16 +59,13 @@ private class API_NPSP_TEST {
         API_NPSP apiNPSP = new API_NPSP();
         List<npsp__Trigger_Handler__c> triggerHandlers = apiNPSP.getDefaultTdtmConfigNpspRecords(null);
         Map<String, Boolean> activeMap = new Map<String, Boolean>();
-        Map<String, Decimal> loadOrderMap = new Map<String, Decimal>();
         for(npsp__Trigger_Handler__c th : triggerHandlers) {
             activeMap.put(th.npsp__Class__c, th.npsp__Active__c);
-            loadOrderMap.put(th.npsp__Class__c, th.npsp__Load_Order__c);
         }
 
         system.assertEquals(false, activeMap.get('ACCT_Accounts_TDTM'));
         system.assertEquals(false, activeMap.get('ACCT_IndividualAccounts_TDTM'));
         system.assertEquals(false, activeMap.get('ADDR_Contact_TDTM'));
         system.assertEquals(false, activeMap.get('ADDR_Account_TDTM'));
-        system.assertEquals(1, loadOrderMap.get('OPP_OpportunityContactRoles_TDTM'));
     }
 }

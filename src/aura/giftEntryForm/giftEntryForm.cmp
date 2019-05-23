@@ -1,4 +1,4 @@
-<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable" access="global" controller="GiftEntryFormController">
+<aura:component implements="force:hasRecordId,force:appHostable" access="public" controller="GiftEntryFormController">
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
@@ -13,37 +13,50 @@
     <aura:attribute type="Map" name="picklistOptions" />
     <aura:attribute type="Map" name="objectLabels" />
     <aura:attribute type="Map" name="oppToDiFieldMap" />
-    
+    <aura:attribute type="Map" name="diToOppFieldMap" />
+
+    <aura:attribute name="bdiLabels" type="Map" description="Labels retrieved in Apex related to Schema information." access="public"/>
+    <aura:attribute name="openOpportunities" type="List" description="List of open Opportunities" access="public" />
+    <aura:attribute name="unpaidPayments" type="List" description="List of unpaid Payments" access="public" />
+    <aura:attribute name="selectedDonation" type="SObject" description="Stored selected open donation. Can also be null or empty." access="public" />
+
     <aura:attribute type="String" name="namespacePrefix" />
     <aura:attribute type="String" name="namespaceFieldPrefix" default="" />
 
     <aura:attribute type="String" name="returnedRecordId" />
     <aura:attribute type="String" name="error" />
     <aura:attribute type="String" name="submitError" />
-    <aura:attribute type="String" name="batchId" />
+    <aura:attribute type="String" name="selectedDonorType" />
     <aura:attribute type="String" name="picklistNoneText" default="-- None --" />
     <aura:attribute type="String" name="closedStage" default="Closed Won" />
     <aura:attribute type="String" name="oppId" />
+    <aura:attribute type="String" name="oppLockedStatus" />
     <aura:attribute type="Boolean" name="showForm" default="true" />
     <aura:attribute type="Boolean" name="showSuccess" default="false" />
     <aura:attribute type="Boolean" name="disableCreate" default="false" />
     <aura:attribute type="Boolean" name="showSpinner" default="false" />
     <aura:attribute type="Boolean" name="showMatchSpinner" default="true" />
     <aura:attribute type="Boolean" name="editMode" default="false" />
+    <aura:attribute type="Boolean" name="editModePaidPayments" default="false" />
     <aura:attribute type="Boolean" name="oppClosed" default="false" />
     <aura:attribute type="Boolean" name="donorExists" default="false" />
     <aura:attribute type="Boolean" name="expandTribute" default="true" />
     <aura:attribute type="Boolean" name="expandMatching" default="true" />
     <aura:attribute type="Boolean" name="messageIsError" default="false" />
     <aura:attribute type="Boolean" name="paymentAdded" default="false" />
+    <aura:attribute type="Boolean" name="disableBlurEvents" default="false" />
     <aura:attribute type="Boolean" name="paymentValChanged" default="false" />
+    <aura:attribute type="Boolean" name="renderInputs" default="true" />
+    <aura:attribute type="Boolean" name="renderDonorInputs" default="true" />
+    <aura:attribute type="Boolean" name="renderRequiredInputs" default="true" />
     <aura:attribute type="Integer" name="paymentTimer" />
 
-    <aura:handler name="change" value="{!v.di.npsp__Account1Imported__c}" action="{!c.handleLookupChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Contact1Imported__c}" action="{!c.handleLookupChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Donation_Amount__c}" action="{!c.handlePaymentChange}"/>
-    <aura:handler name="change" value="{!v.di.npsp__Donation_Date__c}" action="{!c.handlePaymentChange}"/>
-
+    <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.onDonorChange}"/>
+    <aura:handler name="change" value="{!v.opp.npsp__Primary_Contact__c}" action="{!c.onDonorChange}"/>
+    <aura:handler name="change" value="{!v.opp.Amount}" action="{!c.handlePaymentChange}"/>
+    <aura:handler name="change" value="{!v.opp.CloseDate}" action="{!c.handlePaymentChange}"/>
+    <aura:handler event="force:showToast" action="{!c.handleToast}"/>
+    
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 
         default="{sobjectType:'npsp__DataImport__c'}"/>
@@ -51,7 +64,7 @@
     <!-- Used to add lookup fields, mapped back to DataImport object on submit -->
     <aura:attribute name="opp" 
         type="Opportunity" 
-        default="{sobjectType:'Opportunity',CloseDate:null,npe01__Do_Not_Automatically_Create_Payment__c:true}"/>
+        default="{sobjectType:'Opportunity',npe01__Do_Not_Automatically_Create_Payment__c:true}"/>
     
     <aura:attribute name="allocs" 
         type="npsp__Allocation__c[]" 
@@ -62,7 +75,13 @@
     <aura:attribute name="partialCredits" 
         type="npsp__Partial_Soft_Credit__c[]" 
         default="[]"/>
-    
+
+    <!--Modal Attributes-->
+    <aura:attribute name="donationModalHeader" type="Aura.ComponentDefRef[]" description="Formatted header text used in donation modal.">
+        <h2 class="title slds-text-heading_medium">{!$Label.npsp.bgeMatchingSelect}</h2>
+    </aura:attribute>
+
+    <lightning:overlayLibrary aura:id="overlayLib"/>
 
     <aura:if isTrue="{!v.showSpinner}">
         <lightning:spinner class="slds-is-fixed" />
@@ -81,18 +100,14 @@
                 </div>
             </div>
         </header>
-
+        <div class="outerDivContainer">
         <div class="slds-card" aura:id="formWrapper">
+            <lightning:recordEditForm objectApiName="Opportunity"
+                recordId="{!v.opp.Id}">
+            <lightning:messages />
+
             <lightning:layout
                 multipleRows="true">
-                <aura:if isTrue="{!v.oppClosed}">
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-                            <h2>{!$Label.c.Gift_Donation_Locked}</h2>
-                        </div>
-                    </div>
-                </aura:if>
-
                 <lightning:layoutItem size="12">
                     <div class="slds-page-header slds-page-header__title">
                         <h2>{!$Label.c.Gift_Donor_Information}</h2>
@@ -102,7 +117,7 @@
                 <lightning:layoutItem size="12">
                     <lightning:layout multipleRows="true">
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                            <c:giftPicklist picklistValues="[{value:'Account1',label:'Account'},{value:'Contact1',label:'Contact'}]"
+                            <c:giftPicklist picklistValues="[{value:'Contact1',label:'Contact'},{value:'Account1',label:'Account'}]"
                                 fieldLabel="{!$Label.c.Gift_Donor_Type}"
                                 selectedVal="{!v.di.npsp__Donation_Donor__c}" />
                         </lightning:layoutItem>
@@ -112,15 +127,23 @@
                                 <label class="show-required slds-form-element__label">
                                     {!v.objectFieldData.objectLabels.Opportunity.AccountId}
                                 </label>
-                                <force:inputField aura:id="accountLookup"
-                                    value="{!v.di.npsp__Account1Imported__c}" />
+                                <aura:if isTrue="{!v.renderDonorInputs}">
+                                    <lightning:inputField aura:id="accountLookup"
+                                        variant="label-hidden"
+                                        fieldName="AccountId" 
+                                        value="{!v.opp.AccountId}" />
+                                </aura:if>
                             </div>
                             <div class="{!v.di.npsp__Donation_Donor__c != 'Account1' ? '' : 'slds-hidden'}">
                                 <label class="show-required slds-form-element__label">
                                     {!v.objectFieldData.objectLabels.Opportunity.npsp__Primary_Contact__c}
                                 </label>
-                                <force:inputField aura:id="contactLookup"
-                                    value="{!v.di.npsp__Contact1Imported__c}" />
+                                <aura:if isTrue="{!v.renderDonorInputs}">
+                                    <lightning:inputField aura:id="contactLookup"
+                                        variant="label-hidden"
+                                        fieldName="npsp__Primary_Contact__c" 
+                                        value="{!v.opp.npsp__Primary_Contact__c}" />
+                                </aura:if>
                             </div>
                         </lightning:layoutItem>
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
@@ -131,8 +154,59 @@
                                 label="{!$Label.c.Gift_Edit_Selected_Donor}"
                                 onclick="{!c.clickEditDonor}" />
                         </lightning:layoutItem>
+
+                        <!--BEGIN SCOPED MATCH NOTIFICATION-->
+                        <lightning:layoutItem size="12" mediumDeviceSize="12">
+                        <aura:if isTrue="{!or(not(empty(v.openOpportunities)), not(empty(v.unpaidPayments)))}">
+                            <lightning:layoutItem padding="around-small" size="12" smallDeviceSize="12" class="slds-p-horizontal_small">
+                                <div class="slds-scoped-notification slds-media slds-media_center slds-scoped-notification_light slds-m-bottom_small"
+                                    role="alert">
+                                    <div class="slds-media__figure slds-text-align_center">
+                                        <lightning:icon iconName="utility:info"
+                                                        alternativeText="{!$Label.npsp.PageMessagesInfo}"
+                                                        size="x-small"
+                                                        aria-hidden="true"/>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <!--notification text depends on if donation is null, empty, or selected-->
+                                        <aura:if isTrue="{!equals(v.selectedDonation, null)}">
+                                            <p>{!$Label.npsp.bgeMatchingAlert}
+                                                <a class="slds-m-left_x-small" onclick="{!c.openMatchModal}" id="selectOpenDonation">{!$Label.npsp.bgeMatchingSelect}</a>
+                                            </p>
+                                            <aura:set attribute="else">
+                                                <aura:if isTrue="{!equals(v.selectedDonation, '')}">
+                                                    <p>{!$Label.npsp.bgeFormNewDonationHelptext}</p>
+                                                    <aura:set attribute="else">
+                                                        <p class="slds-m-right_x-small">{!$Label.npsp.bgeFormUpdateHelptext}
+                                                            <lightning:formattedUrl value="{! '/' + v.selectedDonation.Id}"
+                                                                                    label="{!v.selectedDonation.Name}"
+                                                                                    class="slds-m-left_x-small"
+                                                                                    target="_blank"/>
+                                                        </p>
+                                                    </aura:set>
+                                                </aura:if>
+                                                <p>
+                                                    <a onclick="{!c.openMatchModal}">{!$Label.npsp.bgeFormUpdateDonation}</a>
+                                                </p>
+                                            </aura:set>
+                                        </aura:if>
+                                    </div>
+                                </div>
+                            </lightning:layoutItem>
+                        </aura:if>
+                        </lightning:layoutItem>
+                        <!--END SCOPED MATCH NOTIFICATION-->
+                        
                     </lightning:layout>
                 </lightning:layoutItem>
+
+                <aura:if isTrue="{!v.oppClosed}">
+                    <div class="slds-col slds-size_1-of-1">
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>{!v.oppLockedStatus}</h2>
+                        </div>
+                    </div>
+                </aura:if>
 
                 <lightning:layoutItem size="12">
                     <div class="slds-page-header slds-page-header__title">
@@ -147,43 +221,52 @@
                                 {!v.objectFieldData.objectLabels.Opportunity.Name}
                             </label>
                             <lightning:input variant="label-hidden"
-                                value="{!v.di.npsp__Donation_Name__c}" />
+                                disabled="{!v.oppClosed}"
+                                value="{!v.opp.Name}" />
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="show-required slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.CloseDate}
                             </label>
-                            <lightning:input aura:id="requiredField"
-                                required="true"
-                                variant="label-hidden"
-                                type="date"
-                                onblur="{!c.checkPaymentChange}"
-                                value="{!v.di.npsp__Donation_Date__c}" />
+                            <aura:if isTrue="{!v.renderRequiredInputs}">
+                                <lightning:input aura:id="requiredField"
+                                    required="true"
+                                    variant="label-hidden"
+                                    type="date"
+                                    onblur="{!c.checkPaymentChange}"
+                                    disabled="{!v.oppClosed}"
+                                    value="{!v.opp.CloseDate}" />
+                            </aura:if>
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="show-required slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.Amount}
                             </label>
-                            <lightning:input aura:id="requiredField"
-                                required="true"
-                                variant="label-hidden"
-                                type="number"
-                                formatter="currency" step="0.01"
-                                onblur="{!c.checkPaymentChange}"
-                                value="{!v.di.npsp__Donation_Amount__c}" />
+                            <aura:if isTrue="{!v.renderRequiredInputs}">
+                                <lightning:input aura:id="requiredField"
+                                    required="true"
+                                    variant="label-hidden"
+                                    type="number"
+                                    formatter="currency" step="0.01"
+                                    onblur="{!c.checkPaymentChange}"
+                                    disabled="{!v.oppClosed}"
+                                    value="{!v.opp.Amount}" />
+                            </aura:if>
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}"
                                 fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}"
-                                selectedVal="{!v.di.npsp__Donation_Stage__c}" />
+                                disabled="{!v.oppClosed}"
+                                selectedVal="{!v.opp.StageName}" />
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Payment_Method__c}"
                                 fieldLabel="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}"
+                                disabled="{!v.oppClosed}"
                                 selectedVal="{!v.di.npsp__Payment_Method__c}" />
                         </lightning:layoutItem>
 
@@ -191,25 +274,31 @@
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}
                             </label>
-                            <lightning:input disabled="{!v.di.npsp__Payment_Method__c != 'Check'}"
+                            <lightning:input disabled="{!v.di.npsp__Payment_Method__c != 'Check' || v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.di.npsp__Payment_Check_Reference_Number__c}" />
                         </lightning:layoutItem>
 
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            >
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.CampaignId}
                             </label>
-                            <force:inputField value="{!v.opp.CampaignId}" />
+                            <aura:if isTrue="{!v.renderInputs}">
+                                <lightning:inputField disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="CampaignId" 
+                                    value="{!v.opp.CampaignId}" />
+                            </aura:if>
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.Description}
                             </label>
-                            <lightning:textarea
+                            <lightning:textarea disabled="{!v.oppClosed}"
                                 variant="label-hidden"
-                                value="{!v.di.npsp__Donation_Description__c}" />
+                                value="{!v.opp.Description}" />
                         </lightning:layoutItem>
                     </lightning:layout>
                 </lightning:layoutItem>
@@ -226,37 +315,55 @@
 
                 <lightning:layoutItem size="12">
                     <lightning:layout multipleRows="true" class="{!v.expandTribute == true ? '' : 'slds-hidden'}">
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Tribute_Type__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Tribute_Type__c}" />
+                            <aura:if isTrue="{!v.renderInputs}">
+                                <lightning:inputField disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="npsp__Tribute_Type__c" 
+                                    value="{!v.opp.npsp__Tribute_Type__c}" />
+                            </aura:if>
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3" 
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Acknowledgment_Status__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Acknowledgment_Status__c}" />
+                            <aura:if isTrue="{!v.renderInputs}">
+                                <lightning:inputField disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="npsp__Acknowledgment_Status__c" 
+                                    value="{!v.opp.npsp__Acknowledgment_Status__c}" />
+                            </aura:if>
                         </lightning:layoutItem>
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Name__c}
                             </label>
-                            <lightning:input
+                            <lightning:input disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.opp.npsp__Honoree_Name__c}" />
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Honoree_Contact__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Honoree_Contact__c}" />
+                            <aura:if isTrue="{!v.renderInputs}">
+                                <lightning:inputField disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="npsp__Honoree_Contact__c" 
+                                    value="{!v.opp.npsp__Honoree_Contact__c}" />
+                            </aura:if>
                         </lightning:layoutItem>
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Recipient_Name__c}
                             </label>
-                            <lightning:input
+                            <lightning:input disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.opp.npsp__Notification_Recipient_Name__c}" />
                         </lightning:layoutItem>
@@ -264,7 +371,7 @@
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Notification_Message__c}
                             </label>
-                            <lightning:input
+                            <lightning:input disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.opp.npsp__Notification_Message__c}" />
                         </lightning:layoutItem>
@@ -287,48 +394,72 @@
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Employer__c}
                             </label>
-                            <lightning:input
+                            <lightning:input disabled="{!v.oppClosed}"
                                 variant="label-hidden"
                                 value="{!v.opp.npsp__Matching_Gift_Employer__c}" />
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Account__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Matching_Gift_Account__c}" />
+                            <aura:if isTrue="{!v.renderInputs}">
+                                <lightning:inputField disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="npsp__Matching_Gift_Account__c" 
+                                    value="{!v.opp.npsp__Matching_Gift_Account__c}" />
+                            </aura:if>
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Matching_Gift__c}" />
+                            <aura:if isTrue="{!v.renderInputs}">
+                                <lightning:inputField disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="npsp__Matching_Gift__c" 
+                                    value="{!v.opp.npsp__Matching_Gift__c}" />
+                            </aura:if>
                         </lightning:layoutItem>
-                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+                        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
+                            class="{!v.oppClosed ? 'disable-force-input' : ''}">
                             <label class="slds-form-element__label">
                                 {!v.objectFieldData.objectLabels.Opportunity.npsp__Matching_Gift_Status__c}
                             </label>
-                            <force:inputField value="{!v.opp.npsp__Matching_Gift_Status__c}" />
+                            <aura:if isTrue="{!v.renderInputs}">
+                                <lightning:inputField disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="npsp__Matching_Gift_Status__c" 
+                                    value="{!v.opp.npsp__Matching_Gift_Status__c}" />
+                            </aura:if>
                         </lightning:layoutItem>
                     </lightning:layout>
                 </lightning:layoutItem>
 
                 <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
+                    editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"
                     paymentList="{!v.payments}"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
-                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    donationAmt="{!v.opp.Amount}"
                     paymentMethod="{!v.di.npsp__Payment_Method__c}"
-                    donationStage="{!v.di.npsp__Donation_Stage__c}"
-                    startDate="{!v.di.npsp__Donation_Date__c}"
+                    donationStage="{!v.opp.StageName}"
+                    startDate="{!v.opp.CloseDate}"
                     objectFieldData="{!v.objectFieldData}"
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Soft_Credits}"
+                    editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"
                     itemList="{!v.partialCredits}"
                     objectName="npsp__Partial_Soft_Credit__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedSoftCredit'}"
                     oppField="npsp__Opportunity__c"
                     amtField="npsp__Amount__c"
-                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    donationAmt="{!v.opp.Amount}"
                     preventAmountSurplus="false"
                     preventAmountDeficit="false"
                     displayErrorOnAmountSurplus="false"
@@ -338,12 +469,15 @@
                     giftModel="{!v.giftModel}" />
 
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
+                    editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"
                     itemList="{!v.allocs}"
                     objectName="npsp__Allocation__c"
                     rowCmpName="{!v.namespacePrefix+':giftRelatedAllocation'}"
                     oppField="npsp__Opportunity__c"
                     amtField="npsp__Amount__c"
-                    donationAmt="{!v.di.npsp__Donation_Amount__c}"
+                    donationAmt="{!v.opp.Amount}"
                     preventAmountSurplus="true"
                     preventAmountDeficit="false"
                     objectFieldData="{!v.objectFieldData}"
@@ -391,6 +525,8 @@
                         value="{!v.payment.Id}" />
                 </div>
             </lightning:layout>
+            </lightning:recordEditForm>
+        </div>
         </div>
     </aura:if>
 

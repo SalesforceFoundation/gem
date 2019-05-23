@@ -1,5 +1,8 @@
-.THIS .slds-form-element__icon.slds-align-middle {
-    display: none;
+.THIS .slds-form-element__icon,
+.THIS lightning-lookup label.slds-form-element__label,
+.THIS .forceInputField .form-element__label,
+.THIS lightning-lookup .slds-form-element__icon {
+    display: none !important;
 }
 .THIS .show-required {
     font-weight: 400; 
@@ -33,3 +36,13 @@
     bottom: 50px;
     left: 0;
 }
+
+.THIS.outerDivContainer {
+    padding: 0px 0px 240px 0px;
+}
+
+@supports (-ms-ime-align:auto) {
+    .THIS.outerDivContainer {
+        padding: 0px 0px 240px 0px;
+    }
+  }

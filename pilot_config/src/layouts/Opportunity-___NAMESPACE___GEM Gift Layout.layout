@@ -52,6 +52,10 @@
                 <field>CampaignId</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>npe03__Recurring_Donation__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Required</behavior>
                 <field>StageName</field>
             </layoutItems>
@@ -265,6 +269,12 @@
         <fields>npe01__Paid__c</fields>
         <fields>npe01__Written_Off__c</fields>
         <relatedList>npe01__OppPayment__c.npe01__Opportunity__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>aba1__Amount__c</fields>
+        <fields>aba1__Due_Date__c</fields>
+        <relatedList>aba1__Installment__c.aba1__Opportunity__c</relatedList>
     </relatedLists>
     <relatedLists>
         <customButtons>npsp__Manage_Allocations</customButtons>

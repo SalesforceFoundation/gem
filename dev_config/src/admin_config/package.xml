@@ -12,5 +12,13 @@
         <members>*</members>
         <name>StandardValueSet</name>
     </types>
+    <types>
+        <members>New_Household_Account</members>
+        <name>QuickAction</name>
+    </types>
+    <types>
+        <members>Opportunity-GEM Gift Layout</members>
+        <name>Layout</name>
+    </types>
     <version>42.0</version>
 </Package>

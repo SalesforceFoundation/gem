@@ -52,7 +52,37 @@ global class NPSP_Account_TDTM extends hed.TDTM_Runnable {
     public override hed.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
             hed.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
         npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
+
+        if (triggerAction == hed.TDTM_Runnable.Action.BeforeUpdate) {
+            configAccountForHouseholdUpdate(newList, oldList);
+        }
+
         adapter.configAccountTDTM(newList, oldList, triggerAction.name());
         return null;
+    }
+
+    /*******************************************************************************************************
+    * @description Trigger Handler on Accounts to clear two specific fields when switching to a Household
+    * record type so the NPSP code can run correctly. 
+    * @param newList the list of Accounts from trigger new
+    * @param oldList the list of Accounts from trigger old
+    * @return void
+    ********************************************************************************************************/
+    public void configAccountForHouseholdUpdate(List<Sobject> newList, List<Sobject> oldList) {
+        Map<Id, Sobject> oldMap = new Map<Id, Sobject>(oldList);
+        String householdRecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
+        
+        for (SObject accountSobj : newList) {
+            Account newAccount = (Account)accountSobj;
+            Account oldAccount = (Account)oldMap.get(newAccount.Id);
+            
+            // If the account's record type is being changed, 
+            // Clear the two fields so that NPSP's code will execute. 
+            if (oldAccount.RecordTypeId != newAccount.RecordTypeId) {
+                newAccount.npe01__SYSTEM_AccountType__c = null;
+                newAccount.npe01__SYSTEMISINDIVIDUAL__c = false;
+                newAccount.Type = null;
+            }
+        }
     }
 }

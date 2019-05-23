@@ -43,6 +43,9 @@
         <members>GEM_API_Settings__mdt.API_NPSP_Class__c</members>
         <members>GEM_API_Settings__mdt.Use_GEM__c</members>
         <members>GEM_Settings__c.Sync_Account_Models__c</members>
+        <members>Gift_Entry_Field_Mapping__mdt.Controlling_Field__c</members>
+        <members>Gift_Entry_Field_Mapping__mdt.Controlling_Object__c</members>
+        <members>Gift_Entry_Field_Mapping__mdt.Dependent_Field_List__c</members>
         <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
         <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
@@ -76,6 +79,7 @@
         <members>Gift_Donation_ID_Placeholder</members>
         <members>Gift_Donation_Information</members>
         <members>Gift_Donation_Locked</members>
+        <members>Gift_Donation_Locked_Payments</members>
         <members>Gift_Donor_Information</members>
         <members>Gift_Donor_Required</members>
         <members>Gift_Donor_Type</members>
@@ -106,6 +110,7 @@
     </types>
     <types>
         <members>GEM_API_Settings__mdt</members>
+        <members>Gift_Entry_Field_Mapping__mdt</members>
         <members>GEM_Settings__c</members>
         <name>CustomObject</name>
     </types>
@@ -122,6 +127,7 @@
         <members>Account-GEM Organization Layout</members>
         <members>Contact-GEM Contact Layout</members>
         <members>GEM_API_Settings__mdt-GEM API Settings Layout</members>
+        <members>Gift_Entry_Field_Mapping__mdt-Gift Entry Field Mapping Layout</members>
         <members>Opportunity-GEM Gift Layout</members>
         <members>npsp__DataImport__c-GEM Gift Layout</members>
         <name>Layout</name>

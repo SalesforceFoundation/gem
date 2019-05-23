@@ -134,21 +134,24 @@ private class GiftEntryFormController_TEST {
         Id scContactId = scContact.Id;
 
         // Test stripping Lightning attributes from JSON, then processing it into a Donation
-        String testJson = '{"di":{"sobjectType":"npsp__DataImport__c","npsp__Contact1_Firstname__c":"Firstname","npsp__Contact1_Lastname__c":"Lastname","npsp__Donation_Amount__c":1000,"npsp__Donation_Name__c":"Test Opp"'
-        + ',"npsp__Account1Imported__c":"","npsp__Account1Imported__r":{"sobjectType":"Account","Name":""},"npsp__Contact1Imported__c":"","npsp__Contact1Imported__r":{"sobjectType":"Contact","Name":""},"npsp__DonationCampaignImported__c":"","Donation_Primary_Campaign__r":{"sobjectType":"Campaign","Name":""},"Donation_Honoree_Contact__c":"","Donation_Honoree_Contact__r":{"sobjectType":"Contact","Name":""},"Donation_Matching_Gift_Account__c":"","Donation_Matching_Gift_Account__r":{"sobjectType":"Account","Name":""},"Donation_Matching_Gift__c":"","Donation_Matching_Gift__r":{"sobjectType":"Opportunity","Name":""},"npsp__Donation_Stage__c":"Closed Won","npsp__Payment_Method__c":"","Donation_Tribute_Type__c":"","Donation_Acknowledgment_Status__c":"","Donation_Matching_Gift_Status__c":"","npsp__Donation_Date__c":"2018-09-05"}'
+        String testJson = '{"di":{"sobjectType":"npsp__DataImport__c","npsp__Contact1_Firstname__c":"Firstname","npsp__Contact1_Lastname__c":"Lastname","npsp__Donation_Amount__c":1000,"npsp__Donation_Name__c":"Test Opp","npsp__DonationImported__c":null'
+        + ',"npsp__Account1Imported__c":"","npsp__Contact1Imported__c":"","npsp__DonationCampaignImported__c":"","Donation_Honoree_Contact__c":"","Donation_Matching_Gift_Account__c":"","Donation_Matching_Gift__c":"","npsp__Donation_Stage__c":"Closed Won","npsp__Payment_Method__c":"","Donation_Tribute_Type__c":"","Donation_Acknowledgment_Status__c":"","Donation_Matching_Gift_Status__c":"","npsp__Donation_Date__c":"2018-09-05"}'
+        + ',"opp":{"sobjectType":"Opportunity","Id":"","StageName":"","ForecastCategory":""}'
         + ',"allocs":['
         + '{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"'+gauAmt+'","npsp__Percent__c":""}'
         + ',{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"","npsp__Percent__c":"'+gauPerc+'"}'
         + ']'
         + ',"payments":['
-        + '{"npe01__Payment_Amount__c":"'+gauAmt+'","npe01__Scheduled_Date__c":"2018-08-06","npe01__Payment_Method__c":"Cash","npe01__Opportunity__c":""}'
+        + '{"npe01__Paid__c":false,"npe01__Payment_Amount__c":"'+gauAmt+'","npe01__Scheduled_Date__c":"2018-08-06","npe01__Payment_Method__c":"Cash","npe01__Opportunity__c":""}'
         + ']'
         + ',"partialCredits":[' 
         + '{"npsp__Amount__c":"'+gauAmt+'","npsp__Contact__c":"' + scContactId + '"}]'
         + '}';
         
+        Test.startTest();
         GiftEntryFormController.GiftFormModel giftModel = new GiftEntryFormController.GiftFormModel();
         giftModel = GiftEntryFormController.saveGift(testJson);
+        Test.stopTest();
 
         Id oppId = giftModel.oppId;
         System.assert(giftModel.oppId != null, 'The new Opportunity ID should be returned');
@@ -166,7 +169,8 @@ private class GiftEntryFormController_TEST {
         Decimal payAmt = Decimal.ValueOf(gauAmt);
         List<npe01__OppPayment__c> paymentQuery = [Select Id from npe01__OppPayment__c 
             where npe01__Opportunity__c =: oppId
-            and npe01__Payment_Amount__c =: payAmt];
+            and npe01__Payment_Amount__c =: payAmt
+            and npe01__Paid__c = false];
         System.assertEquals(1, paymentQuery.size());
         
         // Check that partial soft credits were created
@@ -174,6 +178,29 @@ private class GiftEntryFormController_TEST {
             where npsp__Contact__c =: scContactId
             and npsp__Amount__c =: payAmt];
         System.assertEquals(1, pscQuery.size());
+
+        // Simulate donation matching, then updating a payment to be paid:
+        //  Using the previously created Opportunity, run the process again with the payment marked paid,
+        //  and make sure no new Data Import objects were created
+        testJson = testJson.replace('"npe01__Paid__c":false', '"npe01__Paid__c":true');
+        testJson = testJson.replace('"Id":"","StageName":"","ForecastCategory":""', 
+            '"Id":"'+ oppId +'","StageName":"Closed Won","ForecastCategory":"Closed"');
+        testJson = testJson.replace('"npsp__DonationImported__c":null', 
+            '"npsp__DonationImported__c":"'+ oppId +'"');
+        giftModel = GiftEntryFormController.saveGift(testJson);
+
+        List<npsp__DataImport__c> dataImports = [SELECT Id, npsp__DonationImported__c 
+                    FROM npsp__DataImport__c 
+                    WHERE npsp__DonationImported__c = :oppId];
+        System.assertEquals(1, dataImports.size(), 
+            '1 DataImport should be returned, ' + dataImports.size() + ' were returned instead');
+
+        paymentQuery = [Select Id from npe01__OppPayment__c 
+            where npe01__Opportunity__c =: oppId
+            and npe01__Payment_Amount__c =: payAmt
+            and npe01__Paid__c = true];
+        System.assertEquals(1, paymentQuery.size(),
+            '1 Payment should be returned, ' + paymentQuery.size() + ' were returned instead');
 
     }
     
@@ -328,6 +355,38 @@ private class GiftEntryFormController_TEST {
         List<npe01__OppPayment__c> paymentList = [Select Id from npe01__OppPayment__c 
             where npe01__Payment_Amount__c =: donationAmount];
         System.assertEquals(1, paymentList.size());
+    }
+
+    @isTest
+    private static void testGetOpenDonations() {
+        Contact con1 = UTIL_UnitTestData_TEST.getContact();
+        insert con1;
+
+        Opportunity opp = UTIL_UnitTestData_TEST.getOpenOpportunity(con1, 100);
+        Opportunity opp2 = UTIL_UnitTestData_TEST.getOpenOpportunity(con1, 100);
+        opp2.StageName = UTIL_UnitTestData_TEST.getClosedWonStage();
+        insert new List<Opportunity>{opp, opp2};
+
+        // Add an unpaid payment to the closed Opp, which should be found by matching query
+        npe01__OppPayment__c p1 = UTIL_UnitTestData_TEST.getUnpaidPayment(opp2, 100);
+        insert p1;
+
+        Test.startTest();
+        String openDonations = GiftEntryFormController.getOpenDonations(con1.Id, 'Contact1');
+        Test.stopTest();
+
+        System.assert(openDonations.contains(opp.Name));
+        System.assert(openDonations.contains(opp2.Name));
+        System.assert(openDonations.contains(opp.Id));
+        System.assert(openDonations.contains(opp2.Id));
+
+        con1 = [SELECT Id, AccountId FROM Contact WHERE Id =:con1.Id];
+        String openAccountDonations = GiftEntryFormController.getOpenDonations(con1.AccountId, 'Account1');
+
+        System.assert(openAccountDonations.contains(opp.Name));
+        System.assert(openAccountDonations.contains(opp2.Name));
+        System.assert(openAccountDonations.contains(opp.Id));
+        System.assert(openAccountDonations.contains(opp2.Id));
     }
 
     private static npsp__DataImport__c getTestDI(){

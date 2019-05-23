@@ -48,29 +48,22 @@ public with sharing class GiftEntryFormController {
         @AuraEnabled public List<npsp__Allocation__c> allocs {get;set;}
         @AuraEnabled public List<npsp__Partial_Soft_Credit__c> partialCredits {get;set;}
 
-        @AuraEnabled public List<Opportunity> matchedOpps {get;set;}
-        @AuraEnabled public List<Account> matchedAccts {get;set;}
-        @AuraEnabled public List<Contact> matchedContacts {get;set;}
-        @AuraEnabled public List<npe01__OppPayment__c> matchedPayments {get;set;}
-
         @AuraEnabled public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
-
+        @AuraEnabled public Map<String, String> bdiLabels;
         @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
-
         @AuraEnabled Map<String, Boolean> closedWonStageMap {get;set;}
+        @AuraEnabled Map<String, String> diToOppFieldMap {get;set;}
 
         public GiftFormModel() {
             this.objNameToApiToLabel = getObjNameToApiToLabel();
             this.picklistValues = getPickListValues();
             this.closedWonStageMap = getClosedWonStageMap();
             this.di = new npsp__DataImport__c();
-            this.matchedOpps = new List<Opportunity>();
-            this.matchedContacts = new List<Contact>();
-            this.matchedAccts = new List<Account>();
-            this.matchedPayments = new List<npe01__OppPayment__c>();
             this.payments = new List<npe01__OppPayment__c>();
             this.partialCredits = new List<npsp__Partial_Soft_Credit__c>();
             this.allocs = new List<npsp__Allocation__c>();
+            this.bdiLabels = batchDataImportLabels;
+            this.diToOppFieldMap = getDataImportToOpportunityFieldMap();
         }
 
         public GiftFormModel(Id oppId) {
@@ -101,6 +94,47 @@ public with sharing class GiftEntryFormController {
 
         return closedWonStageMap;
     }
+
+    /*******************************************************************************************************
+     * @description Returns A map of Opp field name to corresponding Data Import field name
+     * @throws UTIL_CrudFLS.AccessException when the supplied sObject is not readable by the current user
+     * @return Map<String, String> A map of Opp field name to corresponding Data Import field name
+     */
+    public static Map<String, String> getDataImportToOpportunityFieldMap() {
+        String sObjectName = 'npsp__DataImport__c';
+        DescribeSObjectResult objectDescribe = UTIL_Describe.getObjectDescribe(sObjectName);
+        if(!objectDescribe.isAccessible()) {
+            throw new UTIL_CrudFLS.AccessException(objectDescribe, 'read');
+        }
+
+    	Map<String, Schema.DescribeFieldResult> fields = UTIL_Describe.getAllFieldsDescribe(sObjectName);
+          
+        Map<String, String> oppToDiFields = new Map<String, String>();
+
+    	for(Schema.DescribeFieldResult field : fields.values()){
+      		if(field.isAccessible()) {
+                String helpText = field.getInlineHelpText();
+                String fieldName = field.getName();
+                if(fieldName == 
+                    Schema.SObjectType.npsp__DataImport__c.fields.npsp__Account1Imported__c.getName()){
+                        helpText = 'Opportunity.AccountId';
+                } else if(fieldName ==
+                    Schema.SObjectType.npsp__DataImport__c.fields.npsp__Contact1Imported__c.getName()){
+                        helpText = 'Opportunity.npsp__Primary_Contact__c';
+                }
+
+                if(helpText == null){
+                    continue;
+                }
+                String[] fieldSplit = helpText.split('Opportunity.');
+                if(fieldSplit.size() > 1){
+                    oppToDiFields.put(field.getName(), fieldSplit[1]);
+                }
+            }
+    	}
+
+    	return oppToDiFields;
+  	}
 
     @AuraEnabled
     public static GiftFormModel initClass(Id oppId) {
@@ -142,7 +176,8 @@ public with sharing class GiftEntryFormController {
                         'npe01__Payment_Method__c',
                         'npe01__Check_Reference_Number__c',
                         'npe01__Paid__c',
-                        'npe01__Payment_Date__c'
+                        'npe01__Payment_Date__c',
+                        'npe01__Opportunity__c'
                 }
         );
 
@@ -163,19 +198,20 @@ public with sharing class GiftEntryFormController {
                         'npsp__Account1Imported__c',
                         'npsp__Contact1Imported__c',
                         'npsp__Donation_Donor__c',
-                        'npsp__Donation_Name__c',
-                        'npsp__Donation_Amount__c',
-                        'npsp__Donation_Stage__c',
                         'npsp__Payment_Method__c',
-                        'npsp__Payment_Check_Reference_Number__c',
-                        'npsp__Donation_Description__c'
+                        'npsp__Payment_Check_Reference_Number__c'
                 }
         );
         UTIL_CrudFLS.checkAccess(
                 UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
                 'Opportunity',
                 new List<String>{
+                        'Amount',
                         'CampaignId',
+                        'CloseDate',
+                        'Description',
+                        'Name',
+                        'StageName',
                         'npsp__Tribute_Type__c',
                         'npsp__Acknowledgment_Status__c',
                         'npsp__Honoree_Name__c',
@@ -235,6 +271,8 @@ public with sharing class GiftEntryFormController {
             }
 
             String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
+            // Data Import uses the Record Type name instead of ID, so we need to set that before processing
+            allOppFields += ', RecordType.Name';
             String allAccountFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Account');
             String allContactFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Contact');
             List<Opportunity> opps = 
@@ -276,6 +314,7 @@ public with sharing class GiftEntryFormController {
                                 'npe01__Payment_Date__c',
                                 'npe01__Payment_Method__c',
                                 'npe01__Check_Reference_Number__c',
+                                'npe01__Written_Off__c',
                                 'npe01__Paid__c'
                         });
                 List<npe01__OppPayment__c> payments = [
@@ -285,9 +324,11 @@ public with sharing class GiftEntryFormController {
                                 npe01__Payment_Date__c,
                                 npe01__Payment_Method__c,
                                 npe01__Check_Reference_Number__c,
+                                npe01__Written_Off__c,
                                 npe01__Paid__c
                         FROM npe01__OppPayment__c
                         WHERE npe01__Opportunity__c = :oppId
+                        ORDER BY npe01__Scheduled_Date__c asc, npe01__Payment_Date__c asc
                 ];
                 if(!payments.isEmpty()) {
                     giftModel.payments = payments;
@@ -306,6 +347,7 @@ public with sharing class GiftEntryFormController {
                     SELECT Id,
                             npsp__Amount__c,
                             npsp__General_Accounting_Unit__c,
+                            npsp__General_Accounting_Unit__r.Name,
                             npsp__Percent__c,
                             npsp__Recurring_Donation__c,
                             npsp__Opportunity__c
@@ -328,6 +370,7 @@ public with sharing class GiftEntryFormController {
                     SELECT Id,
                             npsp__Amount__c,
                             npsp__Contact__c,
+                            npsp__Contact__r.Name,
                             npsp__Contact_Name__c,
                             npsp__Role_Name__c,
                             npsp__Opportunity__c
@@ -355,26 +398,51 @@ public with sharing class GiftEntryFormController {
     private static GiftFormModel saveDonationInformation(GiftFormModel giftModel) {
         Savepoint sp = Database.setSavepoint();
         // Upsert or Delete the provided Donor and Donation information
-        List<Database.SaveResult> saveResults = new List<Database.SaveResult>();
+        List<Database.UpsertResult> saveResults = new List<Database.UpsertResult>();
         try {
-            // Insert or Update the provided Donation information
-            if(giftModel.di != null) {
-                saveResults.addAll(UTIL_CrudFLS.create(giftModel.di));
-            } else {
-                System.debug('No DataImport object was provided'); 
-                return null;
+            Boolean processDI = true;
+            // If the Opportunity is closed or has payments, the DataImport cannot be processed
+            if((giftModel.opp.ForecastCategory != null && giftModel.opp.ForecastCategory == 'Closed') || 
+                (giftModel.opp.npe01__Number_of_Payments__c != null && giftModel.opp.npe01__Number_of_Payments__c > 0)){
+                    processDI = false;
             }
 
-            // After saving, need to process
-            runGiftProcess(giftModel.di.Id, false);
+            if(!processDI){
+                // If we can't process the DataImport, check for an existing one instead of creating a new one
+                List<npsp__DataImport__c> dataImports = [SELECT Id, npsp__DonationImported__c 
+                    FROM npsp__DataImport__c 
+                    WHERE npsp__DonationImported__c = :giftModel.opp.Id
+                    LIMIT 1];
 
-            Id oppId = getOpportunityIdFromImport(giftModel.di.Id);
+                // TODO: Could add a comment on the DI record to show it was used to update?
+                if(!dataImports.isEmpty()){
+                    giftModel.di = dataImports[0];
+                }
+            }
+
+            // Insert or Update the provided Donation information
+            if(giftModel.di != null && giftModel.di.Id == null){
+                UTIL_CrudFLS.checkUpsert(giftModel.di);
+                saveResults.addAll(Database.upsert(new List<npsp__DataImport__c>{giftModel.di}));
+            }
+
+            if(processDI){
+                runGiftProcess(giftModel.di.Id, false);
+            }
+
+            Id oppId = giftModel.di.npsp__DonationImported__c != null ?
+                giftModel.di.npsp__DonationImported__c : getOpportunityIdFromImport(giftModel.di.Id);
+            
+            if(oppId == null){
+                throw returnAuraException('No Opportunity was created or matched');
+            }
 
             if(giftModel.allocs != null && !giftModel.allocs.isEmpty()){
                 for(npsp__Allocation__c a : giftModel.allocs){
                     a.npsp__Opportunity__c = oppId;
                 }
-                saveResults.addAll(UTIL_CrudFLS.create(giftModel.allocs));
+                UTIL_CrudFLS.checkUpsert(giftModel.allocs);
+                saveResults.addAll(Database.upsert(giftModel.allocs));
             }
 
             if(giftModel.payments != null && !giftModel.payments.isEmpty()) {
@@ -383,7 +451,8 @@ public with sharing class GiftEntryFormController {
                         p.npe01__Opportunity__c = oppId;
                     }
                 }
-                saveResults.addAll(UTIL_CrudFLS.create(giftModel.payments));
+                UTIL_CrudFLS.checkUpsert(giftModel.payments);
+                saveResults.addAll(Database.upsert(giftModel.payments));
             }
 
             if(giftModel.partialCredits != null && !giftModel.partialCredits.isEmpty()){
@@ -392,12 +461,13 @@ public with sharing class GiftEntryFormController {
                         c.npsp__Opportunity__c = oppId;
                     }
                 }
-                saveResults.addAll(UTIL_CrudFLS.create(giftModel.partialCredits));
+                UTIL_CrudFLS.checkUpsert(giftModel.partialCredits);
+                saveResults.addAll(Database.upsert(giftModel.partialCredits));
             }
 
             giftModel.oppId = oppId;
 
-            for(Database.SaveResult result : saveResults) {
+            for(Database.UpsertResult result : saveResults) {
                 if(!result.isSuccess()) {
                     DmlException dmlException = new DmlException();
                     dmlException.setMessage(result.getErrors()[0].getMessage());
@@ -411,6 +481,105 @@ public with sharing class GiftEntryFormController {
             Database.rollback(sp);
             throw returnAuraException(e.getMessage());
         }
+    }
+
+    /*******************************************************************************************************
+    * @description Retrieves all open Opportunities, and Opportunities with unpaid Payments, for the 
+    * selected Donor (Account or Contact)
+    * @return JSON stringified Map<String, List<SObject>> of all openOpportunities for the given donor
+    */
+    @AuraEnabled
+    public static String getOpenDonations(Id donorId, String donorType) {
+        String relationshipField;
+        if (donorType == 'Account1') {
+            relationshipField = 'AccountId';
+        } else if (donorType == 'Contact1') {
+            relationshipField = 'npsp__Primary_Contact__c';
+        }
+
+        // Can be used to display unpaid payments on the donation matching modal
+        String paymentSOQL = 'SELECT Id, ' +
+                                'Name, ' +
+                                'npe01__Scheduled_Date__c, ' +
+                                'npe01__Opportunity__r.Name, ' +
+                                'npe01__Opportunity__c, ' +
+                                'npe01__Payment_Amount__c ' +
+                                'FROM npe01__OppPayment__c ' +
+                                'WHERE npe01__Opportunity__r.' + relationshipField + ' = :donorId ' +
+                                'AND npe01__Paid__c = false ' +
+                                'AND npe01__Written_Off__c = false';
+        try {
+            // CRUD / FLS of this operation already verified by checkCRUDFLS()
+            List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);
+
+            Set<Id> oppIdsWithUnpaidPayments = new Set<Id>();
+            for (npe01__OppPayment__c payment : unpaidPayments) {
+                oppIdsWithUnpaidPayments.add(payment.npe01__Opportunity__c);
+            }
+
+            // We want to include Open Opportunities, as well as Closed Opportunities with unpaid payments
+            // CRUD / FLS of this operation already verified by checkCRUDFLS()
+            String opportunitySOQL = 'SELECT Id, ' +
+                                    'Name, ' +
+                                    'StageName, ' +
+                                    'CloseDate, ' +
+                                    'Amount ' +
+                                    'FROM Opportunity ' +
+                                    'WHERE ' + relationshipField + ' = :donorId ' +
+                                    'AND (IsClosed = false OR Id in :oppIdsWithUnpaidPayments) ' + 
+                                    'ORDER BY CloseDate ASC ';
+
+            List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
+            Map<Id, Opportunity> openOpportunitiesById = new Map<Id, Opportunity>(openOpportunities);
+
+            Map<String, List<SObject>> response = new Map<String, List<SObject>>{
+                'openOpportunities' => openOpportunitiesById.values(),
+                'unpaidPayments' => null
+            };
+            return JSON.serialize(response);
+        } catch (Exception ex){
+            throw new AuraHandledException('ERROR: ' + ex.getMessage());
+        }
+    }
+
+    /*******************************************************************************************************
+    * @description Retrieves required schema information for the component.
+    * @return Map of DataImport__c object and field name keys to their labels.
+    */
+    private static Map<String, String> batchDataImportLabels {
+        get {
+            if(batchDataImportLabels == null){
+                batchDataImportLabels = new Map<String, String> {
+                    'accountObject' => Schema.SObjectType.Account.getLabel(),
+                    'accountLookup' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Account1Imported__c.getName(),
+                    'batchIdField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__NPSP_Data_Import_Batch__c.getName(),
+                    'contactLookup' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Contact1Imported__c.getName(),
+                    'contactObject' => Schema.SObjectType.Contact.getLabel(),
+                    'dataImportObject' => Schema.SObjectType.npsp__DataImport__c.getName(),
+                    'donationDonor' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Donation_Donor__c.getName(),
+                    'donationAmountField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__Donation_Amount__c.getName(),
+                    'expectedCountField' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__Expected_Count_of_Gifts__c.getName(),
+                    'expectedTotalField' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__Expected_Total_Batch_Amount__c.getName(),
+                    'opportunityImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__DonationImported__c.getName(),
+                    'opportunityImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__DonationImportStatus__c.getName(),
+                    'opportunityAmount' => Schema.SObjectType.Opportunity.fields.Amount.getLabel(),
+                    'opportunityObject' => Schema.SObjectType.Opportunity.getLabel(),
+                    'opportunityName' => Schema.SObjectType.Opportunity.getLabel(),
+                    'opportunityStage' => Schema.SObjectType.Opportunity.fields.StageName.getLabel(),
+                    'paymentAmount' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Payment_Amount__c.getLabel(),
+                    'paymentObject' => Schema.SObjectType.npe01__OppPayment__c.getLabel(),
+                    'paymentScheduledDate' => Schema.SObjectType.npe01__OppPayment__c.fields.npe01__Scheduled_Date__c.getLabel(),
+                    'paymentImportedLookupField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImported__c.getName(),
+                    'paymentImportedStatusField' => Schema.SObjectType.npsp__DataImport__c.fields.npsp__PaymentImportStatus__c.getName(),
+                    'requireTotalMatch' => Schema.SObjectType.npsp__DataImportBatch__c.fields.npsp__RequireTotalMatch__c.getName(),
+                    'userSelectedNewOpp' => System.Label.npsp.bdiMatchedByUserNewOpp,
+                    'userSelectedNewPayment' => System.Label.npsp.bdiMatchedApplyNewPayment,
+                    'userSelectedMatch' => System.Label.npsp.bdiMatchedByUser
+                };
+            }
+            return batchDataImportLabels;
+        }
+        set;
     }
 
     /*******************************************************************************************************
@@ -532,7 +701,7 @@ public with sharing class GiftEntryFormController {
     */
     private static npsp__Data_Import_Settings__c getGiftEntrySettings() {
         npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
-        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.DoNotMatch;
+        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
         return diSettings;
     }
 
@@ -593,20 +762,7 @@ public with sharing class GiftEntryFormController {
             if(giftModelString == null) {
                 return new GiftFormModel(null);
             }
-
-            // First, remove attributes passed from Lightning that can't be deserialized
-            String sObjectTypeRegex = '"sobjectType":.+?(?=,),';
-            // Now remove related lookup object attributes, we can't upsert with the Id AND the object
-            // NOTE: If this stops working, it may be best to loop through the object and remove
-            // any objects at a certain "depth"
-            String relatedObjectRegex = ',"((?!",")(?!\\[)(?!attributes)(?!\\}).)+\\{((?!",")(?!\\}).)+\\}';
-
-            giftModelString = giftModelString.replaceAll(sObjectTypeRegex, '');
-            giftModelString = giftModelString.replaceAll(relatedObjectRegex, '');
-
             GiftFormModel giftModel = (GiftFormModel)JSON.deserialize(giftModelString, GiftFormModel.class);
-            // TODO: Loop through and remove objects of a certain depth
-
             return giftModel;
 
         } catch(Exception e) {

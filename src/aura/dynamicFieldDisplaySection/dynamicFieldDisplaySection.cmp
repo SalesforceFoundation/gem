@@ -4,9 +4,10 @@
     <aura:attribute type="Map" name="fieldNameToFieldLabel" />
     <aura:attribute type="String" name="pickListValue" />
     <aura:attribute type="Map" name="objectNameToSobject"/>
-    <aura:attribute type="String" name="controllingField"/>
-    <aura:attribute type="String" name="controllingObject"/>
+    <aura:attribute type="String" name="controllingField" />
+    <aura:attribute type="String" name="controllingObject" />
     <aura:attribute type="Boolean" name="displaySection" />
+    <aura:attribute type="Boolean" name="rowDisabled" />
     <aura:attribute type="SObject" name="sobjectRecord" default="{}" />
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>

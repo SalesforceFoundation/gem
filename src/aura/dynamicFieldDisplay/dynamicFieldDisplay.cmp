@@ -12,6 +12,7 @@
     <aura:attribute type="Map" name="objectNameToSobject" default="{}" />
     <aura:attribute type="SObject" name="existingRecord" />
     <aura:attribute type="String[]" name="permanentFieldList" />
+    <aura:attribute type="Boolean" name="rowDisabled" />
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
 

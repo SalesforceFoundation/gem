@@ -20,9 +20,9 @@
                 this.createDynamicDisplaySections(component, metadataRecordWrapper);
 
             } else if (state === "INCOMPLETE") {
-
+                this.handleError(component, response);
             } else if (state === "ERROR") {
-
+                this.handleError(component, response);
             }
         });
 
@@ -36,6 +36,7 @@
         var controllingField = metadataRecordWrapper.controllingField;
         var existingItem = component.getReference("v.existingRecord");
         var objectNameToSobject = component.get("v.objectNameToSobject");
+        var rowDisabled = component.get("v.rowDisabled");
 
         // For each picklist value and for each object, create a new dynamic section
         // It has to be for each object because the dynamic section has the 
@@ -67,7 +68,8 @@
                                     "objectNameToSobject" : objectNameToSobject,
                                     "controllingField" : controllingField,
                                     "controllingObject" : controllingObject,
-                                    "sobjectRecord" : existingItem
+                                    "sobjectRecord" : existingItem,
+                                    "rowDisabled" : rowDisabled
                                     }];
                 
                 componentList.push(dynamicSection);
@@ -79,12 +81,21 @@
                 // Just add the created components into the body and set it. 
                 component.set("v.body", createdComponentsList);
             } else if (status == "INCOMPLETE") {
-
+                console.log(errorMessage); 
             } else if (status == "ERROR") {
-                console.log('error here');
-                console.log(errorMessage);
+                console.log(errorMessage); 
             }
         });
 
+    },
+    handleError: function(component, response) {
+        var errors = response.getError();
+        if (errors) {
+            if (errors[0] && errors[0].message) {
+                console.log(errorMsg); 
+            }
+        } else {
+            console.log($A.get('$Label.c.Error_Unknown'));
+        }
     }
 })

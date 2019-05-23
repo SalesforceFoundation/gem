@@ -80,6 +80,7 @@
     </lightning:layout>
 
     <c:dynamicFieldDisplay objectNameToSobject='{!v.objectNameToSobject}' 
+        rowDisabled='{!v.rowDisabled}'
         permanentFieldList='{!v.permanentFieldList}'
         existingRecord='{!v.item}' 
         metadataRecordName='Payment' />

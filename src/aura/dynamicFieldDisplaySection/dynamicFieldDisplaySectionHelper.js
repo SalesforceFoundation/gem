@@ -3,6 +3,7 @@
         // Need to add the sobject to the map of string to sobject
         var componentList = [];
         var layoutItemIndexList = [];
+        var rowDisabled = component.get("v.rowDisabled");
 
         // Given the list of fields that should be shown for this particular picklist value,
         // Create a lightning layout item and also a lighting input field. 
@@ -16,7 +17,8 @@
 
             var inputField = ["lightning:inputField", {
                                 "fieldName": fieldList[j],
-                                "value" : fieldRecordValue
+                                "value" : fieldRecordValue,
+                                "disabled" : rowDisabled
             }];
 
             componentList.push(layoutItem);
@@ -88,7 +90,7 @@
         component.set('v.objectNameToSobject', sobjectList);
 
         var controllingField = component.get('v.controllingField');
-        var picklistValue = component.get('v.picklistValue');
+        var picklistValue = component.get('v.pickListValue');
         this.handleSobjectChange(component, sobjectRecord, controllingField, picklistValue);
     },
     handleSobjectChange: function(component, sobjectRecord, controllingField, picklistValue) {

@@ -5,6 +5,6 @@
       "default": true
     }
   ],
-  "namespace": "gem0",
+  "namespace": "gem",
   "sourceApiVersion": "37.0"
 }

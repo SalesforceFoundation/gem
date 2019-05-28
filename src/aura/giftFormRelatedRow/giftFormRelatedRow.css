@@ -17,14 +17,14 @@
     height: 0;
     width: 0;
 }
+.THIS .select-container .slds-form-element__label {
+    display: none;
+}
 /*
 .THIS .uiInput--default .form-element__label {
     color: rgb(112, 110, 107);
     font-size: .75rem;
     line-height: 1.5;
     margin-bottom: .125rem;
-}
-.THIS .slds-form-element .slds-form-element__label {
-    display: none;
 }
 */

@@ -287,19 +287,6 @@
                     </lightning:layout>
                 </lightning:layoutItem>
 
-                <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
-                    editMode="{!v.editMode}"
-                    editModePaidPayments="{!v.editModePaidPayments}"
-                    disablePaymentEvents="{!v.disableBlurEvents}"
-                    paymentList="{!v.payments}"
-                    rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
-                    donationAmt="{!v.opp.Amount}"
-                    paymentMethod="{!v.di.npsp__Payment_Method__c}"
-                    donationStage="{!v.opp.StageName}"
-                    startDate="{!v.opp.CloseDate}"
-                    objectFieldData="{!v.objectFieldData}"
-                    giftModel="{!v.giftModel}" />
-
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                     editMode="{!v.editMode}"
                     editModePaidPayments="{!v.editModePaidPayments}"
@@ -333,6 +320,19 @@
                     objectFieldData="{!v.objectFieldData}"
                     modelAttribute="partialCredits"
                     buttonTitle="Add New Soft Credit"
+                    giftModel="{!v.giftModel}" />
+
+                <c:giftPaymentScheduler sectionTitle="{!$Label.c.Gift_Payment_Scheduler}"
+                    editMode="{!v.editMode}"
+                    editModePaidPayments="{!v.editModePaidPayments}"
+                    disablePaymentEvents="{!v.disableBlurEvents}"
+                    paymentList="{!v.payments}"
+                    rowCmpName="{!v.namespacePrefix+':giftRelatedPayment'}"
+                    donationAmt="{!v.opp.Amount}"
+                    paymentMethod="{!v.di.npsp__Payment_Method__c}"
+                    donationStage="{!v.opp.StageName}"
+                    startDate="{!v.opp.CloseDate}"
+                    objectFieldData="{!v.objectFieldData}"
                     giftModel="{!v.giftModel}" />
 
                 <lightning:layoutItem size="12">

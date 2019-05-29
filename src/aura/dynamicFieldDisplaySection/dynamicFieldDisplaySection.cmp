@@ -3,6 +3,7 @@
     <aura:attribute type="List" name="fieldList" />
     <aura:attribute type="Map" name="fieldNameToFieldLabel" />
     <aura:attribute type="String" name="pickListValue" />
+    <aura:attribute type="String" name="currentChoice" />
     <aura:attribute type="Map" name="objectNameToSobject"/>
     <aura:attribute type="String" name="controllingField" />
     <aura:attribute type="String" name="controllingObject" />

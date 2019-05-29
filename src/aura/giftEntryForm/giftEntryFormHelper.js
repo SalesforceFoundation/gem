@@ -514,6 +514,8 @@
         giftModel['objNameToApiToLabel'] = {};
         giftModel['picklistValues'] = {};
 
+        // console.log(giftModel); 
+
         var giftModelString = JSON.stringify(giftModel);
         component.set('v.giftModelString', giftModelString);
         return allRowsValid;

@@ -8,18 +8,36 @@
         // Given the list of fields that should be shown for this particular picklist value,
         // Create a lightning layout item and also a lighting input field. 
         for (var j = 0; j < fieldList.length; j++) {
-            var fieldRecordValue = component.getReference('v.sobjectRecord.' + fieldList[j]);
+            var fieldName = fieldList[j];
+            var fieldRecordValueRef = component.getReference('v.sobjectRecord.' + fieldName);
+            var fieldNameToDescribe = this.proxyToObj(fieldNameToFieldLabel);
+            var fieldType = fieldNameToDescribe[fieldName]['Type'];
+            var fieldLabel = fieldNameToDescribe[fieldName]['Label'];
+            
             var layoutItem = ["lightning:layoutItem", {
                             "padding" : "horizontal-small",
+                            "class": "slds-p-bottom_small",
                             "size": "6",
                             "mediumDeviceSize": "3"
             }];
 
-            var inputField = ["lightning:inputField", {
-                                "fieldName": fieldList[j],
-                                "value" : fieldRecordValue,
-                                "disabled" : rowDisabled
-            }];
+            var componentType = "lightning:inputField";
+            var inputJSON = {
+                "disabled" : rowDisabled
+            };
+
+            // For some reason, Checkbox inputFields don't get their values set correctly...
+            if(fieldType == 'BOOLEAN'){
+                componentType = "lightning:input";
+                inputJSON["checked"] = fieldRecordValueRef;
+                inputJSON["label"] = fieldLabel;
+                inputJSON["type"] = "checkbox";
+            } else {
+                inputJSON["fieldName"] = fieldList[j];
+                inputJSON["value"] = fieldRecordValueRef;
+            }
+
+            var inputField = [componentType, inputJSON];
 
             componentList.push(layoutItem);
 
@@ -91,6 +109,13 @@
 
         var controllingField = component.get('v.controllingField');
         var picklistValue = component.get('v.pickListValue');
+
+        var fieldList = component.get('v.fieldList');
+        var fieldNameToFieldLabel = component.get('v.fieldNameToFieldLabel')
+
+        var customMetadataJSON = this.createAllInputs(component, controllingField, 
+            picklistValue, fieldList, fieldNameToFieldLabel );
+
         this.handleSobjectChange(component, sobjectRecord, controllingField, picklistValue);
     },
     handleSobjectChange: function(component, sobjectRecord, controllingField, picklistValue) {
@@ -99,6 +124,14 @@
         // If it is not the same picklist value, we hide the section because these fields should not be shown
         // for the selected picklist value
         var sobjectRecordSelectedPicklistValue = sobjectRecord[controllingField];
+
+        var currentChoice = component.get("v.currentChoice");
+        // Only run this when the controlling picklist field changes
+        if(sobjectRecordSelectedPicklistValue == currentChoice){
+            return;
+        } else {
+            component.set("v.currentChoice", sobjectRecordSelectedPicklistValue);
+        }
 
         if (sobjectRecordSelectedPicklistValue != null && sobjectRecordSelectedPicklistValue != undefined) {
             if (sobjectRecordSelectedPicklistValue == picklistValue) {
@@ -110,5 +143,9 @@
             component.set('v.displaySection', false);
         }
         
+    },
+    proxyToObj: function(attr){
+        // Used to convert a Proxy object to an actual Javascript object
+        return JSON.parse(JSON.stringify(attr));
     }
 })

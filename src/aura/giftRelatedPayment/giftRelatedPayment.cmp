@@ -55,8 +55,7 @@
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="1">
             <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Paid__c}</label>
-            <lightning:input name="paymentPaid" 
-                disabled="{!v.rowDisabled}"
+            <lightning:input disabled="{!v.rowDisabled}"
                 type="checkbox" 
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Paid__c}" 
                 variant="label-hidden"
@@ -64,8 +63,7 @@
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Written_Off__c}</label>
-            <lightning:input name="paymentWriteoff" 
-                disabled="{!v.rowDisabled}"
+            <lightning:input disabled="{!v.rowDisabled}"
                 type="checkbox" 
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Written_Off__c}" 
                 variant="label-hidden"

@@ -176,7 +176,8 @@ public with sharing class GiftEntryFormController {
                         'npe01__Payment_Method__c',
                         'npe01__Check_Reference_Number__c',
                         'npe01__Paid__c',
-                        'npe01__Payment_Date__c'
+                        'npe01__Payment_Date__c',
+                        'npe01__Opportunity__c'
                 }
         );
 
@@ -504,8 +505,8 @@ public with sharing class GiftEntryFormController {
                                 'WHERE npe01__Opportunity__r.' + relationshipField + ' = :donorId ' +
                                 'AND npe01__Paid__c = false ' +
                                 'AND npe01__Written_Off__c = false';
-
         try {
+            // CRUD / FLS of this operation already verified by checkCRUDFLS()
             List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);
 
             Set<Id> oppIdsWithUnpaidPayments = new Set<Id>();
@@ -514,6 +515,7 @@ public with sharing class GiftEntryFormController {
             }
 
             // We want to include Open Opportunities, as well as Closed Opportunities with unpaid payments
+            // CRUD / FLS of this operation already verified by checkCRUDFLS()
             String opportunitySOQL = 'SELECT Id, ' +
                                     'Name, ' +
                                     'StageName, ' +

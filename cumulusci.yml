@@ -47,8 +47,9 @@ tasks:
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         options:
             apex: >
+                Post_Install_Script.populateNPSPAccountModel();    
                 Post_Install_Script.giftSetup();
-                Post_Install_Script.populateNPSPAccountModel();
+                Post_Install_Script.insertTdtmDefaults();
 
     test_data_dev_org:
         description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'

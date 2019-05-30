@@ -600,5 +600,14 @@
     },
     doToggleSection: function changeState (component, sectionBool){
         component.set('v.' + sectionBool, !component.get('v.' + sectionBool));
+    },
+    parseToast: function(toastMessage) {
+        var isRecordEdit = false;
+
+        if (toastMessage.endsWith('was saved.')) {
+            isRecordEdit = true;
+        }
+
+        return isRecordEdit;
     }
 })

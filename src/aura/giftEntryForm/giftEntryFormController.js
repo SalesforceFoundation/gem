@@ -161,5 +161,12 @@
     },
     handleSubmit: function(component, event, helper) {
         event.preventDefault();
+    },
+    handleToast: function(component, event, helper) {
+        var isRecordEdit = helper.parseToast(event.getParams().message);
+
+        if (isRecordEdit == true) {
+            helper.rerenderInputs(component, 'renderDonorInputs');
+        }
     }
 })

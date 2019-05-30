@@ -92,11 +92,11 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>aba1__Amount__c</fields>
-        <fields>aba1__General_Accounting_Unit__c</fields>
-        <fields>aba1__Date__c</fields>
-        <fields>aba1__Type__c</fields>
-        <relatedList>aba1__Ledger_Entry__c.aba1__Payment__c</relatedList>
+        <fields>abacus__Amount__c</fields>
+        <fields>abacus__General_Accounting_Unit__c</fields>
+        <fields>abacus__Date__c</fields>
+        <fields>abacus__Type__c</fields>
+        <relatedList>abacus__Ledger_Entry__c.abacus__Payment__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>true</showHighlightsPanel>

@@ -1,23 +1,7 @@
 <template>
-    <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
-        <div if:true={ready}>
-            <lightning-record-edit-form object-api-name={layout.sObjectName}>
-                <template for:each={layout.sections} for:item='section'>
-                    <lightning-accordion-section name={section.label} label={section.label} key={section.key}>
-                        <lightning-layout multiple-rows='true'>
-                            <template for:each={section.columns} for:item='column'>
-                                <template for:each={column.fields} for:item='field' key={column.key}>
-                                    <lightning-layout-item size='6' padding='around-small' key={field.name}>
-                                        <lightning-input-field field-name={field.name} data-id={field.name} data-type="field">
-
-                                        </lightning-input-field>
-                                    </lightning-layout-item>
-                                </template>
-                            </template>
-                        </lightning-layout>
-                    </lightning-accordion-section>
-                </template>
-            </lightning-record-edit-form>
-        </div>
-    </lightning-accordion>
+    <lightning-record-edit-form object-api-name={layout.sObjectName} if:true={ready}>
+        <template for:each={layout.sections} for:item='section'>
+            <c-sge_formsection section={section} key={section.key}></c-sge_formsection>
+        </template>
+    </lightning-record-edit-form>
 </template>

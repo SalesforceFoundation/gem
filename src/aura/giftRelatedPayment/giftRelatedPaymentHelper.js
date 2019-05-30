@@ -12,7 +12,8 @@
 
 		// Either Paid, or written off, we need to set the Payment Date
 		if(isPaid || isWrittenOff){
-			payDate = component.get('v.item.npe01__Scheduled_Date__c');
+			var dateObj = new Date();
+			payDate = dateObj.toISOString().split('T')[0];
 		}
 
 		if(paidChange && newValue){

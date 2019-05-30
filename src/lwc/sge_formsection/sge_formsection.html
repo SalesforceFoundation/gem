@@ -1,23 +1,24 @@
 <template>
-    <lightning-layout multiple-rows='true' key={section.key}>
-        <lightning-layout-item size='12'>
-            <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
-                    aria-expanded="true"
-                    onclick={toggleExpand}>
-                <h2>
-                    <lightning-icon icon-name={iconName} size='x-small' alternative-text='Toggle Section'></lightning-icon>
-                    {section.label}
-                </h2>
-            </button>
-        </lightning-layout-item>
-        <template for:each={section.columns} for:item='column'>
-            <template for:each={column.fields} for:item='field' key={column.key}>
-                <lightning-layout-item size='6' padding='around-small' key={field.name}>
-                    <lightning-input-field field-name={field.name} data-id={field.name} data-type="field">
+    <lightning-record-edit-form object-api-name='Opportunity'>
+        <lightning-layout multiple-rows='true' key={section.key}>
+            <lightning-layout-item size='12'>
+                <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
+                        aria-expanded="true">
+                    <h2>
+                        <lightning-icon icon-name='utility:chevrondown' size='x-small' alternative-text='Toggle Section'></lightning-icon>
+                        {section.label}
+                    </h2>
+                </button>
+            </lightning-layout-item>
+            <template for:each={section.columns} for:item='column'>
+                <template for:each={column.fields} for:item='field' key={column.key}>
+                    <lightning-layout-item size='6' padding='around-small' key={field.name}>
+                        <lightning-input-field field-name={field.name} data-id={field.name} data-type="field">
 
-                    </lightning-input-field>
-                </lightning-layout-item>
+                        </lightning-input-field>
+                    </lightning-layout-item>
+                </template>
             </template>
-        </template>
-    </lightning-layout>
+        </lightning-layout>
+    </lightning-record-edit-form>
 </template>

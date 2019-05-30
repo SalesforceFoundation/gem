@@ -2,7 +2,7 @@ import { LightningElement, track, api } from 'lwc';
 import { getOpportunityLayout } from 'c/layoutService';
 
 export default class SGE_DynamicForm extends LightningElement {
-    @track layout;
+    @track layout = {};
     @track activeSections;
     @track ready = false;
 
@@ -27,11 +27,11 @@ export default class SGE_DynamicForm extends LightningElement {
      */
     @api
     get values() {
-        const fields = this.template.querySelectorAll("[data-type='field']");
+        const sections = this.template.querySelectorAll('c-sge_formsection');
         let data = {};
-        if(fields !== null && typeof fields !== 'undefined') {
-            fields.forEach(field => {
-                data[field.fieldName] = field.value;
+        if(sections !== null && typeof sections !== 'undefined') {
+            sections.forEach(section => {
+                data = {...data, ...section.values};
             });
         }
         return data;

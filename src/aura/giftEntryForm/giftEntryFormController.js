@@ -1,5 +1,6 @@
 ({
     doInit: function(component, event, helper) {
+        component.set('v.showSpinner', true);
         var recordId = component.get('v.recordId');
         // Get the data model class for the form
         // Includes picklist options, field labels, and objects if loading an existing record
@@ -11,9 +12,11 @@
         if(namespace !== 'c'){
             component.set('v.namespaceFieldPrefix', namespace+'__');
         }
-        helper.setOppToDiMap(component);
     },
     handlePaymentChange: function(component, event, helper){
+        if(component.get('v.disableBlurEvents')){
+            return;
+        }
         // This is run "on change" so we know that a value changed when the blur event occurs
         component.set('v.paymentValChanged', true);
     },
@@ -29,21 +32,40 @@
         helper.checkValidation(component);
     },
     handleFieldChange: function(component, event, helper){
+        if(component.get('v.disableBlurEvents')){
+            return;
+        }
         // Each time a required input changes, check validation
         helper.checkValidation(component);
     },
-    handleLookupChange: function(component, event, helper){
-        // TODO: Add matching logic here
+    onDonorChange: function(component, event, helper){
+        if(component.get('v.disableBlurEvents')){
+            return;
+        }
+        helper.clearDonationSelectionOptions(component);
+        const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
+        const lookupValue = component.find(lookupField).get('v.value');
+        const lookupId = helper.getIdFromLookupValue(lookupValue);
+        if(!lookupId){
+            return;
+        }
+        const lookupValueIsValidId = lookupId.length === 18;
+
+        if (lookupValueIsValidId) {
+            helper.queryOpenDonations(component, lookupId);
+        }
+
         helper.checkValidation(component);
     },
     clickEditDonor: function(component, event, helper) {
         var donorType = component.get('v.di.npsp__Donation_Donor__c');
-        var donorId;
+        var lookupValue;
         if(donorType === 'Account1'){
-            donorId = component.get('v.di.npsp__Account1Imported__c');
+            lookupValue = component.get('v.opp.AccountId');
         } else {
-            donorId = component.get('v.di.npsp__Contact1Imported__c');
+            lookupValue = component.get('v.opp.npsp__Primary_Contact__c');
         }
+        var donorId = helper.getIdFromLookupValue(lookupValue);
         helper.showEditRecordModal(component, donorId);
     },
     clickCreate: function(component, event, helper) {
@@ -73,6 +95,10 @@
         $A.get('e.force:refreshView').fire();
     },
     handleDonorTypeChange: function(component, event, helper){
+        // Ignore this if currently loading a Donation, or if a Donation it being edited
+        if(component.get('v.disableBlurEvents') || component.get('v.editMode')){
+            return;
+        }
         var donorType = event.getParam('value');
         // Need to clear the other donor fields
         if(donorType === 'Account1'){
@@ -89,6 +115,10 @@
             helper.handlePicklistChange(component, message);
         } else if(channel === 'validateEvent'){
             helper.validateForm(component, true);
+        } else if(channel == 'selectedDonation'){
+            helper.setDonation(component, message);
+        } else if (channel === 'onError') {
+            helper.showErrorToast(message.errorMessage, message.title);
         }
     },
     handleCustomFieldsLoaded: function(component, event, helper) {
@@ -105,5 +135,42 @@
     },
     expandMatchingSection: function(component, event, helper) {
         helper.doToggleSection(component, 'expandMatching');
+    },
+    openMatchModal: function(component, event, helper) {
+        $A.createComponent('npsp:BGE_DonationSelector', {
+                'aura:id': 'donationSelector',
+                'name': 'donationSelector',
+                'unpaidPayments': component.get('v.unpaidPayments'),
+                'openOpportunities': component.get('v.openOpportunities'),
+                'selectedDonation': component.get('v.selectedDonation'),
+                'labels': component.get('v.bdiLabels')
+            },
+            function (newcomponent, status, errorMessage) {
+                if (status === 'SUCCESS') {
+                    component.find('overlayLib').showCustomModal({
+                        header: component.get('v.donationModalHeader'),
+                        body: newcomponent,
+                        showCloseButton: true,
+                        cssClass: 'slds-modal_large'
+                    });
+                } else if (status === 'INCOMPLETE') {
+                    const message = {
+                        title: $A.get('$Label.npsp.PageMessagesError'),
+                        errorMessage: $A.get('$Label.npsp.stgUnknownError')
+                    };
+                    helper.sendMessage('onError', message);
+
+                } else if (status === 'ERROR') {
+                    const message = {title: $A.get('$Label.npsp.PageMessagesError'), errorMessage: errorMessage};
+                    helper.sendMessage('onError', message);
+                }
+            });
+    },
+    handleToast: function(component, event, helper) {
+        var isRecordEdit = helper.parseToast(event.getParams().message);
+
+        if (isRecordEdit == true) {
+            helper.rerenderInputs(component, 'renderDonorInputs');
+        }
     }
 })

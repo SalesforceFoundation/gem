@@ -10,7 +10,7 @@
     </types>
     <types>
         <members>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</members>
-        <members>aba1__Installment__c-aba1__Installment Layout</members>
+        <members>abacus__Installment__c-abacus__Installment Layout</members>
         <members>npe01__OppPayment__c-npe01__Payment Layout</members>
         <name>Layout</name>
     </types>

@@ -1,6 +1,6 @@
 ({
     clickAddRow: function(component, event, helper) {
-        helper.handleAddRow(component, helper);
+        helper.addSingleRow(component, helper);
         // Call addRowEvent, currently only used by the Payment Scheduler component
         var thisObj = component.get('v.objectName');
 		var sendMsgEvent = $A.get('e.ltng:sendMessage');
@@ -37,6 +37,11 @@
             helper.deleteAll(component);
         }
 
+        // We are overwriting the payment list with a matching Opportunity, force this through
+		if(component.get('v.disablePaymentEvents')){
+            blockChange = false;
+        }
+
         // On load, since the itemlist comes in before the picklist values are set,
         // we need to wait for the picklists before processing the rows
         if(component.get('v.initFinished') && !blockChange){
@@ -44,6 +49,9 @@
         }
     },
     handleAmtChange: function(component, event, helper){
+        if(component.get('v.disablePaymentEvents')){
+            return;
+        }
         var checkAmountTotals = component.get('v.checkAmountTotals');
         if(checkAmountTotals){
             helper.handleAmtChangeHelper(component);
@@ -64,5 +72,22 @@
     },
     toggleRelatedSection: function(component, event, helper) {
         component.set('v.expandSection', !component.get('v.expandSection'));
+    },
+    getRelatedObject: function(component){
+        return component.get("v.objectName");
+    },
+    focusOnAddButton: function(component){
+        var btn = component.find('add-button');
+        if(btn){
+            btn.focus();
+        }
+    },
+    disableAddButton: function(component, event, helper){
+        var params = event.getParam('arguments');
+		var disableBtn = false;
+		if(params){
+			disableBtn = params.disableBtn;
+        }
+        component.set("v.addButtonDisabled", disableBtn);
     }
 })

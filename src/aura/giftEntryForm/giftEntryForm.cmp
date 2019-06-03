@@ -14,7 +14,6 @@
     <aura:attribute type="Map" name="objectLabels" />
     <aura:attribute type="Map" name="oppToDiFieldMap" />
     <aura:attribute type="Map" name="diToOppFieldMap" />
-    <aura:attribute type="List" name="openSections" />
 
     <aura:attribute name="bdiLabels" type="Map" description="Labels retrieved in Apex related to Schema information." access="public"/>
     <aura:attribute name="openOpportunities" type="List" description="List of open Opportunities" access="public" />

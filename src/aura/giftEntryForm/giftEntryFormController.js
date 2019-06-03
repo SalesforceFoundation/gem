@@ -123,11 +123,9 @@
             helper.showErrorToast(message.errorMessage, message.title);
         }
     },
-    expandTributeSection: function(component, event, helper) {
-        helper.doToggleSection(component, 'expandTribute');
-    },
-    expandMatchingSection: function(component, event, helper) {
-        helper.doToggleSection(component, 'expandMatching');
+    toggleSection: function(component, event, helper) {
+        const section = event.currentTarget.dataset.section;
+        helper.doToggleSection(component, section);
     },
     openMatchModal: function(component, event, helper) {
         $A.createComponent('npsp:BGE_DonationSelector', {
@@ -165,8 +163,5 @@
         if (isRecordEdit == true) {
             helper.rerenderInputs(component, 'renderDonorInputs');
         }
-    },
-    handleSubmit: function(component, event, helper) {
-        event.preventDefault();
     }
 })

@@ -1,10 +1,11 @@
 import { LightningElement, track, api } from 'lwc';
-import { getOpportunityLayout } from 'c/layoutService';
+import { getOpportunityLayout, getDataImportFields } from 'c/sge_service';
 
 export default class SGE_DynamicForm extends LightningElement {
     @track layout = {};
     @track activeSections;
     @track ready = false;
+    fieldMappings;
 
     /**
      * Mark sections as active, alert parent component when data is present.
@@ -19,6 +20,11 @@ export default class SGE_DynamicForm extends LightningElement {
                     this.dispatchEvent(new CustomEvent('load', {detail: {hasFields: true}}));
                 }
             }
+        });
+
+        getDataImportFields().then(response => {
+           this.fieldMappings = response;
+           console.log(JSON.stringify(this.fieldMappings));
         });
     }
 

@@ -500,9 +500,9 @@
         var giftModel = component.get('v.giftModel');
         var opp = this.proxyToObj(component.get('v.opp'));
         var di = this.proxyToObj(component.get('v.di'));
+
         const customFieldValues = this.getCustomFieldValues(component);
 
-        Object.assign({}, di, customFieldValues);
         // Map fields from Opportunity to DataImport
         // This is done to avoid referencing GEM namespace fields in markup
         this.mapOppToDi(component, di, opp);
@@ -513,8 +513,9 @@
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};
         giftModel['picklistValues'] = {};
-
+        const giftModelString = JSON.stringify(giftModel);
         component.set('v.giftModelString', giftModelString);
+
         return allRowsValid;
     },
     showSaveToast: function(titleTxt, msgText){

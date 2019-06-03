@@ -49,6 +49,12 @@ public with sharing class SGE_GiftEntryService {
         return readOpportunityLayoutByName(LAYOUT_NAME);
     }
 
+    @AuraEnabled(cacheable=true)
+    public static Map<String, String> getDataImportFieldMappings() {
+        List<String> dataImportFields = npsp.BDI_DataImportService.listStrDataImportFields;
+        return npsp.BDI_DataImportService.mapFieldsForDIObject('npsp__Data_Import__c', 'Opportunity', dataImportFields);
+    }
+
     /**
      * Read an opportunity layout for use in the SGE form
      *

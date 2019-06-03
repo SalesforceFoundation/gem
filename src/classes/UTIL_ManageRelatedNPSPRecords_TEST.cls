@@ -254,20 +254,20 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
         // Check that NPSP copies were actually created before we test deleting them!
         List<npe4__Relationship__c> newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
         System.assertEquals(2, newNPSPRelationships.size(), 
-            'There should be 2 new Relationships for this Contact, there are : ' + newNPSPRelationships.size());
+            'There should be 2 new NPSP Relationships for this Contact, there are : ' + newNPSPRelationships.size());
 
         List<npe5__Affiliation__c> newNPSPAffiliations = getNPSPAffiliations(donorAccount.Id);
         System.assertEquals(2, newNPSPAffiliations.size(), 
-            'There should be 2 new Affiliations, there are : ' + newNPSPAffiliations.size());
+            'There should be 2 new NPSP Affiliations, there are : ' + newNPSPAffiliations.size());
 
 
         List<hed__Relationship__c> hedaRels = getEDARElationships(donorContact1.Id);
         System.assertEquals(2, hedaRels.size(), 
-            'There should still be only 2 Relationship, there are : ' + hedaRels.size());
+            'There should still be only 2 EDA Relationships, there are : ' + hedaRels.size());
 
         List<hed__Affiliation__c> hedaAffls = getEDAAffiliations(donorAccount.Id);
         System.assertEquals(2, hedaAffls.size(), 
-            'There should still be only 2 Affiliation, there are : ' + hedaAffls.size());
+            'There should still be only 2 EDA Affiliations, there are : ' + hedaAffls.size());
 
         Test.startTest();
         delete hedaRels[0];
@@ -277,13 +277,31 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
         // Check that NPSP copies were properly deleted
         newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
         System.assertEquals(1, newNPSPRelationships.size(), 
-            'There should be 1 Relationship for this Contact, there are : ' + newNPSPRelationships.size());
+            'There should be 1 NPSP Relationship for this Contact, there are : ' + newNPSPRelationships.size());
         System.assertEquals(solicitorRole, newNPSPRelationships[0].npsp__Related_Opportunity_Contact_Role__c, 
             'The remaining NPSP Relationship should be for Solicitor, not Soft Credit');
 
         newNPSPAffiliations = getNPSPAffiliations(donorAccount.Id);
         System.assertEquals(0, newNPSPAffiliations.size(), 
-            'There should be 0 Affiliations, there are : ' + newNPSPAffiliations.size());
+            'There should be 0 NPSP Affiliations, there are : ' + newNPSPAffiliations.size());
+
+
+        // Now test the other way, deleting NPSP records should not delete EDA ones
+        delete newNPSPRelationships;
+
+        hedaRels = getEDARElationships(donorContact1.Id);
+        System.assertEquals(1, hedaRels.size(), 
+            'There should still be 1 EDA Relationship, there are : ' + hedaRels.size());
+
+
+        // Editing an EDA Relationship should trigger a re-sync, adding back the NPSP record
+        hedaRels[0].hed__Description__c = 'Testing Resync';
+        update hedaRels;
+
+        newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
+        System.assertEquals(1, newNPSPRelationships.size(), 
+            'There should be 1 NPSP Relationship for this Contact, there are : ' + newNPSPRelationships.size());
+
 
     }
 

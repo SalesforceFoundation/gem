@@ -53,8 +53,6 @@ global class REL_SyncToNPSP_TDTM extends hed.TDTM_Runnable {
           || triggerAction == hed.TDTM_Runnable.Action.AfterUpdate) {
             UTIL_ManageRelatedNPSPRecords_TDTM.synchronizeRelationshipRecords(newlist);
         } else if(triggerAction == hed.TDTM_Runnable.Action.AfterDelete){
-            System.debug('DELETE REL'); 
-            System.debug(oldlist); 
             UTIL_ManageRelatedNPSPRecords_TDTM.synchronizeRelationshipRecords(oldlist);
         }
 

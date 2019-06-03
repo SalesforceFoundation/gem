@@ -38,11 +38,13 @@
 **/
 public class UTIL_ManageRelatedNPSPRecords_TDTM {
 
+    private final static String gemRelatedOCRField = UTIL_Namespace.StrTokenNSPrefix('Related_Opportunity_Contact_Role__c');
+
     public static Map<String, String> EDAToNPSPRelFieldMap = new Map<String, String>{
         'hed__Contact__c' => 'npe4__Contact__c',
         'hed__Description__c' => 'npe4__Description__c',
         'hed__RelatedContact__c' => 'npe4__RelatedContact__c',
-        'Related_Opportunity_Contact_Role__c' => 'NPSP__Related_Opportunity_Contact_Role__c',
+        gemRelatedOCRField => 'npsp__Related_Opportunity_Contact_Role__c',
         'hed__Status__c' => 'npe4__Status__c',
         'hed__Type__c' => 'npe4__Type__c'
     };
@@ -50,7 +52,7 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
     public static Map<String, String> EDAToNPSPRelMatchMap = new Map<String, String>{
         'hed__Contact__c' => 'npe4__Contact__c',
         'hed__RelatedContact__c' => 'npe4__RelatedContact__c',
-        'Related_Opportunity_Contact_Role__c' => 'NPSP__Related_Opportunity_Contact_Role__c'
+        gemRelatedOCRField => 'npsp__Related_Opportunity_Contact_Role__c'
     };
 
     public static Map<String, String> EDAToNPSPAfflFieldMap = new Map<String, String>{
@@ -59,7 +61,7 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
         'hed__EndDate__c' => 'npe5__EndDate__c',
         'hed__Account__c' => 'npe5__Organization__c',
         'hed__Primary__c' => 'npe5__Primary__c',
-        'Related_Opportunity_Contact_Role__c' => 'NPSP__Related_Opportunity_Contact_Role__c',
+        gemRelatedOCRField => 'npsp__Related_Opportunity_Contact_Role__c',
         'hed__Role__c' => 'npe5__Role__c',
         'hed__StartDate__c' => 'npe5__StartDate__c',
         'hed__Status__c' => 'npe5__Status__c'
@@ -68,13 +70,12 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
     public static Map<String, String> EDAToNPSPAfflMatchMap = new Map<String, String>{
         'hed__Contact__c' => 'npe5__Contact__c',
         'hed__Account__c' => 'npe5__Organization__c',
-        'Related_Opportunity_Contact_Role__c' => 'NPSP__Related_Opportunity_Contact_Role__c'
+        gemRelatedOCRField => 'npsp__Related_Opportunity_Contact_Role__c'
     };
 
     public static final String RELATED_OPPORTUNITY_CONTACT_ROLE_NONE = '--None--';
     public static final String NPSP_RELATIONSHIP_API_NAME = 'npe4__Relationship__c';
     public static final String NPSP_AFFILIATION_API_NAME = 'npe5__Affiliation__c';
-    private static List<SObject> toDelete = new List<SObject>();
 
     /*******************************************************************************************************
     * @description Take a list of EDA Affiliations and sync them their NPSP versions
@@ -104,8 +105,8 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
             Database.query('SELECT '
 				+ String.escapeSingleQuotes(allNPSPAfflFields) 
 				+' FROM npe5__Affiliation__c '
-				+ 'WHERE NPSP__Related_Opportunity_Contact_Role__c != null '
-                + 'AND NPSP__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
+				+ 'WHERE npsp__Related_Opportunity_Contact_Role__c != null '
+                + 'AND npsp__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND npe5__Organization__c in :donorAccountIds ');
 
         //Organize records by Donor ID, which for Relationships is a Contact, for Affiliations an Account
@@ -145,8 +146,8 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
             Database.query('SELECT '
 				+ String.escapeSingleQuotes(allNPSPRelFields) 
 				+' FROM npe4__Relationship__c '
-				+ 'WHERE NPSP__Related_Opportunity_Contact_Role__c != null '
-                + 'AND NPSP__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
+				+ 'WHERE npsp__Related_Opportunity_Contact_Role__c != null '
+                + 'AND npsp__Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND npe4__Contact__c in :donorContactIds ');
 
         //Organize records by Donor ID, which for Relationships is a Contact, for Affiliations an Account
@@ -188,8 +189,7 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
     private static void syncLists(Map<Id, List<SObject>> sourceMap, 
         Map<Id, List<SObject>> copyMap, String destObjectName){
 
-            // Since the list is static, make sure it's cleared
-            toDelete.clear();
+            List<SObject> toDelete = new List<SObject>();
 
             Map<String, String> fullFieldMap;
             Map<String, String> matchFieldMap;

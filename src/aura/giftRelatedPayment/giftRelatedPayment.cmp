@@ -5,7 +5,8 @@
 
     <aura:attribute type="String[]" 
         name="permanentFieldList" 
-        default="['npe01__Payment_Amount__c','npe01__Scheduled_Date__c','npe01__Paid__c','npe01__Payment_Method__c','npe01__Written_Off__c']" />
+        default="['npe01__Payment_Amount__c','npe01__Scheduled_Date__c','npe01__Payment_Date__c',
+        'npe01__Paid__c','npe01__Payment_Method__c','npe01__Written_Off__c']" />
     <aura:attribute type="Map" name="objectNameToSobject" default="{}" />
     <aura:attribute name="rowDisabled" 
         type="Boolean" 
@@ -37,12 +38,19 @@
                 step="0.01"
                 value="{!v.item.npe01__Payment_Amount__c}" />
         </lightning:layoutItem>
-        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <lightning:input aura:id="requiredField" 
                 disabled="{!v.rowDisabled}"
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}"
                 type="date"    
                 value="{!v.item.npe01__Scheduled_Date__c}"  />            
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
+            <lightning:input aura:id="paymentDate"
+                disabled="{!v.rowDisabled}"
+                label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Date__c}"
+                type="date"    
+                value="{!v.item.npe01__Payment_Date__c}"  />            
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
             <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}</label>
@@ -73,7 +81,6 @@
 
         <div class="slds-hidden">
             <lightning:input name="oppId" type="text" label="Opportunity" value="{!v.item.npe01__Opportunity__c}" />
-            <lightning:input type="date" aura:id="paymentDate" value="{!v.item.npe01__Payment_Date__c}" />
         </div>
     </lightning:layout>
 

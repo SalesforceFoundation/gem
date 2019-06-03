@@ -11,7 +11,7 @@
             var fieldName = fieldList[j];
             var fieldRecordValueRef = component.getReference('v.sobjectRecord.' + fieldName);
             var fieldNameToDescribe = this.proxyToObj(fieldNameToFieldLabel);
-            var fieldType = fieldNameToDescribe[fieldName]['Type'];
+            var fieldType = this.getFieldType(fieldNameToDescribe, fieldName);
             var fieldLabel = fieldNameToDescribe[fieldName]['Label'];
             
             var layoutItem = ["lightning:layoutItem", {
@@ -72,8 +72,8 @@
             } else if (status == "INCOMPLETE") {
                 this.showErrorToast(errorMessage, 'Error')
             } else if (status == "ERROR") {
-                console.log('error here');
-                console.log(errorMessage);
+                // console.log('error here');
+                // console.log(errorMessage);
                 this.showErrorToast(errorMessage, 'Error')
             }
         });
@@ -116,9 +116,9 @@
         var customMetadataJSON = this.createAllInputs(component, controllingField, 
             picklistValue, fieldList, fieldNameToFieldLabel );
 
-        this.handleSobjectChange(component, sobjectRecord, controllingField, picklistValue);
+        this.handleSobjectChange(component, sobjectRecord, controllingField, picklistValue, fieldNameToFieldLabel);
     },
-    handleSobjectChange: function(component, sobjectRecord, controllingField, picklistValue) {
+    handleSobjectChange: function(component, sobjectRecord, controllingField, picklistValue, fieldNameToFieldLabel) {
         // We set the display section to true if the sobject record's selected picklist value
         // is the same as the picklast value this section is for. 
         // If it is not the same picklist value, we hide the section because these fields should not be shown
@@ -133,16 +133,36 @@
             component.set("v.currentChoice", sobjectRecordSelectedPicklistValue);
         }
 
+        var fieldNameToDescribe = this.proxyToObj(fieldNameToFieldLabel);
+
         if (sobjectRecordSelectedPicklistValue != null && sobjectRecordSelectedPicklistValue != undefined) {
             if (sobjectRecordSelectedPicklistValue == picklistValue) {
                 component.set('v.displaySection', true);
             } else {
-                component.set('v.displaySection', false);
+                this.clearFieldsAndHideSection(component, sobjectRecord, fieldNameToDescribe);
             }
         } else {
-            component.set('v.displaySection', false);
+            this.clearFieldsAndHideSection(component, sobjectRecord, fieldNameToDescribe);
         }
         
+    },
+    clearFieldsAndHideSection: function(component, sobjectRecord, fieldNameToDescribe){
+        component.set('v.displaySection', false);
+
+        var fieldList = component.get('v.fieldList');
+        for(var i in fieldList){
+            var fieldName = fieldList[i];
+            var fieldType = this.getFieldType(fieldNameToDescribe, fieldName);
+            // To handle checkbox fields, which have to be true or false
+            if(fieldType === 'BOOLEAN'){
+                sobjectRecord[fieldName] = false;
+            } else {
+                sobjectRecord[fieldName] = null;
+            }
+        }
+    },
+    getFieldType: function(fieldNameToDescribe, fieldName){
+        return fieldNameToDescribe[fieldName]['Type'];
     },
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object

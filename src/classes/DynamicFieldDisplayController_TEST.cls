@@ -10,8 +10,8 @@ public with sharing class DynamicFieldDisplayController_TEST {
         System.assert(wrapper.controllingField == 'npe01__Payment_Method__c', 'The actual controlling field is: ' + wrapper.controllingField);
         System.assert(wrapper.dependentFieldList.size() == 3, 'The actual dependent field list size is: ' + wrapper.dependentFieldList.size());
         System.assert(wrapper.dependentFieldList.containsKey('Check'), 'The default does not contain Check');
-        System.assert(wrapper.dependentFieldList.containsKey('Cash'), 'The default does not contain Check');
-        System.assert(wrapper.dependentFieldList.containsKey('Credit Card'), 'The default does not contain Check');
+        System.assert(wrapper.dependentFieldList.containsKey('Cash'), 'The default does not contain Cash');
+        System.assert(wrapper.dependentFieldList.containsKey('Credit Card'), 'The default does not contain Credit Card');
         Test.stopTest();
 
     }

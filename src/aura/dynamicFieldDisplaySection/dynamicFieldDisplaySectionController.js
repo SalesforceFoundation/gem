@@ -6,7 +6,8 @@
         var sobjectRecord = component.get('v.sobjectRecord');
         var controllingField = component.get('v.controllingField');
         var picklistValue = component.get('v.pickListValue');
+        var fieldNameToFieldLabel = component.get('v.fieldNameToFieldLabel')
 
-        helper.handleSobjectChange(component, sobjectRecord, controllingField, picklistValue);
+        helper.handleSobjectChange(component, sobjectRecord, controllingField, picklistValue, fieldNameToFieldLabel);
     }
 })

@@ -130,11 +130,9 @@
             $A.util.removeClass(container, 'slds-hidden');
         }
     },
-    expandTributeSection: function(component, event, helper) {
-        helper.doToggleSection(component, 'expandTribute');
-    },
-    expandMatchingSection: function(component, event, helper) {
-        helper.doToggleSection(component, 'expandMatching');
+    toggleSection: function(component, event, helper) {
+        const section = event.currentTarget.dataset.section;
+        helper.doToggleSection(component, section);
     },
     openMatchModal: function(component, event, helper) {
         $A.createComponent('npsp:BGE_DonationSelector', {

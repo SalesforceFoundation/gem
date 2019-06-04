@@ -309,8 +309,10 @@
 
                     <lightning:layoutItem size="12">
                     <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
+                        type="button"
                         aria-expanded="true"
-                        onclick="{!c.expandTributeSection}">
+                        data-section="expandTribute"
+                        onclick="{!c.toggleSection}">
                         <h2><lightning:icon iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}"
                             size="x-small"
                             alternativeText="Toggle Tribute Information" />{!$Label.c.Gift_Tribute_Information}</h2>
@@ -384,8 +386,10 @@
 
                 <lightning:layoutItem size="12">
                     <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
+                        type="button"
                         aria-expanded="true"
-                        onclick="{!c.expandMatchingSection}">
+                        data-section="expandMatching"
+                        onclick="{!c.toggleSection}">
                         <h2><lightning:icon iconName="{!v.expandMatching == true ? 'utility:chevrondown' : 'utility:chevronright'}"
                             size="x-small"
                             alternativeText="Toggle Matching Gift Information" />{!$Label.c.Gift_Matching_Gift}</h2>

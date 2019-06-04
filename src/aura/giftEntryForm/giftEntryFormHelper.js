@@ -598,7 +598,7 @@
     changeSubmitText: function(component, newText){
         component.find('createButton').set('v.label', newText);
     },
-    doToggleSection: function changeState (component, sectionBool){
+    doToggleSection: function(component, sectionBool){
         component.set('v.' + sectionBool, !component.get('v.' + sectionBool));
     },
     parseToast: function(toastMessage) {

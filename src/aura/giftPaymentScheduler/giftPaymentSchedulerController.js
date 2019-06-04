@@ -30,6 +30,7 @@
 		component.set('v.selectedPaymentMethod', paymentMethod);
 	},
 	toggleRelatedSection: function(component, event, helper) {
+		event.preventDefault();
 		component.set('v.expandSection', !component.get('v.expandSection'));
 	},
 	createDefaultPayment: function(component, event, helper){

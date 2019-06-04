@@ -37,9 +37,10 @@
         default="{sobjectType:'npe01__OppPayment__c'}" />
 
     <lightning:layoutItem size="12">
-        <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title" 
-            aria-expanded="{!v.expandSection}"
-            onclick="{!c.toggleRelatedSection}">
+        <button class="slds-col slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
+                type="button"
+                aria-expanded="{!v.expandSection}"
+                onclick="{!c.toggleRelatedSection}">
             <h2><lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
                 size="x-small"
                 alternativeText="Toggle Payment Information" />

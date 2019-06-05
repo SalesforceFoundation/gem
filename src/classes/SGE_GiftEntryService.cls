@@ -52,7 +52,7 @@ public with sharing class SGE_GiftEntryService {
     @AuraEnabled(cacheable=true)
     public static Map<String, String> getDataImportFieldMappings() {
         List<String> dataImportFields = npsp.BDI_DataImportService.listStrDataImportFields;
-        return npsp.BDI_DataImportService.mapFieldsForDIObject('npsp__Data_Import__c', 'Opportunity', dataImportFields);
+        return npsp.BDI_DataImportService.mapFieldsForDIObject('Opportunity', 'Opportunity', dataImportFields);
     }
 
     /**

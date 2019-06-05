@@ -34,13 +34,30 @@ export default class SGE_DynamicForm extends LightningElement {
     @api
     get values() {
         const sections = this.template.querySelectorAll('c-sge_formsection');
-        let data = {};
+        let oppData = {};
         if(sections !== null && typeof sections !== 'undefined') {
             sections.forEach(section => {
-                data = {...data, ...section.values};
+                oppData = {...oppData, ...section.values};
             });
         }
-        return data;
+
+        const mappings = this.getFlippedMappings();
+        let diData = {};
+
+        for(let oppFieldName of oppData) {
+            const diFieldName = mappings[oppFieldName];
+            diData[diFieldName] = oppData[oppFieldName];
+        }
+
+        return diData;
+    }
+
+    getFlippedMappings() {
+        let flippedMappings = {};
+        Object.entries(this.fieldMappings).forEach(([k,v]) => {
+            flippedMappings[v] = k;
+        });
+        return flippedMappings;
     }
 
     /**

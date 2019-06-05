@@ -11,10 +11,20 @@ String giftProfileName2 = 'Development Officer';
 
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 
-public static void setupGEMDefaults(){
-    initializeNPSPSettingsForADV();
+public static void setupGEMDefaultsForDev(){
+    initializeNPSPSettingsForGEM();
     enablePaymentAllocationsDefaultGAU();
-    initializeHEDASettingsForADV();
+    initializeHEDASettingsForGEM();
+    initializeGEMSettings();
+}
+
+public static void setupGEMDefaults(){
+    initializeGEMSettings();
+}
+
+public static void setupGEMAndNPSPDefaults(){
+    initializeNPSPSettingsForGEM();
+    enablePaymentAllocationsDefaultGAU();
     initializeGEMSettings();
 }
 
@@ -35,7 +45,7 @@ public static void enablePaymentAllocationsDefaultGAU() {
     upsert stgAllo;
 }
 
-public static void initializeNPSPSettingsForADV() {
+public static void initializeNPSPSettingsForGEM() {
     insertGiftEntrySettings();
     npsp.UTIL_CustomSettings_API.getContactsSettings();
     npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
@@ -63,7 +73,7 @@ public static void initializeNPSPSettingsForADV() {
     upsert cos;
 }
 
-public static void initializeHEDASettingsForADV() {
+public static void initializeHEDASettingsForGEM() {
     hed__Hierarchy_Settings__c orgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
     orgSettings.hed__Automatic_Household_Naming__c = true;
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();

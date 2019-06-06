@@ -276,7 +276,7 @@ flows:
     install_gem_settings:
         steps:
             1:
-                task: execute_installer_settings
+                task: execute_installer_settings_npsp_defaults
                 options:
                     managed: True
             2:

@@ -70,6 +70,7 @@ public static void initializeNPSPSettingsForGEM() {
     cos.npsp__Honoree_Opportunity_Contact_Role__c = 'Honoree Contact';
     cos.npsp__Notification_Recipient_Opp_Contact_Role__c = 'Notification Contact';
     cos.npsp__Payments_Auto_Close_Stage_Name__c = getClosedWonStage();
+    cos.npsp__Household_Account_Addresses_Disabled__c = true;
     upsert cos;
 }
 

@@ -529,8 +529,6 @@
                         label="{!$Label.c.Gift_Show_Matching}" name="doDryRun" />
                     <lightning:input aura:id="oppId"
                         value="{!v.giftModel.oppId}" />
-                    <lightning:input aura:id="paymentLookup"
-                        value="{!v.payment.Id}" />
                 </div>
             </lightning:layout>
             </lightning:recordEditForm>

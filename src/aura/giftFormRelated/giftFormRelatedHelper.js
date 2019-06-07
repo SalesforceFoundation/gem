@@ -64,7 +64,6 @@
         // Add the new rows to the page
         component.set('v.body', body);
 
-        component.set('v.showAmountError', false);
         helper.getAmtTotal(component);
 
         // Check amount validation on this section

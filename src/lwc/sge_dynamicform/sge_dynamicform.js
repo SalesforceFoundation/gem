@@ -5,7 +5,7 @@ export default class SGE_DynamicForm extends LightningElement {
     @track layout = {};
     @track activeSections;
     @track ready = false;
-    fieldMappings;
+    fieldMappings = {};
 
     /**
      * Mark sections as active, alert parent component when data is present.
@@ -44,7 +44,7 @@ export default class SGE_DynamicForm extends LightningElement {
         const mappings = this.getFlippedMappings();
         let diData = {};
 
-        for(let oppFieldName of oppData) {
+        for(let oppFieldName in oppData) {
             const diFieldName = mappings[oppFieldName];
             diData[diFieldName] = oppData[oppFieldName];
         }

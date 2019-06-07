@@ -83,10 +83,10 @@ public with sharing class SGE_GiftEntryService {
     public class Layout {
         @AuraEnabled public List<Section> sections;
         @AuraEnabled public String sObjectName;
+
         public Layout(Schema.SObjectType sObjectType, Metadata.Layout layout) {
             this.sObjectName = sObjectType.getDescribe().getName();
             this.sections = new List<Section>();
-            System.debug(layout);
             for(Metadata.LayoutSection section : layout.layoutSections) {
                 if(section.editHeading && section.label.toLowerCase() != 'hidden - do not edit this section') {
                     this.sections.add(new Section(sObjectType, section));
@@ -153,7 +153,7 @@ public with sharing class SGE_GiftEntryService {
         @AuraEnabled public String helpText;
 
         public Field(Schema.SObjectType sObjectType, Metadata.LayoutItem item) {
-            this(sObjectType.getDescribe().fields.getMap().get(item.field).getDescribe());
+            this(UTIL_Describe.getFieldDescribe(sObjectType.getDescribe().getName(), item.field));
         }
 
         public Field(Schema.DescribeFieldResult describeFieldResult) {

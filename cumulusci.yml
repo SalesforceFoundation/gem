@@ -28,12 +28,12 @@ tasks:
             path: unpackaged/config/src
             unmanaged: True
 
-    deploy_installer_config:
-        description: Deploys configuration for managed install. Assigns page layouts, compact layouts, and sets tab visibilities.
+    deploy_recommended_config:
+        description: Deploys recommended configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
             namespace_inject: $project_config.project__package__namespace
-            path: unpackaged⁩/config/installer
+            path: unpackaged/config/recommended
             unmanaged: True
 
     deploy_dev_config_delete:
@@ -120,7 +120,7 @@ flows:
             4:
                 task: deploy_dev_config
             5:
-                task: deploy_installer_config
+                task: deploy_recommended_config
             6:
                 flow: test_data_setup
 
@@ -133,7 +133,7 @@ flows:
             4:
                 task: deploy_dev_config
             5:
-                task: deploy_installer_config
+                task: deploy_recommended_config
             6:
                 task: update_admin_profile
             7:
@@ -148,7 +148,7 @@ flows:
                 options:
                     unmanaged: False
             4:
-                task: deploy_installer_config
+                task: deploy_recommended_config
                 options:
                     unmanaged: False
 
@@ -163,7 +163,7 @@ flows:
                 options:
                     managed: True
             3:
-                task: deploy_installer_config
+                task: deploy_recommended_config
                 options:
                     unmanaged: False
 
@@ -222,44 +222,56 @@ flows:
             2:
                 task: test_data_dev_org
 
-    install_pilot:
+    install_prod_with_abacus:
       steps:
           1:
+              flow: None # Workaround for SFDO-Tooling/CumulusCI #1098
+          2:
               task: update_dependencies
               options:
                   dependencies:
                       - github: https://github.com/SalesforceFoundation/Cumulus
                       - github: https://github.com/SalesforceFoundation/HEDAP
                       - github: https://github.com/SalesforceFoundation/Abacus
-          2:
-              task: deploy_pre
           3:
-              task: install_managed
+              flow: None # Workaround for SFDO-Tooling/CumulusCI #1098
           4:
-              flow: config_managed
+              task: deploy_pre
           5:
-              flow: install_pilot_settings
+              task: install_managed
           6:
+              flow: config_managed
+
+    install_pilot:
+      steps:
+          1:
+              flow: install_prod_with_abacus
+          2:
+              task: test_data_default_settings
+              options:
+                  managed: True
+          3:
+              task: deploy_abacus_settings
+              options:
+                  managed: True
+          4:
               task: deploy_pilot_config
 
     install_gem:
       steps:
           1:
-              task: update_dependencies
-              options:
-                  dependencies:
-                      - github: https://github.com/SalesforceFoundation/Cumulus
-                      - github: https://github.com/SalesforceFoundation/HEDAP
-                      - github: https://github.com/SalesforceFoundation/Abacus
+              flow: install_prod_with_abacus
           2:
-              task: deploy_pre
-          3:
-              task: install_managed
-          4:
               flow: config_installer
+          3:
+              task: execute_installer_settings_npsp_defaults
+              options:
+                  managed: True
+          4:
+              task: deploy_abacus_settings
+              options:
+                  managed: True
           5:
-              flow: install_gem_settings
-          6:
               task: deploy_pilot_config
 
     install_pilot_settings:
@@ -272,18 +284,6 @@ flows:
                 task: deploy_abacus_settings
                 options:
                     managed: True
-
-    install_gem_settings:
-        steps:
-            1:
-                task: execute_installer_settings_npsp_defaults
-                options:
-                    managed: True
-            2:
-                task: deploy_abacus_settings
-                options:
-                    managed: True
-
 
     # Temporary workaround for deployment issue introduced in 1c00b3c
     deploy_packaging:

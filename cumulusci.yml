@@ -17,10 +17,10 @@ tasks:
         description: Configure the default Abacus Settings for Gift Processing
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
         options:
-            path: unpackaged/config/scripts/configure_abacus_settings.cls
+            path: scripts/configure_abacus_settings.cls
             method: initializeAbacusSettings();
 
-    deploy_unpackaged/config:
+    deploy_dev_config:
         description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
         class_path: cumulusci.tasks.salesforce.DeployBundles
         options:
@@ -36,7 +36,7 @@ tasks:
             path: unpackaged⁩/config/installer
             unmanaged: True
 
-    deploy_unpackaged/config_delete:
+    deploy_dev_config_delete:
         description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
@@ -47,7 +47,7 @@ tasks:
         class_path: cumulusci.tasks.salesforce.DeployBundles
         options:
             namespace_inject: $project_config.project__package__namespace
-            path: pilot_config
+            path: unpackaged/config/pilot
             unmanaged: False
 
     execute_install_apex:
@@ -62,14 +62,14 @@ tasks:
         description: Configure the default Settings for Gift Processing
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
         options:
-            path: unpackaged/config/scripts/configure_default_settings.cls
+            path: scripts/configure_default_settings.cls
             method: setupGEMDefaults();
 
     execute_installer_settings_npsp_defaults:
         description: Configure the default Settings for Gift Processing
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
         options:
-            path: unpackaged/config/scripts/configure_default_settings.cls
+            path: scripts/configure_default_settings.cls
             method: setupGEMAndNPSPDefaults();
 
     test_data_dev_org:
@@ -97,14 +97,14 @@ tasks:
         description: Configure the default Settings for Gift Processing, including NPSP and EDA changes
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
         options:
-            path: unpackaged/config/scripts/configure_default_settings.cls
+            path: scripts/configure_default_settings.cls
             method: setupGEMDefaultsForDev();
 
     test_data_user_setup:
         description: Sets up Gift Processing Users with correct Profiles
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
         options:
-            path: unpackaged/config/scripts/configure_default_settings.cls
+            path: scripts/configure_default_settings.cls
             method: AddGiftProcessor();
 
 flows:

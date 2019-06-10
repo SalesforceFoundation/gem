@@ -76,8 +76,8 @@ tasks:
         description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'
         class_path: cumulusci.tasks.bulkdata.LoadData
         options:
-            database_url: 'sqlite:///testdata/dev_org/test_data.db'
-            mapping: 'testdata/mapping.yml'
+            database_url: 'sqlite:///datasets/dev_org/test_data.db'
+            mapping: 'datasets/mapping.yml'
 
     test_data_delete:
         description: 'WARNING: Deletes all data in the objects specified in the objects option.'

@@ -78,6 +78,8 @@ public static void initializeHEDASettingsForGEM() {
     hed__Hierarchy_Settings__c orgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
     orgSettings.hed__Automatic_Household_Naming__c = true;
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
+    orgSettings.hed__Accounts_Addresses_Enabled__c = orgSettings.hed__Accounts_Addresses_Enabled__c + ";" + hed.UTIL_Describe_API.getHhAccRecTypeID();
+    orgSettings.hed__Accounts_to_Delete__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
     upsert orgSettings;
 }
 

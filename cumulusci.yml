@@ -28,6 +28,12 @@ tasks:
             path: unpackaged/config/src
             unmanaged: True
 
+    deploy_dev_config_delete:
+        description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
+        class_path: cumulusci.tasks.salesforce.Deploy
+        options:
+            path: unpackaged/config/delete
+
     deploy_recommended_config:
         description: Deploys recommended configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
         class_path: cumulusci.tasks.salesforce.Deploy
@@ -36,11 +42,13 @@ tasks:
             path: unpackaged/config/recommended
             unmanaged: True
 
-    deploy_dev_config_delete:
-        description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
+    deploy_qa_config:
+        description: Deploys QA configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
-            path: unpackaged/config/delete
+            namespace_inject: $project_config.project__package__namespace
+            path: unpackaged/config/qa
+            unmanaged: True
 
     deploy_pilot_config:
         description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
@@ -71,6 +79,13 @@ tasks:
         options:
             path: scripts/configure_default_settings.cls
             method: setupGEMAndNPSPDefaults();
+
+    retrieve_config_qa:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/qa
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
+        options:
+            path: unpackaged/config/qa
+            namespace_tokenize: $project_config.project__package__namespace
 
     test_data_dev_org:
         description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'
@@ -140,6 +155,22 @@ flows:
                 flow: test_data_dev_org
             8:
                 flow: test_data_setup
+
+    config_regression:
+        steps:
+            2:
+                task: deploy_dev_config_delete
+                options:
+                    unmanaged: False
+            3:
+                task: deploy_dev_config
+                options:
+                    unmanaged: False
+            4:
+                task: deploy_recommended_config
+                options:
+                    unmanaged: False
+
 
     config_managed:
         steps:
@@ -241,6 +272,27 @@ flows:
               task: install_managed
           6:
               flow: config_managed
+
+    install_regression:
+      steps:
+          1:
+              flow: None # Workaround for SFDO-Tooling/CumulusCI #1098
+          2:
+              task: update_dependencies
+              options:
+                  include_beta: True
+                  dependencies:
+                      - github: https://github.com/SalesforceFoundation/Cumulus
+                      - github: https://github.com/SalesforceFoundation/HEDAP
+                      - github: https://github.com/SalesforceFoundation/Abacus
+          3:
+              task: deploy_pre
+          4:
+              task: install_managed
+              options:
+                  version: previous
+          5:
+              task: install_managed_beta
 
     install_pilot:
       steps:

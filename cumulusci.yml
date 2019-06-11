@@ -268,14 +268,25 @@ flows:
                       - github: https://github.com/SalesforceFoundation/Cumulus
                       - github: https://github.com/SalesforceFoundation/HEDAP
                       - github: https://github.com/SalesforceFoundation/Abacus
+              ui_options:
+                  1:
+                      name: NPSP - Account Record Types
+                  2:
+                      name: NPSP - Opportunity Record Types
+                  9:
+                      name: NPSP Config for Salesforce Mobile App
+                  10:
+                      name: HEDA - Account Record Types
+                  11:
+                      name: HEDA - Contact Key Affiliation Fields
+                  13:
+                      name: HEDA - Deploy Course Connection Record Types
           3:
               flow: None # Workaround for SFDO-Tooling/CumulusCI #1098
           4:
               task: deploy_pre
           5:
               task: install_managed
-          6:
-              flow: config_managed
 
     install_regression:
       steps:
@@ -362,32 +373,8 @@ plans:
         description: Installs the Gift Entry Manager Limited Release
         steps:
             1:
-                task: update_dependencies
-                options:
-                    dependencies:
-                        - github: https://github.com/SalesforceFoundation/Cumulus
-                        - github: https://github.com/SalesforceFoundation/HEDAP
-                        - github: https://github.com/SalesforceFoundation/Abacus
-                ui_options:
-                    1:
-                        name: NPSP - Account Record Types
-                    2:
-                        name: NPSP - Opportunity Record Types
-                    9:
-                        name: NPSP Config for Salesforce Mobile App
-                    10:
-                        name: HEDA - Account Record Types
-                    11:
-                        name: HEDA - Contact Key Affiliation Fields
-                    13:
-                        name: HEDA - Deploy Course Connection Record Types
+                flow: install_prod_with_abacus
             2:
-                task: deploy_pre
-            3:
-                task: install_managed
-            4:
-                flow: config_managed
-            5:
                 flow: install_pilot_settings
                 ui_options:
                     test_data_default_settings:

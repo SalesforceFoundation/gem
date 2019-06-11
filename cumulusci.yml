@@ -16,16 +16,18 @@ tasks:
     deploy_abacus_settings:
         description: Configure the default Abacus Settings for Gift Processing
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        ui_options:
+            name: Deploy Abacus Settings
         options:
             path: scripts/configure_abacus_settings.cls
             method: initializeAbacusSettings();
 
     deploy_dev_config:
         description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
-        class_path: cumulusci.tasks.salesforce.DeployBundles
+        class_path: cumulusci.tasks.salesforce.Deploy
         options:
             namespace_inject: $project_config.project__package__namespace
-            path: unpackaged/config/src
+            path: unpackaged/config/dev
             unmanaged: True
 
     deploy_dev_config_delete:
@@ -50,12 +52,14 @@ tasks:
             path: unpackaged/config/qa
             unmanaged: True
 
-    deploy_pilot_config:
-        description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
-        class_path: cumulusci.tasks.salesforce.DeployBundles
+    deploy_trial_config:
+        description: Deploys metadata for end user. Assigns page layouts and compact layouts.
+        class_path: cumulusci.tasks.salesforce.Deploy
+        ui_options:
+            name: Deploy Trial Metadata
         options:
             namespace_inject: $project_config.project__package__namespace
-            path: unpackaged/config/pilot
+            path: unpackaged/config/trial
             unmanaged: False
 
     execute_install_apex:
@@ -111,6 +115,8 @@ tasks:
     test_data_default_settings:
         description: Configure the default Settings for Gift Processing, including NPSP and EDA changes
         class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        ui_options:
+            name: Configure the default NPSP Settings for Gift Processing
         options:
             path: scripts/configure_default_settings.cls
             method: setupGEMDefaultsForDev();
@@ -179,25 +185,6 @@ flows:
     config_managed:
         steps:
             3:
-                task: deploy_dev_config
-                options:
-                    unmanaged: False
-            4:
-                task: deploy_recommended_config
-                options:
-                    unmanaged: False
-
-    config_installer:
-        steps:
-            1:
-                task: deploy_post
-                options:
-                    unmanaged: False
-            2:
-                task: update_admin_profile
-                options:
-                    managed: True
-            3:
                 task: deploy_recommended_config
                 options:
                     unmanaged: False
@@ -260,8 +247,6 @@ flows:
     install_prod_with_abacus:
       steps:
           1:
-              flow: None # Workaround for SFDO-Tooling/CumulusCI #1098
-          2:
               task: update_dependencies
               options:
                   dependencies:
@@ -281,11 +266,11 @@ flows:
                       name: HEDA - Contact Key Affiliation Fields
                   13:
                       name: HEDA - Deploy Course Connection Record Types
-          3:
-              flow: None # Workaround for SFDO-Tooling/CumulusCI #1098
-          4:
+                  14:
+                      name: Facility Display Name Formula Field
+          2:
               task: deploy_pre
-          5:
+          3:
               task: install_managed
 
     install_regression:
@@ -309,27 +294,33 @@ flows:
           5:
               task: install_managed_beta
 
-    install_pilot:
+    pilot_org:
       steps:
           1:
               flow: install_prod_with_abacus
           2:
+              flow: config_managed
+          3:
+              task: deploy_dev_config
+              options:
+                  unmanaged: False
+          4:
               task: test_data_default_settings
               options:
                   managed: True
-          3:
+          5:
               task: deploy_abacus_settings
               options:
                   managed: True
-          4:
-              task: deploy_pilot_config
+          6:
+              task: deploy_trial_config
 
-    install_gem:
+    trial_org:
       steps:
           1:
               flow: install_prod_with_abacus
           2:
-              flow: config_installer
+              flow: config_managed
           3:
               task: execute_installer_settings_npsp_defaults
               options:
@@ -339,18 +330,8 @@ flows:
               options:
                   managed: True
           5:
-              task: deploy_pilot_config
+              task: deploy_trial_config
 
-    install_pilot_settings:
-        steps:
-            1:
-                task: test_data_default_settings
-                options:
-                    managed: True
-            2:
-                task: deploy_abacus_settings
-                options:
-                    managed: True
 
     # Temporary workaround for deployment issue introduced in 1c00b3c
     deploy_packaging:
@@ -373,14 +354,7 @@ plans:
         description: Installs the Gift Entry Manager Limited Release
         steps:
             1:
-                flow: install_prod_with_abacus
-            2:
-                flow: install_pilot_settings
-                ui_options:
-                    test_data_default_settings:
-                        name: Configure the default NPSP Settings for Gift Processing
-                    deploy_abacus_settings:
-                        name: Deploy Abacus Settings
+                flow: pilot_org
 
 orgs:
     scratch:

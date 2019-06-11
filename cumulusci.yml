@@ -170,6 +170,10 @@ flows:
                 task: deploy_recommended_config
                 options:
                     unmanaged: False
+            5:
+                task: deploy_qa_config
+                options:
+                    unmanaged: False
 
 
     config_managed:

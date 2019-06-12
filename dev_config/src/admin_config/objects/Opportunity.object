@@ -24,34 +24,4 @@
             <default>false</default>
         </values>
     </businessProcesses>
-    <recordTypes>
-        <fullName>Donation</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>Donation</label>
-    </recordTypes>
-    <recordTypes>
-        <fullName>In_Kind</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>In Kind</label>
-    </recordTypes>
-    <recordTypes>
-        <fullName>Major_Gift</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>Major Gift</label>
-    </recordTypes>
-    <recordTypes>
-        <fullName>Matching</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>Matching</label>
-    </recordTypes>
-    <recordTypes>
-        <fullName>Membership</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>Membership</label>
-    </recordTypes>
 </CustomObject>

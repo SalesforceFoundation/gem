@@ -1,5 +1,7 @@
 <template>
-    <template for:each={layout.sections} for:item='section' if:true={ready}>
-        <c-sge_formsection section={section} key={section.key}></c-sge_formsection>
-    </template>
+    <lightning-record-edit-form object-api-name='Opportunity' if:true={ready}>
+        <template for:each={sections} for:item='section'>
+            <c-sge_formsection section={section} key={section.key}></c-sge_formsection>
+        </template>
+    </lightning-record-edit-form>
 </template>

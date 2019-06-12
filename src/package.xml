@@ -138,6 +138,7 @@
     <types>
         <members>sge_dynamicform</members>
         <members>sge_service</members>
+        <members>sge_formField</members>
         <members>sge_formsection</members>
         <name>LightningComponentBundle</name>
     </types>

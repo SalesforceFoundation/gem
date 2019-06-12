@@ -9,7 +9,7 @@ export default class SGE_Formsection extends LightningElement {
      */
     @api
     get values() {
-        const fields = this.template.querySelectorAll("[data-type='field']");
+        const fields = this.template.querySelectorAll("c-sge_form-field");
         let data = {};
         if(fields !== null && typeof fields !== 'undefined') {
             fields.forEach(field => {
@@ -17,6 +17,16 @@ export default class SGE_Formsection extends LightningElement {
             });
         }
         return data;
+    }
+
+    @api
+    get isValid() {
+        const fields = this.template.querySelectorAll("c-sge_form-field");
+        const isValid = fields.reduce((field, acc) => {
+            return acc && field.isValid();
+        }, true);
+
+        return isValid;
     }
 
     get iconName() {

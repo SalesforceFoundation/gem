@@ -74,7 +74,11 @@ public with sharing class SGE_GiftEntryService {
         }
         Metadata.Layout layout = (Metadata.Layout)rawMetadata;
 
-        return new SGE_GiftEntryService.Layout(Schema.Opportunity.SObjectType, layout);
+        SGE_GiftEntryService.Layout sgeLayout = new SGE_GiftEntryService.Layout(Schema.Opportunity.SObjectType, layout);
+
+        sgeLayout.validate();
+
+        return sgeLayout;
     }
 
     /**
@@ -92,6 +96,22 @@ public with sharing class SGE_GiftEntryService {
                     this.sections.add(new Section(sObjectType, section));
                 }
             }
+        }
+
+        public void validate() {
+            List<Field> fieldsToValidate = new List<Field>();
+            for (Section s : sections) {
+                if (s.columns != null) {
+                    for (Column c : s.columns) {
+                        if (c.fields != null) {
+                            fieldsToValidate.addAll(c.fields);
+                        }
+                    }
+                }
+            }
+
+
+
         }
     }
 
@@ -151,15 +171,19 @@ public with sharing class SGE_GiftEntryService {
         @AuraEnabled public String label;
         @AuraEnabled public String name;
         @AuraEnabled public String helpText;
+        @AuraEnabled public Boolean required;
+        @AuraEnabled public String typeName;
 
         public Field(Schema.SObjectType sObjectType, Metadata.LayoutItem item) {
             this(UTIL_Describe.getFieldDescribe(sObjectType.getDescribe().getName(), item.field));
+            this.required = item.behavior == Metadata.UiBehavior.Required;
         }
 
         public Field(Schema.DescribeFieldResult describeFieldResult) {
             this.label = describeFieldResult.getLabel();
             this.name = describeFieldResult.getName();
             this.helpText = describeFieldResult.getInlineHelpText();
+            this.typeName = describeFieldResult.getType().name();
         }
     }
 
@@ -175,5 +199,17 @@ public with sharing class SGE_GiftEntryService {
         }
 
         public HashKey() {}
+    }
+
+
+    public static Boolean typesAreCompatible(Schema.DescribeFieldResult diField, Schema.DescribeFieldResult sourceField) {
+        DisplayType diType = diField.getType();
+        DisplayType sourceType = sourceField.getType();
+
+        if(diType == sourceType) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -2,7 +2,7 @@ import { LightningElement, track, api } from 'lwc';
 import { getOpportunityLayout, getDataImportFields } from 'c/sge_service';
 
 export default class SGE_DynamicForm extends LightningElement {
-    @track layout = {};
+    @track sections = [];
     @track activeSections;
     @track ready = false;
     fieldMappings = {};
@@ -12,19 +12,18 @@ export default class SGE_DynamicForm extends LightningElement {
      */
     connectedCallback() {
         getOpportunityLayout().then(response => {
-            this.layout = response;
-            if(this.layout !== null && typeof this.layout !== 'undefined' && Array.isArray(this.layout.sections)) {
-                this.activeSections = this.layout.sections.map(s => s.label);
-                this.ready = true;
+            if(response !== null && typeof response !== 'undefined' && Array.isArray(response.sections)) {
+                this.sections = response.sections;
+                this.activeSections = this.sections.map(s => s.label);
                 if (this.hasCustomFields()) {
                     this.dispatchEvent(new CustomEvent('load', {detail: {hasFields: true}}));
                 }
+                this.ready = true;
             }
         });
 
         getDataImportFields().then(response => {
            this.fieldMappings = response;
-           console.log(JSON.stringify(this.fieldMappings));
         });
     }
 
@@ -52,6 +51,20 @@ export default class SGE_DynamicForm extends LightningElement {
         return diData;
     }
 
+    @api
+    get isValid() {
+        const sections = this.template.querySelectorAll("c-sge_formsection");
+        if(Array.isArray(sections)) {
+            const isValid = sections.reduce((field, acc) => {
+                return acc && field.isValid();
+            }, true);
+
+            return !this.hasCustomFields() || isValid;
+        }
+
+        return true;
+    }
+
     getFlippedMappings() {
         let flippedMappings = {};
         Object.entries(this.fieldMappings).forEach(([k,v]) => {
@@ -67,7 +80,7 @@ export default class SGE_DynamicForm extends LightningElement {
     hasCustomFields() {
         let layoutHasFields = false;
         if(this.ready) {
-            this.layout.sections.forEach(section => {
+            this.sections.forEach(section => {
                const columns = section.columns;
                if(Array.isArray(columns)) {
                    columns.forEach(column => {
@@ -80,5 +93,7 @@ export default class SGE_DynamicForm extends LightningElement {
         }
         return layoutHasFields;
     }
+
+
 
 }

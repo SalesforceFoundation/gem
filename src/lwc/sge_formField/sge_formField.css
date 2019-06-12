@@ -1,0 +1,10 @@
+.fake-require {
+    font-weight: 400;
+}
+
+.fake-require::before {
+    content: "*";
+    margin: 0 0.125rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left;
+}

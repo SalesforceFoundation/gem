@@ -772,7 +772,9 @@ public with sharing class GiftEntryFormController {
 
     @AuraEnabled
     public static GiftFormModel saveGift(String giftModelString) {
+        System.debug(giftModelString);
         GiftFormModel giftModel = processGiftModelString(giftModelString);
+        System.debug(JSON.serializePretty(giftModel));
         giftModel = saveDonationInformation(giftModel);
         return giftModel;
     }

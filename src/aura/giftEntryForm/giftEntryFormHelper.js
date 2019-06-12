@@ -251,7 +251,7 @@
         var donorExists = false;
 
         // Make sure a donor has been provided
-        if(donorType === 'Account1' || !donorType){
+        if(donorType === 'Account1' || !donorType) {
             donorExists = donorExists || this.checkFields(component, 'accountLookup', true);
         }
         if(donorType === 'Contact1' || !donorType) {
@@ -262,7 +262,7 @@
         
         if(!donorExists){
             // Show error if no Donor has been entered
-            if(showErrors){
+            if(showErrors) {
                 this.showErrorMessage(component, $A.get('$Label.c.Gift_Donor_Required'), true);
             }
             return false;
@@ -390,6 +390,8 @@
             return validSoFar && isValid;
         }, allMustBeValid);
 
+
+
         return validationResult;
     },
     singleInputToArray: function(findResult){
@@ -502,11 +504,12 @@
         var di = this.proxyToObj(component.get('v.di'));
 
         const customFieldValues = this.getCustomFieldValues(component);
+        const dynamicFormValid = this.getDynamicFormValid(component);
 
         // Map fields from Opportunity to DataImport
         // This is done to avoid referencing GEM namespace fields in markup
         this.mapOppToDi(component, di, opp);
-        giftModel['di'] = di;
+        giftModel['di'] = Object.assign({}, di, customFieldValues);
         // Lookup values are converted from array to ID during mapOppToDi, so we need to update
         giftModel['opp'] = opp;
 
@@ -606,6 +609,11 @@
     getCustomFieldValues: function(component) {
         const dynamicForm = component.find('sge_dynamicform');
         const values = dynamicForm.get('v.values');
+        return values;
+    },
+    getDynamicFormValid: function(component) {
+        const dynamicForm = component.find('sge_dynamicform');
+        const values = dynamicForm.get('v.isValid');
         return values;
     },
     parseToast: function(toastMessage) {

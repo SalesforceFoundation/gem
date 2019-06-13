@@ -111,22 +111,20 @@
         var message = event.getParam('message');
         var channel = event.getParam('channel');
 
-        if(channel === 'picklistChangeEvent'){
+        if(channel === 'picklistChangeEvent') {
             helper.handlePicklistChange(component, message);
-        } else if(channel === 'validateEvent'){
+        } else if(channel === 'validateEvent') {
             helper.validateForm(component, true);
-        } else if(channel == 'selectedDonation'){
+        } else if(channel === 'selectedDonation') {
             helper.setDonation(component, message);
         } else if (channel === 'onError') {
             helper.showErrorToast(message.errorMessage, message.title);
         }
     },
-    handleCustomFieldsLoaded: function(component, event, helper) {
+    handleDynamicFormLoaded: function(component, event, helper) {
         const hasFields = event.getParam('hasFields');
         if(hasFields) {
-            const header = component.find('dynamicFormHeader');
             const container = component.find('dynamicFormContainer');
-            $A.util.removeClass(header, 'slds-hidden');
             $A.util.removeClass(container, 'slds-hidden');
         }
     },

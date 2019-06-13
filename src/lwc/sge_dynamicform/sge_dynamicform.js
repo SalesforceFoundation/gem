@@ -15,10 +15,10 @@ export default class SGE_DynamicForm extends LightningElement {
             if(response !== null && typeof response !== 'undefined' && Array.isArray(response.sections)) {
                 this.sections = response.sections;
                 this.activeSections = this.sections.map(s => s.label);
+                this.ready = true;
                 if (this.hasCustomFields()) {
                     this.dispatchEvent(new CustomEvent('load', {detail: {hasFields: true}}));
                 }
-                this.ready = true;
             }
         });
 

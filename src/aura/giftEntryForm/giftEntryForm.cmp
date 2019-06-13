@@ -303,19 +303,23 @@
                     </lightning:layout>
                 </lightning:layoutItem>
 
-                <lightning:layoutItem size="12">
-                        <c:sge_dynamicform aura:id="sge_dynamicform" onload="{!c.handleCustomFieldsLoaded}"></c:sge_dynamicform>
-                    </lightning:layoutItem>
+                <lightning:layoutItem size="12" aura:id="dynamicFormContainer" class="slds-hidden">
+                    <c:sge_dynamicform aura:id="sge_dynamicform" onload="{!c.handleDynamicFormLoaded}"></c:sge_dynamicform>
+                </lightning:layoutItem>
 
-                    <lightning:layoutItem size="12">
+                <lightning:layoutItem size="12">
                     <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
-                        type="button"
-                        aria-expanded="true"
-                        data-section="expandTribute"
-                        onclick="{!c.toggleSection}">
-                        <h2><lightning:icon iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}"
-                            size="x-small"
-                            alternativeText="Toggle Tribute Information" />{!$Label.c.Gift_Tribute_Information}</h2>
+                            type="button"
+                            aria-expanded="true"
+                            data-section="expandTribute"
+                            onclick="{!c.toggleSection}">
+                        <h2>
+                            <lightning:icon
+                                    iconName="{!v.expandTribute == true ? 'utility:chevrondown' : 'utility:chevronright'}"
+                                    size="x-small"
+                                    alternativeText="Toggle Tribute Information"/>
+                            {!$Label.c.Gift_Tribute_Information}
+                        </h2>
                     </button>
                 </lightning:layoutItem>
 

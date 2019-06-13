@@ -84,11 +84,32 @@ tasks:
             path: scripts/configure_default_settings.cls
             apex: setupGEMAndNPSPDefaults();
 
+    retrieve_config_dev:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/dev
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
+        options:
+            path: unpackaged/config/dev
+            namespace_tokenize: $project_config.project__package__namespace
+
     retrieve_config_qa:
         description: Retrieves the current changes in the scratch org into unpackaged/config/qa
         class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
         options:
             path: unpackaged/config/qa
+            namespace_tokenize: $project_config.project__package__namespace
+
+    retrieve_config_recommended:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/recommended
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
+        options:
+            path: unpackaged/config/recommended
+            namespace_tokenize: $project_config.project__package__namespace
+
+    retrieve_config_trial:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/trial
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
+        options:
+            path: unpackaged/config/trial
             namespace_tokenize: $project_config.project__package__namespace
 
     test_data_dev_org:

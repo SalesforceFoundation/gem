@@ -33,7 +33,7 @@ Each directory is used as follows:
 | Directory      | Purpose                                         | Retrieve declarative changes |
 | -------------- | ----------------------------------------------- | ---------------------------- |
 | `delete/`      | Deletes `dev` metadata                          |                              |
-| `dev/`         | Default dev metadata                            | `retrieve_dev_config`        |
-| `qa/`          | Additional configuration for testing/docs       | `retrieve_qa_config`         |
-| `recommended/` | Default profiles, record types, for end-users   | `retrieve_qa_config`         |
-| `trial/`       | Trial configuration, default installation setup | `retrieve_qa_config`         |
+| `dev/`         | Default dev metadata                            | `retrieve_config_dev`        |
+| `qa/`          | Additional configuration for testing/docs       | `retrieve_config_qa`         |
+| `recommended/` | Default profiles, record types, for end-users   | `retrieve_config_recommended` |
+| `trial/`       | Trial configuration, default installation setup | `retrieve_config_trial`    |

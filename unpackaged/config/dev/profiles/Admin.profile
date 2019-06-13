@@ -105,26 +105,6 @@
         <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Donation</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%In_Kind</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Major_Gift</recordType>
-    </layoutAssignments>
-        <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Matching</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Membership</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>npsp__DataImport__c-%%%NAMESPACE%%%GEM Gift Layout</layout>
     </layoutAssignments>
 
@@ -177,36 +157,6 @@
         <default>true</default>
         <recordType>hed__Course_Enrollment__c.Student</recordType>
         <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>true</default>
-        <recordType>Opportunity.Donation</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Opportunity.In_Kind</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Opportunity.Major_Gift</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Opportunity.Matching</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Opportunity.Membership</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Opportunity.NPSP_Default</recordType>
-        <visible>false</visible>
     </recordTypeVisibilities>
 
     <tabVisibilities>

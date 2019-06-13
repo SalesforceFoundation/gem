@@ -154,6 +154,8 @@ flows:
         steps:
             3:
                 task: deploy_dev_config
+            4:
+                task: deploy_recommended_config
 
     config_dev:
         steps:

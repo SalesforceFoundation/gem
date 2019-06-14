@@ -390,9 +390,11 @@
             return validSoFar && isValid;
         }, allMustBeValid);
 
+        debugger;
 
+        const dynamicFormValid = this.getDynamicFormValid(component);
 
-        return validationResult;
+        return validationResult && dynamicFormValid;
     },
     singleInputToArray: function(findResult){
         if(findResult && !findResult.length){

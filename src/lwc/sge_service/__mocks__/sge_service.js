@@ -11,9 +11,9 @@ const SUCCESS = {
                 "label": "Ask Date",
                 "helpText": "The date the donor was asked for this Donation. This may be different from the date you received it."
             }, {
-                "name": "TrackingNumber__c",
-                "label": "Tracking Number",
-                "helpText": null
+                "name": "npsp__In_Kind_Type__c",
+                "label": "In-Kind Type",
+                "helpText": "The type of In-Kind Gift, for example, Goods or Services."
             }]
         }, {
             "key": "780860961",

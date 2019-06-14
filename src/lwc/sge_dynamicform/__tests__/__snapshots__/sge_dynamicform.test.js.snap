@@ -2,7 +2,7 @@
 
 exports[`c-dynamicform getValues should work when values are blank or empty 1`] = `
 Object {
-  "TrackingNumber__c": undefined,
+  "npsp__In_Kind_Type__c": undefined,
   "npsp__Ask_Date__c": undefined,
   "npsp__Fair_Market_Value__c": undefined,
 }

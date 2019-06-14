@@ -13,6 +13,7 @@
         <members>Post_Install_Script</members>
         <members>Post_Install_Script_TEST</members>
         <members>SGE_GiftEntryService</members>
+        <members>SGE_GiftEntryService_TEST</members>
         <members>TDTM_Glue</members>
         <members>UTIL_CrudFLS</members>
         <members>UTIL_CrudFLS_TEST</members>

@@ -1,5 +1,6 @@
 <template>
     <lightning-record-edit-form object-api-name='Opportunity'>
-        <lightning-input-field field-name={field.name} data-id={field.name} data-type="field" class={className}></lightning-input-field>
+        <label class={labelClassName}>{field.label}</label>
+        <lightning-input-field field-name={field.name} data-id={field.name} data-type='field' variant='label-hidden'></lightning-input-field>
     </lightning-record-edit-form>
 </template>

@@ -2,13 +2,13 @@
  * Created by bdvorachek on 2019-06-11.
  */
 
-import {LightningElement, api, track} from 'lwc';
+import {LightningElement, api} from 'lwc';
 
 export default class SGE_FormField extends LightningElement {
     @api field = {};
 
-    get className() {
-        return this.field.required ? 'fake-require' : '';
+    get labelClassName() {
+        return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';
     }
 
 
@@ -23,9 +23,13 @@ export default class SGE_FormField extends LightningElement {
 
     @api
     get value() {
-        const field = this.template.querySelector("[data-type='field']");
+        const field = this.getRawField();
         let data = {};
-        data[field.name] = field.value;
+        data[field.fieldName] = field.value;
         return data;
+    }
+
+    getRawField() {
+        return this.template.querySelector('lightning-input-field');
     }
 }

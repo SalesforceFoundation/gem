@@ -389,9 +389,7 @@
             }
             return validSoFar && isValid;
         }, allMustBeValid);
-
-        debugger;
-
+        
         const dynamicFormValid = this.getDynamicFormValid(component);
 
         return validationResult && dynamicFormValid;

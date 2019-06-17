@@ -10,13 +10,13 @@ export default class SGE_Formsection extends LightningElement {
     @api
     get values() {
         const fields = this.template.querySelectorAll("c-sge_form-field");
-        let data = {};
+        let oppData = {};
         if(fields !== null && typeof fields !== 'undefined') {
             fields.forEach(field => {
-                data[field.fieldName] = field.value;
+                oppData = { ...oppData, ...(field.value) };
             });
         }
-        return data;
+        return oppData;
     }
 
     @api

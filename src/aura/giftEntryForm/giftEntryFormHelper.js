@@ -379,8 +379,8 @@
         findResult = this.singleInputToArray(findResult);
         var validationResult = findResult.reduce(function (validSoFar, inputCmp) {
             var fieldVal = inputCmp.get('v.value');
-            var isValid = fieldVal || fieldVal === false;
-            if(showErrors && typeof inputCmp.reportValidity === 'function'){
+            var isValid = (fieldVal !== null && typeof fieldVal !== 'undefined' && fieldVal !== '') || fieldVal === false;
+            if(showErrors && typeof inputCmp.reportValidity === 'function') {
                 var validMsg = inputCmp.reportValidity();
             }
             if(!allMustBeValid && (isValid || validSoFar)){
@@ -389,7 +389,7 @@
             }
             return validSoFar && isValid;
         }, allMustBeValid);
-        
+
         const dynamicFormValid = this.getDynamicFormValid(component);
 
         return validationResult && dynamicFormValid;

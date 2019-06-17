@@ -36,7 +36,7 @@ export default class SGE_DynamicForm extends LightningElement {
         let oppData = {};
         if(sections !== null && typeof sections !== 'undefined') {
             sections.forEach(section => {
-                oppData = {...oppData, ...section.values};
+                oppData = { ...oppData, ...(section.values) };
             });
         }
 

@@ -9,33 +9,46 @@
         // Create a lightning layout item and also a lighting input field. 
         for (var j = 0; j < fieldList.length; j++) {
             var fieldName = fieldList[j];
-            var fieldRecordValueRef = component.getReference('v.sobjectRecord.' + fieldName);
             var fieldNameToDescribe = this.proxyToObj(fieldNameToFieldLabel);
+            var fieldRecordValueRef = component.getReference('v.sobjectRecord.' + fieldName);
             var fieldType = this.getFieldType(fieldNameToDescribe, fieldName);
             var fieldLabel = fieldNameToDescribe[fieldName]['Label'];
-            
-            var layoutItem = ["lightning:layoutItem", {
-                            "padding" : "horizontal-small",
-                            "class": "slds-p-bottom_small",
-                            "size": "6",
-                            "mediumDeviceSize": "3"
-            }];
 
-            var componentType = "lightning:inputField";
             var inputJSON = {
                 "disabled" : rowDisabled
             };
 
-            // For some reason, Checkbox inputFields don't get their values set correctly...
-            if(fieldType == 'BOOLEAN'){
+            var componentType = "lightning:inputField";
+            if(fieldType == 'BOOLEAN') {
+                // For some reason, Checkbox inputFields don't get their values set correctly
                 componentType = "lightning:input";
                 inputJSON["checked"] = fieldRecordValueRef;
                 inputJSON["label"] = fieldLabel;
                 inputJSON["type"] = "checkbox";
+            } else if(fieldType == 'TIME') {
+                // Time fields are not supported by lightning:inputField as of Summer '19
+                componentType = "lightning:input";
+                inputJSON["label"] = fieldLabel;
+                inputJSON["type"] = "time";
+                inputJSON["value"] = fieldRecordValueRef;
             } else {
-                inputJSON["fieldName"] = fieldList[j];
+                inputJSON["fieldName"] = fieldName;
                 inputJSON["value"] = fieldRecordValueRef;
             }
+
+            var medDeviceSize = "3";
+            var wideFields = ['TEXTAREA', 'MULTIPICKLIST', 'DATETIME'];
+            if(wideFields.indexOf(fieldType) > -1) {
+                // Some field types look better with some more space
+                medDeviceSize = "6";
+            }
+
+            var layoutItem = ["lightning:layoutItem", {
+                "padding" : "horizontal-small",
+                "class": "slds-p-bottom_small",
+                "size": "6",
+                "mediumDeviceSize": medDeviceSize
+            }];
 
             var inputField = [componentType, inputJSON];
 

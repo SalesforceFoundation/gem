@@ -7,7 +7,7 @@
         var recordName = component.get('v.metadataRecordName');
 
         action.setParams({
-            recordName : component.get('v.metadataRecordName')
+            recordName : recordName
         });
 
         action.setCallback(this, function(response) {
@@ -31,7 +31,7 @@
     },
     createDynamicDisplaySections: function (component, metadataRecordWrapper) {
         var dependentFieldList = metadataRecordWrapper.dependentFieldList;
-        var objectToFieldNameToFieldLabel = metadataRecordWrapper.objectToFieldNameToLabel;
+        var objectToFieldNameToFieldDescribe = metadataRecordWrapper.objectToFieldNameToLabel;
         var controllingObject = metadataRecordWrapper.controllingObject;
         var controllingField = metadataRecordWrapper.controllingField;
         var existingItem = component.getReference("v.existingRecord");
@@ -49,21 +49,23 @@
             for (var objectName in objectToFieldList) {
                 var fieldList = objectToFieldList[objectName];
                 var fieldListNoDefaults = [];
+                var fieldNameToDescribe = objectToFieldNameToFieldDescribe[objectName];
 
                 // Remove fields that are part of the default, non-dynamic list
+                // Also remove fields that have no describe mapping, they were not found
                 for(var i in fieldList){
                     var field = fieldList[i];
-                    if(permanentFieldList.indexOf(field) < 0){
+                    var fieldNotFound = typeof(fieldNameToDescribe[field]) === "undefined";
+                    if(permanentFieldList.indexOf(field) < 0 && !fieldNotFound){
                         fieldListNoDefaults.push(field);
                     }
                 }
-                var fieldNameToFieldLabel = objectToFieldNameToFieldLabel[objectName];
 
                // Build dynamic field section
                var dynamicSection = ["c:dynamicFieldDisplaySection", {
                                     "objectName" : objectName,
                                     "fieldList" : fieldListNoDefaults,
-                                    "fieldNameToFieldLabel" : fieldNameToFieldLabel,
+                                    "fieldNameToFieldLabel" : fieldNameToDescribe,
                                     "pickListValue" : pickListValue,
                                     "objectNameToSobject" : objectNameToSobject,
                                     "controllingField" : controllingField,

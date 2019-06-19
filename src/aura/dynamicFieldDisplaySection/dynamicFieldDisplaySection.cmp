@@ -15,7 +15,7 @@
     <aura:handler name="change" value="{!v.sobjectRecord}" action="{!c.handleSobjectChange}"/>
 
     <lightning:recordEditForm objectApiName="{!v.objectName}">
-        <lightning:layout>
+        <lightning:layout multipleRows="true">
             <aura:if isTrue="{!v.displaySection}">
                 {!v.body}
             </aura:if>

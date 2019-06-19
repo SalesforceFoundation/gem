@@ -29,6 +29,13 @@
         <value>Duplicate values are not allowed:</value>
     </labels>
     <labels>
+        <fullName>Error_Gift_Field_Mapping</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Field Mapping Error</shortDescription>
+        <value>There was a JSON parsing error in the Dependent Field List of a Gift Entry Field Mapping record</value>
+    </labels>
+    <labels>
         <fullName>Error_Offline</fullName>
         <language>en_US</language>
         <protected>true</protected>

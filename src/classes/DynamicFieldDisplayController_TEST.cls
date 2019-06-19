@@ -38,6 +38,9 @@
 */
 @isTest
 public with sharing class DynamicFieldDisplayController_TEST {
+
+    private final static String paymentLabel = 'Payment';
+
     @isTest
     public static void testDynamicFieldDisplayController() {
 
@@ -67,10 +70,25 @@ public with sharing class DynamicFieldDisplayController_TEST {
         controlValueToObjectList.put('Check', checkObjectToFieldList);
         controlValueToObjectList.put('Cash', cashObjectToFieldList);
         controlValueToObjectList.put('Credit Card', creditObjectToFieldList);
+        controlValueToObjectList.put('Test Bad Map', null);
 
         Gift_Entry_Field_Mapping__mdt fieldMappingRecord = getTestFieldMapRecordInstance(controlValueToObjectList);
+        GiftEntryFieldMappingWrapper fieldMapWrapper;
 
-        GiftEntryFieldMappingWrapper fieldMapWrapper = new GiftEntryFieldMappingWrapper(fieldMappingRecord);
+        try {
+            fieldMapWrapper = new GiftEntryFieldMappingWrapper(fieldMappingRecord);
+            System.assert(false, 'Because of the Bad Map, the JSON parsing should fail');
+        } catch(Exception e) {
+            System.assert(true);
+            System.assert(e.getMessage().contains(Label.Error_Gift_Field_Mapping), 
+                'The exception did not match what was expected: ' + Label.Error_Gift_Field_Mapping);
+            System.assert(e.getMessage().contains(paymentLabel), 'The exception did not include the record name: ' + paymentLabel);
+        }
+
+        controlValueToObjectList.remove('Test Bad Map');
+        fieldMappingRecord = getTestFieldMapRecordInstance(controlValueToObjectList);
+        
+        fieldMapWrapper = new GiftEntryFieldMappingWrapper(fieldMappingRecord);
         
         Test.startTest();
         
@@ -102,7 +120,7 @@ public with sharing class DynamicFieldDisplayController_TEST {
 
         Gift_Entry_Field_Mapping__mdt fieldMappingRecord = new Gift_Entry_Field_Mapping__mdt();
         
-        fieldMappingRecord.DeveloperName = 'Payment';
+        fieldMappingRecord.DeveloperName = paymentLabel;
         fieldMappingRecord.Controlling_Object__c = 'npe01__OppPayment__c';
         fieldMappingRecord.Controlling_Field__c = 'npe01__Payment_Method__c';
         fieldMappingRecord.Dependent_Field_List__c = JSON.serialize(controlValueToObjectList);

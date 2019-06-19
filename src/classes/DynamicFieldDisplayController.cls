@@ -44,7 +44,7 @@ public with sharing class DynamicFieldDisplayController {
         GiftEntryFieldMappingWrapper mappingRecordWrapper; 
 
         // Query for the custom metadata type record via the record's API Name. 
-        List<Gift_Entry_Field_Mapping__mdt> fieldMappingRecordList = [SELECT Id, 
+        List<Gift_Entry_Field_Mapping__mdt> fieldMappingRecordList = [SELECT Id, DeveloperName, 
                 Controlling_Field__r.QualifiedAPIName, Controlling_Object__r.QualifiedAPIName, 
                 Dependent_Field_List__c 
             FROM Gift_Entry_Field_Mapping__mdt 
@@ -57,5 +57,5 @@ public with sharing class DynamicFieldDisplayController {
 
         return mappingRecordWrapper;
     }
-    
+
 }

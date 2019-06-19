@@ -52,17 +52,22 @@ public class GiftEntryFieldMappingWrapper {
 
         controllingObject = originalMetadataRecord.Controlling_Object__r.QualifiedAPIName;
         controllingField = originalMetadataRecord.Controlling_Field__r.QualifiedAPIName;
-        
+
         // This isn't ideal, but it allows us to setup Test mappings much easier
         if(controllingObject == null){controllingObject = originalMetadataRecord.Controlling_Object__c;}
         if(controllingField == null){controllingField = originalMetadataRecord.Controlling_Field__c;}
 
-        dependentFieldList = (Map<String, Map<String, List<String>>>)JSON.deserialize(
-            originalMetadataRecord.Dependent_Field_List__c, 
-            Map<String, Map<String, List<String>>>.class);
-        
+        try {
+            dependentFieldList = (Map<String, Map<String, List<String>>>)JSON.deserialize(
+                originalMetadataRecord.Dependent_Field_List__c, 
+                Map<String, Map<String, List<String>>>.class);
+        } catch(Exception e){
+            throw new GiftEntryFieldMappingException(Label.Error_Gift_Field_Mapping + ': ' 
+                + originalMetadataRecord.DeveloperName);
+        }
+
         objectToFieldNameToLabel = buildObjectToFieldNameToDescribeMap(dependentFieldList);
-        
+
     }
     
     // This builds a mapping of 
@@ -128,4 +133,10 @@ public class GiftEntryFieldMappingWrapper {
         
         return objectToFieldNameToLabel;
     }
+
+    /*******************************************************************************************************
+    * @description This is the expection class for GiftEntryFieldMappingWrapper class
+    ********************************************************************************************************/
+    private class GiftEntryFieldMappingException extends Exception{}
+
 }

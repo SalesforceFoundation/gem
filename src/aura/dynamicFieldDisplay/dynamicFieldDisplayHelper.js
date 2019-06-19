@@ -90,14 +90,24 @@
         });
 
     },
+    showErrorToast: function(msgText, title){
+        var toastEvent = $A.get('e.force:showToast');
+        toastEvent.setParams({
+            title : title ? title : $A.get('$Label.c.Error'),
+            message: msgText,
+            type: 'error',
+            mode: 'sticky'
+        });
+        toastEvent.fire();
+    },
     handleError: function(component, response) {
         var errors = response.getError();
         if (errors) {
             if (errors[0] && errors[0].message) {
-                console.log(errorMsg); 
+                this.showErrorToast(errors[0].message);
             }
         } else {
-            console.log($A.get('$Label.c.Error_Unknown'));
+            this.showErrorToast($A.get('$Label.c.Error_Unknown'));
         }
     }
 })

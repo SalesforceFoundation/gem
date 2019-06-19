@@ -70,6 +70,7 @@
         <members>Date_of_First_Payment</members>
         <members>Error</members>
         <members>Error_Duplicate_Value</members>
+        <members>Error_Gift_Field_Mapping</members>
         <members>Error_Offline</members>
         <members>Error_Unknown</members>
         <members>Frequency</members>

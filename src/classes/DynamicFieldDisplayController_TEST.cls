@@ -1,49 +1,113 @@
+/*
+    © 2019, Salesforce.org.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    * Neither the name of Salesforce.org nor the names of
+      its contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
+*/
+/**
+* @author Salesforce.org
+* @date 2019
+* @group Gift Entry
+* @group-content ../../ApexDocContent/GiftEntry.htm
+* @description Tests specific to Dynamic Field Display and Gift Entry Field Mapping. 
+*/
 @isTest
 public with sharing class DynamicFieldDisplayController_TEST {
     @isTest
     public static void testDynamicFieldDisplayController() {
 
-        Test.startTest();
-        DynamicFieldDisplayController.GiftEntryFieldMappingWrapper wrapper = DynamicFieldDisplayController.getCustomMetadataRecord('Payment');
+        List<String> checkFieldList = new List<String>{'npe01__Check_Reference_Number__c'};
+        List<String> cashFieldList = new List<String>{'npe01__Payment_Amount__c', 
+            'npe01__Paid__c',
+            'bad_field',
+            ''};
+        List<String> creditFieldList = new List<String>{'npe01__Payment_Amount__c', 
+            'npe01__Payment_Method__c',
+            'npe01__Payment_Method__c',
+            '',
+            'npe01__Paid__c'};
 
-        System.assert(wrapper.controllingObject == 'npe01__OppPayment__c', 'The actual controlling object is: ' + wrapper.controllingObject);
-        System.assert(wrapper.controllingField == 'npe01__Payment_Method__c', 'The actual controlling field is: ' + wrapper.controllingField);
-        System.assert(wrapper.dependentFieldList.size() == 3, 'The actual dependent field list size is: ' + wrapper.dependentFieldList.size());
-        System.assert(wrapper.dependentFieldList.containsKey('Check'), 'The default does not contain Check');
-        System.assert(wrapper.dependentFieldList.containsKey('Cash'), 'The default does not contain Cash');
-        System.assert(wrapper.dependentFieldList.containsKey('Credit Card'), 'The default does not contain Credit Card');
+        Map<String, List<String>> checkObjectToFieldList = new Map<String, List<String>>{
+            'npe01__OppPayment__c' => checkFieldList
+        };
+        Map<String, List<String>> cashObjectToFieldList = new Map<String, List<String>>{
+            'npe01__OppPayment__c' => cashFieldList
+        };
+        Map<String, List<String>> creditObjectToFieldList = new Map<String, List<String>>{
+            'npe01__OppPayment__c' => creditFieldList
+        };
+
+        Map<String, Map<String, List<String>>> controlValueToObjectList = new Map<String, Map<String, List<String>>>();
+
+        controlValueToObjectList.put('Check', checkObjectToFieldList);
+        controlValueToObjectList.put('Cash', cashObjectToFieldList);
+        controlValueToObjectList.put('Credit Card', creditObjectToFieldList);
+
+        Gift_Entry_Field_Mapping__mdt fieldMappingRecord = getTestFieldMapRecordInstance(controlValueToObjectList);
+
+        GiftEntryFieldMappingWrapper fieldMapWrapper = new GiftEntryFieldMappingWrapper(fieldMappingRecord);
+        
+        Test.startTest();
+        
+        System.assert(fieldMapWrapper.controllingObject == 'npe01__OppPayment__c', 'The actual controlling object is: ' + fieldMapWrapper.controllingObject);
+        System.assert(fieldMapWrapper.controllingField == 'npe01__Payment_Method__c', 'The actual controlling field is: ' + fieldMapWrapper.controllingField);
+        System.assert(fieldMapWrapper.dependentFieldList.size() == 3, 'The actual dependent field list size is: ' + fieldMapWrapper.dependentFieldList.size());
+        System.assert(fieldMapWrapper.dependentFieldList.containsKey('Check'), 'The default does not contain Check');
+        System.assert(fieldMapWrapper.dependentFieldList.containsKey('Cash'), 'The default does not contain Cash');
+        System.assert(fieldMapWrapper.dependentFieldList.containsKey('Credit Card'), 'The default does not contain Credit Card');
+        
+        // This should test that a properly setup JSON section is parsed correctly 
+        Integer checkFieldSize = fieldMapWrapper.dependentFieldList.get('Check').get('npe01__OppPayment__c').size();
+        System.assert(checkFieldSize == 1, 'The actual Check field size is: ' + checkFieldSize);    
+
+        // This should test that a blank field and duplicate field get ignored
+        Integer creditCardFieldSize = fieldMapWrapper.dependentFieldList.get('Credit Card').get('npe01__OppPayment__c').size();
+        System.assert(creditCardFieldSize == 3, 'The actual Credit Card field size is: ' + creditCardFieldSize);
+        
+        // This should test that a blank field and a bad field both get ignored
+        Integer cashFieldSize = fieldMapWrapper.dependentFieldList.get('Cash').get('npe01__OppPayment__c').size();
+        System.assert(cashFieldSize == 2, 'The actual Cash field size is: ' + cashFieldSize);
+        
         Test.stopTest();
 
     }
 
-    public Gift_Entry_Field_Mapping__mdt getCustomMetadataRecordInstance() {
-        Gift_Entry_Field_Mapping__mdt paymentRecord = new Gift_Entry_Field_Mapping__mdt();
-        paymentRecord.DeveloperName = 'Payment';
-        paymentRecord.Dependent_Field_List__c = getTestDependentFieldListString();
-        paymentRecord.Controlling_Object__c = 'Payment';
-        paymentRecord.Controlling_Field__c = 'Payment Method';
+    public static Gift_Entry_Field_Mapping__mdt getTestFieldMapRecordInstance(
+        Map<String, Map<String, List<String>>> controlValueToObjectList) {
 
-        return paymentRecord;
+        Gift_Entry_Field_Mapping__mdt fieldMappingRecord = new Gift_Entry_Field_Mapping__mdt();
+        
+        fieldMappingRecord.DeveloperName = 'Payment';
+        fieldMappingRecord.Controlling_Object__c = 'npe01__OppPayment__c';
+        fieldMappingRecord.Controlling_Field__c = 'npe01__Payment_Method__c';
+        fieldMappingRecord.Dependent_Field_List__c = JSON.serialize(controlValueToObjectList);
 
-
+        return fieldMappingRecord;
     }
 
-    public String getTestDependentFieldListString() {
-        Map<String, Map<String, List<String>>> dependentFieldListStructure = new Map<String, Map<String, List<String>>>();
-
-        List<String> fieldList = new List<String>();
-        fieldList.add('npe01__Payment_Amount__c');
-        fieldList.add('npe01__Payment_Method__c');
-        fieldList.add('npe01__Check_Reference_Number__c');
-        fieldList.add('npe01__Paid__c');
-
-        Map<String, List<String>> objectToFieldList = new Map<String, List<String>>();
-        objectToFieldList.put('npe01__OppPayment__c', fieldList);
-
-        dependentFieldListStructure.put('Check', objectToFieldList);
-
-        String JSONDepedentFieldList = JSON.serialize(dependentFieldListStructure);
-
-        return JSONDepedentFieldList;
-    }
 }

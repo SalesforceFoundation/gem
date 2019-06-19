@@ -8,6 +8,7 @@
         <members>API_NPSP_TEST</members>
         <members>DynamicFieldDisplayController</members>
         <members>DynamicFieldDisplayController_TEST</members>
+        <members>GiftEntryFieldMappingWrapper</members>
         <members>GiftEntryFormController</members>
         <members>GiftEntryFormController_TEST</members>
         <members>NPSP_Account_TDTM</members>

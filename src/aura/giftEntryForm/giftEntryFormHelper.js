@@ -243,12 +243,12 @@
     validateForm: function(component, showErrors) {
         component.set('v.error', null);
         // Show error messages if required fields are blank
-        var validForm = this.checkFields(component, 'requiredField', true, showErrors);
+        const validForm = this.checkFields(component, 'requiredField', true, showErrors);
         const validDynamicForm = this.getInvalidDynamicFields(component).length <= 0;
         // Check that at least one combination of donor fields is valid, otherwise show error
         // First check if an Account field is filled in
-        var donorType = component.get('v.di.npsp__Donation_Donor__c');
-        var donorExists = false;
+        const donorType = component.get('v.di.npsp__Donation_Donor__c');
+        let donorExists = false;
 
         // Make sure a donor has been provided
         if(donorType === 'Account1' || !donorType) {
@@ -275,7 +275,7 @@
             this.showErrorMessage(component, '', false);            
         }
 
-        return validForm;
+        return validForm && validDynamicForm;
     },
     showErrorMessage: function(component, errorMsg, msgIsError) {
         component.set('v.messageIsError', msgIsError);
@@ -393,7 +393,7 @@
             }
             return validSoFar && isValid;
         }, allMustBeValid);
-        
+
         return validationResult;
     },
     singleInputToArray: function(findResult) {

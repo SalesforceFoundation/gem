@@ -13,7 +13,7 @@ export default class SGE_FormField extends LightningElement {
 
 
     @api
-    get isValid() {
+    isValid() {
         if(this.field.required) {
             return this.value !== null && typeof this.value !== 'undefined' && this.value !== '';
         }
@@ -22,11 +22,16 @@ export default class SGE_FormField extends LightningElement {
     }
 
     @api
-    get value() {
+    get fieldObject() {
         const field = this.getRawField();
         let data = {};
         data[field.fieldName] = field.value;
         return data;
+    }
+
+    get value() {
+        const field = this.getRawField();
+        return field.value;
     }
 
     getRawField() {

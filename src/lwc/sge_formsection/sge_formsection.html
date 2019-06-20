@@ -11,11 +11,15 @@
             </button>
         </lightning-layout-item>
         <template for:each={section.columns} for:item='column'>
-            <template for:each={column.fields} for:item='field' key={column.key}>
-                <lightning-layout-item size='6' padding='around-small' key={field.name}>
-                    <c-sge_form-field field={field}></c-sge_form-field>
-                </lightning-layout-item>
-            </template>
+            <lightning-layout-item size='6' key={column.key}>
+                <lightning-layout multiple-rows='true'>
+                    <template for:each={column.fields} for:item='field'>
+                        <lightning-layout-item size='12' padding='around-small' key={field.name}>
+                            <c-sge_form-field field={field}></c-sge_form-field>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </lightning-layout-item>
         </template>
     </lightning-layout>
 </template>

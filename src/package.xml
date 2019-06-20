@@ -100,6 +100,7 @@
         <members>Number_of_Payments</members>
         <members>Partial</members>
         <members>Remove</members>
+        <members>Required_Fields_Missing</members>
         <name>CustomLabel</name>
     </types>
     <types>
@@ -138,9 +139,9 @@
     </types>
     <types>
         <members>sge_dynamicform</members>
-        <members>sge_service</members>
         <members>sge_formField</members>
         <members>sge_formsection</members>
+        <members>sge_service</members>
         <name>LightningComponentBundle</name>
     </types>
     <version>45.0</version>

@@ -52,15 +52,13 @@ export default class SGE_DynamicForm extends LightningElement {
     }
 
     @api
-    get isValid() {
+    get invalidFields() {
         const sections = this.template.querySelectorAll("c-sge_formsection");
-        if(Array.isArray(sections)) {
-            const isValid = sections.reduce((field, acc) => {
-                return acc && field.isValid();
-            }, true);
-
-            return !this.hasCustomFields() || isValid;
-        }
+        let invalidFields = [];
+        sections.forEach(section => {
+            const fields = section.getInvalidFields();
+            invalidFields.push(...fields);
+        });
 
         return true;
     }

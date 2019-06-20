@@ -13,20 +13,24 @@ export default class SGE_Formsection extends LightningElement {
         let oppData = {};
         if(fields !== null && typeof fields !== 'undefined') {
             fields.forEach(field => {
-                oppData = { ...oppData, ...(field.value) };
+                oppData = { ...oppData, ...(field.fieldObject) };
             });
         }
         return oppData;
     }
 
     @api
-    get isValid() {
+    getInvalidFields() {
         const fields = this.template.querySelectorAll("c-sge_form-field");
-        const isValid = fields.reduce((field, acc) => {
-            return acc && field.isValid();
-        }, true);
+        let invalidFields = [];
 
-        return isValid;
+        fields.forEach(f => {
+            if(!f.isValid()) {
+                invalidFields.push(f);
+            }
+        });
+
+        return invalidFields;
     }
 
     get iconName() {

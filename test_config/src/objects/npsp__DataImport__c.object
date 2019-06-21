@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Test_Text_Field__c</fullName>
+        <inlineHelpText>Opportunity.Test_Text_Field__c</inlineHelpText>
+        <externalId>false</externalId>
+        <label>Test Text Field</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Test_Checkbox_Field__c</fullName>
+        <inlineHelpText>Opportunity.Test_Checkbox_Field__c</inlineHelpText>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Do Not Automatically Create Payment</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Test_Lookup_Field__c</fullName>
+        <inlineHelpText>Opportunity.Test_Lookup_Field__c</inlineHelpText>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Test Lookup Field</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Test Contact Lookups</relationshipLabel>
+        <relationshipName>Test_Contact_Lookup</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Test_Long_Text_Area__c</fullName>
+        <inlineHelpText>Opportunity.Test_Long_Text_Area__c</inlineHelpText>
+        <externalId>false</externalId>
+        <label>Test Long Text Area</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Test_Picklist__c</fullName>
+        <inlineHelpText>Opportunity.Test_Picklist__c</inlineHelpText>
+        <externalId>false</externalId>
+        <label>Test Picklist</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Test Value 1</fullName>
+                    <default>false</default>
+                    <label>Test Value 1</label>
+                </value>
+                <value>
+                    <fullName>Test Value 2</fullName>
+                    <default>false</default>
+                    <label>Test Value 2</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Test_Date_Field__c</fullName>
+        <inlineHelpText>Opportunity.Test_Date_Field__c</inlineHelpText>
+        <externalId>false</externalId>
+        <label>Test Date Field</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Test_Number_Field__c</fullName>
+        <inlineHelpText>Opportunity.Test_Number_Field__c</inlineHelpText>
+        <externalId>false</externalId>
+        <label>Test Number Field</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Test_Rich_Text__c</fullName>
+        <inlineHelpText>Opportunity.Test_Rich_Text__c</inlineHelpText>
+        <externalId>false</externalId>
+        <label>Test Rich Text</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Test_Phone_Field__c</fullName>
+        <inlineHelpText>Opportunity.Test_Phone_Field__c</inlineHelpText>
+        <externalId>false</externalId>
+        <required>false</required>
+        <label>Test Phone Field</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Test_Percent_Field__c</fullName>
+        <inlineHelpText>Opportunity.Test_Percent_Field__c</inlineHelpText>
+        <externalId>false</externalId>
+        <required>false</required>
+        <precision>18</precision>
+        <scale>0</scale>
+        <label>Test Percent Field</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Percent</type>
+    </fields>
+</CustomObject>

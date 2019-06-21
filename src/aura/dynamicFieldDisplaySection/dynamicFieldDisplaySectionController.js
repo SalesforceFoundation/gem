@@ -1,6 +1,7 @@
 ({
     doInit : function(component, event, helper) {
         helper.processSobjectRecord(component);
+        component.set('v.loadingData', false);
     },
     handleSobjectChange : function(component, event, helper) {
         var sobjectRecord = component.get('v.sobjectRecord');

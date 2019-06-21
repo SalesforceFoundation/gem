@@ -311,7 +311,7 @@
             for(var i=0; i < relatedCmp.length; i++){
                 var objectName = relatedCmp[i].getRelatedObject();
                 if(objectName == 'npe01__OppPayment__c'){
-                    relatedCmp[i].focusOnAddButton();
+                    relatedCmp[i].addNewRowAndFocus();
                 }
             }
         }

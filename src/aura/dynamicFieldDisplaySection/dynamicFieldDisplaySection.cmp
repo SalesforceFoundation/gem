@@ -9,6 +9,7 @@
     <aura:attribute type="String" name="controllingObject" />
     <aura:attribute type="Boolean" name="displaySection" />
     <aura:attribute type="Boolean" name="rowDisabled" />
+    <aura:attribute type="Boolean" name="loadingData" default="true" />
     <aura:attribute type="SObject" name="sobjectRecord" default="{}" />
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>

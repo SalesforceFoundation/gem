@@ -161,8 +161,13 @@
     },
     clearFieldsAndHideSection: function(component, sobjectRecord, fieldNameToDescribe){
         component.set('v.displaySection', false);
+        
+        // If loading sections for the first time, don't clear fields, since there could be existing data
+        if(component.get('v.loadingData')){
+            return;
+        }
 
-        var fieldList = component.get('v.fieldList');
+        var fieldList = component.get('v.fieldList');        
         for(var i in fieldList){
             var fieldName = fieldList[i];
             var fieldType = this.getFieldType(fieldNameToDescribe, fieldName);

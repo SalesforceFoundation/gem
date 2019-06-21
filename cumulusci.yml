@@ -48,7 +48,6 @@ tasks:
         options:
             namespace_inject: $project_config.project__package__namespace
             path: test_config
-            unmanaged: False
 
     execute_install_apex:
         description: Runs most of the install script methods from Post_Install_Script class

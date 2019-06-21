@@ -5,10 +5,6 @@
         <name>CustomObject</name>
     </types>
     <types>
-        <members>*</members>
-        <name>Profile</name>
-    </types>
-    <types>
         <members>New_Household_Account</members>
         <name>QuickAction</name>
     </types>

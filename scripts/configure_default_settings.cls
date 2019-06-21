@@ -12,9 +12,9 @@ String giftProfileName2 = 'Development Officer';
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 
 public static void setupGEMDefaultsForDev(){
+    initializeHEDASettingsForGEM();
     initializeNPSPSettingsForGEM();
     enablePaymentAllocationsDefaultGAU();
-    initializeHEDASettingsForGEM();
     initializeGEMSettings();
 }
 

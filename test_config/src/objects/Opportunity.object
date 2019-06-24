@@ -14,7 +14,7 @@
         <fullName>Test_Checkbox_Field__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
-        <label>Do Not Automatically Create Payment</label>
+        <label>Test Checkbox Field</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>

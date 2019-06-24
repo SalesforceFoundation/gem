@@ -60,7 +60,7 @@ export default class SGE_DynamicForm extends LightningElement {
             invalidFields.push(...fields);
         });
 
-        return true;
+        return invalidFields;
     }
 
     getFlippedMappings() {

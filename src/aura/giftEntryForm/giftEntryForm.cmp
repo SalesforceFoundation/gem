@@ -304,7 +304,12 @@
                 </lightning:layoutItem>
 
                 <lightning:layoutItem size="12" aura:id="dynamicFormContainer" class="slds-hidden">
-                    <c:sge_dynamicform aura:id="sge_dynamicform" onload="{!c.handleDynamicFormLoaded}"></c:sge_dynamicform>
+                    <c:sge_dynamicform 
+                        sobject="{!v.opp}" 
+                        disableinputs="{!v.oppClosed}"
+                        aura:id="sge_dynamicform" 
+                        onload="{!c.handleDynamicFormLoaded}">
+                    </c:sge_dynamicform>
                 </lightning:layoutItem>
 
                 <lightning:layoutItem size="12">

@@ -5,12 +5,25 @@
 import {LightningElement, api} from 'lwc';
 
 export default class SGE_FormField extends LightningElement {
+    @api sobject;
+    @api disableinputs;
     @api field = {};
 
     get labelClassName() {
         return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';
     }
 
+    @api
+    get fieldValue() {
+        return this.sobject[this.field.name];
+    }
+
+    handleValueChange(event){
+        let inputValue = event.target.value;
+        let sobjectClone = JSON.parse(JSON.stringify(this.sobject));
+        sobjectClone[this.field.name] = inputValue;
+        this.sobject = {...sobjectClone};
+    }
 
     @api
     isValid() {
@@ -25,7 +38,7 @@ export default class SGE_FormField extends LightningElement {
     get fieldObject() {
         const field = this.getRawField();
         let data = {};
-        data[field.fieldName] = field.value;
+        data[this.field.name] = field.value;
         return data;
     }
 

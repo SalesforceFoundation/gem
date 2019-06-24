@@ -101,39 +101,10 @@ public with sharing class GiftEntryFormController {
      * @return Map<String, String> A map of Opp field name to corresponding Data Import field name
      */
     public static Map<String, String> getDataImportToOpportunityFieldMap() {
-        String sObjectName = 'npsp__DataImport__c';
-        DescribeSObjectResult objectDescribe = UTIL_Describe.getObjectDescribe(sObjectName);
-        if(!objectDescribe.isAccessible()) {
-            throw new UTIL_CrudFLS.AccessException(objectDescribe, 'read');
-        }
-
-    	Map<String, Schema.DescribeFieldResult> fields = UTIL_Describe.getAllFieldsDescribe(sObjectName);
-          
-        Map<String, String> oppToDiFields = new Map<String, String>();
-
-    	for(Schema.DescribeFieldResult field : fields.values()){
-      		if(field.isAccessible()) {
-                String helpText = field.getInlineHelpText();
-                String fieldName = field.getName();
-                if(fieldName == 
-                    Schema.SObjectType.npsp__DataImport__c.fields.npsp__Account1Imported__c.getName()){
-                        helpText = 'Opportunity.AccountId';
-                } else if(fieldName ==
-                    Schema.SObjectType.npsp__DataImport__c.fields.npsp__Contact1Imported__c.getName()){
-                        helpText = 'Opportunity.npsp__Primary_Contact__c';
-                }
-
-                if(helpText == null){
-                    continue;
-                }
-                String[] fieldSplit = helpText.split('Opportunity.');
-                if(fieldSplit.size() > 1){
-                    oppToDiFields.put(field.getName(), fieldSplit[1]);
-                }
-            }
-    	}
-
-    	return oppToDiFields;
+        Map<String, String> diMappings = SGE_GiftEntryService.getDataImportFieldMappings();
+        diMappings.put('npsp__Account1Imported__c'.toLowerCase(), 'AccountId');
+        diMappings.put('npsp__Contact1Imported__c'.toLowerCase(), 'npsp__Primary_Contact__c');
+        return diMappings;
   	}
 
     @AuraEnabled

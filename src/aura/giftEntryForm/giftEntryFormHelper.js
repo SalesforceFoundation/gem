@@ -572,6 +572,7 @@
         var boolString = 'v.'+booleanAttr;
         component.set(boolString, false);
         setTimeout($A.getCallback(() => component.set(boolString, true)));
+        this.rerenderCustomFields(component);
     },
     getIdFromLookupValue: function(lookupValue) {
         var idArray = this.proxyToObj(lookupValue);
@@ -606,6 +607,10 @@
     },
     doToggleSection: function(component, sectionBool) {
         component.set('v.' + sectionBool, !component.get('v.' + sectionBool));
+    },
+    rerenderCustomFields: function(component) {
+        const dynamicForm = component.find('sge_dynamicform');
+        dynamicForm.rerenderInputs();
     },
     getCustomFieldValues: function(component) {
         const dynamicForm = component.find('sge_dynamicform');

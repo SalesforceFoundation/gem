@@ -18,13 +18,6 @@ export default class SGE_FormField extends LightningElement {
         return this.sobject[this.field.name];
     }
 
-    handleValueChange(event){
-        let inputValue = event.target.value;
-        let sobjectClone = JSON.parse(JSON.stringify(this.sobject));
-        sobjectClone[this.field.name] = inputValue;
-        this.sobject = {...sobjectClone};
-    }
-
     @api
     isValid() {
         if(this.field.required) {

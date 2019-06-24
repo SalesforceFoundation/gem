@@ -5,7 +5,6 @@ export default class SGE_Formsection extends LightningElement {
     @api sobject;
     @api disableinputs;
     @track expanded = true;
-    @track renderInputs = true;
 
     /**
      * @returns {*} Object where keys are field API names, and values are the value in the field.
@@ -43,12 +42,6 @@ export default class SGE_Formsection extends LightningElement {
     toggleExpand(event) {
         event.preventDefault();
         this.expanded = !this.expanded;
-    }
-
-    @api
-    rerenderSection() {
-        this.renderInputs = false;
-        setTimeout(() => {this.renderInputs = true}, 0);
     }
 
     /**

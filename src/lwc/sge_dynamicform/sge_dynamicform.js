@@ -16,7 +16,6 @@ export default class SGE_DynamicForm extends LightningElement {
         getOpportunityLayout().then(response => {
             if(response !== null && typeof response !== 'undefined' && Array.isArray(response.sections)) {
                 this.sections = response.sections;
-                this.setObjectFields();
                 this.activeSections = this.sections.map(s => s.label);
                 this.ready = true;
                 if (this.hasCustomFields()) {
@@ -28,39 +27,6 @@ export default class SGE_DynamicForm extends LightningElement {
         getDataImportFields().then(response => {
            this.fieldMappings = response;
         });
-    }
-
-    setObjectFields() {
-        let sobjectClone = JSON.parse(JSON.stringify(this.sobject));
-
-        this.sections.forEach(section => {
-            const columns = section.columns;
-            if(Array.isArray(columns)) {
-                columns.forEach(column => {
-                    if(Array.isArray(column.fields) && column.fields.length > 0) {
-                        column.fields.forEach(field => {
-                            const fieldName = field.name;
-                            if(sobjectClone[fieldName] === undefined){
-                                sobjectClone[fieldName] = null;
-                            }
-                        });
-                    }
-                });
-            }
-        });
-        
-        this.sobject = {...sobjectClone};
-    }
-
-    @api
-    rerenderInputs() {
-        const sections = this.template.querySelectorAll("c-sge_formsection");
-        if(sections !== null && typeof sections !== 'undefined') {
-            sections.forEach(section => {
-                section.rerenderSection();
-            });
-        }
-        return true;
     }
 
     /**

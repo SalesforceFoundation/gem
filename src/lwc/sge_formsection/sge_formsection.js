@@ -2,6 +2,8 @@ import {LightningElement, api, track} from 'lwc';
 
 export default class SGE_Formsection extends LightningElement {
     @api section;
+    @api sobject;
+    @api disableinputs;
     @track expanded = true;
 
     /**

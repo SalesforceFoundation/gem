@@ -2,6 +2,8 @@ import { LightningElement, track, api } from 'lwc';
 import { getOpportunityLayout, getDataImportFields } from 'c/sge_service';
 
 export default class SGE_DynamicForm extends LightningElement {
+    @api sobject;
+    @api disableinputs;
     @track sections = [];
     @track activeSections;
     @track ready = false;

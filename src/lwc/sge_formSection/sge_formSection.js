@@ -77,6 +77,10 @@ export default class SGE_FormSection extends LightningElement {
         return this.expanded ? 'utility:chevrondown' : 'utility:chevronright';
     }
 
+    get sectionClassName() {
+        return this.expanded ? '' : 'slds-hidden';
+    }
+
     toggleExpand(event) {
         event.preventDefault();
         this.expanded = !this.expanded;

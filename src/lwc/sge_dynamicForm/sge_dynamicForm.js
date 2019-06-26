@@ -58,7 +58,6 @@ export default class SGE_DynamicForm extends LightningElement {
                 }
             }
         });
-
     }
 
     /**

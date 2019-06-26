@@ -11,8 +11,8 @@
                 </h2>
             </button>
         </lightning-layout-item>
-        <template for:each={section.columns} for:item='column' if:true={expanded}>
-            <lightning-layout-item size='6' key={column.key}>
+        <template for:each={section.columns} for:item='column'>
+            <lightning-layout-item size='6' key={column.key} class={sectionClassName}>
                 <lightning-layout multiple-rows='true'>
                     <template for:each={column.fields} for:item='field'>
                         <lightning-layout-item size='12' padding='around-small' key={field.name}>

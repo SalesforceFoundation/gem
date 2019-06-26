@@ -1,5 +1,4 @@
 import readOpportunityLayout from '@salesforce/apex/SGE_GiftEntryService.readOpportunityLayout';
-import getDataImportFieldMappings from '@salesforce/apex/SGE_GiftEntryService.getDataImportFieldMappings';
 
 const getOpportunityLayout = () => {
     return new Promise((resolve, reject) => {
@@ -11,14 +10,4 @@ const getOpportunityLayout = () => {
     });
 };
 
-const getDataImportFields = () => {
-    return new Promise((resolve, reject) => {
-        getDataImportFieldMappings()
-            .then(resolve)
-            .catch(error => {
-                console.error(JSON.stringify(error));
-            });
-    });
-};
-
-export { getOpportunityLayout, getDataImportFields }
+export { getOpportunityLayout }

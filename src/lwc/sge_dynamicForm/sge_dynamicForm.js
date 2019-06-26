@@ -37,14 +37,13 @@
  * @description This is the top-level component for the dynamic fields portion of the Single Gift Entry form
  **/
 import { LightningElement, track, api } from 'lwc';
-import { getOpportunityLayout, getDataImportFields } from 'c/sge_service';
+import { getOpportunityLayout } from 'c/sge_service';
 
 export default class SGE_DynamicForm extends LightningElement {
     @api sobject;
     @api disableinputs;
     @track sections = [];
     @track ready = false;
-    fieldMappings = {};
 
     /**
      * Mark sections as active, alert parent component when custom fields are present.
@@ -60,9 +59,6 @@ export default class SGE_DynamicForm extends LightningElement {
             }
         });
 
-        getDataImportFields().then(response => {
-           this.fieldMappings = response;
-        });
     }
 
     /**

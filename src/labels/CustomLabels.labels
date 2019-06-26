@@ -33,7 +33,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Gift Field Mapping Error</shortDescription>
-        <value>There was a JSON parsing error in the Dependent Field List of a Gift Entry Field Mapping record</value>
+        <value>The JSON used to define Gift Entry Field Mapping is malformed. Please review and correct the syntax in the Dependent Field List on this Mapping record</value>
     </labels>
     <labels>
         <fullName>Error_Offline</fullName>

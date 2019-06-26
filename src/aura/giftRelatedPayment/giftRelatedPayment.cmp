@@ -29,6 +29,7 @@
     <lightning:layout multipleRows="true">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <lightning:input aura:id="requiredField" 
+                required="true"
                 disabled="{!v.rowDisabled}"
                 onblur="{!c.handleAmountCheck}"
                 name="paymentAmt" 
@@ -40,6 +41,7 @@
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <lightning:input aura:id="requiredField" 
+                required="true"
                 disabled="{!v.rowDisabled}"
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}"
                 type="date"    

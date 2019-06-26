@@ -20,6 +20,7 @@
   },
   &quot;Credit Card&quot;: {
     &quot;npe01__OppPayment__c&quot;: [
+      &quot;npe01__Check_Reference_Number__c&quot;,
       &quot;npe01__Payment_Date__c&quot;
     ]
   },

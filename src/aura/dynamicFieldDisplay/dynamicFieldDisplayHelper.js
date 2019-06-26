@@ -95,7 +95,7 @@
         toastEvent.setParams({
             title : title ? title : $A.get('$Label.c.Error'),
             message: msgText,
-            type: 'error',
+            type: 'warning',
             mode: 'sticky'
         });
         toastEvent.fire();

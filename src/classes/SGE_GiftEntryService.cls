@@ -38,7 +38,7 @@
 **/
 public with sharing class SGE_GiftEntryService {
     private static final String LAYOUT_NAME = 'SGE Custom Fields';
-
+    private static final String HIDDEN_LAYOUT_SECTION_NAME = 'hidden - do not edit this section';
     /**
      * Read an opportunity layout for use in the SGE form
      *
@@ -76,8 +76,6 @@ public with sharing class SGE_GiftEntryService {
 
         SGE_GiftEntryService.Layout sgeLayout = new SGE_GiftEntryService.Layout(Schema.Opportunity.SObjectType, layout);
 
-        sgeLayout.validate();
-
         return sgeLayout;
     }
 
@@ -92,26 +90,10 @@ public with sharing class SGE_GiftEntryService {
             this.sObjectName = sObjectType.getDescribe().getName();
             this.sections = new List<Section>();
             for(Metadata.LayoutSection section : layout.layoutSections) {
-                if(section.editHeading && section.label.toLowerCase() != 'hidden - do not edit this section') {
+                if(section.editHeading && section.label.toLowerCase() != HIDDEN_LAYOUT_SECTION_NAME) {
                     this.sections.add(new Section(sObjectType, section));
                 }
             }
-        }
-
-        public void validate() {
-            List<Field> fieldsToValidate = new List<Field>();
-            for (Section s : sections) {
-                if (s.columns != null) {
-                    for (Column c : s.columns) {
-                        if (c.fields != null) {
-                            fieldsToValidate.addAll(c.fields);
-                        }
-                    }
-                }
-            }
-
-
-
         }
     }
 
@@ -133,7 +115,7 @@ public with sharing class SGE_GiftEntryService {
     }
 
     /**
-     * Class represeting a column within a page layout
+     * Class representing a column within a page layout
      */
     public class Column extends HashKey {
         @AuraEnabled public List<Field> fields;
@@ -141,7 +123,6 @@ public with sharing class SGE_GiftEntryService {
         public Column(Schema.SObjectType sObjectType, Metadata.LayoutColumn column) {
             super(column);
             this.fields = new List<Field>();
-            this.key = String.valueOf(System.hashCode(column));
             if(column.layoutItems != null) {
                 for (Metadata.LayoutItem item : column.layoutItems) {
                     if (isRenderable(item)) {
@@ -199,17 +180,5 @@ public with sharing class SGE_GiftEntryService {
         }
 
         public HashKey() {}
-    }
-
-
-    public static Boolean typesAreCompatible(Schema.DescribeFieldResult diField, Schema.DescribeFieldResult sourceField) {
-        DisplayType diType = diField.getType();
-        DisplayType sourceType = sourceField.getType();
-
-        if(diType == sourceType) {
-            return true;
-        }
-
-        return false;
     }
 }

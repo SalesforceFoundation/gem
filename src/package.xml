@@ -138,9 +138,9 @@
         <name>Layout</name>
     </types>
     <types>
-        <members>sge_dynamicform</members>
+        <members>sge_dynamicForm</members>
         <members>sge_formField</members>
-        <members>sge_formsection</members>
+        <members>sge_formSection</members>
         <members>sge_service</members>
         <name>LightningComponentBundle</name>
     </types>

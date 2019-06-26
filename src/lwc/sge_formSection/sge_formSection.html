@@ -2,15 +2,16 @@
     <lightning-layout multiple-rows='true'>
         <lightning-layout-item size='12'>
             <button class="slds-size_1-of-1 slds-text-align_left slds-page-header slds-page-header__title"
-                    aria-expanded="true">
+                    aria-expanded="true"
+                    onclick={toggleExpand}>
                 <h2>
-                    <lightning-icon icon-name='utility:chevrondown' size='x-small'
+                    <lightning-icon icon-name={iconName} size='x-small'
                                     alternative-text='Toggle Section'></lightning-icon>
                     {section.label}
                 </h2>
             </button>
         </lightning-layout-item>
-        <template for:each={section.columns} for:item='column'>
+        <template for:each={section.columns} for:item='column' if:true={expanded}>
             <lightning-layout-item size='6' key={column.key}>
                 <lightning-layout multiple-rows='true'>
                     <template for:each={column.fields} for:item='field'>

@@ -1,8 +1,8 @@
 import { createElement } from 'lwc';
-import DynamicForm from 'c/sge_dynamicform';
-import { getOpportunityLayout } from 'c/layoutService';
+import DynamicForm from 'c/sge_dynamicForm';
+import { getOpportunityLayout } from 'c/sge_service';
 
-jest.mock('c/layoutService');
+jest.mock('c/sge_service');
 
 
 describe('c-dynamicform', () => {

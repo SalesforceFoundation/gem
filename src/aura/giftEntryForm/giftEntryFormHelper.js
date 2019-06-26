@@ -491,26 +491,28 @@
         $A.enqueueAction(action);
     },
     fillJsonField: function(component) {
-        var relatedCmp = this.getChildComponents(component, 'giftFormRelated');
-        var allRowsValid = true;
+        const relatedCmp = this.getChildComponents(component, 'giftFormRelated');
+        let allRowsValid = true;
 
         // First process the related objects
-        for(var i=0; i < relatedCmp.length; i++) {
+        for(let i=0; i < relatedCmp.length; i++) {
             // Need to get variable name for each of these to know where to map the return
-            var jsonResp = relatedCmp[i].handleJsonUpdate();
+            const jsonResp = relatedCmp[i].handleJsonUpdate();
             allRowsValid = allRowsValid && jsonResp;
         }
 
-        var giftModel = component.get('v.giftModel');
-        var opp = this.proxyToObj(component.get('v.opp'));
-        var di = this.proxyToObj(component.get('v.di'));
+        let giftModel = component.get('v.giftModel');
+        let opp = this.proxyToObj(component.get('v.opp'));
+        let di = this.proxyToObj(component.get('v.di'));
 
         const customFieldValues = this.getCustomFieldValues(component);
 
+        let mergedDi = Object.assign({}, di, customFieldValues);
+
         // Map fields from Opportunity to DataImport
         // This is done to avoid referencing GEM namespace fields in markup
-        this.mapOppToDi(component, di, opp);
-        giftModel['di'] = Object.assign({}, di, customFieldValues);
+        this.mapOppToDi(component, mergedDi, opp);
+        giftModel['di'] = mergedDi;
         // Lookup values are converted from array to ID during mapOppToDi, so we need to update
         giftModel['opp'] = opp;
 
@@ -608,12 +610,12 @@
         component.set('v.' + sectionBool, !component.get('v.' + sectionBool));
     },
     getCustomFieldValues: function(component) {
-        const dynamicForm = component.find('sge_dynamicform');
+        const dynamicForm = component.find('sge_dynamicForm');
         const values = dynamicForm.get('v.values');
         return values;
     },
     getInvalidDynamicFields: function(component) {
-        const dynamicForm = component.find('sge_dynamicform');
+        const dynamicForm = component.find('sge_dynamicForm');
         const fields = dynamicForm.get('v.invalidFields');
         return fields;
     },

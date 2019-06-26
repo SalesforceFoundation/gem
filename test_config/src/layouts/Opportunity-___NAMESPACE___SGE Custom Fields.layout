@@ -56,6 +56,10 @@
                 <behavior>Edit</behavior>
                 <field>Test_Rich_Text__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Test_Phone_Field__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -73,6 +77,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Test_Checkbox_Field__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Test_Number_Field__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>

@@ -73,6 +73,7 @@ public static void initializeNPSPSettingsForGEM() {
     cos.npsp__Notification_Recipient_Opp_Contact_Role__c = 'Notification Contact';
     cos.npsp__Payments_Auto_Close_Stage_Name__c = getClosedWonStage();
     cos.npsp__Household_Account_Addresses_Disabled__c = true;
+    cos.npsp__Enforce_Accounting_Data_Consistency__c = true;
     cos.npe01__One_to_One_RecordTypeID__c = hedaOrgSettings.hed__Administrative_Account_Record_Type__c;
     cos.npe01__HH_Account_RecordTypeID__c = hedaOrgSettings.hed__Household_Addresses_RecType__c;
     upsert cos;

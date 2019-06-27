@@ -203,6 +203,15 @@ flows:
                 task: deploy_qa_config
                 options:
                     unmanaged: False
+            6:
+                task: test_data_default_settings
+                options:
+                    managed: True
+            7:
+                task: deploy_abacus_settings
+                options:
+                    managed: True
+
 
 
     config_managed:

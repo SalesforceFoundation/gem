@@ -59,6 +59,10 @@ export default class SGE_FormSection extends LightningElement {
         return oppData;
     }
 
+    /**
+     * Get a list of fields that are required, but are null/undefined or otherwise blank in the dynamic form
+     * @returns {Array} of invalid fields. If all fields are ok, the array is empty.
+     */
     @api
     getInvalidFields() {
         const fields = this.template.querySelectorAll('c-sge_form-field');
@@ -73,32 +77,28 @@ export default class SGE_FormSection extends LightningElement {
         return invalidFields;
     }
 
+    /**
+     * Get the icon that should display next to the twistable section header
+     * @returns {string} containing the icon name from SLDS
+     */
     get iconName() {
         return this.expanded ? 'utility:chevrondown' : 'utility:chevronright';
     }
 
+    /**
+     * Get the css classname for the body of the twistable section, show/hide when closed/open
+     * @returns {string} 'slds-hidden' when the section is closed
+     */
     get sectionClassName() {
         return this.expanded ? '' : 'slds-hidden';
     }
 
+    /**
+     * When twistable section header is clicked, collapse/expand it
+     * @param event
+     */
     toggleExpand(event) {
         event.preventDefault();
         this.expanded = !this.expanded;
-    }
-
-    /**
-     * TRUE when there is at least one field inside of any column or section
-     * @returns {boolean}
-     */
-    hasCustomFields() {
-        let layoutHasFields = false;
-        const columns = section.columns;
-        if (Array.isArray(columns)) {
-            columns.forEach(column => {
-                if (Array.isArray(column.fields) && column.fields.length > 0) {
-                    layoutHasFields = true;
-                }
-            });
-        }
     }
 }

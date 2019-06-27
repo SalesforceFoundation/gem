@@ -508,6 +508,7 @@
         let opp = this.proxyToObj(component.get('v.opp'));
         let di = this.proxyToObj(component.get('v.di'));
 
+        // object where keys are opportunity fields, and values are their corresponding values from the dynamic form
         const customFieldValues = this.getCustomFieldValues(component);
 
         let mergedOpp = Object.assign({}, opp, customFieldValues);

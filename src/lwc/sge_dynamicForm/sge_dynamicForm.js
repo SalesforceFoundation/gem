@@ -63,11 +63,11 @@ export default class SGE_DynamicForm extends LightningElement {
     /**
      * Get the field names and values from the dynamic fields section.
      *
-     * @returns {*} Object where keys are field API names, and values are the value in the field.
+     * @returns {*} Object where keys are Opportunity field API names, and values are the value in the field.
      */
     @api
     get values() {
-        const sections = this.template.querySelectorAll('c-sge_form-ection');
+        const sections = this.template.querySelectorAll('c-sge_form-section');
         let oppData = {};
         if(sections !== null && typeof sections !== 'undefined') {
             sections.forEach(section => {

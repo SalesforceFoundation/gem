@@ -441,11 +441,14 @@
         this.getDonationInformation(component, oppId);
     },
     mapOppToDi: function(component, di, opp) {
-        var fieldMap = component.get('v.objectFieldData.diToOppFieldMap');
-        fieldMap = this.proxyToObj(fieldMap);
-        for(var field in fieldMap) {
-            var oppField = fieldMap[field];
-            var oppValue = opp[oppField];
+        // keys - data import fields
+        // values - opportunity fields
+        const fieldMap = component.get('v.objectFieldData.diToOppFieldMap');
+
+        for(let field in fieldMap) {
+            const oppField = fieldMap[field];
+            let oppValue = opp[oppField];
+
             // Small exception for record type, Data Import wants the name, not the ID
             if(oppField === 'RecordTypeId' && opp['RecordType']) {
                 oppValue = opp['RecordType'].Name;
@@ -507,12 +510,12 @@
 
         const customFieldValues = this.getCustomFieldValues(component);
 
-        let mergedDi = Object.assign({}, di, customFieldValues);
+        let mergedOpp = Object.assign({}, opp, customFieldValues);
 
         // Map fields from Opportunity to DataImport
         // This is done to avoid referencing GEM namespace fields in markup
-        this.mapOppToDi(component, mergedDi, opp);
-        giftModel['di'] = mergedDi;
+        this.mapOppToDi(component, di, mergedOpp);
+        giftModel['di'] = di;
         // Lookup values are converted from array to ID during mapOppToDi, so we need to update
         giftModel['opp'] = opp;
 

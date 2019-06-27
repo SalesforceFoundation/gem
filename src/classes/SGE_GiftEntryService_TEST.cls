@@ -39,6 +39,7 @@
 @isTest
 private class SGE_GiftEntryService_TEST {
     static final String mockLayoutJSON = '{"fullName":"Opportunity-SGE Custom Fields","summaryLayout":{"summaryLayoutStyle":"Default_x","summaryLayoutItems":null,"sizeZ":null,"sizeY":0,"sizeX":4,"masterLabel":"00h1D000000r0El"},"showSubmitAndAttachButton":false,"showSolutionSection":null,"showRunAssignmentRulesCheckbox":false,"showKnowledgeComponent":null,"showInteractionLogPanel":false,"showHighlightsPanel":false,"showEmailCheckbox":false,"runAssignmentRulesDefault":null,"relatedObjects":["AccountId"],"relatedLists":null,"relatedContent":null,"quickActionList":null,"platformActionList":{"fullName":null,"relatedSourceEntity":null,"platformActionListItems":[{"subtype":null,"sortOrder":0,"actionType":"StandardButton","actionName":"Edit"},{"subtype":null,"sortOrder":10,"actionType":"CustomButton","actionName":"npsp__Manage_Soft_Credits"},{"subtype":null,"sortOrder":1,"actionType":"QuickAction","actionName":"npsp__NewContact"},{"subtype":null,"sortOrder":2,"actionType":"QuickAction","actionName":"New_Household_Account"},{"subtype":null,"sortOrder":3,"actionType":"QuickAction","actionName":"npsp__New_Campaign"},{"subtype":null,"sortOrder":4,"actionType":"StandardButton","actionName":"Delete"},{"subtype":null,"sortOrder":5,"actionType":"StandardButton","actionName":"Clone"},{"subtype":null,"sortOrder":6,"actionType":"StandardButton","actionName":"ChangeOwnerOne"},{"subtype":null,"sortOrder":7,"actionType":"StandardButton","actionName":"ChangeRecordType"},{"subtype":null,"sortOrder":8,"actionType":"StandardButton","actionName":"PrintableView"},{"subtype":null,"sortOrder":9,"actionType":"CustomButton","actionName":"npsp__Email_Acknowledgment"}],"actionListContext":"Record"},"multilineLayoutFields":null,"miniLayout":null,"layoutSections":[{"style":"TwoColumnsLeftToRight","layoutColumns":[{"reserved":null,"layoutItems":[{"width":null,"showScrollbars":null,"showLabel":null,"scontrol":null,"reportChartComponent":null,"page_x":null,"height":null,"field":"Name","emptySpace":null,"customLink":null,"component":null,"canvas":null,"behavior":"Required","analyticsCloudComponent":null},{"width":null,"showScrollbars":null,"showLabel":null,"scontrol":null,"reportChartComponent":null,"page_x":null,"height":null,"field":"AccountId","emptySpace":null,"customLink":null,"component":null,"canvas":null,"behavior":"Required","analyticsCloudComponent":null},{"width":null,"showScrollbars":null,"showLabel":null,"scontrol":null,"reportChartComponent":null,"page_x":null,"height":null,"field":"CloseDate","emptySpace":null,"customLink":null,"component":null,"canvas":null,"behavior":"Required","analyticsCloudComponent":null}]},{"reserved":null,"layoutItems":[{"width":null,"showScrollbars":null,"showLabel":null,"scontrol":null,"reportChartComponent":null,"page_x":null,"height":null,"field":"StageName","emptySpace":null,"customLink":null,"component":null,"canvas":null,"behavior":"Required","analyticsCloudComponent":null},{"width":null,"showScrollbars":null,"showLabel":null,"scontrol":null,"reportChartComponent":null,"page_x":null,"height":null,"field":"Probability","emptySpace":null,"customLink":null,"component":null,"canvas":null,"behavior":"Edit","analyticsCloudComponent":null}]}],"label":"hidden - do not edit this section","editHeading":true,"detailHeading":true,"customLabel":true},{"style":"TwoColumnsLeftToRight","layoutColumns":[{"reserved":null,"layoutItems":[{"width":null,"showScrollbars":null,"showLabel":null,"scontrol":null,"reportChartComponent":null,"page_x":null,"height":null,"field":"npsp__Ask_Date__c","emptySpace":null,"customLink":null,"component":null,"canvas":null,"behavior":"Edit","analyticsCloudComponent":null},{"width":null,"showScrollbars":null,"showLabel":null,"scontrol":null,"reportChartComponent":null,"page_x":null,"height":null,"field":"npsp__In_Kind_Type__c","emptySpace":null,"customLink":null,"component":null,"canvas":null,"behavior":"Edit","analyticsCloudComponent":null}]},{"reserved":null,"layoutItems":[{"width":null,"showScrollbars":null,"showLabel":null,"scontrol":null,"reportChartComponent":null,"page_x":null,"height":null,"field":"npsp__Fair_Market_Value__c","emptySpace":null,"customLink":null,"component":null,"canvas":null,"behavior":"Edit","analyticsCloudComponent":null}]}],"label":"Some Section","editHeading":true,"detailHeading":true,"customLabel":true},{"style":"CustomLinks","layoutColumns":[{"reserved":null,"layoutItems":null},{"reserved":null,"layoutItems":null},{"reserved":null,"layoutItems":null}],"label":"Custom Links","editHeading":false,"detailHeading":false,"customLabel":false}],"headers":null,"feedLayout":null,"excludeButtons":["Submit"],"emailDefault":null,"customConsoleComponents":null,"customButtons":["npsp__Email_Acknowledgment","npsp__Manage_Soft_Credits"]}';
+
     /**
      * Test retrieving a layout. Content of the layout will be empty in an unmodified org.
      */
@@ -49,6 +50,9 @@ private class SGE_GiftEntryService_TEST {
         System.assertNotEquals(null, layout.sections, 'Expected an empty array of sections');
     }
 
+    /**
+     * Test constructing a layout w/ sections, columns and fields using a mock.
+     */
     @isTest
     static void testConstructLayout() {
         Metadata.Layout mLayout = (Metadata.Layout)JSON.deserialize(mockLayoutJSON, Metadata.Layout.class);
@@ -62,6 +66,9 @@ private class SGE_GiftEntryService_TEST {
     }
 
 
+    /**
+     * When no layout is found, an AuraHandledException should be thrown.
+     */
     @isTest
     static void testThrowsWhenNotFound() {
         Boolean exceptionCaught = false;
@@ -71,6 +78,16 @@ private class SGE_GiftEntryService_TEST {
             exceptionCaught = true;
         }
 
-        System.assertEquals(true, exceptionCaught, 'Expected to tach an exception');
+        System.assertEquals(true, exceptionCaught, 'Expected to catch an exception');
+    }
+
+    /**
+     * getDataImportFieldMappings() calls an npsp function, no need to test the inner workings of it here.
+     */
+    @isTest
+    static void testRetrieveMappings() {
+        Map<String, String> fieldMappings = SGE_GiftEntryService.getDataImportFieldMappings();
+        System.assertNotEquals(null, fieldMappings, 'Expected to receive field mappings');
+        System.assert(fieldMappings.size() > 0, 'There should be at least one default mapping');
     }
 }

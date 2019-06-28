@@ -7,8 +7,8 @@
 		if(inputs.length > 0){
 			var firstInput = inputs[0];
 			if(typeof firstInput.focus === 'function'){
-				// TODO: Trying to focus on first input, not working yet
-				firstInput.focus();
+				// TODO: Trying to focus on first input, only works on lookup fields?
+				// firstInput.focus();
 			}
 		}
 	},

@@ -1,11 +1,11 @@
 {
   "orgName": "GEM - Release Test Org",
   "edition": "Developer",
-  "orgPreferences" : {
-    "enabled": [
-      "S1DesktopEnabled",
-      "ChatterEnabled",
-      "DisableParallelApexTesting"
-    ]
+  "settings" : {
+    "orgPreferenceSettings": {
+        "chatterEnabled": true,
+        "disableParallelApexTesting": true,
+        "s1DesktopEnabled": true
+    }
   }
 }

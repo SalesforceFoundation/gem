@@ -37,5 +37,9 @@
             label="{!$Label.c.Remove}" 
             onclick="{!c.clickDeleteRow}" />
     </lightning:layoutItem>
+
+    <lightning:layoutItem size="12" padding="horizontal-small">
+        <hr class="slds-m-top_xx-small slds-m-bottom_xxx-small" />
+    </lightning:layoutItem>
     
 </aura:component>

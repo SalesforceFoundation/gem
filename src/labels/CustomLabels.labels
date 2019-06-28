@@ -29,6 +29,13 @@
         <value>Duplicate values are not allowed:</value>
     </labels>
     <labels>
+        <fullName>Error_Gift_Field_Mapping</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gift Field Mapping Error</shortDescription>
+        <value>The JSON used to define Gift Entry Field Mapping is malformed. Please review and correct the syntax in the Dependent Field List on this Mapping record</value>
+    </labels>
+    <labels>
         <fullName>Error_Offline</fullName>
         <language>en_US</language>
         <protected>true</protected>

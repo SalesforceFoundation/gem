@@ -1,7 +1,13 @@
 <aura:component extends="c:giftFormRelatedRow">
     
+    <aura:dependency resource="markup://c:dynamicFieldDisplay"/>
     <aura:method name="clearAmount" />
 
+    <aura:attribute type="String[]"
+        name="permanentFieldList"
+        default="['npe01__Payment_Amount__c','npe01__Scheduled_Date__c','npe01__Payment_Date__c',
+        'npe01__Paid__c','npe01__Payment_Method__c','npe01__Written_Off__c']" />
+    <aura:attribute type="Map" name="objectNameToSobject" default="{}" />
     <aura:attribute name="rowDisabled"
         type="Boolean"
         default="false" />
@@ -12,42 +18,44 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:handler name="change"
         value="{!v.item.npe01__Scheduled_Date__c}" 
-        action="{!c.handlePaid}"/>
+        action="{!c.handlePaidOrWriteOff}"/>
+    <aura:handler name="change"
+        value="{!v.item.npe01__Paid__c}"
+        action="{!c.handlePaidOrWriteOff}"/>
     <aura:handler name="change"
         value="{!v.item.npe01__Written_Off__c}"
-        action="{!c.preventPaidAndWrittenOff}"/>
+        action="{!c.handlePaidOrWriteOff}"/>
 
     <lightning:layout multipleRows="true">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Amount__c}</label>
-            </aura:if>
             <lightning:input aura:id="requiredField" 
+                required="true"
                 disabled="{!v.rowDisabled}"
                 onblur="{!c.handleAmountCheck}"
                 name="paymentAmt" 
                 type="number" 
-                label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Amount__c}" 
-                variant="label-hidden"
+                label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Amount__c}"
                 formatter="currency"
                 step="0.01"
                 value="{!v.item.npe01__Payment_Amount__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}</label>
-            </aura:if>
-            <lightning:input aura:id="requiredField"
+            <lightning:input aura:id="requiredField"required="true"
                 disabled="{!v.rowDisabled}"
-                label="{!v.objectLabels.Payment.npe01__Scheduled_Date__c}"
+                label="{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}"
                 type="date"
-                variant="label-hidden"
+
                 value="{!v.item.npe01__Scheduled_Date__c}"  />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}</label>
-            </aura:if>
+            <lightning:input aura:id="paymentDate"
+                disabled="{!v.rowDisabled}"
+                label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Date__c}"
+                type="date"
+                value="{!v.item.npe01__Payment_Date__c}"  />
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
+            <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}</label>
             <aura:if isTrue="{!!v.rowDisabled}">
                 <force:inputField aura:id="methodField" value="{!v.item.npe01__Payment_Method__c}" />
                 <aura:set attribute="else">
@@ -55,31 +63,19 @@
                 </aura:set>
             </aura:if>
         </lightning:layoutItem>
-        <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}</label>
-            </aura:if>
-            <lightning:input disabled="{!or(v.rowDisabled,v.item.npe01__Payment_Method__c != 'Check')}"
-                label="{!v.objectFieldData.objectLabels.Payment.npe01__Check_Reference_Number__c}" variant="label-hidden"
-                value="{!v.item.npe01__Check_Reference_Number__c}" />
-        </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="1">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Paid__c}</label>
-            </aura:if>
-            <lightning:input name="paymentPaid" 
+            <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Paid__c}</label>
+            <lightning:input
                 disabled="{!v.rowDisabled}"
                 type="checkbox"
-                onchange="{!c.handlePaid}" 
+
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Paid__c}" 
                 variant="label-hidden"
                 checked="{!v.item.npe01__Paid__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Written_Off__c}</label>
-            </aura:if>
-            <lightning:input name="paymentWriteoff"
+            <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Written_Off__c}</label>
+            <lightning:input
                 disabled="{!v.rowDisabled}"
                 type="checkbox"
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Written_Off__c}"
@@ -87,10 +83,16 @@
                 checked="{!v.item.npe01__Written_Off__c}" />
         </lightning:layoutItem>
 
+
         <div class="slds-hidden">
             <lightning:input name="oppId" type="text" label="Opportunity" value="{!v.item.npe01__Opportunity__c}" />
-            <lightning:input type="date" aura:id="paymentDate" value="{!v.item.npe01__Payment_Date__c}" />
         </div>
     </lightning:layout>
+
+    <c:dynamicFieldDisplay objectNameToSobject='{!v.objectNameToSobject}'
+        rowDisabled='{!v.rowDisabled}'
+        permanentFieldList='{!v.permanentFieldList}'
+        existingRecord='{!v.item}'
+        metadataRecordName='Payment' />
 
 </aura:component>

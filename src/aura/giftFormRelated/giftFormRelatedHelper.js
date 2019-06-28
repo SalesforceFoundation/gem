@@ -3,9 +3,11 @@
         // Collect all new rows in an array, and add them to the page after they're all created
         Promise.all(newRowList).then($A.getCallback(function(values) {
             helper.setBody(component, helper, values);
-        }));
+        })).catch(function(e) {
+            console.log(e);
+        });
     },
-    handleAddRow: function(component, helper, item, index){
+    handleAddRow: function(component, helper, item, index, canEditRow){
 
         return new Promise(function(resolve, reject){
             // Now, create the component that contains the fields and pass it the list of data
@@ -18,7 +20,8 @@
             var donationAmt = component.getReference('v.donationAmt');
             var checkAmountTotals = component.getReference('v.checkAmountTotals');
             var noDuplicateValueList = component.getReference('v.noDuplicateValueList');
-            var editMode = component.get('v.editModeOverride');
+            // Passing canEditRow as true forces the row to be editable
+            var editMode = (canEditRow === true) ? false : component.get('v.editModeOverride');
             var editModePaidPayments = component.get('v.editModePaidPayments');
             var showLabels = (index == 0 || newRowNum == 0) ? true : false;
 
@@ -90,11 +93,20 @@
         itemList = this.proxyToObj(itemList);
 
         var cmpList = [];
+        var i = 0;
         if(itemList instanceof Array){
-            for(var i=0; i<itemList.length; i++){
+            for(i=0; i<itemList.length; i++){
                 var newCmp = this.handleAddRow(component, helper, itemList[i], i);
                 cmpList.push(newCmp);
             }
+        }
+
+        // TODO: WIP for adding a new row after init
+        if(component.get("v.addNewRowAfterInit")){
+            var canEditRow = true;
+            var newCmp = this.handleAddRow(component, helper, null, i+1, canEditRow);
+            cmpList.push(newCmp);
+            component.set("v.addNewRowAfterInit", false);
         }
 
         this.addRows(component, helper, cmpList);

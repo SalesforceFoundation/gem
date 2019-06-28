@@ -276,31 +276,28 @@ public with sharing class GiftEntryFormController {
             }
 
             // Now check for related objects
+            String allPaymentFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npe01__OppPayment__c');
             if(opp.npe01__Number_of_Payments__c > 0) {
+                // TODO: Need to include fields that are loaded dynamically
+                // Could try to leverage DynamicFieldDisplayController.getCustomMetadataRecord
+                // allPaymentFields.split(',');
+                List<String> paymentFields = new List<String>{
+                    'Id',
+                    'npe01__Payment_Amount__c',
+                    'npe01__Scheduled_Date__c',
+                    'npe01__Payment_Date__c',
+                    'npe01__Payment_Method__c',
+                    'npe01__Check_Reference_Number__c',
+                    'npe01__Written_Off__c',
+                    'npe01__Paid__c'
+                };
                 UTIL_CrudFLS.checkRead('npe01__OppPayment__c',
-                        new List<String>{
-                                'Id',
-                                'npe01__Payment_Amount__c',
-                                'npe01__Scheduled_Date__c',
-                                'npe01__Payment_Date__c',
-                                'npe01__Payment_Method__c',
-                                'npe01__Check_Reference_Number__c',
-                                'npe01__Written_Off__c',
-                                'npe01__Paid__c'
-                        });
-                List<npe01__OppPayment__c> payments = [
-                        SELECT Id,
-                                npe01__Payment_Amount__c,
-                                npe01__Scheduled_Date__c,
-                                npe01__Payment_Date__c,
-                                npe01__Payment_Method__c,
-                                npe01__Check_Reference_Number__c,
-                                npe01__Written_Off__c,
-                                npe01__Paid__c
-                        FROM npe01__OppPayment__c
-                        WHERE npe01__Opportunity__c = :oppId
-                        ORDER BY npe01__Scheduled_Date__c asc, npe01__Payment_Date__c asc
-                ];
+                        paymentFields);
+
+                List<npe01__OppPayment__c> payments =
+                    Database.query('SELECT '+ String.escapeSingleQuotes(allPaymentFields)
+                        + ' FROM npe01__OppPayment__c WHERE npe01__Opportunity__c = :oppId ' 
+                        + ' ORDER BY npe01__Scheduled_Date__c asc, npe01__Payment_Date__c asc');
                 if(!payments.isEmpty()) {
                     giftModel.payments = payments;
                 }

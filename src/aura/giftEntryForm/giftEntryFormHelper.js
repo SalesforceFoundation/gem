@@ -5,6 +5,7 @@
         var selectedDonorType = component.get('v.di.npsp__Donation_Donor__c');
         component.set('v.selectedDonorType', selectedDonorType);
 
+        component.set('v.disableCreate', true);
         component.set('v.oppClosed', false);
         component.set('v.editModePaidPayments', false);
         // Make changes if a recordId was provided (Edit mode)
@@ -103,6 +104,7 @@
                 this.setDefaults(component, giftModel.opp);
                 this.checkValidation(component);
                 component.set('v.showSpinner', false);
+                component.set('v.disableCreate', false);
             } else if (state === 'ERROR') {
                 component.set('v.showForm', false);
                 this.handleError(component, response);
@@ -309,7 +311,7 @@
             for(var i=0; i < relatedCmp.length; i++){
                 var objectName = relatedCmp[i].getRelatedObject();
                 if(objectName == 'npe01__OppPayment__c'){
-                    relatedCmp[i].focusOnAddButton();
+                    relatedCmp[i].addNewRowAndFocus();
                 }
             }
         }
@@ -511,6 +513,8 @@
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};
         giftModel['picklistValues'] = {};
+
+        // console.log(giftModel); 
 
         var giftModelString = JSON.stringify(giftModel);
         component.set('v.giftModelString', giftModelString);

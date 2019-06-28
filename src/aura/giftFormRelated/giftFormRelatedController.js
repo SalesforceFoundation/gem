@@ -76,7 +76,8 @@
     getRelatedObject: function(component){
         return component.get("v.objectName");
     },
-    focusOnAddButton: function(component){
+    addNewRowAndFocus: function(component, event, helper){
+        // component.set("v.addNewRowAfterInit", true);
         var btn = component.find('add-button');
         if(btn){
             btn.focus();

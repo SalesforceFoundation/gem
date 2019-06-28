@@ -13,9 +13,7 @@
 
     <lightning:layout multipleRows="true" horizontalAlign="spread">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="4">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Contact__c}</label>
-            </aura:if>
+            <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Contact__c}</label>
             <aura:if isTrue="{!v.editMode}">
                 <p class="slds-p-left_small slds-p-top_x-small">
                     <lightning:formattedText value="{!v.item.npsp__Contact__r.Name}" />
@@ -27,10 +25,7 @@
             </aura:if>
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="slds-form-element__label">{!$Label.c.Gift_Credit_Type}</label>
-            </aura:if>
-
+            <label class="slds-form-element__label">{!$Label.c.Gift_Credit_Type}</label>
             <lightning:radioGroup
                 disabled="{!v.editMode}"
                 value="{!v.creditType}"
@@ -40,9 +35,7 @@
                 
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Amount__c}</label>
-            </aura:if>
+            <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Amount__c}</label>
             <lightning:input aura:id="requiredField"
                 disabled="{!v.editMode}"
                 onblur="{!c.handleAmountCheck}"
@@ -55,10 +48,9 @@
                 value="{!v.item.npsp__Amount__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="4">
-            <aura:if isTrue="{!v.showLabels}">
-                <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Role_Name__c}</label>
-            </aura:if>
+            <label class="show-required slds-form-element__label">{!v.objectFieldData.objectLabels.PSC.npsp__Role_Name__c}</label>
             <lightning:select name="select" 
+                class="select-container"
                 disabled="{!v.editMode}"
                 aura:id="requiredField"
                 label="{!v.objectFieldData.objectLabels.PSC.npsp__Role_Name__c}"

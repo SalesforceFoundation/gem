@@ -2,15 +2,13 @@
   "edition": "Developer",
   "orgName": "GEM - Dev Workspace",
   "hasSampleData": "true",
-  "orgPreferences": {
-    "enabled": [
-      "ChatterEnabled",
-      "S1DesktopEnabled",
-      "Translation",
-      "DisableParallelApexTesting"
-    ],
-    "disabled": [
-      "S1EncryptedStoragePref2"
-    ]
+  "settings" : {
+    "orgPreferenceSettings": {
+        "chatterEnabled": true,
+        "disableParallelApexTesting": true,
+        "s1DesktopEnabled": true,
+        "s1EncryptedStoragePref2": false,
+        "translation": true
+    }
   }
 }

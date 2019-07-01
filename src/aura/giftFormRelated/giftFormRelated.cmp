@@ -1,7 +1,7 @@
 <aura:component>
     
     <aura:method name="handleJsonUpdate" />
-    <aura:method name="focusOnAddButton" /> 
+    <aura:method name="addNewRowAndFocus" /> 
     <aura:method name="getRelatedObject" /> 
     <aura:method name="disableAddButton" action="{!c.disableAddButton}"> 
         <aura:attribute name="disableBtn" type="Boolean" />
@@ -45,6 +45,7 @@
     <aura:attribute type="Boolean" name="editModeOverride" default="false" />
     <aura:attribute type="Boolean" name="editModePaidPayments" />
     <aura:attribute type="Boolean" name="addButtonDisabled" default="false" />
+    <aura:attribute type="Boolean" name="addNewRowAfterInit" default="false" />
 
     <lightning:layoutItem size="12">
         <lightning:layout multipleRows="true">

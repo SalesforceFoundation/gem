@@ -302,6 +302,12 @@
         </relatedContentItems>
     </relatedContent>
     <relatedLists>
+        <fields>NAME</fields>
+        <fields>abacus__Amount__c</fields>
+        <fields>abacus__Due_Date__c</fields>
+        <relatedList>abacus__Installment__c.abacus__Opportunity__c</relatedList>
+    </relatedLists>
+    <relatedLists>
         <relatedList>RelatedContactRoleList</relatedList>
     </relatedLists>
     <relatedLists>

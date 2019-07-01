@@ -96,7 +96,7 @@ export default class SGE_DynamicForm extends LightningElement {
     }
 
     /**
-     * Check if there are custom fields present in the SGE Custom Fields layout
+     * Check if there are custom fields present in the Custom Field Configuration for Single Gift Entry layout
      *
      * @returns {boolean} TRUE when there is at least one field inside of any column or section
      */

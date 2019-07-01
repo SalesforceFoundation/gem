@@ -25,7 +25,7 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>Opportunity-%%%NAMESPACE%%%SGE Custom Fields</members>
+        <members>Opportunity-%%%NAMESPACE%%%Custom Field Configuration for Single Gift Entry</members>
         <name>Layout</name>
     </types>
     <types>

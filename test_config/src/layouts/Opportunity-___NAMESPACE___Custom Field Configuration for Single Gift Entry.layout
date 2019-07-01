@@ -7,7 +7,7 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>hidden - do not edit this section</label>
+        <label>DO NOT EDIT - Required Fields</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Required</behavior>

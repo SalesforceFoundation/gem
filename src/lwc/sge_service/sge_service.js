@@ -3,7 +3,9 @@ import readOpportunityLayout from '@salesforce/apex/SGE_GiftEntryService.readOpp
 const getOpportunityLayout = () => {
     return new Promise((resolve, reject) => {
         readOpportunityLayout()
-            .then(resolve)
+            .then((result) => {
+                resolve(result);
+            })
             .catch(error => {
                 console.error(JSON.stringify(error));
             });

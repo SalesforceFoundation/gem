@@ -40,11 +40,10 @@
                 value="{!v.item.npe01__Payment_Amount__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <lightning:input aura:id="requiredField"required="true"
+            <lightning:input aura:id="requiredField" required="true"
                 disabled="{!v.rowDisabled}"
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}"
                 type="date"
-
                 value="{!v.item.npe01__Scheduled_Date__c}"  />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">

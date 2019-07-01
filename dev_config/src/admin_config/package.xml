@@ -18,7 +18,7 @@
     </types>
     <types>
         <members>Opportunity-GEM Gift Layout</members>
-        <members>Opportunity-SGE Custom Fields</members>
+        <members>Opportunity-Custom Field Configuration for Single Gift Entry</members>
         <name>Layout</name>
     </types>
     <version>42.0</version>

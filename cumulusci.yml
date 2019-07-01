@@ -188,22 +188,18 @@ flows:
     config_regression:
         steps:
             3:
-                task: deploy_recommended_config
-                options:
-                    unmanaged: False
-            4:
                 task: deploy_dev_config
                 options:
                     unmanaged: False
-            5:
+            4:
                 task: deploy_qa_config
                 options:
                     unmanaged: False
-            6:
+            5:
                 task: test_data_default_settings
                 options:
                     managed: True
-            7:
+            6:
                 task: deploy_abacus_settings
                 options:
                     managed: True

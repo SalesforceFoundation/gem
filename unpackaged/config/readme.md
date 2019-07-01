@@ -12,7 +12,7 @@ writers.
 | `qa_org`            | Feature/robot testing                      |         |
 | `regression_org`    | Regression testing                         | ✔       |
 | `trial_org`         | Trialforce Source Org/Installer            | ✔       |
-| `pilot_org`         | Installer - Limited Release                | ✔       |
+| `existing_org`      | Installer - Production Orgs                | ✔       |
 
 ## Unpackaged Metadata
 

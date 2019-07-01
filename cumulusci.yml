@@ -187,10 +187,6 @@ flows:
 
     config_regression:
         steps:
-            2:
-                task: deploy_dev_config_delete
-                options:
-                    unmanaged: False
             3:
                 task: deploy_recommended_config
                 options:
@@ -386,7 +382,7 @@ plans:
         description: Installs the Gift Entry Manager Limited Release
         steps:
             1:
-                flow: pilot_org
+                flow: trial_org
 
 orgs:
     scratch:

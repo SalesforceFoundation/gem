@@ -47,13 +47,16 @@ global class AFFL_SyncToNPSP_TDTM extends hed.TDTM_Runnable {
     * @return dmlWrapper always null
     ********************************************************************************************************/
     public override hed.TDTM_Runnable.DmlWrapper run(List<SObject> newlist, List<SObject> oldlist,
-    		hed.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
+    	hed.TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
+
+        List<List<SObject>> triggerLists = new List<List<SObject>>{newList, oldList};
+        List<SObject> combinedList = 
+            UTIL_ManageRelatedNPSPRecords_TDTM.combineLists(triggerLists);
 
         if (triggerAction == hed.TDTM_Runnable.Action.AfterInsert 
-          || triggerAction == hed.TDTM_Runnable.Action.AfterUpdate) {
-            UTIL_ManageRelatedNPSPRecords_TDTM.synchronizeAffiliationRecords(newlist);
-        } else if(triggerAction == hed.TDTM_Runnable.Action.AfterDelete){
-            UTIL_ManageRelatedNPSPRecords_TDTM.synchronizeAffiliationRecords(oldlist);
+          || triggerAction == hed.TDTM_Runnable.Action.AfterUpdate
+          || triggerAction == hed.TDTM_Runnable.Action.AfterDelete) {
+            UTIL_ManageRelatedNPSPRecords_TDTM.synchronizeAffiliationRecords(combinedList);
         }
 
     	return null;

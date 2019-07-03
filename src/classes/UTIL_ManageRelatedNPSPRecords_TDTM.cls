@@ -205,8 +205,16 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
             SObject[] toUpsert = (SObject[])Type.forName('List<'+destObjectName+'>').newInstance();
             SObject destRecordTemplate = Schema.getGlobalDescribe().get(destObjectName).newSObject();
 
-            for(Id donorId : sourceMap.keySet()){
-                List<SObject> sourceList = sourceMap.get(donorId);
+            Set<Id> donorIdsFromSourceAndCopies = new Set<Id>();
+            donorIdsFromSourceAndCopies.addAll(sourceMap.keySet());
+            donorIdsFromSourceAndCopies.addAll(copyMap.keySet());
+
+            for(Id donorId : donorIdsFromSourceAndCopies){
+                List<SObject> sourceList = new List<SObject>();
+                if(sourceMap.containsKey(donorId)){
+                    sourceList = sourceMap.get(donorId);
+                }
+
                 List<SObject> copyList = new List<SObject>();
                 if(copyMap.containsKey(donorId)){
                     copyList = copyMap.get(donorId);
@@ -307,6 +315,23 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
         }
 
         return destRecord;
+    }
+
+    /*******************************************************************************************************
+    * @description Take a List of List<SObject> and combine them into one List
+    * @param triggerLists a List of List<SObject> from a trigger handler to combine
+    * @return List<SObject> the combined trigger list
+    ********************************************************************************************************/
+    public static List<SObject> combineLists(List<List<SObject>> triggerLists){
+        List<SObject> combinedList = new List<SObject>();
+
+        for(List<SObject> triggerList : triggerLists){
+            if(triggerList != null && !triggerList.isEmpty()){
+                combinedList.addAll(triggerList);
+            }
+        }
+
+        return combinedList;
     }
 
 }

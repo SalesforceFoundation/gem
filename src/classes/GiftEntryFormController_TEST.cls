@@ -203,6 +203,46 @@ private class GiftEntryFormController_TEST {
             '1 Payment should be returned, ' + paymentQuery.size() + ' were returned instead');
 
     }
+
+    @isTest
+    private static void testRunGiftProcessUpdate() {
+        npsp__DataImport__c diObj = getTestDI();
+        diObj.Do_Not_Automatically_Create_Payment__c = true;
+        insert diObj;
+
+        // Test error handling
+        Id oppId = GiftEntryFormController.getOpportunityIdFromImport(diObj.Id);
+        System.assertEquals(null, oppId);
+
+        GiftEntryFormController ge = new GiftEntryFormController();
+        
+        Test.startTest();
+        GiftEntryFormController.runGiftProcess(diObj.Id, false, false);
+        Test.stopTest();
+        
+        List<Opportunity> oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c
+            from Opportunity 
+            where Name =: donationName
+            and npsp__Honoree_Name__c =: tributeName
+            and npsp__Notification_Recipient_Name__c =: recipientName
+        ];
+        //System.debug(oppList);
+        System.assertEquals(1, oppList.size());
+
+        Decimal newAmt = 200;
+        diObj.npsp__Donation_Amount__c = newAmt;
+        GiftEntryFormController.runGiftProcess(diObj.Id, false, true);
+
+        oppList = [Select Id, Amount
+            from Opportunity 
+            where Name =: donationName
+            and npsp__Honoree_Name__c =: tributeName
+            and npsp__Notification_Recipient_Name__c =: recipientName
+        ];
+
+        System.assertEquals(1, oppList.size());
+        System.assertEquals(newAmt, oppList[0].Amount);
+    }
     
     @isTest
     private static void testRunGiftProcess() {
@@ -216,7 +256,7 @@ private class GiftEntryFormController_TEST {
         GiftEntryFormController ge = new GiftEntryFormController();
         
         Test.startTest();
-        GiftEntryFormController.runGiftProcess(diObj.Id, false);
+        GiftEntryFormController.runGiftProcess(diObj.Id, false, false);
         Test.stopTest();
         
         List<Opportunity> oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c

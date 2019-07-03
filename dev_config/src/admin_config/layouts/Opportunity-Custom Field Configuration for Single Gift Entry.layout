@@ -60,6 +60,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>npsp__Notification_Recipient_Contact__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>npsp__Notification_Recipient_Name__c</field>
             </layoutItems>
         </layoutColumns>

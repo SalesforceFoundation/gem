@@ -11,10 +11,20 @@ String giftProfileName2 = 'Development Officer';
 
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 
-public static void setupGEMDefaults(){
-    initializeNPSPSettingsForADV();
+public static void setupGEMDefaultsForDev(){
+    initializeHEDASettingsForGEM();
+    initializeNPSPSettingsForGEM();
     enablePaymentAllocationsDefaultGAU();
-    initializeHEDASettingsForADV();
+    initializeGEMSettings();
+}
+
+public static void setupGEMDefaults(){
+    initializeGEMSettings();
+}
+
+public static void setupGEMAndNPSPDefaults(){
+    initializeNPSPSettingsForGEM();
+    enablePaymentAllocationsDefaultGAU();
     initializeGEMSettings();
 }
 
@@ -35,7 +45,7 @@ public static void enablePaymentAllocationsDefaultGAU() {
     upsert stgAllo;
 }
 
-public static void initializeNPSPSettingsForADV() {
+public static void initializeNPSPSettingsForGEM() {
     insertGiftEntrySettings();
     npsp.UTIL_CustomSettings_API.getContactsSettings();
     npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
@@ -56,17 +66,25 @@ public static void initializeNPSPSettingsForADV() {
     hs.npo02__Advanced_Household_Naming__c = false;
     upsert hs;
 
+    hed__Hierarchy_Settings__c hedaOrgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
+
     npe01__Contacts_And_Orgs_Settings__c cos = npsp.UTIL_CustomSettings_API.getContactsSettings();
     cos.npsp__Honoree_Opportunity_Contact_Role__c = 'Honoree Contact';
     cos.npsp__Notification_Recipient_Opp_Contact_Role__c = 'Notification Contact';
     cos.npsp__Payments_Auto_Close_Stage_Name__c = getClosedWonStage();
+    cos.npsp__Household_Account_Addresses_Disabled__c = true;
+    cos.npsp__Enforce_Accounting_Data_Consistency__c = true;
+    cos.npe01__One_to_One_RecordTypeID__c = hedaOrgSettings.hed__Administrative_Account_Record_Type__c;
+    cos.npe01__HH_Account_RecordTypeID__c = hedaOrgSettings.hed__Household_Addresses_RecType__c;
     upsert cos;
 }
 
-public static void initializeHEDASettingsForADV() {
+public static void initializeHEDASettingsForGEM() {
     hed__Hierarchy_Settings__c orgSettings = hed__Hierarchy_Settings__c.getOrgDefaults();
     orgSettings.hed__Automatic_Household_Naming__c = true;
     orgSettings.hed__Account_Processor__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
+    orgSettings.hed__Accounts_Addresses_Enabled__c = orgSettings.hed__Accounts_Addresses_Enabled__c + ';' + hed.UTIL_Describe_API.getHhAccRecTypeID();
+    orgSettings.hed__Accounts_to_Delete__c = hed.UTIL_Describe_API.getHhAccRecTypeID();
     upsert orgSettings;
 }
 

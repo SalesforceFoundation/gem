@@ -40,7 +40,7 @@ import {LightningElement, api} from 'lwc';
 
 export default class SGE_FormField extends LightningElement {
     @api sobject;
-    @api disableinputs;
+    @api disableInputs;
     @api field = {};
 
     get labelClassName() {

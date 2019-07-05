@@ -15,31 +15,51 @@ project:
 tasks:
     deploy_abacus_settings:
         description: Configure the default Abacus Settings for Gift Processing
-        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        ui_options:
+            name: Deploy Abacus Settings
         options:
-            path: dev_config/scripts/configure_abacus_settings.cls
-            method: initializeAbacusSettings();
+            path: scripts/configure_abacus_settings.cls
+            apex: initializeAbacusSettings();
 
     deploy_dev_config:
         description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
-        class_path: cumulusci.tasks.salesforce.DeployBundles
+        class_path: cumulusci.tasks.salesforce.Deploy
         options:
             namespace_inject: $project_config.project__package__namespace
-            path: dev_config/src
+            path: unpackaged/config/dev
             unmanaged: True
 
     deploy_dev_config_delete:
         description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
-            path: dev_config/delete
+            path: unpackaged/config/delete
 
-    deploy_pilot_config:
-        description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
-        class_path: cumulusci.tasks.salesforce.DeployBundles
+    deploy_recommended_config:
+        description: Deploys recommended configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
+        class_path: cumulusci.tasks.salesforce.Deploy
         options:
             namespace_inject: $project_config.project__package__namespace
-            path: pilot_config
+            path: unpackaged/config/recommended
+            unmanaged: True
+
+    deploy_qa_config:
+        description: Deploys QA configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
+        class_path: cumulusci.tasks.salesforce.Deploy
+        options:
+            namespace_inject: $project_config.project__package__namespace
+            path: unpackaged/config/qa
+            unmanaged: True
+
+    deploy_trial_config:
+        description: Deploys metadata for end user. Assigns page layouts and compact layouts.
+        class_path: cumulusci.tasks.salesforce.Deploy
+        ui_options:
+            name: Deploy Trial Metadata
+        options:
+            namespace_inject: $project_config.project__package__namespace
+            path: unpackaged/config/trial
             unmanaged: False
 
     deploy_test_config:
@@ -57,19 +77,54 @@ tasks:
                 Post_Install_Script.giftSetup();
                 Post_Install_Script.populateNPSPAccountModel();
 
+    execute_installer_settings_gem_only:
+        description: Configure the default Settings for Gift Processing
+        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        options:
+            path: scripts/configure_default_settings.cls
+            apex: setupGEMDefaults();
+
+    execute_installer_settings_npsp_defaults:
+        description: Configure the default Settings for Gift Processing
+        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        options:
+            path: scripts/configure_default_settings.cls
+            apex: setupGEMAndNPSPDefaults();
+
     retrieve_config_dev:
         description: Retrieves the current changes in the scratch org into unpackaged/config/dev
         class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
         options:
-            path: dev_config/src/admin_config
+            path: unpackaged/config/dev
+            namespace_tokenize: $project_config.project__package__namespace
+
+    retrieve_config_qa:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/qa
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
+        options:
+            path: unpackaged/config/qa
+            namespace_tokenize: $project_config.project__package__namespace
+
+    retrieve_config_recommended:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/recommended
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
+        options:
+            path: unpackaged/config/recommended
+            namespace_tokenize: $project_config.project__package__namespace
+
+    retrieve_config_trial:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/trial
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
+        options:
+            path: unpackaged/config/trial
             namespace_tokenize: $project_config.project__package__namespace
 
     test_data_dev_org:
         description: 'Loads a test data set for most NPSP objects based on 100 Contacts that should fit into a scratch org or DE org'
         class_path: cumulusci.tasks.bulkdata.LoadData
         options:
-            database_url: 'sqlite:///testdata/dev_org/test_data.db'
-            mapping: 'testdata/mapping.yml'
+            database_url: 'sqlite:///datasets/dev_org/test_data.db'
+            mapping: 'datasets/mapping.yml'
 
     test_data_delete:
         description: 'WARNING: Deletes all data in the objects specified in the objects option.'
@@ -86,23 +141,27 @@ tasks:
                 - Campaign
 
     test_data_default_settings:
-        description: Configure the default NPSP Settings for Gift Processing
-        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        description: Configure the default Settings for Gift Processing, including NPSP and EDA changes
+        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        ui_options:
+            name: Configure the default NPSP Settings for Gift Processing
         options:
-            path: dev_config/scripts/configure_default_settings.cls
-            method: setupGEMDefaults();
+            path: scripts/configure_default_settings.cls
+            apex: setupGEMDefaultsForDev();
 
     test_data_user_setup:
         description: Sets up Gift Processing Users with correct Profiles
-        class_path: tasks.anon_apex.AnonymousApexFromFileTask
+        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         options:
-            path: dev_config/scripts/configure_default_settings.cls
-            method: AddGiftProcessor();
+            path: scripts/configure_default_settings.cls
+            apex: AddGiftProcessor();
 
 flows:
     config_apextest:
         steps:
             3:
+                task: deploy_recommended_config
+            4:
                 task: deploy_dev_config
 
     config_dev:
@@ -110,8 +169,10 @@ flows:
             3:
                 task: deploy_dev_config_delete
             4:
-                task: deploy_dev_config
+                task: deploy_recommended_config
             5:
+                task: deploy_dev_config
+            6:
                 flow: test_data_setup
 
     config_qa:
@@ -121,32 +182,55 @@ flows:
             3:
                 task: deploy_dev_config_delete
             4:
-                task: deploy_dev_config
+                task: deploy_recommended_config
             5:
-                task: update_admin_profile
+                task: deploy_dev_config
             6:
-                flow: test_data_dev_org
+                task: update_admin_profile
             7:
+                flow: test_data_dev_org
+            8:
                 flow: test_data_setup
 
-    config_managed:
+    config_regression:
         steps:
             3:
                 task: deploy_dev_config
                 options:
                     unmanaged: False
+            4:
+                task: deploy_qa_config
+                options:
+                    unmanaged: False
+            5:
+                task: test_data_default_settings
+                options:
+                    managed: True
+            6:
+                task: deploy_abacus_settings
+                options:
+                    managed: True
+
+
+
+    config_managed:
+        steps:
+            3:
+                task: deploy_recommended_config
+                options:
+                    unmanaged: False
+
     ci_feature:
         steps:
-            7.1:
-                task: run_tests
-                options:
-                   managed: True
-                   namespace: hed
-            7.2:
+            1:
+                flow: beta_dependencies
+            4:
                 task: run_tests
                 options:
                     managed: True
                     namespace: npsp
+            5:
+                task: None # github_parent_to_children
 
     ci_feature_beta_deps:
         description: When run, the latest version (including betas) of Cumulus and HEDA are installed, and all tests are run.
@@ -156,11 +240,6 @@ flows:
                 options:
                    managed: True
                    namespace: hed
-            6:
-                task: run_tests
-                options:
-                    managed: True
-                    namespace: npsp
 
     dev_org_beta_deps:
         description: Set up an org as a development environment for unmanaged metadata based on the latest version (including betas).
@@ -189,7 +268,8 @@ flows:
                 task: test_data_delete
             2:
                 task: test_data_dev_org
-    install_pilot:
+
+    install_prod_with_abacus:
       steps:
           1:
               task: update_dependencies
@@ -198,30 +278,85 @@ flows:
                       - github: https://github.com/SalesforceFoundation/Cumulus
                       - github: https://github.com/SalesforceFoundation/HEDAP
                       - github: https://github.com/SalesforceFoundation/Abacus
+              ui_options:
+                  1:
+                      name: NPSP - Account Record Types
+                  2:
+                      name: NPSP - Opportunity Record Types
+                  9:
+                      name: NPSP Config for Salesforce Mobile App
+                  10:
+                      name: HEDA - Account Record Types
+                  11:
+                      name: HEDA - Contact Key Affiliation Fields
+                  13:
+                      name: HEDA - Deploy Course Connection Record Types
+                  14:
+                      name: Facility Display Name Formula Field
           2:
               task: deploy_pre
           3:
               task: install_managed
+
+    install_regression:
+      steps:
+          1:
+              flow: None # Workaround for SFDO-Tooling/CumulusCI #1098
+          2:
+              task: update_dependencies
               options:
-                  version: 1.1
+                  include_beta: True
+                  dependencies:
+                      - github: https://github.com/SalesforceFoundation/Cumulus
+                      - github: https://github.com/SalesforceFoundation/HEDAP
+                      - github: https://github.com/SalesforceFoundation/Abacus
+          3:
+              task: deploy_pre
           4:
-              flow: config_managed
+              task: install_managed
+              options:
+                  version: previous
           5:
-              flow: install_pilot_settings
+              task: install_managed_beta
+
+    trial_org:
+      steps:
+          1:
+              flow: install_prod_with_abacus
+          2:
+              flow: config_managed
+          3:
+              task: deploy_dev_config
+              options:
+                  unmanaged: False
+          4:
+              task: test_data_default_settings
+              options:
+                  managed: True
+          5:
+              task: deploy_abacus_settings
+              options:
+                  managed: True
           6:
-              task: deploy_pilot_config
+              task: deploy_trial_config
 
+    existing_org:
+      steps:
+          1:
+              flow: install_prod_with_abacus
+          2:
+              flow: config_managed
+          3:
+              task: execute_installer_settings_npsp_defaults
+              options:
+                  managed: True
+          4:
+              task: deploy_abacus_settings
+              options:
+                  managed: True
+          5:
+              task: deploy_trial_config
 
-    install_pilot_settings:
-        steps:
-            1:
-                task: test_data_default_settings
-                options:
-                    managed: True
-            2:
-                task: deploy_abacus_settings
-                options:
-                    managed: True
 
     # Temporary workaround for deployment issue introduced in 1c00b3c
     deploy_packaging:
@@ -244,38 +379,7 @@ plans:
         description: Installs the Gift Entry Manager Limited Release
         steps:
             1:
-                task: update_dependencies
-                options:
-                    dependencies:
-                        - github: https://github.com/SalesforceFoundation/Cumulus
-                        - github: https://github.com/SalesforceFoundation/HEDAP
-                        - github: https://github.com/SalesforceFoundation/Abacus
-                ui_options:
-                    1:
-                        name: NPSP - Account Record Types
-                    2:
-                        name: NPSP - Opportunity Record Types
-                    9:
-                        name: NPSP Config for Salesforce Mobile App
-                    10:
-                        name: HEDA - Account Record Types
-                    11:
-                        name: HEDA - Contact Key Affiliation Fields
-                    13:
-                        name: HEDA - Deploy Course Connection Record Types
-            2:
-                task: deploy_pre
-            3:
-                task: install_managed
-            4:
-                flow: config_managed
-            5:
-                flow: install_pilot_settings
-                ui_options:
-                    test_data_default_settings:
-                        name: Configure the default NPSP Settings for Gift Processing
-                    deploy_abacus_settings:
-                        name: Deploy Abacus Settings
+                flow: trial_org
 
 orgs:
     scratch:

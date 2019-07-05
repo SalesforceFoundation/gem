@@ -1,29 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-    <businessProcesses>
-        <fullName>NPSP_Default</fullName>
-        <isActive>true</isActive>
-        <values>
-            <fullName>Pledged</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Posted</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Closed Lost</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Prospecting</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Closed Won</fullName>
-            <default>false</default>
-        </values>
-    </businessProcesses>
     <recordTypes>
         <fullName>Donation</fullName>
         <active>true</active>

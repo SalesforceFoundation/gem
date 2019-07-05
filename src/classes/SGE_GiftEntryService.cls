@@ -37,7 +37,7 @@
 * @description This class handles the custom fields section of the Single Gift Entry form
 **/
 public with sharing class SGE_GiftEntryService {
-    private static final String LAYOUT_NAME = 'Custom Field Configuration for Single Gift Entry';
+    private static final String LAYOUT_NAME = 'Single Gift Entry Customization';
     private static final String HIDDEN_LAYOUT_SECTION_NAME = 'DO NOT EDIT - Required Fields';
     /**
      * Read an opportunity layout for use in the SGE form

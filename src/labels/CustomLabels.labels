@@ -270,7 +270,7 @@
         <fullName>Required_Fields_Missing</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Required fields missing.</shortDescription>
-        <value>Required fields missing.</value>
+        <shortDescription>A required field is not filled in.</shortDescription>
+        <value>A required field is not filled in.</value>
     </labels>
 </CustomLabels>

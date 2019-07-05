@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>Opportunity.Test_Text_Field__c</members>
+        <members>Opportunity.Test_Checkbox_Field__c</members>
+        <members>Opportunity.Test_Lookup_Field__c</members>
+        <members>Opportunity.Test_Long_Text_Area__c</members>
+        <members>Opportunity.Test_Picklist__c</members>
+        <members>Opportunity.Test_Date_Field__c</members>
+        <members>Opportunity.Test_Number_Field__c</members>
+        <members>Opportunity.Test_Rich_Text__c</members>
+        <members>Opportunity.Test_Phone_Field__c</members>
+        <members>Opportunity.Test_Percent_Field__c</members>
+        <members>npsp__DataImport__c.Test_Text_Field__c</members>
+        <members>npsp__DataImport__c.Test_Checkbox_Field__c</members>
+        <members>npsp__DataImport__c.Test_Lookup_Field__c</members>
+        <members>npsp__DataImport__c.Test_Long_Text_Area__c</members>
+        <members>npsp__DataImport__c.Test_Picklist__c</members>
+        <members>npsp__DataImport__c.Test_Date_Field__c</members>
+        <members>npsp__DataImport__c.Test_Number_Field__c</members>
+        <members>npsp__DataImport__c.Test_Rich_Text__c</members>
+        <members>npsp__DataImport__c.Test_Phone_Field__c</members>
+        <members>npsp__DataImport__c.Test_Percent_Field__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
         <members>Opportunity-npsp__Donation Layout</members>
+        <members>Opportunity-Single Gift Entry Customization</members>
         <members>npe01__OppPayment__c-npe01__Payment Layout</members>
         <name>Layout</name>
     </types>
-    <version>42.0</version>
+    <types>
+        <members>Admin</members>
+        <name>Profile</name>
+    </types>
+    <version>45.0</version>
 </Package>

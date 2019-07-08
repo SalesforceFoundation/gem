@@ -404,6 +404,7 @@ public with sharing class GiftEntryFormController {
                 (giftModel.opp.npe01__Number_of_Payments__c != null && giftModel.opp.npe01__Number_of_Payments__c > 0)){
                     processDI = false;
             } else if(giftModel.oppId != null){
+                // If the Opportunity can be updated, and it already exists, update via Data Import process
                 updateGift = true;
             }
 

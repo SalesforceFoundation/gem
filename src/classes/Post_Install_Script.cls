@@ -69,7 +69,7 @@ global with sharing class Post_Install_Script implements InstallHandler{
                 hed__Class__c = syncRelRecords, hed__Active__c = true, hed__Object__c = 'Relationship__c',
                 hed__Load_Order__c =  0,  hed__Trigger_Action__c = 'AfterInsert;AfterUpdate;AfterDelete', 
                 hed__Asynchronous__c = false,  hed__User_Managed__c = false,  
-                hed__Usernames_to_Exclude__c = ''
+                hed__Usernames_to_Exclude__c = '', hed__Owned_by_Namespace__c = 'gem'
             )
         );
 
@@ -79,7 +79,7 @@ global with sharing class Post_Install_Script implements InstallHandler{
                 hed__Class__c = syncAfflRecords, hed__Active__c = true, hed__Object__c = 'Affiliation__c',
                 hed__Load_Order__c =  0,  hed__Trigger_Action__c = 'AfterInsert;AfterUpdate;AfterDelete', 
                 hed__Asynchronous__c = false,  hed__User_Managed__c = false,  
-                hed__Usernames_to_Exclude__c = ''
+                hed__Usernames_to_Exclude__c = '', hed__Owned_by_Namespace__c = 'gem'
             )
         );
 

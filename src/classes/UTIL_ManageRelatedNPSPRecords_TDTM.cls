@@ -38,7 +38,7 @@
 **/
 public class UTIL_ManageRelatedNPSPRecords_TDTM {
 
-    private final static String gemRelatedOCRField = UTIL_Namespace.StrTokenNSPrefix('Related_Opportunity_Contact_Role__c');
+    public final static String gemRelatedOCRField = UTIL_Namespace.StrTokenNSPrefix('Related_Opportunity_Contact_Role__c');
 
     public static Map<String, String> EDAToNPSPRelFieldMap = new Map<String, String>{
         'hed__Contact__c' => 'npe4__Contact__c',
@@ -95,8 +95,9 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
             Database.query('SELECT '
 				+ String.escapeSingleQuotes(allEDAAfflFields) 
 				+' FROM hed__Affiliation__c '
-				+ 'WHERE Related_Opportunity_Contact_Role__c != null '
-                + 'AND Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
+				+ 'WHERE ' + gemRelatedOCRField + ' != null '
+                + 'AND hed__Contact__c != null '
+                + 'AND ' + gemRelatedOCRField + ' != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND hed__Account__c in :donorAccountIds ');
 
         // Query existing NPSP Affiliations to these Donors
@@ -136,8 +137,8 @@ public class UTIL_ManageRelatedNPSPRecords_TDTM {
             Database.query('SELECT '
 				+ String.escapeSingleQuotes(allEDARelFields) 
 				+' FROM hed__Relationship__c '
-				+ 'WHERE Related_Opportunity_Contact_Role__c != null '
-				+ 'AND Related_Opportunity_Contact_Role__c != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
+				+ 'WHERE ' + gemRelatedOCRField + ' != null '
+				+ 'AND ' + gemRelatedOCRField + ' != :RELATED_OPPORTUNITY_CONTACT_ROLE_NONE '
 				+ 'AND hed__Contact__c in :donorContactIds ');
 
 		// Query existing NPSP Relationships to these Donors

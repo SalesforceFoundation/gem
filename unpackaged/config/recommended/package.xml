@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-	    <members>*</members>
-	    <name>CustomObject</name>
-	</types>
-    <types>
         <members>*</members>
-        <name>Profile</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>StandardValueSet</name>
+        <name>CustomObject</name>
     </types>
     <types>
         <members>New_Household_Account</members>
@@ -18,8 +10,8 @@
     </types>
     <types>
         <members>Opportunity-GEM Gift Layout</members>
-        <members>Opportunity-Custom Field Configuration for Single Gift Entry</members>
+        <members>Opportunity-Single Gift Entry Customization</members>
         <name>Layout</name>
     </types>
-    <version>42.0</version>
+    <version>45.0</version>
 </Package>

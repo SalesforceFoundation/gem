@@ -65,5 +65,33 @@ public with sharing class Post_Install_Script_TEST {
           npspOrgSettings.npe01__Account_Processor__c);
         system.assertEquals(hedaOrgSettings.hed__Account_Processor__c,
           npspOrgSettings.npe01__One_to_One_RecordTypeID__c);
+
+        //Verify that Data Import settings have been added
+        npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
+        System.assertEquals(npsp.BDI_DataImport_API.ExactMatchOrCreate, diSettings.npsp__Donation_Matching_Behavior__c);
+        System.assertEquals('npsp__donation_date__c;npsp__donation_name__c', diSettings.npsp__Donation_Matching_Rule__c);
+
+        //Check that default TDTM triggers were added
+        List<hed__Trigger_Handler__c> hedaTriggers = [SELECT hed__Class__c, hed__Object__c,
+            hed__Active__c, hed__Load_Order__c
+            FROM hed__Trigger_Handler__c
+            ORDER BY hed__Class__c ASC];
+        hed__Trigger_Handler__c afflSync = hedaTriggers[0];
+        hed__Trigger_Handler__c relSync = hedaTriggers[1];
+        
+        String syncAfflRecords = AFFL_SyncToNPSP_TDTM.class.toString();
+        String syncRelRecords = REL_SyncToNPSP_TDTM.class.toString();
+
+        System.assertEquals(2, hedaTriggers.size());
+
+        System.assertEquals('Affiliation__c', afflSync.hed__Object__c);
+        System.assertEquals(syncAfflRecords, afflSync.hed__Class__c);
+        System.assertEquals(true, afflSync.hed__Active__c);
+        System.assertEquals(0, afflSync.hed__Load_Order__c);
+
+        System.assertEquals('Relationship__c', relSync.hed__Object__c);
+        System.assertEquals(syncRelRecords, relSync.hed__Class__c);
+        System.assertEquals(true, relSync.hed__Active__c);
+        System.assertEquals(0, relSync.hed__Load_Order__c);
     }
 }

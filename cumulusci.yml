@@ -67,8 +67,9 @@ tasks:
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         options:
             apex: >
+                Post_Install_Script.populateNPSPAccountModel();    
                 Post_Install_Script.giftSetup();
-                Post_Install_Script.populateNPSPAccountModel();
+                Post_Install_Script.insertTdtmDefaults();
 
     execute_installer_settings_gem_only:
         description: Configure the default Settings for Gift Processing

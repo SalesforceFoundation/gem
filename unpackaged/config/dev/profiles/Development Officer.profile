@@ -107,6 +107,12 @@
         <layout>Contact-%%%NAMESPACE%%%GEM Contact Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>hed__Affiliation__c-GEM Affiliation Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>hed__Relationship__c-GEM Relationship Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
     </layoutAssignments>
     <layoutAssignments>

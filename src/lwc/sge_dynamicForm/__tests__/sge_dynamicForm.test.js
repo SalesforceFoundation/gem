@@ -39,35 +39,4 @@ describe('c-sge_dynamic-form', () => {
         })
     });
 
-    describe.skip('getValues', () => {
-        it('should work when values are present', () => {
-            const element = createElement('c-sge_dynamic-form', { is: SGE_DynamicForm });
-            document.body.appendChild(element);
-
-            return flushPromises().then(() => {
-                const testNumberField = element.shadowRoot.querySelector("lightning-input-field[data-id='Test_Number_Field__c']");
-                testNumberField.value = 10.00;
-
-
-                return flushPromises().then(() => {
-                   const { values } =  element;
-                   console.log(values);
-
-                   expect(values.Test_Number_Field__c).toBe(10.00);
-                });
-            });
-        });
-
-        it('should work when values are blank or empty', () => {
-            const element = createElement('c-sge-dynamicform', { is: SGE_DynamicForm });
-            document.body.appendChild(element);
-
-            return flushPromises().then(() => {
-                const fields = element.shadowRoot.querySelectorAll("[data-type='field']");
-                expect(fields.length).toBe(3);
-                const { values } = element;
-                expect(values).toMatchSnapshot();
-            });
-        });
-    });
 });

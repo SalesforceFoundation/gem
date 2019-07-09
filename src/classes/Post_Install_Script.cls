@@ -43,6 +43,8 @@ global with sharing class Post_Install_Script implements InstallHandler{
         if(context.previousVersion() == null) {
             UTIL_CustomSettingsFacade.getOrgGemSettings();
             populateNPSPAccountModel();
+            giftSetup();
+            insertTdtmDefaults();
         }
     }
 
@@ -53,4 +55,35 @@ global with sharing class Post_Install_Script implements InstallHandler{
     global static void populateNPSPAccountModel() {
         TDTM_Glue.updateNPSPAccountModel();
     }
+
+    /*******************************************************************************************************
+    * @description Inserts the default TDTM records. Public just for testing purposes
+    * @return void
+    */
+    public static void insertTdtmDefaults() {
+        List<hed__Trigger_Handler__c> gemTDTMTriggers = new List<hed__Trigger_Handler__c>();
+
+        String syncRelRecords = REL_SyncToNPSP_TDTM.class.toString();
+        gemTDTMTriggers.add(
+            new hed__Trigger_Handler__c(
+                hed__Class__c = syncRelRecords, hed__Active__c = true, hed__Object__c = 'Relationship__c',
+                hed__Load_Order__c =  0,  hed__Trigger_Action__c = 'AfterInsert;AfterUpdate;AfterDelete', 
+                hed__Asynchronous__c = false,  hed__User_Managed__c = false,  
+                hed__Usernames_to_Exclude__c = '', hed__Owned_by_Namespace__c = 'gem'
+            )
+        );
+
+        String syncAfflRecords = AFFL_SyncToNPSP_TDTM.class.toString();
+        gemTDTMTriggers.add(
+            new hed__Trigger_Handler__c(
+                hed__Class__c = syncAfflRecords, hed__Active__c = true, hed__Object__c = 'Affiliation__c',
+                hed__Load_Order__c =  0,  hed__Trigger_Action__c = 'AfterInsert;AfterUpdate;AfterDelete', 
+                hed__Asynchronous__c = false,  hed__User_Managed__c = false,  
+                hed__Usernames_to_Exclude__c = '', hed__Owned_by_Namespace__c = 'gem'
+            )
+        );
+
+        insert gemTDTMTriggers;    
+    }
+
 }

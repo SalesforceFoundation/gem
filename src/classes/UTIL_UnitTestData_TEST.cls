@@ -221,4 +221,30 @@ public class UTIL_UnitTestData_TEST {
         }
         return u;
     }
+
+    /******************************************************************************************************
+    * @description Helper method to return an Opportunity, contactId is optional
+    * @return void
+    *******************************************************************************************************/
+    
+    public static Opportunity getTestOpportunity(Id accountId, Id contactId){
+
+        return new Opportunity(
+            Name = 'Test Opp ' + Datetime.now().getTime(),
+            AccountId = accountId,
+            npsp__Primary_Contact__c = contactId,
+            CloseDate = System.Today(),
+            Amount = 100,
+            StageName = getClosedWonStage()
+        );
+
+    }
+
+    /******************************************************************************************************
+    * @description Helper method to insert GEM related TDTM
+    * @return void
+    *******************************************************************************************************/
+    public static void insertTDTMForTest() {
+        Post_Install_Script.insertTdtmDefaults();
+    }
 }

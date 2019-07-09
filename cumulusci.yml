@@ -85,6 +85,12 @@ tasks:
             path: scripts/configure_default_settings.cls
             apex: setupGEMAndNPSPDefaults();
 
+    npm_install:
+        description: Installs node packages using npm install
+        class_path: cumulusci.tasks.command.Command
+        options:
+            command: npm install
+
     retrieve_config_dev:
         description: Retrieves the current changes in the scratch org into unpackaged/config/dev
         class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
@@ -241,7 +247,9 @@ flows:
                    managed: True
                    namespace: hed
             6:
-               task: ui_tests
+                task: npm_install
+            7:
+                task: ui_tests
 
     dev_org_beta_deps:
         description: Set up an org as a development environment for unmanaged metadata based on the latest version (including betas).

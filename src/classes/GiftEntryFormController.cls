@@ -145,7 +145,6 @@ public with sharing class GiftEntryFormController {
                         'npe01__Payment_Amount__c',
                         'npe01__Scheduled_Date__c',
                         'npe01__Payment_Method__c',
-                        'npe01__Check_Reference_Number__c',
                         'npe01__Paid__c',
                         'npe01__Payment_Date__c',
                         'npe01__Opportunity__c'
@@ -169,8 +168,7 @@ public with sharing class GiftEntryFormController {
                         'npsp__Account1Imported__c',
                         'npsp__Contact1Imported__c',
                         'npsp__Donation_Donor__c',
-                        'npsp__Payment_Method__c',
-                        'npsp__Payment_Check_Reference_Number__c'
+                        'npsp__Payment_Method__c'
                 }
         );
         UTIL_CrudFLS.checkAccess(
@@ -182,17 +180,7 @@ public with sharing class GiftEntryFormController {
                         'CloseDate',
                         'Description',
                         'Name',
-                        'StageName',
-                        'npsp__Tribute_Type__c',
-                        'npsp__Acknowledgment_Status__c',
-                        'npsp__Honoree_Name__c',
-                        'npsp__Honoree_Contact__c',
-                        'npsp__Notification_Recipient_Name__c',
-                        'npsp__Notification_Message__c',
-                        'npsp__Matching_Gift_Employer__c',
-                        'npsp__Matching_Gift_Account__c',
-                        'npsp__Matching_Gift__c',
-                        'npsp__Matching_Gift_Status__c'
+                        'StageName'
                 }
         );
     }
@@ -565,15 +553,6 @@ public with sharing class GiftEntryFormController {
 
         picklistValues = Opportunity.StageName.getDescribe().getPicklistValues();
         picklistMap.put('npsp__Donation_Stage__c', returnPicklistValuesList(picklistValues));
-        
-        picklistValues = Opportunity.npsp__Matching_Gift_Status__c.getDescribe().getPicklistValues();
-        picklistMap.put('Donation_Matching_Gift_Status__c', returnPicklistValuesList(picklistValues));
-        
-        picklistValues = Opportunity.npsp__Acknowledgment_Status__c.getDescribe().getPicklistValues();
-        picklistMap.put('Donation_Acknowledgment_Status__c', returnPicklistValuesList(picklistValues));
-        
-        picklistValues = Opportunity.npsp__Tribute_Type__c.getDescribe().getPicklistValues();
-        picklistMap.put('Donation_Tribute_Type__c', returnPicklistValuesList(picklistValues));
 
         picklistValues = OpportunityContactRole.Role.getDescribe().getPicklistValues();
         picklistMap.put('npsp__Role_Name__c', returnSoftCreditRoleList(picklistValues));

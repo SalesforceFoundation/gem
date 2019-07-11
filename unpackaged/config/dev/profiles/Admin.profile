@@ -116,11 +116,11 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%In_Kind</recordType>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%InKindGift</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Major_Gift</recordType>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%MajorGift</recordType>
     </layoutAssignments>
         <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
@@ -191,17 +191,22 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Opportunity.In_Kind</recordType>
+        <recordType>Opportunity.Grant</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Opportunity.Major_Gift</recordType>
+        <recordType>Opportunity.InKindGift</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Opportunity.Matching</recordType>
+        <recordType>Opportunity.MajorGift</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>Opportunity.MatchingGift</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>

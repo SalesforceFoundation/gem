@@ -6,23 +6,17 @@
 * @date 2018-07-26
 */
 String adminEmail = 'testing@example.com';
-String giftProfileName = 'Gift Processor';
-String giftProfileName2 = 'Development Officer';
 
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 
-public static void setupGEMDefaultsForDev(){
+public static void setupGEMDefaultsForTrial(){
     initializeHEDASettingsForGEM();
     initializeNPSPSettingsForGEM();
     enablePaymentAllocationsDefaultGAU();
     initializeGEMSettings();
 }
 
-public static void setupGEMDefaults(){
-    initializeGEMSettings();
-}
-
-public static void setupGEMAndNPSPDefaults(){
+public static void setupGEMDefaultsForInstaller(){
     initializeNPSPSettingsForGEM();
     enablePaymentAllocationsDefaultGAU();
     initializeGEMSettings();
@@ -48,8 +42,6 @@ public static void enablePaymentAllocationsDefaultGAU() {
 public static void initializeNPSPSettingsForGEM() {
     insertGiftEntrySettings();
     npsp.UTIL_CustomSettings_API.getContactsSettings();
-    npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
-    npsp.UTIL_CustomSettings_API.getRecurringDonationsSettings();
     npsp.UTIL_CustomSettings_API.getRelationshipSettings();
     npsp.UTIL_CustomSettings_API.getAffiliationsSettings();
     npsp.UTIL_CustomSettings_API.getHouseholdNamingSettings();
@@ -59,10 +51,9 @@ public static void initializeNPSPSettingsForGEM() {
     npsp.UTIL_CustomSettings_API.getAllocationsSettings();
     npsp.UTIL_CustomSettings_API.getDataImportSettings();
 
-    Id rtId = [SELECT Id FROM RecordType WHERE SObjectType = 'Opportunity' AND DeveloperName = 'Membership' LIMIT 1].Id;
-
+    Id membershipRtId = [SELECT Id FROM RecordType WHERE SObjectType = 'Opportunity' AND DeveloperName = 'Membership' LIMIT 1].Id;
     npo02__Households_Settings__c hs = npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
-    hs.npo02__Membership_Record_Types__c = rtId;
+    hs.npo02__Membership_Record_Types__c = membershipRtId;
     hs.npo02__Advanced_Household_Naming__c = false;
     upsert hs;
 
@@ -73,10 +64,15 @@ public static void initializeNPSPSettingsForGEM() {
     cos.npsp__Notification_Recipient_Opp_Contact_Role__c = 'Notification Contact';
     cos.npsp__Payments_Auto_Close_Stage_Name__c = getClosedWonStage();
     cos.npsp__Household_Account_Addresses_Disabled__c = true;
-    cos.npsp__Enforce_Accounting_Data_Consistency__c = true;
+    
     cos.npe01__One_to_One_RecordTypeID__c = hedaOrgSettings.hed__Administrative_Account_Record_Type__c;
     cos.npe01__HH_Account_RecordTypeID__c = hedaOrgSettings.hed__Household_Addresses_RecType__c;
     upsert cos;
+
+    Id donationRtId = [SELECT Id FROM RecordType WHERE SObjectType = 'Opportunity' AND DeveloperName = 'Donation' LIMIT 1].Id;
+    npe03__Recurring_Donations_Settings__c rds = npsp.UTIL_CustomSettings_API.getRecurringDonationsSettings();
+    rds.npe03__Record_Type__c = donationRtId;
+    upsert rds;
 }
 
 public static void initializeHEDASettingsForGEM() {
@@ -112,7 +108,8 @@ public static void AddGiftProcessor() {
         Profile giftProfile = [
             SELECT Id
             FROM Profile
-            WHERE Name =: giftProfileName
+            WHERE Name =: 'Standard User'
+            LIMIT 1
         ];
 
         List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :giftProfile.Id AND IsActive = true];

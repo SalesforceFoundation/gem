@@ -124,7 +124,7 @@
     </layoutAssignments>
         <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Matching</recordType>
+        <recordType>Opportunity.%%%NAMESPACED_ORG%%%MatchingGift</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>

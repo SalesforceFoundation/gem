@@ -171,17 +171,19 @@ public with sharing class GiftEntryFormController {
                         'npsp__Payment_Method__c'
                 }
         );
+        List<String> opportunityFields = getFieldsFromCustomizableLayout();
+        opportunityFields.addAll(new List<String>{
+                'Amount',
+                'CampaignId',
+                'CloseDate',
+                'Description',
+                'Name',
+                'StageName'
+        });
         UTIL_CrudFLS.checkAccess(
                 UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
                 'Opportunity',
-                new List<String>{
-                        'Amount',
-                        'CampaignId',
-                        'CloseDate',
-                        'Description',
-                        'Name',
-                        'StageName'
-                }
+                opportunityFields
         );
     }
 
@@ -723,7 +725,12 @@ public with sharing class GiftEntryFormController {
         giftModel = saveDonationInformation(giftModel);
         return giftModel;
     }
-    
+
+    public static List<String> getFieldsFromCustomizableLayout() {
+        SGE_GiftEntryService.Layout layout = SGE_GiftEntryService.readOpportunityLayout();
+        return layout.getFieldNames();
+    }
+
     /*******************************************************************************************************
     * @description Holds the label and value for a picklist option in the Gift Entry Form
     * @attribute label String for the visible label

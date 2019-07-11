@@ -25,7 +25,6 @@
     </types>
     <types>
         <members>Opportunity-npsp__Donation Layout</members>
-        <members>Opportunity-Single Gift Entry Customization</members>
         <members>npe01__OppPayment__c-npe01__Payment Layout</members>
         <name>Layout</name>
     </types>

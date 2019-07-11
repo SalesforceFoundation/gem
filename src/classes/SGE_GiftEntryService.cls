@@ -95,6 +95,16 @@ public with sharing class SGE_GiftEntryService {
                 }
             }
         }
+
+        public List<String> getFieldNames() {
+            List<String> fieldNames = new List<String>();
+
+            for(Section s : this.sections) {
+                fieldNames.addAll(s.getFieldNames());
+            }
+
+            return fieldNames;
+        }
     }
 
     /**
@@ -111,6 +121,16 @@ public with sharing class SGE_GiftEntryService {
             for(Metadata.LayoutColumn column : section.layoutColumns) {
                 columns.add(new Column(sObjectType, column));
             }
+        }
+
+        public List<String> getFieldNames() {
+            List<String> fieldNames = new List<String>();
+
+            for(Column c : this.columns) {
+                fieldNames.addAll(c.getFieldNames());
+            }
+
+            return fieldNames;
         }
     }
 
@@ -130,6 +150,16 @@ public with sharing class SGE_GiftEntryService {
                     }
                 }
             }
+        }
+
+        public List<String> getFieldNames() {
+            List<String> fieldNames = new List<String>();
+
+            for(Field f : this.fields) {
+                fieldNames.add(f.name);
+            }
+
+            return fieldNames;
         }
 
         /**

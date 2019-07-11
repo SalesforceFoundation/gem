@@ -90,4 +90,17 @@ private class SGE_GiftEntryService_TEST {
         System.assertNotEquals(null, fieldMappings, 'Expected to receive field mappings');
         System.assert(fieldMappings.size() > 0, 'There should be at least one default mapping');
     }
+
+    @isTest
+    static void testRetrieveFieldNames() {
+        Metadata.Layout mLayout = (Metadata.Layout)JSON.deserialize(mockLayoutJSON, Metadata.Layout.class);
+        SGE_GiftEntryService.Layout layout = new SGE_GiftEntryService.Layout(Schema.Opportunity.SObjectType, mLayout);
+
+        List<String> fieldNames = layout.getFieldNames();
+
+        // expecting npsp__Ask_Date__c, npsp__In_Kind_Type__c, npsp__Fair_Market_Value__c
+        System.assert(fieldNames.contains('npsp__Ask_Date__c'), 'Expected to see npsp__Ask_Date__c in list of layout fields');
+        System.assert(fieldNames.contains('npsp__In_Kind_Type__c'), 'Expected to see npsp__In_Kind_Type__c in list of layout fields');
+        System.assert(fieldNames.contains('npsp__Fair_Market_Value__c'), 'Expected to see npsp__Fair_Market_Value__c in list of layout fields');
+    }
 }

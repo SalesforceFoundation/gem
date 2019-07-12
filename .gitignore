@@ -24,6 +24,7 @@ packaged
 *.pyc
 .sfdx
 .vscode
+.cci
 
 # macOS Specific Ignores
 # https://github.com/github/gitignore/blob/master/Global/macOS.gitignore

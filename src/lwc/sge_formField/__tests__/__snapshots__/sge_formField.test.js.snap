@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`c-sge_form-field should load with matcing donation info 1`] = `
+Object {
+  "Test_Number_Field__c": 123,
+}
+`;
+
 exports[`c-sge_form-field should return a field object with a name and value 1`] = `
 Object {
   "Test_Number_Field__c": 10,

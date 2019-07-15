@@ -298,7 +298,6 @@ public with sharing class GiftEntryFormController {
                             'npsp__Amount__c',
                             'npsp__General_Accounting_Unit__c',
                             'npsp__Percent__c',
-                            'npsp__Recurring_Donation__c',
                             'npsp__Opportunity__c'
                     });
             List<npsp__Allocation__c> allocations = [
@@ -307,7 +306,6 @@ public with sharing class GiftEntryFormController {
                             npsp__General_Accounting_Unit__c,
                             npsp__General_Accounting_Unit__r.Name,
                             npsp__Percent__c,
-                            npsp__Recurring_Donation__c,
                             npsp__Opportunity__c
                     FROM npsp__Allocation__c
                     WHERE npsp__Opportunity__c = :oppId

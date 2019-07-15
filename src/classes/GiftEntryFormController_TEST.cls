@@ -389,6 +389,32 @@ private class GiftEntryFormController_TEST {
         System.assert(openAccountDonations.contains(opp2.Id));
     }
 
+    // Checking that an existing gift can be loaded and saved using our provided Permission Set
+    @isTest
+    private static void testGiftEntryWithPermissionSet() {
+
+        User u = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
+        UTIL_UnitTestData_TEST.assignGiftEntryPermissionSetToUser(u.Id);
+
+        Contact con1 = UTIL_UnitTestData_TEST.getContact();
+        insert con1;
+
+        Test.startTest();
+        Opportunity opp = UTIL_UnitTestData_TEST.getOpenOpportunity(con1, 100);
+        insert opp;
+        Test.stopTest();
+
+        GiftEntryFormController.GiftFormModel giftModel;
+        
+        System.runAs(u) {
+            giftModel = GiftEntryFormController.initClass(opp.Id);
+            giftModel.oppId = opp.Id;
+            GiftEntryFormController.saveDonationInformation(giftModel);
+        }
+
+        System.assertNotEquals(null, giftModel);
+    }
+
     private static npsp__DataImport__c getTestDI(){
         return new npsp__DataImport__c(
             npsp__Contact1_Firstname__c = cFirst,

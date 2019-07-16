@@ -12,7 +12,7 @@
         <name>Layout</name>
     </types>
     <types>
-        <members>Gift_Entry_Management</members>
+        <members>Gift_Entry</members>
         <name>PermissionSet</name>
     </types>
     <types>

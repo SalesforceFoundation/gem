@@ -156,12 +156,6 @@ tasks:
             path: scripts/configure_default_settings.cls
             apex: AddGiftProcessor();
 
-    ui_tests:
-        description: Runs UI tests for the project via jest
-        class_path: cumulusci.tasks.command.Command
-        options:
-            command: npm run test:unit
-
 flows:
     config_apextest:
         steps:
@@ -248,8 +242,6 @@ flows:
                    namespace: hed
             6:
                 task: npm_install
-            7:
-                task: ui_tests
 
     dev_org_beta_deps:
         description: Set up an org as a development environment for unmanaged metadata based on the latest version (including betas).

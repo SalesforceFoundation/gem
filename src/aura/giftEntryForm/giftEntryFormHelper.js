@@ -459,8 +459,7 @@
                 // Lookup values are stored as arrays for some reason
                 oppValue = oppValue[0];
                 opp[oppField] = oppValue;
-            }
-            if(oppValue) {
+            } else if(oppValue !== null && typeof oppValue !== 'undefined') {
                 di[field] = oppValue;
             }
         }

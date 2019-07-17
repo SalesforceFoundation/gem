@@ -52,6 +52,14 @@ tasks:
             path: unpackaged/config/qa
             unmanaged: True
 
+    deploy_regression_config:
+        description: Deploys regression testing configuration. Assigns page layouts.
+        class_path: cumulusci.tasks.salesforce.Deploy
+        options:
+            namespace_inject: $project_config.project__package__namespace
+            path: unpackaged/config/regression
+            unmanaged: False
+
     deploy_trial_config:
         description: Deploys metadata for end user. Assigns page layouts and compact layouts.
         class_path: cumulusci.tasks.salesforce.Deploy
@@ -104,6 +112,13 @@ tasks:
         class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
         options:
             path: unpackaged/config/recommended
+            namespace_tokenize: $project_config.project__package__namespace
+
+    retrieve_config_regression:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/regression
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
+        options:
+            path: unpackaged/config/regression
             namespace_tokenize: $project_config.project__package__namespace
 
     retrieve_config_trial:
@@ -197,10 +212,14 @@ flows:
                 options:
                     unmanaged: False
             5:
+                task: deploy_regression_config
+                options:
+                    unmanaged: False
+            6:
                 task: test_data_default_settings
                 options:
                     managed: True
-            6:
+            7:
                 task: deploy_abacus_settings
                 options:
                     managed: True

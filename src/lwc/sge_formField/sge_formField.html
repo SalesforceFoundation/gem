@@ -1,12 +1,12 @@
 <template>
-    <lightning-record-edit-form object-api-name='Opportunity'>
+    <lightning-record-edit-form object-api-name='Opportunity' if:true={renderInput}>
         <label class={labelClassName}>{field.label}</label>
         <lightning-input-field
             field-name={field.name} 
             data-id={field.name} 
             data-type='field'
             variant='label-hidden'
-            value={fieldValue} 
+            value={value} 
             disabled={disableinputs}>
         </lightning-input-field>
     </lightning-record-edit-form>

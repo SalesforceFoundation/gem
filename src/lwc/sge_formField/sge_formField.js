@@ -36,20 +36,24 @@
  * @group-content
  * @description This component represents a single field within the custom fields layout for Single Gift Entry
  **/
-import {LightningElement, api} from 'lwc';
+import {LightningElement, api, track} from 'lwc';
 
 export default class SGE_FormField extends LightningElement {
     @api sobject;
     @api disableinputs;
     @api field = {};
+    @track value;
+    @track renderInput = true;
+
+    /**
+     * Load the default field value into the actual value attribute
+     */
+    connectedCallback() {
+        this.setDefaultVal();
+    }
 
     get labelClassName() {
         return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';
-    }
-
-    @api
-    get fieldValue() {
-        return this.sobject[this.field.name];
     }
 
     @api
@@ -67,6 +71,41 @@ export default class SGE_FormField extends LightningElement {
         let data = {};
         data[this.field.name] = field.value;
         return data;
+    }
+
+    @api
+    resetToDefault(loadingValues) {
+        this.renderInput = false;
+        setTimeout(() => {
+            this.renderInput = true;
+            if(loadingValues){
+                this.loadValueFromObject();
+            } else {
+                this.setDefaultVal();
+            }
+        }, 0);
+    }
+
+    loadValueFromObject() {
+        let fieldVal = this.sobject[this.field.name];
+        // If the picklist value is blank, we need to change what the field gets set to
+        if(this.field.typeName === 'PICKLIST' && !fieldVal){
+            fieldVal = '';
+        }
+        this.value = fieldVal;
+    }
+
+    setDefaultVal() {
+        let defaultVal = null;
+        if(this.field.typeName === 'PICKLIST'){
+            defaultVal = '';
+        }
+        if(this.field.hasOwnProperty('defaultValue')){
+            defaultVal = this.field.defaultValue;
+        } else if(this.field.hasOwnProperty('defaultValueFormula')){
+            defaultVal = this.field.defaultValueFormula;
+        }
+        this.value = defaultVal;
     }
 
     get value() {

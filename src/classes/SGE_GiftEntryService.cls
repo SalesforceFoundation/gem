@@ -184,6 +184,8 @@ public with sharing class SGE_GiftEntryService {
         @AuraEnabled public String helpText;
         @AuraEnabled public Boolean required;
         @AuraEnabled public String typeName;
+        @AuraEnabled public Object defaultValue;
+        @AuraEnabled public String defaultValueFormula;
 
         public Field(Schema.SObjectType sObjectType, Metadata.LayoutItem item) {
             this(UTIL_Describe.getFieldDescribe(sObjectType.getDescribe().getName(), item.field));
@@ -195,6 +197,8 @@ public with sharing class SGE_GiftEntryService {
             this.name = describeFieldResult.getName();
             this.helpText = describeFieldResult.getInlineHelpText();
             this.typeName = describeFieldResult.getType().name();
+            this.defaultValue = describeFieldResult.getDefaultValue();
+            this.defaultValueFormula = describeFieldResult.getDefaultValueFormula();
         }
     }
 

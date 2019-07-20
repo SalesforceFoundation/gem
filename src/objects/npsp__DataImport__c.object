@@ -109,6 +109,20 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>Donation_Notification_Recipient_Contact__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Lookup to the Notification Recipient Contact for this Opportunity</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npsp__Notification_Recipient_Contact__c</inlineHelpText>
+        <label>Donation Notification Recipient Contact</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>NPSP Data Imports (Donation Notification Recipient Contact)</relationshipLabel>
+        <relationshipName>NPSP_Data_Imports1</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Donation_Tribute_Type__c</fullName>
         <description>Donation Tribute Type</description>
         <externalId>false</externalId>

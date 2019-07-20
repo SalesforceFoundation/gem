@@ -12,5 +12,5 @@
         <members>*</members>
         <name>StandardValueSet</name>
     </types>
-    <version>42.0</version>
+    <version>45.0</version>
 </Package>

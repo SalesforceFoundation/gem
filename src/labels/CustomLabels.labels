@@ -266,4 +266,11 @@
         <shortDescription>Remove</shortDescription>
         <value>Remove</value>
     </labels>
+    <labels>
+        <fullName>Required_Fields_Missing</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>A required field is not filled in.</shortDescription>
+        <value>A required field is not filled in.</value>
+    </labels>
 </CustomLabels>

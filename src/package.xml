@@ -17,6 +17,8 @@
         <members>Post_Install_Script</members>
         <members>Post_Install_Script_TEST</members>
         <members>REL_SyncToNPSP_TDTM</members>
+        <members>SGE_GiftEntryService</members>
+        <members>SGE_GiftEntryService_TEST</members>
         <members>TDTM_Glue</members>
         <members>UTIL_CrudFLS</members>
         <members>UTIL_CrudFLS_TEST</members>
@@ -66,6 +68,7 @@
         <members>npsp__DataImport__c.Donation_Matching_Gift_Status__c</members>
         <members>npsp__DataImport__c.Donation_Matching_Gift__c</members>
         <members>npsp__DataImport__c.Donation_Notification_Message__c</members>
+        <members>npsp__DataImport__c.Donation_Notification_Recipient_Contact__c</members>
         <members>npsp__DataImport__c.Donation_Tribute_Type__c</members>
         <members>npsp__DataImport__c.Notification_Recipient_Name__c</members>
         <members>npsp__DataImport__c.Post_Process_Object_JSON__c</members>
@@ -110,6 +113,7 @@
         <members>Number_of_Payments</members>
         <members>Partial</members>
         <members>Remove</members>
+        <members>Required_Fields_Missing</members>
         <name>CustomLabel</name>
     </types>
     <types>
@@ -145,5 +149,12 @@
         <members>npsp__DataImport__c-GEM Gift Layout</members>
         <name>Layout</name>
     </types>
-    <version>42.0</version>
+    <types>
+        <members>sge_dynamicForm</members>
+        <members>sge_formField</members>
+        <members>sge_formSection</members>
+        <members>sge_service</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <version>45.0</version>
 </Package>

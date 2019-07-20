@@ -6,7 +6,7 @@ project:
     package:
         name: Gift Entry Manager
         namespace: gem
-        api_version: 42.0
+        api_version: 45.0
     git:
         prefix_release: rel/gem/
         prefix_beta: beta/gem/

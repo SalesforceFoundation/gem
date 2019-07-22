@@ -66,13 +66,12 @@
 
         // Add the new rows to the page
         component.set('v.body', body);
-        
-        component.set('v.showAmountError', false);
+
         helper.getAmtTotal(component);
 
         // Check amount validation on this section
         this.handleAmtChangeHelper(component);
-        
+
         // This way, new rows will not be locked
         component.set('v.editModeOverride', false);
     },

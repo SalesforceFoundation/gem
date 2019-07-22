@@ -1,0 +1,15 @@
+import readOpportunityLayout from '@salesforce/apex/SGE_GiftEntryService.readOpportunityLayout';
+
+const getOpportunityLayout = () => {
+    return new Promise((resolve, reject) => {
+        readOpportunityLayout()
+            .then((result) => {
+                resolve(result);
+            })
+            .catch(error => {
+                console.error(JSON.stringify(error));
+            });
+    });
+};
+
+export { getOpportunityLayout }

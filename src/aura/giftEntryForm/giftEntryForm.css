@@ -40,6 +40,10 @@
     padding: 0px 0px 240px 0px;
 }
 
+.THIS [data-type='field'] [lightning-quill_quill].slds-form-element__label {
+    display: none;
+}
+
 @supports (-ms-ime-align:auto) {
     .THIS.outerDivContainer {
         padding: 0px 0px 240px 0px;

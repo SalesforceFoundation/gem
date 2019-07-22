@@ -14,5 +14,5 @@
         <members>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</members>
         <name>Layout</name>
     </types>
-    <version>42.0</version>
+    <version>45.0</version>
 </Package>

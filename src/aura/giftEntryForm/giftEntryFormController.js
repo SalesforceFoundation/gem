@@ -9,7 +9,7 @@
         // Set the namespace var so components load in managed package
         var namespace = component.getType().split(':')[0];
         component.set('v.namespacePrefix', namespace);
-        if(namespace != 'c'){
+        if(namespace !== 'c'){
             component.set('v.namespaceFieldPrefix', namespace+'__');
         }
     },
@@ -60,7 +60,7 @@
     clickEditDonor: function(component, event, helper) {
         var donorType = component.get('v.di.npsp__Donation_Donor__c');
         var lookupValue;
-        if(donorType == 'Account1'){
+        if(donorType === 'Account1'){
             lookupValue = component.get('v.opp.AccountId');
         } else {
             lookupValue = component.get('v.opp.npsp__Primary_Contact__c');
@@ -101,9 +101,9 @@
         }
         var donorType = event.getParam('value');
         // Need to clear the other donor fields
-        if(donorType == 'Account1'){
+        if(donorType === 'Account1'){
             helper.clearInputs(component, 'contactLookup');
-        } else if(donorType == 'Contact1'){
+        } else if(donorType === 'Contact1'){
             helper.clearInputs(component, 'accountLookup');
         }
     },
@@ -111,16 +111,21 @@
         var message = event.getParam('message');
         var channel = event.getParam('channel');
 
-        if(channel == 'picklistChangeEvent'){
+        if(channel === 'picklistChangeEvent') {
             helper.handlePicklistChange(component, message);
-        } else if(channel == 'matchChangeEvent'){
-            helper.handleMatchChange(component, message, helper);
-        } else if(channel == 'validateEvent'){
+        } else if(channel === 'validateEvent') {
             helper.validateForm(component, true);
-        } else if(channel == 'selectedDonation'){
+        } else if(channel === 'selectedDonation') {
             helper.setDonation(component, message);
         } else if (channel === 'onError') {
             helper.showErrorToast(message.errorMessage, message.title);
+        }
+    },
+    handleDynamicFormLoaded: function(component, event, helper) {
+        const hasFields = event.getParam('hasFields');
+        if(hasFields) {
+            const container = component.find('dynamicFormContainer');
+            $A.util.removeClass(container, 'slds-hidden');
         }
     },
     toggleSection: function(component, event, helper) {

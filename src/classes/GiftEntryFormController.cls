@@ -101,39 +101,10 @@ public with sharing class GiftEntryFormController {
      * @return Map<String, String> A map of Opp field name to corresponding Data Import field name
      */
     public static Map<String, String> getDataImportToOpportunityFieldMap() {
-        String sObjectName = 'npsp__DataImport__c';
-        DescribeSObjectResult objectDescribe = UTIL_Describe.getObjectDescribe(sObjectName);
-        if(!objectDescribe.isAccessible()) {
-            throw new UTIL_CrudFLS.AccessException(objectDescribe, 'read');
-        }
-
-    	Map<String, Schema.DescribeFieldResult> fields = UTIL_Describe.getAllFieldsDescribe(sObjectName);
-          
-        Map<String, String> oppToDiFields = new Map<String, String>();
-
-    	for(Schema.DescribeFieldResult field : fields.values()){
-      		if(field.isAccessible()) {
-                String helpText = field.getInlineHelpText();
-                String fieldName = field.getName();
-                if(fieldName == 
-                    Schema.SObjectType.npsp__DataImport__c.fields.npsp__Account1Imported__c.getName()){
-                        helpText = 'Opportunity.AccountId';
-                } else if(fieldName ==
-                    Schema.SObjectType.npsp__DataImport__c.fields.npsp__Contact1Imported__c.getName()){
-                        helpText = 'Opportunity.npsp__Primary_Contact__c';
-                }
-
-                if(helpText == null){
-                    continue;
-                }
-                String[] fieldSplit = helpText.split('Opportunity.');
-                if(fieldSplit.size() > 1){
-                    oppToDiFields.put(field.getName(), fieldSplit[1]);
-                }
-            }
-    	}
-
-    	return oppToDiFields;
+        Map<String, String> diMappings = SGE_GiftEntryService.getDataImportFieldMappings();
+        diMappings.put('npsp__Account1Imported__c'.toLowerCase(), 'AccountId');
+        diMappings.put('npsp__Contact1Imported__c'.toLowerCase(), 'npsp__Primary_Contact__c');
+        return diMappings;
   	}
 
     @AuraEnabled
@@ -174,7 +145,6 @@ public with sharing class GiftEntryFormController {
                         'npe01__Payment_Amount__c',
                         'npe01__Scheduled_Date__c',
                         'npe01__Payment_Method__c',
-                        'npe01__Check_Reference_Number__c',
                         'npe01__Paid__c',
                         'npe01__Payment_Date__c',
                         'npe01__Opportunity__c'
@@ -198,31 +168,22 @@ public with sharing class GiftEntryFormController {
                         'npsp__Account1Imported__c',
                         'npsp__Contact1Imported__c',
                         'npsp__Donation_Donor__c',
-                        'npsp__Payment_Method__c',
-                        'npsp__Payment_Check_Reference_Number__c'
+                        'npsp__Payment_Method__c'
                 }
         );
+        List<String> opportunityFields = getFieldsFromCustomizableLayout();
+        opportunityFields.addAll(new List<String>{
+                'Amount',
+                'CampaignId',
+                'CloseDate',
+                'Description',
+                'Name',
+                'StageName'
+        });
         UTIL_CrudFLS.checkAccess(
                 UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
                 'Opportunity',
-                new List<String>{
-                        'Amount',
-                        'CampaignId',
-                        'CloseDate',
-                        'Description',
-                        'Name',
-                        'StageName',
-                        'npsp__Tribute_Type__c',
-                        'npsp__Acknowledgment_Status__c',
-                        'npsp__Honoree_Name__c',
-                        'npsp__Honoree_Contact__c',
-                        'npsp__Notification_Recipient_Name__c',
-                        'npsp__Notification_Message__c',
-                        'npsp__Matching_Gift_Employer__c',
-                        'npsp__Matching_Gift_Account__c',
-                        'npsp__Matching_Gift__c',
-                        'npsp__Matching_Gift_Status__c'
-                }
+                opportunityFields
         );
     }
 
@@ -337,7 +298,6 @@ public with sharing class GiftEntryFormController {
                             'npsp__Amount__c',
                             'npsp__General_Accounting_Unit__c',
                             'npsp__Percent__c',
-                            'npsp__Recurring_Donation__c',
                             'npsp__Opportunity__c'
                     });
             List<npsp__Allocation__c> allocations = [
@@ -346,7 +306,6 @@ public with sharing class GiftEntryFormController {
                             npsp__General_Accounting_Unit__c,
                             npsp__General_Accounting_Unit__r.Name,
                             npsp__Percent__c,
-                            npsp__Recurring_Donation__c,
                             npsp__Opportunity__c
                     FROM npsp__Allocation__c
                     WHERE npsp__Opportunity__c = :oppId
@@ -594,15 +553,6 @@ public with sharing class GiftEntryFormController {
 
         picklistValues = Opportunity.StageName.getDescribe().getPicklistValues();
         picklistMap.put('npsp__Donation_Stage__c', returnPicklistValuesList(picklistValues));
-        
-        picklistValues = Opportunity.npsp__Matching_Gift_Status__c.getDescribe().getPicklistValues();
-        picklistMap.put('Donation_Matching_Gift_Status__c', returnPicklistValuesList(picklistValues));
-        
-        picklistValues = Opportunity.npsp__Acknowledgment_Status__c.getDescribe().getPicklistValues();
-        picklistMap.put('Donation_Acknowledgment_Status__c', returnPicklistValuesList(picklistValues));
-        
-        picklistValues = Opportunity.npsp__Tribute_Type__c.getDescribe().getPicklistValues();
-        picklistMap.put('Donation_Tribute_Type__c', returnPicklistValuesList(picklistValues));
 
         picklistValues = OpportunityContactRole.Role.getDescribe().getPicklistValues();
         picklistMap.put('npsp__Role_Name__c', returnSoftCreditRoleList(picklistValues));
@@ -773,7 +723,12 @@ public with sharing class GiftEntryFormController {
         giftModel = saveDonationInformation(giftModel);
         return giftModel;
     }
-    
+
+    public static List<String> getFieldsFromCustomizableLayout() {
+        SGE_GiftEntryService.Layout layout = SGE_GiftEntryService.readOpportunityLayout();
+        return layout.getFieldNames();
+    }
+
     /*******************************************************************************************************
     * @description Holds the label and value for a picklist option in the Gift Entry Form
     * @attribute label String for the visible label

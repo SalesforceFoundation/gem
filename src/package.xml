@@ -144,6 +144,7 @@
         <members>Account-GEM Organization Layout</members>
         <members>Contact-GEM Contact Layout</members>
         <members>Opportunity-GEM Gift Layout</members>
+        <members>Opportunity-Single Gift Entry Customization</members>
         <members>GEM_API_Settings__mdt-GEM API Settings Layout</members>
         <members>Gift_Entry_Field_Mapping__mdt-Gift Entry Field Mapping Layout</members>
         <members>npsp__DataImport__c-GEM Gift Layout</members>

@@ -46,7 +46,7 @@ public with sharing class SGE_GiftEntryService {
      */
     @AuraEnabled(cacheable=true)
     public static SGE_GiftEntryService.Layout readOpportunityLayout() {
-        return readOpportunityLayoutByName(LAYOUT_NAME);
+        return readOpportunityLayoutByName(UTIL_Namespace.StrTokenNSPrefix(LAYOUT_NAME));
     }
 
     @AuraEnabled(cacheable=true)

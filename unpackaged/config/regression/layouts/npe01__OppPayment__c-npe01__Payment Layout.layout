@@ -84,11 +84,12 @@
     <relatedLists>
         <fields>NAME</fields>
         <fields>abacus__Amount__c</fields>
-        <fields>abacus__Check_Reference_Number__c</fields>
-        <fields>abacus__Date__c</fields>
+        <fields>abacus__Due_Date__c</fields>
+        <fields>abacus__Type__c</fields>
         <relatedList>abacus__Ledger_Entry__c.abacus__Payment__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <customButtons>npsp__Manage_Allocations</customButtons>
         <fields>NAME</fields>
         <fields>npsp__General_Accounting_Unit__c</fields>
         <fields>npsp__Amount__c</fields>

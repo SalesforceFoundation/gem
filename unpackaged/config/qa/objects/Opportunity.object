@@ -12,7 +12,7 @@
     </fields>
     <fields>
         <fullName>Test_Checkbox_Field__c</fullName>
-        <defaultValue>false</defaultValue>
+        <defaultValue>true</defaultValue>
         <externalId>false</externalId>
         <label>Test Checkbox Field</label>
         <trackTrending>false</trackTrending>

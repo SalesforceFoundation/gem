@@ -5,18 +5,18 @@
         <name>CustomObject</name>
     </types>
     <types>
-        <members>New_Household_Account</members>
-        <name>QuickAction</name>
-    </types>
-    <types>
+        <members>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</members>
         <members>hed__Affiliation__c-GEM Affiliation Layout</members>
         <members>hed__Relationship__c-GEM Relationship Layout</members>
-        <members>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</members>
         <name>Layout</name>
     </types>
     <types>
         <members>Gift_Entry</members>
         <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>New_Household_Account</members>
+        <name>QuickAction</name>
     </types>
     <types>
         <members>New_Household_Account</members>

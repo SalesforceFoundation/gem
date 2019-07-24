@@ -131,7 +131,7 @@ public with sharing class GiftEntryFormController {
         // ensure field exists inside fieldMappings
         for(String oppField : customOppFields) {
             if(!mappedOppFields.contains(oppField)) {
-                throw new FieldNotMappedException('No data import mapping found for Opportunity field: ' + oppField);
+                throw new FieldNotMappedException(Label.Error_No_Data_Import_Mapping + ': ' + oppField);
             }
         }
     }

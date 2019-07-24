@@ -259,8 +259,6 @@ flows:
                 options:
                    managed: True
                    namespace: hed
-            6:
-                task: npm_install
 
     dev_org_beta_deps:
         description: Set up an org as a development environment for unmanaged metadata based on the latest version (including betas).

@@ -13,12 +13,26 @@
     </fields>
     <fields>
         <fullName>Test_Checkbox_Field__c</fullName>
-        <inlineHelpText>Opportunity.%%%NAMESPACED_ORG%%%Test_Checkbox_Field__c</inlineHelpText>
-        <defaultValue>false</defaultValue>
+        <inlineHelpText>Opportunity.Test_Checkbox_Field__c</inlineHelpText>
         <externalId>false</externalId>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>False</fullName>
+                    <default>false</default>
+                    <label>False</label>
+                </value>
+                <value>
+                    <fullName>True</fullName>
+                    <default>false</default>
+                    <label>True</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
         <label>Test Checkbox Field</label>
         <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Test_Lookup_Field__c</fullName>

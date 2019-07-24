@@ -357,10 +357,14 @@ public with sharing class GiftEntryFormController {
         List<Database.UpsertResult> saveResults = new List<Database.UpsertResult>();
         try {
             Boolean createOrEditOpportunity = true;
+            Boolean updateGift = false;
             // If the Opportunity is closed or has payments, the DataImport cannot be processed
             if((giftModel.opp.ForecastCategory != null && giftModel.opp.ForecastCategory == 'Closed') || 
                 (giftModel.opp.npe01__Number_of_Payments__c != null && giftModel.opp.npe01__Number_of_Payments__c > 0)){
                     createOrEditOpportunity = false;
+            } else if(giftModel.oppId != null){
+                // If the Opportunity can be updated, and it already exists, update via Data Import process
+                updateGift = true;
             }
 
             if(!createOrEditOpportunity){
@@ -394,7 +398,7 @@ public with sharing class GiftEntryFormController {
                 saveResults.add(Database.upsert(giftModel.opp));
             } else if(createOrEditOpportunity) {
                 // Run the DataImport process for new gifts
-                runGiftProcess(giftModel.di.Id, false);
+                runGiftProcess(giftModel.di.Id, false, updateGift);
             }
 
             Id oppId = giftModel.di.npsp__DonationImported__c != null ?
@@ -657,9 +661,11 @@ public with sharing class GiftEntryFormController {
     * @description Set DataImport Settings that are important to Gift Entry matching
     * @return npsp__Data_Import_Settings__c diSettings object used to process gifts
     */
-    private static npsp__Data_Import_Settings__c getGiftEntrySettings() {
+    private static npsp__Data_Import_Settings__c getGiftEntrySettings(Boolean updateGift) {
         npsp__Data_Import_Settings__c diSettings = npsp__Data_Import_Settings__c.getOrgDefaults();
-        diSettings.npsp__Donation_Matching_Behavior__c = npsp.BDI_DataImport_API.ExactMatchOrCreate;
+        // If we are updating an existing gift, set the matching logic accordingly
+        diSettings.npsp__Donation_Matching_Behavior__c = 
+            updateGift ? npsp.BDI_DataImport_API.ExactMatchOrCreate : npsp.BDI_DataImport_API.DoNotMatch;
         return diSettings;
     }
 
@@ -670,8 +676,8 @@ public with sharing class GiftEntryFormController {
     * @return void
     */
     @AuraEnabled
-    public static void runGiftProcess(Id diObjId, Boolean dryRunMode) {
-        npsp__Data_Import_Settings__c diSettings = getGiftEntrySettings();
+    public static void runGiftProcess(Id diObjId, Boolean dryRunMode, Boolean updateGift) {
+        npsp__Data_Import_Settings__c diSettings = getGiftEntrySettings(updateGift);
 
         String allDIFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npsp__DataImport__c');
         List<npsp__DataImport__c> listDI = 

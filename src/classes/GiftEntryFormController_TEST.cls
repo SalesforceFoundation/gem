@@ -203,6 +203,49 @@ private class GiftEntryFormController_TEST {
             '1 Payment should be returned, ' + paymentQuery.size() + ' were returned instead');
 
     }
+
+    // Testing Single Gift Entry updating an existing Opportunity
+    // Make sure a second Opportunity is not created, and make sure the original Opp gets properly updated.
+    @isTest
+    private static void testRunGiftProcessUpdate() {
+        npsp__DataImport__c diObj = getTestDI();
+        diObj.Do_Not_Automatically_Create_Payment__c = true;
+        diObj.npsp__Donation_Stage__c = openStage;
+        insert diObj;
+
+        GiftEntryFormController ge = new GiftEntryFormController();
+        
+        Test.startTest();
+        GiftEntryFormController.runGiftProcess(diObj.Id, false, false);
+        Test.stopTest();
+        
+        // Make sure the Opp is open and does not have payments, otherwise it can't be updated
+        List<Opportunity> oppList = [SELECT Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c
+            FROM Opportunity 
+            WHERE Name =: donationName
+            AND npsp__Honoree_Name__c =: tributeName
+            AND npsp__Notification_Recipient_Name__c =: recipientName
+            AND npe01__Number_of_Payments__c = 0 
+            AND IsClosed = false
+        ];
+        System.assertEquals(1, oppList.size());
+
+        Decimal newAmt = 200;
+        // Forcing the Opportunity match to test updating
+        diObj.npsp__DonationImported__c = oppList[0].Id;
+        diObj.npsp__Donation_Amount__c = newAmt;
+        update diObj;
+
+        GiftEntryFormController.runGiftProcess(diObj.Id, false, true);
+
+        oppList = [SELECT Id, Amount
+            FROM Opportunity 
+            WHERE Name =: donationName
+        ];
+
+        System.assertEquals(1, oppList.size());
+        System.assertEquals(newAmt, oppList[0].Amount);
+    }
     
     @isTest
     private static void testRunGiftProcess() {
@@ -216,7 +259,7 @@ private class GiftEntryFormController_TEST {
         GiftEntryFormController ge = new GiftEntryFormController();
         
         Test.startTest();
-        GiftEntryFormController.runGiftProcess(diObj.Id, false);
+        GiftEntryFormController.runGiftProcess(diObj.Id, false, false);
         Test.stopTest();
         
         List<Opportunity> oppList = [Select Id, npsp__Honoree_Name__c, npsp__Notification_Recipient_Name__c
@@ -225,7 +268,6 @@ private class GiftEntryFormController_TEST {
             and npsp__Honoree_Name__c =: tributeName
             and npsp__Notification_Recipient_Name__c =: recipientName
         ];
-        //System.debug(oppList);
         System.assertEquals(1, oppList.size());
 
         List<Contact> cList = [Select Id from Contact where FirstName =: cFirst and LastName =: cLast];

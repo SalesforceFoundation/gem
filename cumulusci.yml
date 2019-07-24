@@ -335,8 +335,6 @@ flows:
               task: deploy_pre
           4:
               task: install_managed
-              options:
-                  version: previous
           5:
               task: install_managed_beta
 

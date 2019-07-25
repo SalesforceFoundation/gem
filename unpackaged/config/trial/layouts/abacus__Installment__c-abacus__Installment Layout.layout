@@ -64,7 +64,7 @@
         <fields>NAME</fields>
         <fields>abacus__Amount__c</fields>
         <fields>abacus__General_Accounting_Unit__c</fields>
-        <fields>abacus__Date__c</fields>
+        <fields>abacus__Due_Date__c</fields>
         <fields>abacus__Type__c</fields>
         <fields>abacus__Payment__c</fields>
         <relatedList>abacus__Ledger_Entry__c.abacus__Installment__c</relatedList>

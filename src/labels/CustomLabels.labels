@@ -33,7 +33,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>No Data Import mapping was found</shortDescription>
-        <value>We can't find a Data Import mapping for this Opportunity field</value>
+        <value>We can&apos;t find a Data Import mapping for this Opportunity field:</value>
     </labels>
     <labels>
         <fullName>Error_Gift_Field_Mapping</fullName>

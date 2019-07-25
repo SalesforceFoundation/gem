@@ -43,7 +43,7 @@ public class UTIL_UnitTestData_TEST {
     *******************************************************************************************************/
     private static string closedWonStage;
     private static string openStage;
-    public static String giftEntryPS = 'Gift Entry Management';
+    public static String giftEntryPS = 'Gift Entry';
 
     /*******************************************************************************************************
     * @description Returns opportunity closed won stage

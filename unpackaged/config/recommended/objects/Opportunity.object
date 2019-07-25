@@ -19,21 +19,9 @@
         <label>In-Kind Gift</label>
     </recordTypes>
     <recordTypes>
-        <fullName>MajorGift</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>Major Gift</label>
-    </recordTypes>
-    <recordTypes>
         <fullName>MatchingGift</fullName>
         <active>true</active>
         <businessProcess>NPSP_Default</businessProcess>
         <label>Matching Gift</label>
-    </recordTypes>
-    <recordTypes>
-        <fullName>Membership</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>Membership</label>
     </recordTypes>
 </CustomObject>

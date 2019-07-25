@@ -51,9 +51,7 @@ public static void initializeNPSPSettingsForGEM() {
     npsp.UTIL_CustomSettings_API.getAllocationsSettings();
     npsp.UTIL_CustomSettings_API.getDataImportSettings();
 
-    Id membershipRtId = [SELECT Id FROM RecordType WHERE SObjectType = 'Opportunity' AND DeveloperName = 'Membership' LIMIT 1].Id;
     npo02__Households_Settings__c hs = npsp.UTIL_CustomSettings_API.getHouseholdsSettings();
-    hs.npo02__Membership_Record_Types__c = membershipRtId;
     hs.npo02__Advanced_Household_Naming__c = false;
     upsert hs;
 

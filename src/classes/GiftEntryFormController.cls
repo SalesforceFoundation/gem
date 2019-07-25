@@ -124,8 +124,8 @@ public with sharing class GiftEntryFormController {
 
     public static void validateMappings(List<String> customOppFields) {
         List<String> diFields = npsp.BDI_DataImportService.listStrDataImportFields;
-        // key - di field
-        // valie - opp field
+        // Key - Data Import field
+        // Value - Opportunity field
         Map<String, String> diToOppFieldMap = npsp.BDI_DataImportService.mapFieldsForDIObject('Opportunity', 'Opportunity', diFields);
         List<String> mappedOppFields = diToOppFieldMap.values();
         // ensure field exists inside fieldMappings

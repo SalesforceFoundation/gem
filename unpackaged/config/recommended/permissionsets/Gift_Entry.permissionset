@@ -8,6 +8,7 @@
         <application>hed__HEDA</application>
         <visible>true</visible>
     </applicationVisibilities>
+    <description>Lets a user access the data required for Single Gift Entry.</description>
     <fieldPermissions>
         <editable>false</editable>
         <field>Account.DunsNumber</field>
@@ -740,7 +741,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Contact.npsp__Current_Address__c</field>
+        <field>Contact.hed__Current_Address__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -864,9 +865,9 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Opportunity.LeadSource</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
@@ -1114,9 +1115,9 @@
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Opportunity.npsp__Primary_Contact_Campaign_Member_Status__c</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>

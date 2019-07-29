@@ -44,9 +44,6 @@ export default class SGE_FormField extends LightningElement {
     @api field = {};
     @track value;
 
-    connectedCallback() {
-        this.value = this.sobject[this.field.name];
-    }
 
     get labelClassName() {
         return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';
@@ -64,13 +61,16 @@ export default class SGE_FormField extends LightningElement {
 
         return true;
     }
-
-    @api
+    
     get fieldObject() {
         const field = this.getRawField();
         let data = {};
         data[this.field.name] = field.value;
         return data;
+    }
+
+    get fieldValue() {
+        return this.sobject[this.field.name];
     }
 
     getRawField() {

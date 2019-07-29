@@ -93,12 +93,6 @@ tasks:
             path: scripts/configure_default_settings.cls
             apex: setupGEMAndNPSPDefaults();
 
-    npm_install:
-        description: Installs node packages using npm install
-        class_path: cumulusci.tasks.command.Command
-        options:
-            command: npm install
-
     retrieve_config_dev:
         description: Retrieves the current changes in the scratch org into unpackaged/config/dev
         class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges

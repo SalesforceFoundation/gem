@@ -457,46 +457,37 @@ public with sharing class GiftEntryFormController {
             relationshipField = 'npsp__Primary_Contact__c';
         }
 
-        // Can be used to display unpaid payments on the donation matching modal
-        String paymentSOQL = 'SELECT Id, ' +
-                                'Name, ' +
-                                'npe01__Scheduled_Date__c, ' +
-                                'npe01__Opportunity__r.Name, ' +
-                                'npe01__Opportunity__c, ' +
-                                'npe01__Payment_Amount__c ' +
-                                'FROM npe01__OppPayment__c ' +
-                                'WHERE npe01__Opportunity__r.' + relationshipField + ' = :donorId ' +
-                                'AND npe01__Paid__c = false ' +
-                                'AND npe01__Written_Off__c = false';
+        // We want to include Open Opportunities, as well as Closed Opportunities with unpaid payments
+        String query = 'SELECT Id, ' +
+                'Name, ' +
+                'StageName, ' +
+                'CloseDate, ' + 
+                'Amount, ' +
+                    '(SELECT Id, ' +
+                    'Name, ' +
+                    'npe01__Scheduled_Date__c, ' +
+                    'npe01__Opportunity__r.Name, ' +
+                    'npe01__Opportunity__c, ' +
+                    'npe01__Payment_Amount__c,' +
+                    'npe01__Paid__c, ' +
+                    'npe01__Written_Off__c ' +
+                    'FROM npe01__OppPayment__r ' +
+                    'WHERE npe01__Written_Off__c = false) ' +
+                'FROM Opportunity ' +
+                'WHERE ' + relationshipField + ' = :donorId ' +
+                'AND (IsClosed = false OR npe01__Number_of_Payments__c > 0) ' + 
+                'ORDER BY CloseDate ASC ';
+
         try {
             // CRUD / FLS of this operation already verified by checkCRUDFLS()
-            List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);
+            List<Opportunity> openOpportunities = Database.query(query);
 
-            Set<Id> oppIdsWithUnpaidPayments = new Set<Id>();
-            for (npe01__OppPayment__c payment : unpaidPayments) {
-                oppIdsWithUnpaidPayments.add(payment.npe01__Opportunity__c);
+            List<OpportunityWrapper> opportunityWrappers = new List<OpportunityWrapper>();
+            for (Opportunity opportunity : openOpportunities) {
+                opportunityWrappers.add(new OpportunityWrapper(opportunity));
             }
 
-            // We want to include Open Opportunities, as well as Closed Opportunities with unpaid payments
-            // CRUD / FLS of this operation already verified by checkCRUDFLS()
-            String opportunitySOQL = 'SELECT Id, ' +
-                                    'Name, ' +
-                                    'StageName, ' +
-                                    'CloseDate, ' +
-                                    'Amount ' +
-                                    'FROM Opportunity ' +
-                                    'WHERE ' + relationshipField + ' = :donorId ' +
-                                    'AND (IsClosed = false OR Id in :oppIdsWithUnpaidPayments) ' + 
-                                    'ORDER BY CloseDate ASC ';
-
-            List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
-            Map<Id, Opportunity> openOpportunitiesById = new Map<Id, Opportunity>(openOpportunities);
-
-            Map<String, List<SObject>> response = new Map<String, List<SObject>>{
-                'openOpportunities' => openOpportunitiesById.values(),
-                'unpaidPayments' => null
-            };
-            return JSON.serialize(response);
+            return JSON.serialize(opportunityWrappers);
         } catch (Exception ex){
             throw new AuraHandledException('ERROR: ' + ex.getMessage());
         }
@@ -749,4 +740,68 @@ public with sharing class GiftEntryFormController {
             this.value = optionValue;
         }
     }
+
+    /**
+    * @description Wrapper class used to hold only the information needed in the
+    * component for each Opportunity.  The component does not need to store any of
+    * the paid or written-off Payments for a donor, but it does need to know if the Donation
+    * has related Payments that have not been written-off. In that case the User should not
+    * be able to update the Opportunity in the BGE Donation Selector.
+    */
+    @TestVisible
+    private class OpportunityWrapper {
+        @TestVisible Opportunity opportunity {get; private set;}
+        @TestVisible List<npe01__OppPayment__c> unpaidPayments {get; private set;}
+        @TestVisible Boolean hasNonWrittenOffPayments {get; private set;}
+        @TestVisible Boolean hasPayments {get; private set;}
+
+        private OpportunityWrapper(Opportunity opportunity) {
+            this.opportunity = opportunity;
+            initialize();
+        }
+
+        private void initialize() {
+            if (unpaidPayments == null) {
+                unpaidPayments = new List<npe01__OppPayment__c>();
+            }
+
+            if (opportunity.npe01__OppPayment__r.isEmpty()) {
+                hasNonWrittenOffPayments = false;
+                hasPayments = false;
+                return;
+            } else {
+                hasPayments = true;
+            }
+
+            for (npe01__OppPayment__c oppPayment : opportunity.npe01__OppPayment__r) {
+                if (hasNonWrittenOffPayments == null
+                        && oppPayment.npe01__Written_Off__c == false) {
+                    hasNonWrittenOffPayments = true;
+                }
+
+                if (isAvailableForUpdate(oppPayment)) {
+                    unpaidPayments.add(oppPayment);
+                } else {
+                    continue;
+                }
+            }
+
+            //If hasNonWrittenOffPayments is null after looping all of the Payments,
+            //then all of the Opp's Payments are written-off, and hasNonWrittenOffPayments can
+            //be set to false, as this Opp should be treated in the BGE Donation Selector UI
+            //as if it has 0 Payments.
+            if (hasNonWrittenOffPayments == null) {
+                hasNonWrittenOffPayments = false;
+            }
+        }
+
+        private Boolean isAvailableForUpdate(npe01__OppPayment__c oppPayment) {
+            if (oppPayment.npe01__Paid__c || oppPayment.npe01__Written_Off__c) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
 }

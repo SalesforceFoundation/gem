@@ -37,6 +37,7 @@
 * @description This class handles the custom fields section of the Single Gift Entry form
 **/
 public with sharing class SGE_GiftEntryService {
+    private static Opportunity defaultValuesObject; 
     private static final String LAYOUT_NAME = 'Single Gift Entry Customization';
     private static final String HIDDEN_LAYOUT_SECTION_NAME = 'DO NOT EDIT - Required Fields';
     /**
@@ -198,7 +199,7 @@ public with sharing class SGE_GiftEntryService {
             this.helpText = describeFieldResult.getInlineHelpText();
             this.typeName = describeFieldResult.getType().name();
             this.defaultValue = describeFieldResult.getDefaultValue();
-            this.defaultValueFormula = describeFieldResult.getDefaultValueFormula();
+            this.defaultValueFormula = getDefaultValueFromField(this.name);
         }
     }
 
@@ -214,5 +215,20 @@ public with sharing class SGE_GiftEntryService {
         }
 
         public HashKey() {}
+    }
+
+    public static String getDefaultValueFromField(String fieldAPIName){
+        if(defaultValuesObject == null){
+            defaultValuesObject = (Opportunity)Opportunity.sObjectType.newSObject(null, true);
+        }
+
+        String defaultVal = null;
+        try {
+            defaultVal = String.valueOf(defaultValuesObject.get(fieldAPIName));
+        } catch(Exception e){
+            System.debug(e); 
+        }
+
+        return defaultVal;
     }
 }

@@ -81,13 +81,11 @@ export default class SGE_DynamicForm extends LightningElement {
     @api
     loadRecordValues() {
         this.resetInputs(true);
-        return true;
     }
 
     @api
     rerenderInputs() {
         this.resetInputs(false);
-        return true;
     }
 
     resetInputs(loadingValues){

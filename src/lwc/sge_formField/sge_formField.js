@@ -87,7 +87,7 @@ export default class SGE_FormField extends LightningElement {
             } else {
                 this.setDefaultVal();
             }
-        }, 0);
+        });
     }
 
     loadValueFromObject() {

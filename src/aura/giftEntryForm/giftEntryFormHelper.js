@@ -484,6 +484,8 @@
                 const opportunityWrappers = JSON.parse(response.getReturnValue());
                 let oppsOpenOrWithOpenPayments = [];
                 let unpaidPayments = [];
+                // Closed Opportunities with no unpaid payments mave have been sent through
+                // Filter those out here
                 opportunityWrappers.forEach(function (opportunityWrapper) {
                     if (opportunityWrapper.hasPayments === false ||
                         opportunityWrapper.unpaidPayments.length > 0) {

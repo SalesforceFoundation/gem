@@ -15,6 +15,20 @@
         <value>Date of First Payment</value>
     </labels>
     <labels>
+        <fullName>Donation_Match_Description</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Help text to appear in Donation Selector modal in SGE.</shortDescription>
+        <value>This screen displays open Opportunities and Opportunities that have unpaid Payments.</value>
+    </labels>
+    <labels>
+        <fullName>Donation_Match_Payments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Link text during donation match to add or edit payments</shortDescription>
+        <value>Add or Edit Payments</value>
+    </labels>
+    <labels>
         <fullName>Error</fullName>
         <language>en_US</language>
         <protected>true</protected>

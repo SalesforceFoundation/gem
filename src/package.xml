@@ -77,6 +77,8 @@
     <types>
         <members>Cancel</members>
         <members>Date_of_First_Payment</members>
+        <members>Donation_Match_Description</members>
+        <members>Donation_Match_Payments</members>
         <members>Error</members>
         <members>Error_Duplicate_Value</members>
         <members>Error_Gift_Field_Mapping</members>

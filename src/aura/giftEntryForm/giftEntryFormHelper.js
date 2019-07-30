@@ -487,7 +487,7 @@
                 // Closed Opportunities with no unpaid payments mave have been sent through
                 // Filter those out here
                 opportunityWrappers.forEach(function (opportunityWrapper) {
-                    if (opportunityWrapper.hasPayments === false ||
+                    if (opportunityWrapper.opportunity.IsClosed === false ||
                         opportunityWrapper.unpaidPayments.length > 0) {
                             oppsOpenOrWithOpenPayments.push(opportunityWrapper);
                     }

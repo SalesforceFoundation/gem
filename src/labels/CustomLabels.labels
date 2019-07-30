@@ -26,7 +26,28 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Link text during donation match to add or edit payments</shortDescription>
-        <value>Add or Edit Payments</value>
+        <value>Create or Edit Payments</value>
+    </labels>
+    <labels>
+        <fullName>Donation_Match_Payments_Selected</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Link text during donation match to add or edit payments</shortDescription>
+        <value>Creating or Editing Payments</value>
+    </labels>
+    <labels>
+        <fullName>Donation_Match_Select_Opp</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Link text during donation match to select the opportunity</shortDescription>
+        <value>Select this Opportunity</value>
+    </labels>
+    <labels>
+        <fullName>Donation_Match_Select_Opp_Selected</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Link text during donation match to select the opportunity</shortDescription>
+        <value>Updating this Opportunity</value>
     </labels>
     <labels>
         <fullName>Error</fullName>

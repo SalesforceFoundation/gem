@@ -482,11 +482,33 @@ public with sharing class GiftEntryFormController {
             relationshipField = 'npsp__Primary_Contact__c';
         }
 
-        // We want to include Open Opportunities, as well as Closed Opportunities with unpaid payments
-        String query = 'SELECT Id, ' +
+        // Could eventually be used to display unpaid payments on the donation matching modal
+        String paymentSOQL = 'SELECT Id, ' +
+                                'Name, ' +
+                                'npe01__Scheduled_Date__c, ' +
+                                'npe01__Opportunity__r.Name, ' +
+                                'npe01__Opportunity__c, ' +
+                                'npe01__Payment_Amount__c ' +
+                                'FROM npe01__OppPayment__c ' +
+                                'WHERE npe01__Opportunity__r.' + relationshipField + ' = :donorId ' +
+                                'AND npe01__Paid__c = false ' +
+                                'AND npe01__Written_Off__c = false';
+
+        try {
+            // CRUD / FLS of this operation already verified by checkCRUDFLS()
+            List<npe01__OppPayment__c> unpaidPayments = Database.query(paymentSOQL);
+
+            Set<Id> oppIdsWithUnpaidPayments = new Set<Id>();
+            for (npe01__OppPayment__c payment : unpaidPayments) {
+                oppIdsWithUnpaidPayments.add(payment.npe01__Opportunity__c);
+            }
+
+            // We want to include Open Opportunities, as well as Closed Opportunities with unpaid payments
+            String opportunitySOQL = 'SELECT Id, ' +
                 'Name, ' +
                 'StageName, ' +
                 'CloseDate, ' + 
+                'IsClosed, ' + 
                 'Amount, ' +
                     '(SELECT Id, ' +
                     'Name, ' +
@@ -497,15 +519,15 @@ public with sharing class GiftEntryFormController {
                     'npe01__Paid__c, ' +
                     'npe01__Written_Off__c ' +
                     'FROM npe01__OppPayment__r ' +
-                    'WHERE npe01__Written_Off__c = false) ' +
+                    'WHERE npe01__Written_Off__c = false ' +
+                    'AND npe01__Paid__c = false) ' +
                 'FROM Opportunity ' +
                 'WHERE ' + relationshipField + ' = :donorId ' +
-                'AND (IsClosed = false OR npe01__Number_of_Payments__c > 0) ' + 
+                'AND (IsClosed = false OR Id in :oppIdsWithUnpaidPayments) ' + 
                 'ORDER BY CloseDate ASC ';
 
-        try {
             // CRUD / FLS of this operation already verified by checkCRUDFLS()
-            List<Opportunity> openOpportunities = Database.query(query);
+            List<Opportunity> openOpportunities = Database.query(opportunitySOQL);
 
             List<OpportunityWrapper> opportunityWrappers = new List<OpportunityWrapper>();
             for (Opportunity opportunity : openOpportunities) {
@@ -778,7 +800,6 @@ public with sharing class GiftEntryFormController {
         @TestVisible Opportunity opportunity {get; private set;}
         @TestVisible List<npe01__OppPayment__c> unpaidPayments {get; private set;}
         @TestVisible Boolean hasNonWrittenOffPayments {get; private set;}
-        @TestVisible Boolean hasPayments {get; private set;}
 
         private OpportunityWrapper(Opportunity opportunity) {
             this.opportunity = opportunity;
@@ -792,10 +813,7 @@ public with sharing class GiftEntryFormController {
 
             if (opportunity.npe01__OppPayment__r.isEmpty()) {
                 hasNonWrittenOffPayments = false;
-                hasPayments = false;
                 return;
-            } else {
-                hasPayments = true;
             }
 
             for (npe01__OppPayment__c oppPayment : opportunity.npe01__OppPayment__r) {

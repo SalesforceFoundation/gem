@@ -56,6 +56,10 @@ export default class SGE_FormField extends LightningElement {
         return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';
     }
 
+    /**
+     * TRUE when a field is required and filled in, or not required at all.
+     * @returns {boolean}
+     */
     @api
     isValid() {
         if(this.field.required) {

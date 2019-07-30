@@ -109,9 +109,12 @@ public with sharing class GiftEntryFormController {
 
     @AuraEnabled
     public static GiftFormModel initClass(Id oppId) {
+
         try {
-            checkCRUDFLS();
+            validateForm();
         } catch(UTIL_CrudFLS.AccessException ex) {
+            throw returnAuraException(ex.getMessage());
+        } catch(FieldNotMappedException ex) {
             throw returnAuraException(ex.getMessage());
         }
         GiftFormModel giftModel = new GiftFormModel(oppId);
@@ -119,14 +122,35 @@ public with sharing class GiftEntryFormController {
         return giftModel;
     }
 
+    public static void validateMappings(List<String> customOppFields) {
+        List<String> diFields = npsp.BDI_DataImportService.listStrDataImportFields;
+        // Key - Data Import field
+        // Value - Opportunity field
+        Map<String, String> diToOppFieldMap = npsp.BDI_DataImportService.mapFieldsForDIObject('Opportunity', 'Opportunity', diFields);
+        List<String> mappedOppFields = diToOppFieldMap.values();
+        // ensure field exists inside fieldMappings
+        for(String oppField : customOppFields) {
+            if(!mappedOppFields.contains(oppField)) {
+                throw new FieldNotMappedException(Label.Error_No_Data_Import_Mapping + ' ' + oppField);
+            }
+        }
+    }
+
+    public static void validateForm() {
+        List<String> opportunityFields = getFieldsFromCustomizableLayout();
+        validateMappings(opportunityFields);
+        checkCRUDFLS(opportunityFields);
+    }
+
     /**
      * @description This method checks CRUD/FLS on load of the gift entry form controller.
      * Not all CRUD/FLS violations may be caught by this method. Run-time CRUD/FLS checks on SOQL/DML operations
      * are used elsewhere that will prevent users from performing SOQL/DML if they do not have access.
      * For an example, @see getDonationRecords and @see saveDonationInformation
+     * @param customFields Custom opportunity fields to check, passed in by validateForm
      * @throws Util_CrudFLS.AccessException if a user does not have the needed access to a field being checked
      */
-    public static void checkCRUDFLS() {
+    public static void checkCRUDFLS(List<String> customFields) {
         UTIL_CrudFLS.checkAccess(
                 UTIL_CrudFLS.CRUD_OPERATION.MODIFY_CREATE,
                 'npsp__Allocation__c',
@@ -171,7 +195,8 @@ public with sharing class GiftEntryFormController {
                         'npsp__Payment_Method__c'
                 }
         );
-        List<String> opportunityFields = getFieldsFromCustomizableLayout();
+        List<String> opportunityFields = new List<String>();
+        opportunityFields.addAll(customFields);
         opportunityFields.addAll(new List<String>{
                 'Amount',
                 'CampaignId',
@@ -760,4 +785,6 @@ public with sharing class GiftEntryFormController {
             this.value = optionValue;
         }
     }
+
+    public class FieldNotMappedException extends Exception {}
 }

@@ -456,6 +456,29 @@ private class GiftEntryFormController_TEST {
 
         System.assertNotEquals(null, giftModel);
     }
+    
+    // Check that field mapping validation acts like we expect
+    @isTest
+    private static void testValidateMappings() {
+
+        try {
+            GiftEntryFormController.validateForm();
+            System.assert(true, 'No exception');
+        } catch(Exception e){
+            System.assert(false, 'This case should not have an exception');
+        }
+
+        List<String> fakeFields = new List<String>{'fake__c', 'fail__c'};
+        
+        try {
+            GiftEntryFormController.validateMappings(fakeFields);
+            System.assert(false, 'This case should throw an exception');
+        } catch(Exception e){
+            System.assert(e.getMessage().contains(Label.Error_No_Data_Import_Mapping), 
+                'The exception did not match what was expected: ' + Label.Error_No_Data_Import_Mapping);
+        }
+
+    }
 
     private static npsp__DataImport__c getTestDI(){
         return new npsp__DataImport__c(

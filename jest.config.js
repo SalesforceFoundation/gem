@@ -7,5 +7,6 @@ module.exports = {
     testPathIgnorePatterns: [
         '<rootDir>/node_modules/',
         '<rootDir>/test/specs/'
-    ]
+    ],
+    setupFiles: ['./jest.setup.js']
 };

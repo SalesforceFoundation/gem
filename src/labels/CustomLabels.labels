@@ -29,6 +29,13 @@
         <value>Duplicate values are not allowed:</value>
     </labels>
     <labels>
+        <fullName>Error_No_Data_Import_Mapping</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No Data Import mapping was found</shortDescription>
+        <value>We can&apos;t find a Data Import mapping for this Opportunity field:</value>
+    </labels>
+    <labels>
         <fullName>Error_Gift_Field_Mapping</fullName>
         <language>en_US</language>
         <protected>true</protected>

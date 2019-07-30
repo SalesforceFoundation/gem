@@ -36,22 +36,26 @@
  * @group-content
  * @description This component represents a single field within the custom fields layout for Single Gift Entry
  **/
-import {LightningElement, api} from 'lwc';
+import {LightningElement, api, track} from 'lwc';
 
 export default class SGE_FormField extends LightningElement {
     @api sobject;
     @api disableinputs;
     @api field = {};
+    @track value;
+
+    connectedCallback() {
+        this.value = this.sobject[this.field.name];
+    }
 
     get labelClassName() {
         return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';
     }
 
-    @api
-    get fieldValue() {
-        return this.sobject[this.field.name];
-    }
-
+    /**
+     * TRUE when a field is required and filled in, or not required at all.
+     * @returns {boolean}
+     */
     @api
     isValid() {
         if(this.field.required) {
@@ -67,11 +71,6 @@ export default class SGE_FormField extends LightningElement {
         let data = {};
         data[this.field.name] = field.value;
         return data;
-    }
-
-    get value() {
-        const field = this.getRawField();
-        return field.value;
     }
 
     getRawField() {

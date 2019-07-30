@@ -491,7 +491,6 @@ public with sharing class GiftEntryFormController {
                                 'npe01__Payment_Amount__c ' +
                                 'FROM npe01__OppPayment__c ' +
                                 'WHERE npe01__Opportunity__r.' + relationshipField + ' = :donorId ' +
-                                'AND npe01__Paid__c = false ' +
                                 'AND npe01__Written_Off__c = false';
 
         try {
@@ -519,8 +518,7 @@ public with sharing class GiftEntryFormController {
                     'npe01__Paid__c, ' +
                     'npe01__Written_Off__c ' +
                     'FROM npe01__OppPayment__r ' +
-                    'WHERE npe01__Written_Off__c = false ' +
-                    'AND npe01__Paid__c = false) ' +
+                    'WHERE npe01__Written_Off__c = false) ' +
                 'FROM Opportunity ' +
                 'WHERE ' + relationshipField + ' = :donorId ' +
                 'AND (IsClosed = false OR Id in :oppIdsWithUnpaidPayments) ' + 

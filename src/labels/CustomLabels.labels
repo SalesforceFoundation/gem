@@ -32,7 +32,7 @@
         <fullName>Donation_Match_Payments_Selected</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Link text during donation match to add or edit payments</shortDescription>
+        <shortDescription>Link text during donation match after selecting add or edit payments</shortDescription>
         <value>Creating or Editing Payments</value>
     </labels>
     <labels>
@@ -46,7 +46,7 @@
         <fullName>Donation_Match_Select_Opp_Selected</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Link text during donation match to select the opportunity</shortDescription>
+        <shortDescription>Link text during donation match after selecting the opportunity</shortDescription>
         <value>Updating this Opportunity</value>
     </labels>
     <labels>

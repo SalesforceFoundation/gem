@@ -48,6 +48,10 @@ export default class SGE_FormField extends LightningElement {
         this.value = this.sobject[this.field.name];
     }
 
+    /**
+     * Class name for indicating when a given field is required.
+     * @returns {string}
+     */
     get labelClassName() {
         return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';
     }
@@ -64,7 +68,11 @@ export default class SGE_FormField extends LightningElement {
 
         return true;
     }
-    
+
+    /**
+     * @returns {object} Object with a single key/value pair where the key is the field name
+     */
+    @api
     get fieldObject() {
         const field = this.getRawField();
         let data = {};

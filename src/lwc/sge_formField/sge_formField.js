@@ -44,6 +44,9 @@ export default class SGE_FormField extends LightningElement {
     @api field = {};
     @track value;
 
+    connectedCallback() {
+        this.value = this.sobject[this.field.name];
+    }
 
     get labelClassName() {
         return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';

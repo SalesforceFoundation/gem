@@ -40,7 +40,7 @@ import {LightningElement, api, track} from 'lwc';
 
 export default class SGE_FormField extends LightningElement {
     @api sobject;
-    @api disableinputs;
+    @api disableInputs;
     @api field = {};
     @track value;
 
@@ -70,10 +70,6 @@ export default class SGE_FormField extends LightningElement {
         let data = {};
         data[this.field.name] = field.value;
         return data;
-    }
-
-    get fieldValue() {
-        return this.sobject[this.field.name];
     }
 
     getRawField() {

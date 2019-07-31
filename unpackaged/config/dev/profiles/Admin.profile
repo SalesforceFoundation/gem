@@ -125,15 +125,7 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%MajorGift</recordType>
-    </layoutAssignments>
-        <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
         <recordType>Opportunity.%%%NAMESPACED_ORG%%%MatchingGift</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Opportunity-%%%NAMESPACE%%%GEM Gift Layout</layout>
-        <recordType>Opportunity.%%%NAMESPACED_ORG%%%Membership</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>npsp__DataImport__c-%%%NAMESPACE%%%GEM Gift Layout</layout>
@@ -206,17 +198,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Opportunity.MajorGift</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
         <recordType>Opportunity.MatchingGift</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>Opportunity.Membership</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>

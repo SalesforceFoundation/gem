@@ -489,6 +489,11 @@
                 opportunityWrappers.forEach(function (opportunityWrapper) {
                     if (opportunityWrapper.opportunity.IsClosed === false ||
                         opportunityWrapper.unpaidPayments.length > 0) {
+                            if(opportunityWrapper.opportunity.npe01__Number_of_Payments__c > 0 || 
+                                opportunityWrapper.opportunity.IsClosed === true){
+                                    // Setting this will hide the Opportunity link
+                                    opportunityWrapper.hasNonWrittenOffPayments = true;
+                            }
                             oppsOpenOrWithOpenPayments.push(opportunityWrapper);
                     }
                 });

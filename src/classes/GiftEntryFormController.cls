@@ -509,6 +509,7 @@ public with sharing class GiftEntryFormController {
                 'CloseDate, ' + 
                 'IsClosed, ' + 
                 'Amount, ' +
+                'npe01__Number_of_Payments__c, ' +
                     '(SELECT Id, ' +
                     'Name, ' +
                     'npe01__Scheduled_Date__c, ' +
@@ -812,9 +813,6 @@ public with sharing class GiftEntryFormController {
             if (opportunity.npe01__OppPayment__r.isEmpty()) {
                 hasNonWrittenOffPayments = false;
                 return;
-            } else {
-                // In Single Gift Entry, we want to remove the Select Opportunity link whenever there are payments
-                hasNonWrittenOffPayments = true;
             }
 
             for (npe01__OppPayment__c oppPayment : opportunity.npe01__OppPayment__r) {

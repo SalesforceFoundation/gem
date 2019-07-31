@@ -812,6 +812,9 @@ public with sharing class GiftEntryFormController {
             if (opportunity.npe01__OppPayment__r.isEmpty()) {
                 hasNonWrittenOffPayments = false;
                 return;
+            } else {
+                // In Single Gift Entry, we want to remove the Select Opportunity link whenever there are payments
+                hasNonWrittenOffPayments = true;
             }
 
             for (npe01__OppPayment__c oppPayment : opportunity.npe01__OppPayment__r) {

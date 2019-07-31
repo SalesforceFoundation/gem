@@ -7,6 +7,34 @@
             console.log(e);
         });
     },
+    distributeRemainder: function(component) {
+        const allocationComponents = component.find({instancesOf: 'c:giftRelatedAllocation'});
+        const _self = this;
+        if(Array.isArray(allocationComponents) && allocationComponents.length > 1) {
+            const donationAmount = component.get('v.donationAmt');
+            const allocationData = allocationComponents.reduce((acc, val) => {
+                const record = val.get('v.item');
+                return {
+                    percent: acc.percent + _self.isNumber(record.npsp__Percent__c) ? record.npsp__Percent__c : 0,
+                    amount: acc.amount + _self.isNumber(record.npsp__Amount__c) ? record.npsp__Amount__c : 0
+                };
+            }, {percent: 0, amount: 0});
+
+            if(allocationData.percent === 100 && allocationData.amount < donationAmount) {
+                const remainderInCents = Math.round((donationAmount * 100) - (allocationData.amount * 100));
+                for(let i = 0; i <= remainderInCents; i++) {
+                    const allocationComponent = allocationComponents[i];
+                    const originalAmount = allocationComponent.get('v.item.npsp__Amount__c');
+                    const newAmount = Math.round(((originalAmount * 100) + 1)/100);
+                    allocationComponent.set('v.item.npsp__Amount__c', newAmount);
+                }
+                for(let allocationComponent in allocationComponents) {
+                    const amount = allocationComponent.get('v.item.npsp__Amount__c');
+                    allocationComponent.set('v.item.npsp__Amount__c')
+                }
+            }
+        }
+    },
     handleAddRow: function(component, helper, item, index, canEditRow){
 
         return new Promise(function(resolve, reject){
@@ -23,7 +51,7 @@
             // Passing canEditRow as true forces the row to be editable
             var editMode = (canEditRow === true) ? false : component.get('v.editModeOverride');
             var editModePaidPayments = component.get('v.editModePaidPayments');
-            var showLabels = (index == 0 || newRowNum == 0) ? true : false;
+            var showLabels = (index === 0 || newRowNum === 0);
 
             $A.createComponent(
                 rowCmpName, {
@@ -276,5 +304,8 @@
     proxyToObj: function(attr){
         // Used to convert a Proxy object to an actual Javascript object
         return JSON.parse(JSON.stringify(attr));
+    },
+    isNumber: function(val) {
+        return !(Array.isArray(val) && (val - parseFloat(val)) + 1 >= 0);
     }
 })

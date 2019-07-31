@@ -11,7 +11,8 @@
         component.set('v.item.npsp__Percent__c', percent);
 
         var donationAmt = component.get('v.donationAmt');
-        var amt = percent * donationAmt / 100;
+        var amt = Math.floor(percent * donationAmt) / 100;
+
         component.set('v.item.npsp__Amount__c', amt);
 
         // Also trigger a change event to check totals

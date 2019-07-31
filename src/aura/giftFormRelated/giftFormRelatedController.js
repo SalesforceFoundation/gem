@@ -56,6 +56,11 @@
         if(checkAmountTotals){
             helper.handleAmtChangeHelper(component);
         }
+
+        const rowCmpName = component.get('v.rowCmpName');
+        if(rowCmpName === 'c:giftRelatedAllocation') {
+            helper.distributeRemainder(component);
+        }
     },
     handleMessage: function(component, event, helper){
         var channel = event.getParam('channel');

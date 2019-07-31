@@ -62,7 +62,7 @@ public class GiftEntryFieldMappingWrapper {
                 originalMetadataRecord.Dependent_Field_List__c, 
                 Map<String, Map<String, List<String>>>.class);
         } catch(Exception e){
-            throw new GiftEntryFieldMappingException(Label.Error_Gift_Field_Mapping + ': ' 
+            throw new GiftEntryFieldMappingException(Label.Error_Gift_Field_Mapping + ' ' 
                 + originalMetadataRecord.DeveloperName);
         }
 

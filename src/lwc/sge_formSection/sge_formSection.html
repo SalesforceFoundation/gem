@@ -16,7 +16,7 @@
                 <lightning-layout multiple-rows='true'>
                     <template for:each={column.fields} for:item='field'>
                         <lightning-layout-item size='12' padding='around-small' key={field.name}>
-                            <c-sge_form-field disable-inputs={disableInputs} sobject={sobject} field={field}></c-sge_form-field>
+                            <c-sge_form-field disableinputs={disableinputs} sobject={sobject} field={field}></c-sge_form-field>
                         </lightning-layout-item>
                     </template>
                 </lightning-layout>

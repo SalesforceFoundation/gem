@@ -18,9 +18,5 @@
         <members>New_Household_Account</members>
         <name>QuickAction</name>
     </types>
-    <types>
-        <members>New_Household_Account</members>
-        <name>QuickAction</name>
-    </types>
     <version>45.0</version>
 </Package>

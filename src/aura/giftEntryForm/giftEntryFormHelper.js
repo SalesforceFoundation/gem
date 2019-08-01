@@ -483,9 +483,27 @@
         action.setCallback(this, function (response) {
             const state = response.getState();
             if (state === 'SUCCESS') {
-                const openDonations = JSON.parse(response.getReturnValue());
-                component.set('v.openOpportunities', openDonations.openOpportunities);
-                component.set('v.unpaidPayments', openDonations.unpaidPayments);
+
+                const opportunityWrappers = JSON.parse(response.getReturnValue());
+                let oppsOpenOrWithOpenPayments = [];
+                let unpaidPayments = [];
+                // Closed Opportunities with no unpaid payments mave have been sent through
+                // Filter those out here
+                opportunityWrappers.forEach(function (opportunityWrapper) {
+                    if (opportunityWrapper.opportunity.IsClosed === false ||
+                        opportunityWrapper.unpaidPayments.length > 0) {
+                            if(opportunityWrapper.opportunity.npe01__Number_of_Payments__c > 0 || 
+                                opportunityWrapper.opportunity.IsClosed === true){
+                                    // Setting this will hide the Opportunity link
+                                    opportunityWrapper.hasNonWrittenOffPayments = true;
+                            }
+                            oppsOpenOrWithOpenPayments.push(opportunityWrapper);
+                    }
+                });
+                // We aren't supporting direct matching to Payments in SGE at this time, so this will be empty
+                component.set('v.unpaidPayments', unpaidPayments);
+                component.set('v.openOpportunities', oppsOpenOrWithOpenPayments);
+
                 // If currently editing an existing Opportunity, clear the form
                 var oppId = component.get('v.giftModel.oppId');
                 if(oppId) {

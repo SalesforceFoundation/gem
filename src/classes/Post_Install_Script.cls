@@ -60,7 +60,7 @@ global with sharing class Post_Install_Script implements InstallHandler{
     * @description Inserts the default TDTM records. Public just for testing purposes
     * @return void
     */
-    public static void insertTdtmDefaults() {
+    global static void insertTdtmDefaults() {
         List<hed__Trigger_Handler__c> gemTDTMTriggers = new List<hed__Trigger_Handler__c>();
 
         String syncRelRecords = REL_SyncToNPSP_TDTM.class.toString();

@@ -139,7 +139,12 @@
                 'unpaidPayments': component.get('v.unpaidPayments'),
                 'openOpportunities': component.get('v.openOpportunities'),
                 'selectedDonation': component.get('v.selectedDonation'),
-                'labels': component.get('v.bdiLabels')
+                'labels': component.get('v.bdiLabels'),
+                'labelForSelectorSectionDescription': $A.get('$Label.c.Donation_Match_Description'),
+                'labelForOppSelectedForUpdate': $A.get('$Label.c.Donation_Match_Select_Opp_Selected'),
+                'labelForSelectOppForUpdate': $A.get('$Label.c.Donation_Match_Select_Opp'),
+                'labelForOppSelectedForApplyNewPmt': $A.get('$Label.c.Donation_Match_Payments_Selected'),
+                'labelForSelectOppForApplyNewPmt': $A.get('$Label.c.Donation_Match_Payments')
             },
             function (newcomponent, status, errorMessage) {
                 if (status === 'SUCCESS') {

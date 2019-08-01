@@ -102,14 +102,14 @@ public static void AddGiftProcessor() {
 
         users.clear();
 
-        Profile giftProfile = [
+        Profile standardUserProfile = [
             SELECT Id
             FROM Profile
             WHERE Name =: 'Standard User'
             LIMIT 1
         ];
 
-        List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :giftProfile.Id AND IsActive = true];
+        List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :standardUserProfile.Id AND IsActive = true];
         if(giftProcessors.size() == 0) {
             String randomPad = EncodingUtil.convertToHex(Crypto.generateAesKey(128)).subString(0, 8);
 
@@ -122,7 +122,7 @@ public static void AddGiftProcessor() {
                 TimeZoneSidKey = 'America/Chicago',
                 LocaleSidKey = 'en_US',
                 EmailEncodingKey = 'utf-8',
-                ProfileId = giftProfile.Id,
+                ProfileId = standardUserProfile.Id,
                 LanguageLocaleKey = 'en_US'
             );
             users.add(goUser);

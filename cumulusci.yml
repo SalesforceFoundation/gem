@@ -78,9 +78,9 @@ tasks:
                 Post_Install_Script.populateNPSPAccountModel();    
                 Post_Install_Script.giftSetup();
                 Post_Install_Script.insertTdtmDefaults();
-    
+
     execute_installer_settings:
-        description: Configure the default Settings for Gift Processing, including NPSP and EDA changes
+        description: Configure the default Settings for Gift Processing and NPSP.
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         ui_options:
             name: Configure the default NPSP Settings for Gift Processing
@@ -88,9 +88,11 @@ tasks:
             path: scripts/configure_default_settings.cls
             apex: setupGEMDefaultsForInstaller();
 
-    execute_installer_settings_trial:
-        description: Configure the default Settings for Gift Processing
+    execute_trial_settings:
+        description: Configure the default Settings for Gift Processing, NPSP, and EDA.
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        ui_options:
+            name: Configure the default EDA/NPSP Settings for Gift Processing
         options:
             path: scripts/configure_default_settings.cls
             apex: setupGEMDefaultsForTrial();
@@ -209,7 +211,7 @@ flows:
                 options:
                     unmanaged: False
             6:
-                task: execute_installer_settings_trial
+                task: execute_trial_settings
                 options:
                     managed: True
             7:
@@ -261,7 +263,7 @@ flows:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
         steps:
             1:
-                task: execute_installer_settings_trial
+                task: execute_trial_settings
             2:
                 task: test_data_user_setup
             3:
@@ -334,7 +336,7 @@ flows:
               options:
                   unmanaged: False
           4:
-              task: execute_installer_settings_trial
+              task: execute_trial_settings
               options:
                   managed: True
           5:

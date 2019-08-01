@@ -232,11 +232,12 @@ private class GiftEntryFormController_TEST {
 
         Decimal newAmt = 200;
         // Forcing the Opportunity match to test updating
-        diObj.npsp__DonationImported__c = oppList[0].Id;
-        diObj.npsp__Donation_Amount__c = newAmt;
-        update diObj;
+        npsp__DataImport__c diObj2 = diObj.clone(false, false, false, false);
+        diObj2.npsp__DonationImported__c = oppList[0].Id;
+        diObj2.npsp__Donation_Amount__c = newAmt;
+        insert diObj2;
 
-        GiftEntryFormController.runGiftProcess(diObj.Id, false, true);
+        GiftEntryFormController.runGiftProcess(diObj2.Id, false, true);
 
         oppList = [SELECT Id, Amount
             FROM Opportunity 

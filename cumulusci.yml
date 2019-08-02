@@ -319,9 +319,7 @@ flows:
           2:
               task: update_dependencies
               options:
-                  include_beta: True
                   dependencies:
-                      - github: https://github.com/SalesforceFoundation/Cumulus
                       - github: https://github.com/SalesforceFoundation/HEDAP
                       - github: https://github.com/SalesforceFoundation/Abacus
           3:
@@ -329,6 +327,13 @@ flows:
           4:
               task: install_managed
           5:
+              task: update_dependencies
+              options:
+                  include_beta: True
+                  dependencies:
+                      - github: https://github.com/SalesforceFoundation/HEDAP
+                      - github: https://github.com/SalesforceFoundation/Abacus
+          6:
               task: install_managed_beta
 
     trial_org:

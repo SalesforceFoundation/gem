@@ -7,6 +7,7 @@ project:
         name: Gift Entry Manager
         namespace: gem
         api_version: 45.0
+        install_class: Post_Install_Script
     git:
         prefix_release: rel/gem/
         prefix_beta: beta/gem/
@@ -318,9 +319,7 @@ flows:
           2:
               task: update_dependencies
               options:
-                  include_beta: True
                   dependencies:
-                      - github: https://github.com/SalesforceFoundation/Cumulus
                       - github: https://github.com/SalesforceFoundation/HEDAP
                       - github: https://github.com/SalesforceFoundation/Abacus
           3:
@@ -328,6 +327,13 @@ flows:
           4:
               task: install_managed
           5:
+              task: update_dependencies
+              options:
+                  include_beta: True
+                  dependencies:
+                      - github: https://github.com/SalesforceFoundation/HEDAP
+                      - github: https://github.com/SalesforceFoundation/Abacus
+          6:
               task: install_managed_beta
 
     trial_org:

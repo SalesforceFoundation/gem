@@ -7,6 +7,7 @@
 */
 String adminEmail = 'testing@example.com';
 String giftEntryPS = 'Gift Entry';
+String giftProfileName = 'Gift Processor';
 
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 
@@ -111,7 +112,7 @@ public static void AddGiftProcessor() {
         Profile giftProfile = [
             SELECT Id
             FROM Profile
-            WHERE Name = 'Standard User'
+            WHERE Name =: giftProfileName
         ];
 
         PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Label =: giftEntryPS];

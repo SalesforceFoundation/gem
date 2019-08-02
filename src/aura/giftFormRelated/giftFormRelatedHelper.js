@@ -28,6 +28,7 @@
                     const newAmount = Math.round((originalAmount * 100) + 1) / 100;
                     allocationComponent.set('v.item.npsp__Amount__c', newAmount);
                 }
+                component.set('v.checkAmountTotals', true);
             }
         }
     },

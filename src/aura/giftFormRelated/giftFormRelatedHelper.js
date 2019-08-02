@@ -15,22 +15,18 @@
             const allocationData = allocationComponents.reduce((acc, val) => {
                 const record = val.get('v.item');
                 return {
-                    percent: acc.percent + _self.isNumber(record.npsp__Percent__c) ? record.npsp__Percent__c : 0,
-                    amount: acc.amount + _self.isNumber(record.npsp__Amount__c) ? record.npsp__Amount__c : 0
+                    percent: acc.percent + (_self.isNumber(record.npsp__Percent__c) ? record.npsp__Percent__c : 0),
+                    amount: acc.amount + (_self.isNumber(record.npsp__Amount__c) ? record.npsp__Amount__c : 0)
                 };
             }, {percent: 0, amount: 0});
 
             if(allocationData.percent === 100 && allocationData.amount < donationAmount) {
                 const remainderInCents = Math.round((donationAmount * 100) - (allocationData.amount * 100));
-                for(let i = 0; i <= remainderInCents; i++) {
+                for(let i = 0; i < remainderInCents; i++) {
                     const allocationComponent = allocationComponents[i];
                     const originalAmount = allocationComponent.get('v.item.npsp__Amount__c');
-                    const newAmount = Math.round(((originalAmount * 100) + 1)/100);
+                    const newAmount = Math.round((originalAmount * 100) + 1) / 100;
                     allocationComponent.set('v.item.npsp__Amount__c', newAmount);
-                }
-                for(let allocationComponent in allocationComponents) {
-                    const amount = allocationComponent.get('v.item.npsp__Amount__c');
-                    allocationComponent.set('v.item.npsp__Amount__c')
                 }
             }
         }

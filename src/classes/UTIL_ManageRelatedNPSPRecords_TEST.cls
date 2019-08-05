@@ -123,9 +123,6 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     @isTest
     private static void testOppRelatedRecordSync() {
 
-        User testUser = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
-        UTIL_UnitTestData_TEST.assignGiftEntryPermissionSetToUser(testUser.Id);
-
         List<Contact> contacts = [SELECT Id, AccountId FROM Contact];
         System.assertEquals(4, contacts.size(), 'There should be 4 Contacts, there are : ' + contacts.size());
 
@@ -171,36 +168,30 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
         System.assertEquals(2, hedaRels.size(), 
             'There should still be only 2 Relationship, there are : ' + hedaRels.size());
 
-        System.runAs(testUser) {
-            hedaRels[0].hed__Description__c = descriptionNotesUpdate;
-            hedaRels[0].hed__Status__c = statusFormer;
-            update hedaRels;
-        }
+        hedaRels[0].hed__Description__c = descriptionNotesUpdate;
+        hedaRels[0].hed__Status__c = statusFormer;
+        update hedaRels;
 
         List<hed__Affiliation__c> hedaAffls = getEDAAffiliations(donorAccount.Id);
         System.assertEquals(2, hedaAffls.size(), 
             'There should still be only 2 Affiliation, there are : ' + hedaAffls.size());
 
-        System.runAs(testUser) {
-            // This will break the "sync", causing the existing copy to be deleted and remade
-            hedaAffls[0].Related_Opportunity_Contact_Role__c = solicitorRole;
-            hedaAffls[0].hed__Description__c = descriptionNotesUpdate;
-            update hedaAffls;
-        }
+        // This will break the "sync", causing the existing copy to be deleted and remade
+        hedaAffls[0].Related_Opportunity_Contact_Role__c = solicitorRole;
+        hedaAffls[0].hed__Description__c = descriptionNotesUpdate;
+        update hedaAffls;
 
         Test.startTest();
 
         Opportunity oppTestRel2;
         Opportunity oppTestAffl2;
-        System.runAs(testUser) {
-            // Create new Opportunities to run the copy code again
-            oppTestRel2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
-            insert oppTestRel2;
+        // Create new Opportunities to run the copy code again
+        oppTestRel2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
+        insert oppTestRel2;
 
-            // Since the Affiliation role was changed, this Opp will create a different OCR Role
-            oppTestAffl2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorAccount.Id, null);
-            insert oppTestAffl2;
-        }
+        // Since the Affiliation role was changed, this Opp will create a different OCR Role
+        oppTestAffl2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorAccount.Id, null);
+        insert oppTestAffl2;
 
         Test.stopTest();
 
@@ -257,9 +248,6 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     @isTest
     private static void testRelatedRecordDelete() {
 
-        User testUser = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
-        UTIL_UnitTestData_TEST.assignGiftEntryPermissionSetToUser(testUser.Id);
-
         Contact donorContact1 = returnContact(donor1FirstName);
         Contact donorContact2 = returnContact(donor2FirstName);
         Contact creditContact1 = returnContact(credit1FirstName);
@@ -285,10 +273,8 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
             'There should still be only 2 EDA Affiliations, there are : ' + hedaAffls.size());
 
         Test.startTest();
-        System.runAs(testUser) {
-            delete hedaRels[0];
-            delete hedaAffls;
-        }
+        delete hedaRels[0];
+        delete hedaAffls;
         Test.stopTest();
 
         // Check that NPSP copies were properly deleted
@@ -304,9 +290,7 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
 
 
         // Now test the other way, deleting NPSP records should not delete EDA ones
-        System.runAs(testUser) {
-            delete newNPSPRelationships;
-        }
+        delete newNPSPRelationships;
 
         hedaRels = getEDARElationships(donorContact1.Id);
         System.assertEquals(1, hedaRels.size(), 
@@ -315,9 +299,7 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
 
         // Editing an EDA Relationship should trigger a re-sync, adding back the NPSP record
         hedaRels[0].hed__Description__c = 'Testing Resync';
-        System.runAs(testUser) {
-            update hedaRels;
-        }
+        update hedaRels;
 
         newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
         System.assertEquals(1, newNPSPRelationships.size(), 
@@ -333,9 +315,6 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     */ 
     @isTest
     private static void testRelatedRecordReparent() {
-
-        User testUser = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
-        UTIL_UnitTestData_TEST.assignGiftEntryPermissionSetToUser(testUser.Id);
 
         Contact donorContact1 = returnContact(donor1FirstName);
         Contact donorContact2 = returnContact(donor2FirstName);
@@ -354,11 +333,9 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
             'There should be 2 EDA Affiliations, there are : ' + hedaAffls.size());
 
         Test.startTest();
-        System.runAs(testUser) {
-            hedaAffls[0].hed__Account__c = newAfflAccountId;
-            hedaAffls[1].hed__Account__c = newAfflAccountId;
-            update hedaAffls;
-        }
+        hedaAffls[0].hed__Account__c = newAfflAccountId;
+        hedaAffls[1].hed__Account__c = newAfflAccountId;
+        update hedaAffls;
         Test.stopTest();
 
         // The existing EDA Affiliations should be updated

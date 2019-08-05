@@ -6,6 +6,8 @@
 * @date 2018-07-26
 */
 String adminEmail = 'testing@example.com';
+String giftEntryPS = 'Gift Entry';
+String giftProfileName = 'Gift Processor';
 
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 
@@ -109,7 +111,9 @@ public static void AddGiftProcessor() {
             LIMIT 1
         ];
 
-        List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :standardUserProfile.Id AND IsActive = true];
+        PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Label =: giftEntryPS];
+        
+        List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :giftProfile.Id AND IsActive = true];
         if(giftProcessors.size() == 0) {
             String randomPad = EncodingUtil.convertToHex(Crypto.generateAesKey(128)).subString(0, 8);
 
@@ -127,6 +131,8 @@ public static void AddGiftProcessor() {
             );
             users.add(goUser);
             insert users;
+
+            insert new PermissionSetAssignment(AssigneeId = users[0].Id, PermissionSetId = ps.Id);
         }
     } catch (System.DmlException e) {
         Database.rollback(sp);

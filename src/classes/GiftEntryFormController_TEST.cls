@@ -436,8 +436,8 @@ private class GiftEntryFormController_TEST {
     @isTest
     private static void testGiftEntryWithPermissionSet() {
 
-        User u = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
-        UTIL_UnitTestData_TEST.assignGiftEntryPermissionSetToUser(u.Id);
+        User testUser = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
+        UTIL_UnitTestData_TEST.assignGiftEntryPermissionSetToUser(testUser.Id);
 
         Contact con1 = UTIL_UnitTestData_TEST.getContact();
         insert con1;
@@ -449,7 +449,7 @@ private class GiftEntryFormController_TEST {
 
         GiftEntryFormController.GiftFormModel giftModel;
         
-        System.runAs(u) {
+        System.runAs(testUser) {
             giftModel = GiftEntryFormController.initClass(opp.Id);
             giftModel.oppId = opp.Id;
             GiftEntryFormController.saveDonationInformation(giftModel);

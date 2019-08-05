@@ -43,6 +43,7 @@ public class UTIL_UnitTestData_TEST {
     *******************************************************************************************************/
     private static string closedWonStage;
     private static string openStage;
+    public static String giftEntryPS = 'Gift Entry';
 
     /*******************************************************************************************************
     * @description Returns opportunity closed won stage
@@ -160,6 +161,22 @@ public class UTIL_UnitTestData_TEST {
             insert u;
         }
         return u;
+    }
+
+    /*******************************************************************************************************
+    * @description Assign our Gift Entry permission set to the provided user Id
+    * @param userId the Id of the user 
+    * @return void
+    *******************************************************************************************************/
+    public static void assignGiftEntryPermissionSetToUser(Id userId) {
+
+        PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Label =: giftEntryPS];
+        
+        // to work around mixed DML errors during tests, you must create user account in its own transaction. got this
+        // hack from the web.
+        System.runAs ( new User(Id = UserInfo.getUserId()) ) {
+            insert new PermissionSetAssignment(AssigneeId = userId, PermissionSetId = ps.Id);
+        }
     }
 
     /*******************************************************************************************************

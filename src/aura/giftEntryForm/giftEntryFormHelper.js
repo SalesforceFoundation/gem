@@ -90,9 +90,6 @@
                     component.set('v.opp', giftModel.opp);
                     this.setDiFields(component, di);
 
-                    component.set('v.opp.campaignId', giftModel.opp.CampaignId);
-                    component.set('v.opp.npsp__Matching_Gift__c', giftModel.opp.npsp__Matching_Gift__c);
-
                     component.set('v.allocs', giftModel.allocs);
                     component.set('v.partialCredits', giftModel.partialCredits);
                     component.set('v.payments', giftModel.payments);

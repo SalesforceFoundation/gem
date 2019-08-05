@@ -122,6 +122,7 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     */ 
     @isTest
     private static void testOppRelatedRecordSync() {
+
         List<Contact> contacts = [SELECT Id, AccountId FROM Contact];
         System.assertEquals(4, contacts.size(), 'There should be 4 Contacts, there are : ' + contacts.size());
 
@@ -181,13 +182,15 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
         update hedaAffls;
 
         Test.startTest();
-        
+
+        Opportunity oppTestRel2;
+        Opportunity oppTestAffl2;
         // Create new Opportunities to run the copy code again
-        Opportunity oppTestRel2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
+        oppTestRel2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
         insert oppTestRel2;
 
         // Since the Affiliation role was changed, this Opp will create a different OCR Role
-        Opportunity oppTestAffl2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorAccount.Id, null);
+        oppTestAffl2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorAccount.Id, null);
         insert oppTestAffl2;
 
         Test.stopTest();
@@ -308,6 +311,7 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     /*******************************************************************************************************
     * @description Check that changing the parent Contact or Account on HEDA Relationships and Affiliations 
     * correctly deletes the original NPSP copies
+    * As of EDA 1.81, Relationships can no longer be reparented, so we're only testing Affiliations now.
     */ 
     @isTest
     private static void testRelatedRecordReparent() {
@@ -324,42 +328,26 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
         Account newAfflAccount = donorAccounts[0];
         Id newAfflAccountId = newAfflAccount.Id;
 
-        List<hed__Relationship__c> hedaRels = getEDARElationships(donorContact1.Id);
-        System.assertEquals(2, hedaRels.size(), 
-            'There should be 2 EDA Relationships, there are : ' + hedaRels.size());
-
         List<hed__Affiliation__c> hedaAffls = getEDAAffiliations(donorAccount.Id);
         System.assertEquals(2, hedaAffls.size(), 
             'There should be 2 EDA Affiliations, there are : ' + hedaAffls.size());
 
         Test.startTest();
-        hedaRels[0].hed__Contact__c = donorContact2.Id;
-        hedaRels[1].hed__Contact__c = donorContact2.Id;
-        update hedaRels;
-
         hedaAffls[0].hed__Account__c = newAfflAccountId;
         hedaAffls[1].hed__Account__c = newAfflAccountId;
         update hedaAffls;
         Test.stopTest();
 
-        // The EDA relationships and affiliations should be updated
-        hedaRels = getEDARElationships(donorContact1.Id);
-        System.assertEquals(0, hedaRels.size(), 
-            'There should be 0 EDA Relationships, there are : ' + hedaRels.size());
+        // The existing EDA Affiliations should be updated
+        hedaAffls = getEDAAffiliations(donorAccount.Id);
+        System.assertEquals(0, hedaAffls.size(), 
+            'There should be 0 EDA Affiliations, there are : ' + hedaAffls.size());
 
-        hedaRels = getEDARElationships(donorContact2.Id);
-        System.assertEquals(2, hedaRels.size(), 
-            'There should be 2 EDA Relationships, there are : ' + hedaRels.size());
+        hedaAffls = getEDAAffiliations(newAfflAccountId);
+        System.assertEquals(2, hedaAffls.size(), 
+            'There should be 2 EDA Affiliations, there are : ' + hedaAffls.size());
 
         // This is where the true test begins, the old copies should have been deleted 
-        List<npe4__Relationship__c> newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
-        System.assertEquals(0, newNPSPRelationships.size(), 
-            'There should be 0 NPSP Relationships for this Contact, there are : ' + newNPSPRelationships.size());
-        
-        newNPSPRelationships = getNPSPRelationships(donorContact2.Id);
-        System.assertEquals(2, newNPSPRelationships.size(), 
-            'There should be 2 NPSP Relationships for this Contact, there are : ' + newNPSPRelationships.size());
-
         List<npe5__Affiliation__c> newNPSPAffiliations = getNPSPAffiliations(newAfflAccountId);
         System.assertEquals(2, newNPSPAffiliations.size(), 
             'There should be 2 NPSP Affiliations, there are : ' + newNPSPAffiliations.size());

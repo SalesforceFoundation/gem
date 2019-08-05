@@ -426,9 +426,17 @@ public with sharing class GiftEntryFormController {
                 runGiftProcess(giftModel.di.Id, false, updateGift);
             }
 
-            Id oppId = giftModel.di.npsp__DonationImported__c != null ?
-                giftModel.di.npsp__DonationImported__c : getOpportunityIdFromImport(giftModel.di.Id);
+            Id oppId = giftModel.oppId;
+
+            if(oppId == null){
+                oppId = giftModel.di.npsp__DonationImported__c != null ?
+                    giftModel.di.npsp__DonationImported__c : getOpportunityIdFromImport(giftModel.di.Id);
+            }
             
+            if(giftModel.oppId == null){
+                giftModel.oppId = oppId;
+            }
+
             if(oppId == null){
                 throw returnAuraException('No Opportunity was created or matched');
             }
@@ -460,8 +468,6 @@ public with sharing class GiftEntryFormController {
                 UTIL_CrudFLS.checkUpsert(giftModel.partialCredits);
                 saveResults.addAll(Database.upsert(giftModel.partialCredits));
             }
-
-            giftModel.oppId = oppId;
 
             for(Database.UpsertResult result : saveResults) {
                 if(!result.isSuccess()) {

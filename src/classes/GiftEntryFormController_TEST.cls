@@ -431,7 +431,7 @@ private class GiftEntryFormController_TEST {
         System.assert(openAccountDonations.contains(opp.Id));
         System.assert(openAccountDonations.contains(opp2.Id));
     }
-
+    
     // Check that field mapping validation acts like we expect
     @isTest
     private static void testValidateMappings() {

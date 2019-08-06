@@ -113,7 +113,7 @@ public static void AddGiftProcessor() {
 
         PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Label =: giftEntryPS];
         
-        List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :giftProfile.Id AND IsActive = true];
+        List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :standardUserProfile.Id AND IsActive = true];
         if(giftProcessors.size() == 0) {
             String randomPad = EncodingUtil.convertToHex(Crypto.generateAesKey(128)).subString(0, 8);
 

@@ -44,6 +44,8 @@
 
 public with sharing class UTIL_Describe {
 
+    public static Boolean checkCRUD = true;
+
     // throw custom exceptions when a bogus object or field is provided.
     public class SchemaDescribeException extends Exception {}
 
@@ -333,7 +335,7 @@ public with sharing class UTIL_Describe {
      */
     public static String getAllFieldsQueryStringFromObject(String sObjectName) {
         DescribeSObjectResult objectDescribe = getObjectDescribe(sObjectName);
-        if(!objectDescribe.isAccessible()) {
+        if(checkCRUD && !objectDescribe.isAccessible()) {
             throw new UTIL_CrudFLS.AccessException(objectDescribe, 'read');
         }
 
@@ -342,7 +344,7 @@ public with sharing class UTIL_Describe {
     	Set<String> accessibleFields = new Set<String>();
   
     	for(Schema.DescribeFieldResult field : fields.values()){
-      		if(field.isAccessible()) {
+      		if(!checkCRUD || field.isAccessible()) {
                 if(field.getType() == Schema.DisplayType.Location){
                     // Since Geolocation fields return an object, including them was causing an internal server error
                     // The Latitude and Longitude fields are still included in the list and can be referenced

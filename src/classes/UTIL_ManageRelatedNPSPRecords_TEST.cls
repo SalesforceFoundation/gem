@@ -348,6 +348,8 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
 
         Test.startTest();
         System.runAs(testUser) {
+            hedaAffls[0].ownerId = testUser.Id;
+            hedaAffls[1].ownerId = testUser.Id;
             hedaAffls[0].hed__Account__c = newAfflAccountId;
             hedaAffls[1].hed__Account__c = newAfflAccountId;
             update hedaAffls;

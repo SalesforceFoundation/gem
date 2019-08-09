@@ -94,4 +94,105 @@ public with sharing class Post_Install_Script_TEST {
         System.assertEquals(true, relSync.hed__Active__c);
         System.assertEquals(0, relSync.hed__Load_Order__c);
     }
+
+
+    /**
+     * Do our best to simulate NPSP being installed after HEDA.
+     */
+    @isTest
+    static void adminAccountUpdate() {
+
+        //Insert HEDA Trigger Handlers
+        List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
+        hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
+
+        //Insert NPSP Trigger Handlers
+        List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
+        insert npspHandlers;
+
+        Post_Install_Script.insertTdtmDefaults();
+
+        Contact co = new Contact(
+            FirstName = 'Test',
+            LastName = 'Name'
+        );
+
+        insert co;
+
+        co = [SELECT Id, AccountId FROM Contact WHERE Id = :co.Id];
+
+        Account ac = [
+                SELECT Id, Type, RecordTypeId, RecordType.Name, npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c
+                FROM Account WHERE Id = :co.AccountId
+        ];
+
+        ac.npe01__SYSTEMIsIndividual__c = false;
+        ac.npe01__SYSTEM_AccountType__c = null;
+        ac.Type = null;
+
+        update ac;
+
+        Test.startTest();
+
+        Post_Install_Script.queueAccountProcessor();
+
+        Test.stopTest();
+
+        ac = [
+                SELECT Id, Type, RecordTypeId, RecordType.Name, npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c
+                FROM Account WHERE Id = :co.AccountId
+        ];
+
+        System.assertEquals(true, ac.npe01__SYSTEMIsIndividual__c);
+        System.assertEquals('One-to-One Individual', ac.npe01__SYSTEM_AccountType__c);
+        System.assertEquals(null, ac.Type);
+    }
+
+    @isTest
+    static void householdAccountUpdate() {
+        //Insert HEDA Trigger Handlers
+        List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
+        hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
+
+        //Insert NPSP Trigger Handlers
+        List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
+        insert npspHandlers;
+
+        Post_Install_Script.insertTdtmDefaults();
+
+
+        Account ac = new Account(
+                Name = 'Test Household Acct',
+                Type = 'Household',
+                RecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID()
+        );
+
+        insert ac;
+
+        ac = [
+                SELECT Id, Type, RecordTypeId, RecordType.Name, npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c
+                FROM Account WHERE Id = :ac.Id
+        ];
+
+        ac.npe01__SYSTEMIsIndividual__c = false;
+        ac.npe01__SYSTEM_AccountType__c = null;
+        ac.Type = null;
+
+        update ac;
+
+        Test.startTest();
+
+        Post_Install_Script.queueAccountProcessor();
+
+        Test.stopTest();
+
+        ac = [
+                SELECT Id, Type, RecordTypeId, RecordType.Name, npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c
+                FROM Account WHERE Id = :ac.Id
+        ];
+
+        System.assertEquals(true, ac.npe01__SYSTEMIsIndividual__c);
+        System.assertEquals('Household Account', ac.npe01__SYSTEM_AccountType__c);
+        System.assertEquals('Household', ac.Type);
+    }
 }

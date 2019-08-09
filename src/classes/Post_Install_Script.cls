@@ -38,6 +38,8 @@
 **/
 global with sharing class Post_Install_Script implements InstallHandler{
 
+    static final Integer ACCOUNT_BATCH_SIZE = 200;
+
     global void onInstall(InstallContext context) {
         //Initial installation.
         if(context.previousVersion() == null) {
@@ -84,6 +86,54 @@ global with sharing class Post_Install_Script implements InstallHandler{
         );
 
         insert gemTDTMTriggers;    
+    }
+
+    global static Id queueAccountProcessor() {
+        return System.enqueueJob(new NPSP_Account_Processor());
+    }
+
+    static void populateNPSPAccountFields() {
+        Id adminAccountRecordTypeId = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+        Id hhAccountRecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
+
+
+        List<Account> accounts = [
+                SELECT Id, RecordTypeId, RecordType.Name
+                FROM Account
+                WHERE (RecordTypeId = :adminAccountRecordTypeId OR RecordTypeId = :hhAccountRecordTypeId)
+                    AND npe01__SYSTEM_AccountType__c = null
+                    AND Type = null
+                    AND npe01__SYSTEMIsIndividual__c = false
+                LIMIT :ACCOUNT_BATCH_SIZE
+        ];
+
+
+        for(Account a : accounts) {
+            if(a.RecordTypeId == hhAccountRecordTypeId) {
+                a.npe01__SYSTEM_AccountType__c = 'Household Account';
+                a.Type = 'Household';
+            } else if(a.RecordTypeId == adminAccountRecordTypeId) {
+                a.npe01__SYSTEM_AccountType__c = 'One-to-One Individual';
+            }
+            a.npe01__SYSTEMIsIndividual__c = true;
+        }
+
+        try {
+            update accounts;
+            if(accounts.size() == 200) {
+                queueAccountProcessor();
+            }
+        } catch (Exception ex) {
+            npsp.ERR_Handler_API.processError(ex, 'NPSP_Account_Processor');
+        }
+    }
+
+
+    public class NPSP_Account_Processor implements Queueable {
+
+        public void execute(System.QueueableContext ctx) {
+            populateNPSPAccountFields();
+        }
     }
 
 }

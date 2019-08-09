@@ -390,14 +390,18 @@ flows:
                             - npsp__DataImport__c.Donation_Primary_Campaign__c
 
 plans:
-    limited_release:
-        slug: limited-release
-        title: Install Limited Release
+    existing_org:
+        slug: install
+        title: Install GEM
         tier: primary
-        description: Installs the Gift Entry Manager Limited Release
+        description: Installs the Gift Entry Manager
         steps:
             1:
-                flow: trial_org
+                flow: existing_org
+        checks:
+            - when: "org_config.organization_sobject['SignupCountryIsoCode'] != 'US'"
+              action: error
+              message: "Sorry, this product is not available in your region."
 
 orgs:
     scratch:

@@ -208,6 +208,14 @@
     </recordTypeVisibilities>
 
     <tabVisibilities>
+        <tab>npe01__Contact_Merge</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>npsp__Contact_Merge</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>%%%NAMESPACE%%%Single_Gift_Entry</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>

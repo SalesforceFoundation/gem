@@ -7,27 +7,21 @@
         <label>Donation</label>
     </recordTypes>
     <recordTypes>
-        <fullName>In_Kind</fullName>
+        <fullName>Grant</fullName>
         <active>true</active>
         <businessProcess>NPSP_Default</businessProcess>
-        <label>In Kind</label>
+        <label>Grant</label>
     </recordTypes>
     <recordTypes>
-        <fullName>Major_Gift</fullName>
+        <fullName>InKindGift</fullName>
         <active>true</active>
         <businessProcess>NPSP_Default</businessProcess>
-        <label>Major Gift</label>
+        <label>In-Kind Gift</label>
     </recordTypes>
     <recordTypes>
-        <fullName>Matching</fullName>
+        <fullName>MatchingGift</fullName>
         <active>true</active>
         <businessProcess>NPSP_Default</businessProcess>
-        <label>Matching</label>
-    </recordTypes>
-    <recordTypes>
-        <fullName>Membership</fullName>
-        <active>true</active>
-        <businessProcess>NPSP_Default</businessProcess>
-        <label>Membership</label>
+        <label>Matching Gift</label>
     </recordTypes>
 </CustomObject>

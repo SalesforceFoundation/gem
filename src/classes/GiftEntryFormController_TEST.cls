@@ -232,9 +232,11 @@ private class GiftEntryFormController_TEST {
 
         Decimal newAmt = 200;
         // Forcing the Opportunity match to test updating
+        diObj = getDIRecord(diObj.Id);
         npsp__DataImport__c diObj2 = diObj.clone(false, false, false, false);
         diObj2.npsp__DonationImported__c = oppList[0].Id;
         diObj2.npsp__Donation_Amount__c = newAmt;
+        diObj2.npsp__DonationImportStatus__c = null;
         insert diObj2;
 
         GiftEntryFormController.runGiftProcess(diObj2.Id, false, true);
@@ -468,6 +470,13 @@ private class GiftEntryFormController_TEST {
             Notification_Recipient_Name__c = recipientName,
             Donation_Honoree_Name__c = tributeName
         );
+    }
+
+    private static npsp__DataImport__c getDIRecord(Id diObjId){
+        String allDIFields = UTIL_Describe.getAllFieldsQueryStringFromObject('npsp__DataImport__c');
+        List<npsp__DataImport__c> listDI = 
+            Database.query('SELECT '+ String.escapeSingleQuotes(allDIFields) +' FROM npsp__DataImport__c WHERE Id = :diObjId');
+        return listDI[0];
     }
     
 }

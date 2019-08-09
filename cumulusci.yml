@@ -37,7 +37,7 @@ tasks:
         options:
             path: unpackaged/config/delete
 
-    deploy_recommended_config:
+    deploy_installer_config:
         description: Deploys recommended configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
@@ -80,19 +80,23 @@ tasks:
                 Post_Install_Script.giftSetup();
                 Post_Install_Script.insertTdtmDefaults();
 
-    execute_installer_settings_gem_only:
-        description: Configure the default Settings for Gift Processing
+    execute_installer_settings:
+        description: Configure the default Settings for Gift Processing and NPSP.
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        ui_options:
+            name: Configure the default NPSP Settings for Gift Processing
         options:
             path: scripts/configure_default_settings.cls
-            apex: setupGEMDefaults();
+            apex: setupGEMDefaultsForInstaller();
 
-    execute_installer_settings_npsp_defaults:
-        description: Configure the default Settings for Gift Processing
+    execute_trial_settings:
+        description: Configure the default Settings for Gift Processing, NPSP, and EDA.
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
+        ui_options:
+            name: Configure the default EDA/NPSP Settings for Gift Processing
         options:
             path: scripts/configure_default_settings.cls
-            apex: setupGEMAndNPSPDefaults();
+            apex: setupGEMDefaultsForTrial();
 
     retrieve_config_dev:
         description: Retrieves the current changes in the scratch org into unpackaged/config/dev
@@ -150,15 +154,6 @@ tasks:
                 - npsp__General_Accounting_Unit__c
                 - Campaign
 
-    test_data_default_settings:
-        description: Configure the default Settings for Gift Processing, including NPSP and EDA changes
-        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
-        ui_options:
-            name: Configure the default NPSP Settings for Gift Processing
-        options:
-            path: scripts/configure_default_settings.cls
-            apex: setupGEMDefaultsForDev();
-
     test_data_user_setup:
         description: Sets up Gift Processing Users with correct Profiles
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
@@ -170,7 +165,7 @@ flows:
     config_apextest:
         steps:
             3:
-                task: deploy_recommended_config
+                task: deploy_installer_config
             4:
                 task: deploy_dev_config
 
@@ -179,7 +174,7 @@ flows:
             3:
                 task: deploy_dev_config_delete
             4:
-                task: deploy_recommended_config
+                task: deploy_installer_config
             5:
                 task: deploy_dev_config
             6:
@@ -192,7 +187,7 @@ flows:
             3:
                 task: deploy_dev_config_delete
             4:
-                task: deploy_recommended_config
+                task: deploy_installer_config
             5:
                 task: deploy_dev_config
             6:
@@ -217,7 +212,7 @@ flows:
                 options:
                     unmanaged: False
             6:
-                task: test_data_default_settings
+                task: execute_trial_settings
                 options:
                     managed: True
             7:
@@ -230,7 +225,7 @@ flows:
     config_managed:
         steps:
             3:
-                task: deploy_recommended_config
+                task: deploy_installer_config
                 options:
                     unmanaged: False
 
@@ -269,7 +264,7 @@ flows:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
         steps:
             1:
-                task: test_data_default_settings
+                task: execute_trial_settings
             2:
                 task: test_data_user_setup
             3:
@@ -347,7 +342,7 @@ flows:
               options:
                   unmanaged: False
           4:
-              task: test_data_default_settings
+              task: execute_trial_settings
               options:
                   managed: True
           5:
@@ -362,16 +357,22 @@ flows:
           1:
               flow: install_prod_with_abacus
           2:
-              flow: config_managed
-          3:
-              task: execute_installer_settings_npsp_defaults
+              task: deploy_post
               options:
-                  managed: True
+                  unmanaged: False
+          3:  
+              task: deploy_installer_config
+              options:
+                  unmanaged: False
           4:
-              task: deploy_abacus_settings
+              task: execute_installer_settings
               options:
                   managed: True
           5:
+              task: deploy_abacus_settings
+              options:
+                  managed: True
+          6:
               task: deploy_trial_config
 
 

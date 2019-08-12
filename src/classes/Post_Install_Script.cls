@@ -36,7 +36,7 @@
 * @group-content
 * @description This is the post install script for Adv.
 **/
-global with sharing class Post_Install_Script implements InstallHandler{
+global without sharing class Post_Install_Script implements InstallHandler{
 
     static final Integer ACCOUNT_BATCH_SIZE = 200;
 

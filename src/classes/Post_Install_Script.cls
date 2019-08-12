@@ -88,10 +88,21 @@ global with sharing class Post_Install_Script implements InstallHandler{
         insert gemTDTMTriggers;    
     }
 
+
+    /**
+     * Starts a new chained queueable account processing job.
+     * Used when GEM/NPSP are installed in an org that already has EDA installed.
+     *
+     * @return  Id of the Queueable
+     */
     global static Id queueAccountProcessor() {
         return System.enqueueJob(new NPSP_Account_Processor());
     }
 
+    /**
+     * Populate the npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c and Type fields with the correct values
+     * for each Account that is Administrative or Household as indicated by record type.
+     */
     static void populateNPSPAccountFields() {
         Id adminAccountRecordTypeId = hed.UTIL_Describe_API.getAdminAccRecTypeID();
         Id hhAccountRecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
@@ -129,8 +140,11 @@ global with sharing class Post_Install_Script implements InstallHandler{
     }
 
 
+    /**
+     * Queueable class for populating NPSP fields on Accounts.
+     * Used when NPSP and GEM have been installed in an org that already had EDA.
+     */
     public class NPSP_Account_Processor implements Queueable {
-
         public void execute(System.QueueableContext ctx) {
             populateNPSPAccountFields();
         }

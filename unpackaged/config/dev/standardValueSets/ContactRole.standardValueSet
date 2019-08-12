@@ -51,4 +51,9 @@
         <default>false</default>
         <label>Other</label>
     </standardValue>
+    <standardValue>
+        <fullName>Tribute</fullName>
+        <default>false</default>
+        <label>Tribute</label>
+    </standardValue>
 </StandardValueSet>

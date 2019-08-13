@@ -106,11 +106,14 @@ public with sharing class Post_Install_Script_TEST {
         List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
         hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
 
-        //Insert NPSP Trigger Handlers
-        List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
-        insert npspHandlers;
-
         Post_Install_Script.insertTdtmDefaults();
+
+        //Insert NPSP Trigger Handlers, but deactivated because otherwise NPSP will do this for us when running a test
+        List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
+        for(npsp__Trigger_Handler__c th : npspHandlers) {
+            th.npsp__Active__c = false;
+        }
+        insert npspHandlers;
 
         Contact co = new Contact(
             FirstName = 'Test',
@@ -118,7 +121,7 @@ public with sharing class Post_Install_Script_TEST {
         );
 
         insert co;
-
+        System.debug(JSON.serializePretty([SELECT npsp__Asynchronous__c, npsp__Class__c, npsp__Load_Order__c, npsp__Object__c, npsp__Active__c, npsp__Usernames_to_Exclude__c, npsp__Trigger_Action__c, npsp__User_Managed__c FROM npsp__Trigger_Handler__c ORDER BY npsp__Load_Order__c ASC NULLS FIRST]));
         co = [SELECT Id, AccountId FROM Contact WHERE Id = :co.Id];
 
         Account ac = [
@@ -126,11 +129,15 @@ public with sharing class Post_Install_Script_TEST {
                 FROM Account WHERE Id = :co.AccountId
         ];
 
-        ac.npe01__SYSTEMIsIndividual__c = false;
-        ac.npe01__SYSTEM_AccountType__c = null;
-        ac.Type = null;
+        // assert initial state
+        System.assertEquals(false, ac.npe01__SYSTEMIsIndividual__c);
+        System.assertEquals(null, ac.npe01__SYSTEM_AccountType__c);
 
-        update ac;
+        // reactivate our trigger handlers to simulate NPSP/GEM being installed
+        for(npsp__Trigger_Handler__c th : npspHandlers) {
+            th.npsp__Active__c = true;
+        }
+        update npspHandlers;
 
         Test.startTest();
 
@@ -154,12 +161,15 @@ public with sharing class Post_Install_Script_TEST {
         List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
         hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
 
-        //Insert NPSP Trigger Handlers
+
+        //Insert NPSP Trigger Handlers, but deactivated. Otherwise NPSP creates these records on its own.
         List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
+        for(npsp__Trigger_Handler__c th : npspHandlers) {
+            th.npsp__Active__c = false;
+        }
         insert npspHandlers;
 
         Post_Install_Script.insertTdtmDefaults();
-
 
         Account ac = new Account(
                 Name = 'Test Household Acct',
@@ -174,11 +184,15 @@ public with sharing class Post_Install_Script_TEST {
                 FROM Account WHERE Id = :ac.Id
         ];
 
-        ac.npe01__SYSTEMIsIndividual__c = false;
-        ac.npe01__SYSTEM_AccountType__c = null;
-        ac.Type = null;
+        // assert initial state
+        System.assertEquals(false, ac.npe01__SYSTEMIsIndividual__c);
+        System.assertEquals(null, ac.npe01__SYSTEM_AccountType__c);
 
-        update ac;
+        // reactivate our trigger handlers to simulate NPSP/GEM being installed
+        for(npsp__Trigger_Handler__c th : npspHandlers) {
+            th.npsp__Active__c = true;
+        }
+        update npspHandlers;
 
         Test.startTest();
 
@@ -191,6 +205,7 @@ public with sharing class Post_Install_Script_TEST {
                 FROM Account WHERE Id = :ac.Id
         ];
 
+        System.debug(JSON.serializePretty(ac));
         System.assertEquals(true, ac.npe01__SYSTEMIsIndividual__c);
         System.assertEquals('Household Account', ac.npe01__SYSTEM_AccountType__c);
         System.assertEquals('Household', ac.Type);

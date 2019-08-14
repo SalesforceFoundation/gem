@@ -1,7 +1,7 @@
 project:
     dependencies:
         - github: https://github.com/SalesforceFoundation/Cumulus
-        - github: https://github.com/SalesforceFoundation/HEDAP
+        - github: https://github.com/SalesforceFoundation/EDA
     name: Advancement
     package:
         name: Gift Entry Manager
@@ -244,7 +244,7 @@ flows:
                 task: None # github_parent_to_children
 
     ci_feature_beta_deps:
-        description: When run, the latest version (including betas) of Cumulus and HEDA are installed, and all tests are run.
+        description: When run, the latest version (including betas) of Cumulus and EDA are installed, and all tests are run.
         steps:
             5:
                 task: run_tests
@@ -287,7 +287,7 @@ flows:
               options:
                   dependencies:
                       - github: https://github.com/SalesforceFoundation/Cumulus
-                      - github: https://github.com/SalesforceFoundation/HEDAP
+                      - github: https://github.com/SalesforceFoundation/EDA
                       - github: https://github.com/SalesforceFoundation/Abacus
               ui_options:
                   1:
@@ -297,11 +297,11 @@ flows:
                   9:
                       name: NPSP Config for Salesforce Mobile App
                   10:
-                      name: HEDA - Account Record Types
+                      name: EDA - Account Record Types
                   11:
-                      name: HEDA - Contact Key Affiliation Fields
+                      name: EDA - Contact Key Affiliation Fields
                   13:
-                      name: HEDA - Deploy Course Connection Record Types
+                      name: EDA - Deploy Course Connection Record Types
                   14:
                       name: Facility Display Name Formula Field
           2:
@@ -317,7 +317,7 @@ flows:
               task: update_dependencies
               options:
                   dependencies:
-                      - github: https://github.com/SalesforceFoundation/HEDAP
+                      - github: https://github.com/SalesforceFoundation/EDA
                       - github: https://github.com/SalesforceFoundation/Abacus
           3:
               task: deploy_pre
@@ -328,7 +328,7 @@ flows:
               options:
                   include_beta: True
                   dependencies:
-                      - github: https://github.com/SalesforceFoundation/HEDAP
+                      - github: https://github.com/SalesforceFoundation/EDA
                       - github: https://github.com/SalesforceFoundation/Abacus
           6:
               task: install_managed_beta
@@ -405,32 +405,25 @@ plans:
                 options:
                     unmanaged: False
             3:
-                task: update_admin_profile
-                options:
-                    unmanaged: False
-                checks:
-                    - when: "'hed' in tasks.get_installed_packages()"
-                      action: hide
-            4:
                 task: deploy_installer_config
                 options:
                     unmanaged: False
-            5:
+            4:
                 task: deploy_dev_config
                 options:
                     unmanaged: False
                 checks:
                     - when: "'hed' in tasks.get_installed_packages()"
                       action: hide
-            6:
+            5:
                 task: execute_installer_settings
                 options:
                     managed: True
-            7:
+            6:
                 task: deploy_abacus_settings
                 options:
                     managed: True
-            8:
+            7:
                 task: deploy_trial_config
         checks:
             - when: "org_config.organization_sobject['SignupCountryIsoCode'] != 'US'"

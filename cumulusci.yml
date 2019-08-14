@@ -398,40 +398,40 @@ plans:
         tier: primary
         description: Installs the Gift Entry Manager
         steps:
-          1:
-              flow: install_prod_with_abacus
-          2:
-              task: deploy_post
-              options:
-                  unmanaged: False
-          3:
-              task: update_admin_profile
-              options:
-                  unmanaged: False
-              checks:
-                  - when: "'hed' in tasks.get_installed_packages()"
-                    action: hide
-          4:
-              task: deploy_installer_config
-              options:
-                  unmanaged: False
-          5:
-              task: deploy_dev_config
-              options:
-                  unmanaged: False
-              checks:
-                  - when: "'hed' in tasks.get_installed_packages()"
-                    action: hide
-          6:
-              task: execute_installer_settings
-              options:
-                  managed: True
-          7:
-              task: deploy_abacus_settings
-              options:
-                  managed: True
-          8:
-              task: deploy_trial_config
+            1:
+                flow: install_prod_with_abacus
+            2:
+                task: deploy_post
+                options:
+                    unmanaged: False
+            3:
+                task: update_admin_profile
+                options:
+                    unmanaged: False
+                checks:
+                    - when: "'hed' in tasks.get_installed_packages()"
+                      action: hide
+            4:
+                task: deploy_installer_config
+                options:
+                    unmanaged: False
+            5:
+                task: deploy_dev_config
+                options:
+                    unmanaged: False
+                checks:
+                    - when: "'hed' in tasks.get_installed_packages()"
+                      action: hide
+            6:
+                task: execute_installer_settings
+                options:
+                    managed: True
+            7:
+                task: deploy_abacus_settings
+                options:
+                    managed: True
+            8:
+                task: deploy_trial_config
         checks:
             - when: "org_config.organization_sobject['SignupCountryIsoCode'] != 'US'"
               action: error

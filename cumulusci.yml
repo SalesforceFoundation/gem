@@ -15,10 +15,10 @@ project:
 
 tasks:
     deploy_abacus_settings:
-        description: Configure the default Abacus Settings for Gift Processing
+        description: Configure the default Accounting Support Settings for Gift Processing
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         ui_options:
-            name: Deploy Abacus Settings
+            name: Deploy Accounting Support Settings
         options:
             path: scripts/configure_abacus_settings.cls
             apex: initializeAbacusSettings();

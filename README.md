@@ -6,7 +6,7 @@ GEM is driven by customer feedback across higher education and the Salesforce ec
 
 We are proud to offer GEM to our U.S. market, prior to its worldwide availability. See below for more information on how to get involved.
 
-**Questions? Become a member of the [Gift Entry Manager](https://powerofus.force.com/s/topic/0TO1E000000VcE0WAK/gift-entry-manager) customer group in the Power of Us Hub.**
+**Questions? Become a member of the [Gift Entry Manager](https://powerofus.force.com/s/group/0F91E000000XbvASAS/gift-entry-manager-gem) customer group in the Power of Us Hub.**
 
 Before installing, you will be asked to review and agree to product terms of use and licenses.
 

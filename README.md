@@ -8,6 +8,8 @@ We are proud to offer GEM to our U.S. market, prior to its worldwide availabilit
 
 **Questions? Become a member of the [Gift Entry Manager](https://powerofus.force.com/s/topic/0TO1E000000VcE0WAK/gift-entry-manager) customer group in the Power of Us Hub.**
 
+Before installing, you will be asked to review and agree to product terms of use and licenses.
+
 #### Meta
 
 The Gift Entry Manager (GEM) technology consists of: (a) one open-source  package licensed by Salesforce.org (“SFDO”) under the BSD-3 Clause License, found at https://opensource.org/licenses/BSD-3-Clause, and (b) one closed-source package, licensed by SFDO under a proprietary limited use license, that provides the Accounting Support feature.  When you install the GEM package, the necessary components of EDA, NPSP, and Accounting Support will automatically be installed into your Salesforce org.

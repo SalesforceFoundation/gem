@@ -121,7 +121,6 @@ public with sharing class Post_Install_Script_TEST {
         );
 
         insert co;
-        System.debug(JSON.serializePretty([SELECT npsp__Asynchronous__c, npsp__Class__c, npsp__Load_Order__c, npsp__Object__c, npsp__Active__c, npsp__Usernames_to_Exclude__c, npsp__Trigger_Action__c, npsp__User_Managed__c FROM npsp__Trigger_Handler__c ORDER BY npsp__Load_Order__c ASC NULLS FIRST]));
         co = [SELECT Id, AccountId FROM Contact WHERE Id = :co.Id];
 
         Account ac = [
@@ -173,7 +172,6 @@ public with sharing class Post_Install_Script_TEST {
 
         Account ac = new Account(
                 Name = 'Test Household Acct',
-                Type = 'Household',
                 RecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID()
         );
 
@@ -205,7 +203,6 @@ public with sharing class Post_Install_Script_TEST {
                 FROM Account WHERE Id = :ac.Id
         ];
 
-        System.debug(JSON.serializePretty(ac));
         System.assertEquals(true, ac.npe01__SYSTEMIsIndividual__c);
         System.assertEquals('Household Account', ac.npe01__SYSTEM_AccountType__c);
         System.assertEquals('Household', ac.Type);

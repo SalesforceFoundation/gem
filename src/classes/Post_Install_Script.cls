@@ -107,7 +107,6 @@ global without sharing class Post_Install_Script implements InstallHandler{
         Id adminAccountRecordTypeId = hed.UTIL_Describe_API.getAdminAccRecTypeID();
         Id hhAccountRecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
 
-
         List<Account> accounts = [
                 SELECT Id, RecordTypeId, RecordType.Name
                 FROM Account
@@ -131,7 +130,7 @@ global without sharing class Post_Install_Script implements InstallHandler{
 
         try {
             update accounts;
-            if(accounts.size() == 200) {
+            if(accounts.size() == ACCOUNT_BATCH_SIZE) {
                 queueAccountProcessor();
             }
         } catch (Exception ex) {

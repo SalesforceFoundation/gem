@@ -1,8 +1,12 @@
 # Gift Entry Manager
 
-Salesforce.org Gift Entry Manager (“GEM”) is an open source, extensible application that leverages existing fundraising capabilities, built on EDA, with new code to address the unique core needs of higher education gift entry management. GEM  utilizes a Salesforce.com (“Salesforce”) managed package to give higher education users the ability to record gifts and pledges. In addition, GEM developers and administrators can benefit from insights beyond gift records, manage extensible pledge and gift management in the cloud, and utilize a robust framework for gift entry from single to batch workflows.
+Salesforce.org Gift Entry Manager (“GEM”) is an extensible application with open source and closed source components that leverages existing fundraising capabilities, built on EDA, with new code to address the unique core needs of higher education gift entry management. GEM utilizes Salesforce.com (“Salesforce”) managed packages to give higher education users the ability to record gifts and pledges. In addition, GEM developers and administrators can benefit from insights beyond gift records, manage extensible pledge and gift management in the cloud, and utilize a robust framework for gift entry from single to batch workflows.
 
-GEM is driven by customer feedback across higher education and the Salesforce ecosystem and we welcome feedback and contributions for the project. **Questions? Become a member of the [Gift Entry Manager](https://powerofus.force.com/s/topic/0TO1E000000VcE0WAK/gift-entry-manager) customer group in the Power of Us Hub.**
+GEM is driven by customer feedback across higher education and the Salesforce ecosystem and we welcome feedback and contributions for the project.  For clarity, GEM is a Non-SFDC Application or a Third-Party Application, and not Services, under any master subscription agreement with Salesforce.
+
+We are proud to offer GEM to our U.S. market, prior to its worldwide availability. See below for more information on how to get involved.
+
+**Questions? Become a member of the [Gift Entry Manager](https://powerofus.force.com/s/topic/0TO1E000000VcE0WAK/gift-entry-manager) customer group in the Power of Us Hub.**
 
 #### Meta
 

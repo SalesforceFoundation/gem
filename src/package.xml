@@ -163,5 +163,9 @@
         <members>sge_service</members>
         <name>LightningComponentBundle</name>
     </types>
+    <types>
+        <members>Gift_Entry_Managed</members>
+        <name>PermissionSet</name>
+    </types>
     <version>45.0</version>
 </Package>

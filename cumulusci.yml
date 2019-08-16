@@ -42,6 +42,8 @@ tasks:
     deploy_installer_config:
         description: Deploys recommended configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
         class_path: cumulusci.tasks.salesforce.Deploy
+        ui_options:
+            name: Deploy Recommended Settings
         options:
             namespace_inject: $project_config.project__package__namespace
             path: unpackaged/config/recommended
@@ -78,7 +80,7 @@ tasks:
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         options:
             apex: >
-                Post_Install_Script.populateNPSPAccountModel();    
+                Post_Install_Script.populateNPSPAccountModel();
                 Post_Install_Script.giftSetup();
                 Post_Install_Script.insertTdtmDefaults();
 
@@ -362,7 +364,7 @@ flows:
               task: deploy_post
               options:
                   unmanaged: False
-          3:  
+          3:
               task: deploy_installer_config
               options:
                   unmanaged: False

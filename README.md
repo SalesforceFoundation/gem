@@ -4,7 +4,7 @@ Salesforce.org Gift Entry Manager (“GEM”) is an extensible application with 
 
 GEM is driven by customer feedback across higher education and the Salesforce ecosystem and we welcome feedback and contributions for the project.  For clarity, GEM is a Non-SFDC Application or a Third-Party Application, and not Services, under any master subscription agreement with Salesforce.
 
-We are proud to offer GEM to our U.S. market, prior to its worldwide availability. See below for more information on how to get involved.
+We are proud to offer GEM to our U.S. market, prior to its worldwide availability. Refer to [the documentation](https://powerofus.force.com/s/article/GEM-Documentation) for information on installing and configuring GEM. 
 
 **Questions? Become a member of the [Gift Entry Manager](https://powerofus.force.com/s/group/0F91E000000XbvASAS/gift-entry-manager-gem) customer group in the Power of Us Hub.**
 

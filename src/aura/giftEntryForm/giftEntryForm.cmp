@@ -257,10 +257,16 @@
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                            <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}"
-                                fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}"
-                                disabled="{!v.oppClosed}"
-                                selectedVal="{!v.opp.StageName}" />
+                            <label class="show-required slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.StageName}
+                            </label>
+                            <aura:if isTrue="{!v.renderRequiredInputs}">
+                                <lightning:inputField aura:id="requiredField" 
+                                    disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="StageName"
+                                    value="{!v.opp.StageName}" />
+                            </aura:if>
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"

@@ -1,4 +1,4 @@
-<aura:component extends="c:giftFormRelatedRow">
+<aura:component extends="c:giftFormRelatedRow" controller="GiftRelatedPaymentController">
     
     <aura:dependency resource="markup://c:dynamicFieldDisplay"/>
     <aura:method name="clearAmount" />
@@ -11,6 +11,9 @@
     <aura:attribute name="rowDisabled"
         type="Boolean"
         default="false" />
+    <aura:attribute name="accountingDataConsistencyEnabled"
+        type="Boolean"
+        default="true"/>
     <aura:attribute name="item"
         type="npe01__OppPayment__c" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
@@ -40,7 +43,7 @@
                 value="{!v.item.npe01__Payment_Amount__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <lightning:input aura:id="requiredField" required="{! and(not(v.item.npe01__Paid__c), not(v.item.npe01__Written_Off__c))}"
+            <lightning:input aura:id="{!and(v.accountingDataConsistencyEnabled,and(not(v.item.npe01__Paid__c), not(v.item.npe01__Written_Off__c))) ? 'requiredField' : ''}" required="{! and(v.accountingDataConsistencyEnabled,and(not(v.item.npe01__Paid__c), not(v.item.npe01__Written_Off__c)))}"
                 disabled="{!v.rowDisabled}"
                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}"
                 type="date"

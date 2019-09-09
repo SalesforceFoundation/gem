@@ -38,5 +38,24 @@
 		if(methodInput){
 			methodInput.set("v.required", newValue);
 		}
+	},
+	getAccountingDataConsistencyEnforced: function(component) {
+		var getAccountingDataConsistencyEnforced = component.get('c.getIsEnforceAccountingDataConsistencyEnabled');
+
+		getAccountingDataConsistencyEnforced.setCallback(this, function(response) {
+			var state = response.getState();
+			if (state === 'SUCCESS') {
+				var queriedDataConsistencyEnabled = response.getReturnValue();
+				console.log('this is a success');
+				component.set('v.accountingDataConsistencyEnabled', queriedDataConsistencyEnabled);
+			} else if (state === 'ERROR') {
+				// When there is an error, don't do anything. The Boolean already has a default value.
+				console.log('this is an error');
+
+			}
+		});
+		$A.enqueueAction(getAccountingDataConsistencyEnforced);
 	}
+
+
 })

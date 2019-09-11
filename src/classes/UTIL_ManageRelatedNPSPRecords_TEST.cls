@@ -85,25 +85,8 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
 
         insert new List<hed__Relationship__c>{rel, rel2};
 
-        // Create a Soft Credit affiliation between Donor2 and Related2
-        hed__Affiliation__c affl = new hed__Affiliation__c(
-            hed__Contact__c = creditContact2.Id,
-            hed__Account__c = donorAccount.Id,
-            hed__Role__c = familyRole,
-            hed__Status__c = statusCurrent,
-            Related_Opportunity_Contact_Role__c = softCreditRole,
-            hed__Description__c = descriptionNotes);
-
-        // Create another Affiliation to test syncing edge cases
-        hed__Affiliation__c affl2 = new hed__Affiliation__c(
-            hed__Contact__c = creditContact2.Id,
-            hed__Account__c = donorAccount.Id,
-            hed__Role__c = familyRole,
-            hed__Status__c = statusCurrent,
-            Related_Opportunity_Contact_Role__c = solicitorRole,
-            hed__Description__c = descriptionNotes2);
-
-        insert new List<hed__Affiliation__c>{affl, affl2};
+        List<hed__Affiliation__c> afflList = returnTestEDAAffiliations(donorAccount.Id, creditContact2.Id);
+        insert afflList;
 
         // Add Opportunities to test if the NPSP versions of Relationship and Affiliation get created
         Opportunity oppTestRel1 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
@@ -122,6 +105,8 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     */ 
     @isTest
     private static void testOppRelatedRecordSync() {
+
+        User testUser = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
 
         List<Contact> contacts = [SELECT Id, AccountId FROM Contact];
         System.assertEquals(4, contacts.size(), 'There should be 4 Contacts, there are : ' + contacts.size());
@@ -168,30 +153,36 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
         System.assertEquals(2, hedaRels.size(), 
             'There should still be only 2 Relationship, there are : ' + hedaRels.size());
 
-        hedaRels[0].hed__Description__c = descriptionNotesUpdate;
-        hedaRels[0].hed__Status__c = statusFormer;
-        update hedaRels;
+        System.runAs(testUser) {
+            hedaRels[0].hed__Description__c = descriptionNotesUpdate;
+            hedaRels[0].hed__Status__c = statusFormer;
+            update hedaRels;
+        }
 
         List<hed__Affiliation__c> hedaAffls = getEDAAffiliations(donorAccount.Id);
         System.assertEquals(2, hedaAffls.size(), 
             'There should still be only 2 Affiliation, there are : ' + hedaAffls.size());
 
-        // This will break the "sync", causing the existing copy to be deleted and remade
-        hedaAffls[0].Related_Opportunity_Contact_Role__c = solicitorRole;
-        hedaAffls[0].hed__Description__c = descriptionNotesUpdate;
-        update hedaAffls;
+        System.runAs(testUser) {
+            // This will break the "sync", causing the existing copy to be deleted and remade
+            hedaAffls[0].Related_Opportunity_Contact_Role__c = solicitorRole;
+            hedaAffls[0].hed__Description__c = descriptionNotesUpdate;
+            update hedaAffls;
+        }
 
         Test.startTest();
 
         Opportunity oppTestRel2;
         Opportunity oppTestAffl2;
-        // Create new Opportunities to run the copy code again
-        oppTestRel2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
-        insert oppTestRel2;
+        System.runAs(testUser) {
+            // Create new Opportunities to run the copy code again
+            oppTestRel2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorContact1.AccountId, donorContact1.Id);
+            insert oppTestRel2;
 
-        // Since the Affiliation role was changed, this Opp will create a different OCR Role
-        oppTestAffl2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorAccount.Id, null);
-        insert oppTestAffl2;
+            // Since the Affiliation role was changed, this Opp will create a different OCR Role
+            oppTestAffl2 = UTIL_UnitTestData_TEST.getTestOpportunity(donorAccount.Id, null);
+            insert oppTestAffl2;
+        }
 
         Test.stopTest();
 
@@ -248,6 +239,8 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     @isTest
     private static void testRelatedRecordDelete() {
 
+        User testUser = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
+
         Contact donorContact1 = returnContact(donor1FirstName);
         Contact donorContact2 = returnContact(donor2FirstName);
         Contact creditContact1 = returnContact(credit1FirstName);
@@ -298,8 +291,10 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
 
 
         // Editing an EDA Relationship should trigger a re-sync, adding back the NPSP record
-        hedaRels[0].hed__Description__c = 'Testing Resync';
-        update hedaRels;
+        System.runAs(testUser) {
+            hedaRels[0].hed__Description__c = 'Testing Resync';
+            update hedaRels;
+        }
 
         newNPSPRelationships = getNPSPRelationships(donorContact1.Id);
         System.assertEquals(1, newNPSPRelationships.size(), 
@@ -316,26 +311,41 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
     @isTest
     private static void testRelatedRecordReparent() {
 
+        User testUser = UTIL_UnitTestData_TEST.createNewUserForTests(System.now().getTime() + '@testerson.com');
+
         Contact donorContact1 = returnContact(donor1FirstName);
         Contact donorContact2 = returnContact(donor2FirstName);
+        Contact creditContact2 = returnContact(credit2FirstName);
         Account donorAccount = [SELECT Id, Name FROM Account WHERE Name = :donorAccountName];
 
-        String newAfflAccountName = 'New Affl Account';
-        List<Account> donorAccounts = 
-            UTIL_UnitTestData_TEST.getMultipleTestAccounts(1,hed.UTIL_Describe_API.getBizAccRecTypeID());
-        donorAccounts[0].Name = newAfflAccountName;
-        insert donorAccounts;
-        Account newAfflAccount = donorAccounts[0];
-        Id newAfflAccountId = newAfflAccount.Id;
-
+        // We need to create new Affiliations for this test
         List<hed__Affiliation__c> hedaAffls = getEDAAffiliations(donorAccount.Id);
+        delete hedaAffls;
+
+        String newAfflAccountName = 'New Affl Account';
+        Id newAfflAccountId;
+        System.runAs(testUser) {
+            List<hed__Affiliation__c> afflList = returnTestEDAAffiliations(donorAccount.Id, creditContact2.Id);
+            insert afflList;
+
+            List<Account> donorAccounts = 
+                UTIL_UnitTestData_TEST.getMultipleTestAccounts(1,hed.UTIL_Describe_API.getBizAccRecTypeID());
+            donorAccounts[0].Name = newAfflAccountName;
+            insert donorAccounts;
+            Account newAfflAccount = donorAccounts[0];
+            newAfflAccountId = newAfflAccount.Id;
+        }
+
+        hedaAffls = getEDAAffiliations(donorAccount.Id);
         System.assertEquals(2, hedaAffls.size(), 
             'There should be 2 EDA Affiliations, there are : ' + hedaAffls.size());
 
         Test.startTest();
-        hedaAffls[0].hed__Account__c = newAfflAccountId;
-        hedaAffls[1].hed__Account__c = newAfflAccountId;
-        update hedaAffls;
+        System.runAs(testUser) {
+            hedaAffls[0].hed__Account__c = newAfflAccountId;
+            hedaAffls[1].hed__Account__c = newAfflAccountId;
+            update hedaAffls;
+        }
         Test.stopTest();
 
         // The existing EDA Affiliations should be updated
@@ -356,6 +366,28 @@ public with sharing class UTIL_ManageRelatedNPSPRecords_TEST {
         System.assertEquals(0, newNPSPAffiliations.size(), 
             'There should be 0 NPSP Affiliations, there are : ' + newNPSPAffiliations.size());
 
+    }
+
+    private static List<hed__Affiliation__c> returnTestEDAAffiliations(Id accountId, Id contactId){
+        // Create a Soft Credit Affiliation
+        hed__Affiliation__c affl = new hed__Affiliation__c(
+            hed__Contact__c = contactId,
+            hed__Account__c = accountId,
+            hed__Role__c = familyRole,
+            hed__Status__c = statusCurrent,
+            Related_Opportunity_Contact_Role__c = softCreditRole,
+            hed__Description__c = descriptionNotes);
+
+        // Create another Affiliation to test syncing edge cases
+        hed__Affiliation__c affl2 = new hed__Affiliation__c(
+            hed__Contact__c = contactId,
+            hed__Account__c = accountId,
+            hed__Role__c = familyRole,
+            hed__Status__c = statusCurrent,
+            Related_Opportunity_Contact_Role__c = solicitorRole,
+            hed__Description__c = descriptionNotes2);
+
+        return new List<hed__Affiliation__c>{affl, affl2};
     }
 
     private static List<hed__Relationship__c> getEDARElationships(Id donorContactId){

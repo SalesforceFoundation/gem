@@ -157,6 +157,7 @@
         <name>Layout</name>
     </types>
     <types>
+        <members>sge_defaultGau</members>
         <members>sge_dynamicForm</members>
         <members>sge_formField</members>
         <members>sge_formSection</members>

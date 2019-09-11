@@ -1,0 +1,63 @@
+import { LightningElement, api, wire, track } from 'lwc';
+import ALLOCATION_OBJECT from '@salesforce/schema/npsp__Allocation__c';
+import ALLOCATION_AMOUNT_FIELD from '@salesforce/schema/npsp__Allocation__c.npsp__Amount__c';
+import GAU_OBJECT from '@salesforce/schema/npsp__General_Accounting_Unit__c';
+import GAU_NAME_FIELD from '@salesforce/schema/npsp__General_Accounting_Unit__c.Name';
+import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+import { getRecord } from 'lightning/uiRecordApi';
+import { getAllocationSettings } from 'c/sge_service';
+
+export default class SGE_DefaultGAU extends LightningElement {
+    @api item;
+    @api totalAmount = 0;
+    @api allocatedAmount = 0;
+    @api opportunityId; // if defined, attempt to load existing Allocation Id
+
+    @track hasDefaultGAU = false;
+    @track defaultGAUId;
+
+    @wire(getRecord, {recordId: '$defaultGAUId', fields: [GAU_NAME_FIELD]})
+    defaultGAU;
+
+    @wire(getObjectInfo, { objectApiName: GAU_OBJECT })
+    gauObjectInfo;
+
+    @wire(getObjectInfo, { objectApiName: ALLOCATION_OBJECT })
+    allocationObjectInfo;
+
+    connectedCallback() {
+        // determine if default GAU exists
+        getAllocationSettings().then(settings => {
+            if (settings.npsp__Default_Allocations_Enabled__c && settings.npsp__Default__c) {
+                this.defaultGAUId = settings.npsp__Default__c;
+                this.hasDefaultGAU = true;
+            }
+        });
+    }
+
+    get remainderAmount() {
+        return this.totalAmount - this.allocatedAmount;
+    }
+
+    get amountFieldLabel() {
+        if (this.allocationObjectInfo.data) {
+            return this.allocationObjectInfo.data.fields[ALLOCATION_AMOUNT_FIELD.fieldApiName].label;
+        }
+    }
+
+    get defaultGAUName() {
+        if(this.defaultGAU.data) {
+            return this.defaultGAU.data.fields.Name.value;
+        } else {
+            return '';
+        }
+    }
+
+    get gauObjectLabel() {
+        if(this.gauObjectInfo.data) {
+            return this.gauObjectInfo.data.label;
+        }
+    }
+
+
+}

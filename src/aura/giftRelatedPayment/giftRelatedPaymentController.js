@@ -6,8 +6,6 @@
 		if((isPaid || isWrittenOff) && isEditMode){
 			component.set("v.rowDisabled", true);
 		}
-
-		helper.getAccountingDataConsistencyEnforced(component);
 	},
 	handlePaidOrWriteOff: function(component, event, helper) {
 		var fieldChanged = event.getParam("expression");

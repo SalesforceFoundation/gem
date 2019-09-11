@@ -38,6 +38,10 @@
 		if(methodInput){
 			methodInput.set("v.required", newValue);
 		}
+
+		// Hide and show lookup fields to update them
+		this.rerenderInputs(component, 'renderRequiredInputs');
+
 	},
 	getAccountingDataConsistencyEnforced: function(component) {
 		var getAccountingDataConsistencyEnforced = component.get('c.getIsEnforceAccountingDataConsistencyEnabled');
@@ -46,16 +50,16 @@
 			var state = response.getState();
 			if (state === 'SUCCESS') {
 				var queriedDataConsistencyEnabled = response.getReturnValue();
-				console.log('this is a success');
 				component.set('v.accountingDataConsistencyEnabled', queriedDataConsistencyEnabled);
 			} else if (state === 'ERROR') {
 				// When there is an error, don't do anything. The Boolean already has a default value.
-				console.log('this is an error');
-
 			}
 		});
 		$A.enqueueAction(getAccountingDataConsistencyEnforced);
+	}, rerenderInputs: function(component, booleanAttr) {
+		console.log('calling rerender input');
+		var boolString = 'v.'+booleanAttr;
+		component.set(boolString, false);
+		setTimeout($A.getCallback(() => component.set(boolString, true)));
 	}
-
-
 })

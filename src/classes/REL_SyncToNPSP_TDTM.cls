@@ -56,7 +56,9 @@ global class REL_SyncToNPSP_TDTM extends hed.TDTM_Runnable {
         if (triggerAction == hed.TDTM_Runnable.Action.AfterInsert 
           || triggerAction == hed.TDTM_Runnable.Action.AfterUpdate
           || triggerAction == hed.TDTM_Runnable.Action.AfterDelete) {
+            UTIL_Describe.checkCRUD = false;
             UTIL_ManageRelatedNPSPRecords_TDTM.synchronizeRelationshipRecords(combinedList);
+            UTIL_Describe.checkCRUD = true;
         }
 
     	return null;

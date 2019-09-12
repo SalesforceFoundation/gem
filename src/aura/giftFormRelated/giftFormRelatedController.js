@@ -10,9 +10,6 @@
 		});
 		sendMsgEvent.fire();
     },
-    handleError: function(component, event, helper) {
-
-    },
     handleInitRows: function(component, event, helper) {
         var itemList = component.get('v.itemList');
         if(itemList && itemList.length != 0){

@@ -292,7 +292,6 @@
                         </lightning:layoutItem>
                     </lightning:layout>
                 </lightning:layoutItem>
-
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                     editMode="{!v.editMode}"
                     editModePaidPayments="{!v.editModePaidPayments}"

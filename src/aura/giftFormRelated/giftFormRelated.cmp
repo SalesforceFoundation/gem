@@ -85,16 +85,15 @@
                     <aura:if isTrue="{!v.rowCmpName == 'c:giftRelatedAllocation'}">
                         <lightning:layoutItem size="12">
                             <c:sge_defaultGau
-                                totalAllocated="{!v.amountTotal}"
-                                totalDonation="{!v.totalDonation}"
-                                onError="{!c.handleError}"/>
+                                    allocatedAmount="{!v.amountTotal}"
+                                    totalAmount="{!v.donationAmt}"/>
                         </lightning:layoutItem>
                     </aura:if>
                     <lightning:layoutItem padding="around-small" size="12">
                         <lightning:button aura:id="add-button" 
                             disabled="{!v.addButtonDisabled}" 
                             label="{!v.buttonTitle}" 
-                            onclick="{!c.clickAddRow}" />
+                            onclick="{!c.clickAddRow}"/>
                     </lightning:layoutItem>
                 </lightning:layout>
             </lightning:layoutItem>

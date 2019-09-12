@@ -7,8 +7,9 @@ import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getRecord } from 'lightning/uiRecordApi';
 import { getAllocationSettings } from 'c/sge_service';
 
+
+
 export default class SGE_DefaultGAU extends LightningElement {
-    @api item;
     @api totalAmount = 0;
     @api allocatedAmount = 0;
     @api opportunityId; // if defined, attempt to load existing Allocation Id
@@ -36,7 +37,15 @@ export default class SGE_DefaultGAU extends LightningElement {
     }
 
     get remainderAmount() {
-        return this.totalAmount - this.allocatedAmount;
+        if(isNumber(this.totalAmount)) {
+            if(isNumber(this.allocatedAmount)) {
+                return this.totalAmount - this.allocatedAmount;
+            } else {
+                return this.totalAmount;
+            }
+        }
+
+        return 0;
     }
 
     get amountFieldLabel() {
@@ -46,7 +55,7 @@ export default class SGE_DefaultGAU extends LightningElement {
     }
 
     get defaultGAUName() {
-        if(this.defaultGAU.data) {
+        if(this.defaultGAU.data && this.hasDefaultGAU) {
             return this.defaultGAU.data.fields.Name.value;
         } else {
             return '';
@@ -54,10 +63,10 @@ export default class SGE_DefaultGAU extends LightningElement {
     }
 
     get gauObjectLabel() {
-        if(this.gauObjectInfo.data) {
+        if(this.gauObjectInfo.data && this.hasDefaultGAU) {
             return this.gauObjectInfo.data.label;
         }
     }
-
-
 }
+
+const isNumber = val => !(Array.isArray(val) && (val - parseFloat(val)) +1 >= 0);

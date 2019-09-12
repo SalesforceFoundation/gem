@@ -1,6 +1,6 @@
 <template>
     <lightning-layout multiple-rows="true">
-        <lightning-layout-item padding="around-small" size="6" small-device-size="6">
+        <lightning-layout-item padding="around-small" size="6" small-device-size="6" if:true={showDefaultGAU}>
             <label class="slds-form-element__label">{gauObjectLabel}</label>
             <lightning-input label="Amount"
                              name="defaultGAUAmount"

@@ -86,7 +86,8 @@
                         <lightning:layoutItem size="12">
                             <c:sge_defaultGau
                                     allocatedAmount="{!v.amountTotal}"
-                                    totalAmount="{!v.donationAmt}"/>
+                                    totalAmount="{!v.donationAmt}"
+                                    hasDefaultAllocation="{!v.editMode}"/>
                         </lightning:layoutItem>
                     </aura:if>
                     <lightning:layoutItem padding="around-small" size="12">

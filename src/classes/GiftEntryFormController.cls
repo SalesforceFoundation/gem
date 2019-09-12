@@ -251,10 +251,17 @@ public with sharing class GiftEntryFormController {
     */
     private static GiftFormModel getDonationRecords(GiftFormModel giftModel) {
         try {
+            Id defaultGAUId;
             Id oppId = giftModel.oppId;
             if(oppId == null) {
                 return giftModel;
             }
+
+            npsp__Allocations_Settings__c allocationsSettings = SGE_GiftEntryService.readAllocationSettings();
+            if(allocationsSettings.npsp__Default_Allocations_Enabled__c == true) {
+                defaultGAUId = allocationsSettings.npsp__Default__c;
+            }
+
 
             String allOppFields = UTIL_Describe.getAllFieldsQueryStringFromObject('Opportunity');
             // Data Import uses the Record Type name instead of ID, so we need to set that before processing
@@ -334,6 +341,7 @@ public with sharing class GiftEntryFormController {
                             npsp__Opportunity__c
                     FROM npsp__Allocation__c
                     WHERE npsp__Opportunity__c = :oppId
+                        AND npsp__General_Accounting_Unit__c != :defaultGAUId
             ];
             if(!allocations.isEmpty()) {
                 giftModel.allocs = allocations;

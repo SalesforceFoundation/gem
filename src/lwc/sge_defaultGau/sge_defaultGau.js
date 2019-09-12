@@ -12,9 +12,9 @@ import { getAllocationSettings } from 'c/sge_service';
 export default class SGE_DefaultGAU extends LightningElement {
     @api totalAmount = 0;
     @api allocatedAmount = 0;
-    @api opportunityId; // if defined, attempt to load existing Allocation Id
+    @api editMode = false;
 
-    @track hasDefaultGAU = false;
+    @track defaultGAUEnabled = false;
     @track defaultGAUId;
 
     @wire(getRecord, {recordId: '$defaultGAUId', fields: [GAU_NAME_FIELD]})
@@ -31,7 +31,7 @@ export default class SGE_DefaultGAU extends LightningElement {
         getAllocationSettings().then(settings => {
             if (settings.npsp__Default_Allocations_Enabled__c && settings.npsp__Default__c) {
                 this.defaultGAUId = settings.npsp__Default__c;
-                this.hasDefaultGAU = true;
+                this.defaultGAUEnabled = true;
             }
         });
     }
@@ -55,7 +55,7 @@ export default class SGE_DefaultGAU extends LightningElement {
     }
 
     get defaultGAUName() {
-        if(this.defaultGAU.data && this.hasDefaultGAU) {
+        if(this.defaultGAU.data && this.defaultGAUEnabled) {
             return this.defaultGAU.data.fields.Name.value;
         } else {
             return '';
@@ -63,9 +63,13 @@ export default class SGE_DefaultGAU extends LightningElement {
     }
 
     get gauObjectLabel() {
-        if(this.gauObjectInfo.data && this.hasDefaultGAU) {
+        if(this.gauObjectInfo.data && this.defaultGAUEnabled) {
             return this.gauObjectInfo.data.label;
         }
+    }
+
+    get showDefaultGAU() {
+        return !this.editMode && this.defaultGAUEnabled;
     }
 }
 

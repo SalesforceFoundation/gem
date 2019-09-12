@@ -3,6 +3,7 @@ import ALLOCATION_OBJECT from '@salesforce/schema/npsp__Allocation__c';
 import ALLOCATION_AMOUNT_FIELD from '@salesforce/schema/npsp__Allocation__c.npsp__Amount__c';
 import GAU_OBJECT from '@salesforce/schema/npsp__General_Accounting_Unit__c';
 import GAU_NAME_FIELD from '@salesforce/schema/npsp__General_Accounting_Unit__c.Name';
+import REMAINING_AMOUNT_LABEL from '@salesforce/label/c.REMAINING_AMOUNT';
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getRecord } from 'lightning/uiRecordApi';
 import { getAllocationSettings } from 'c/sge_service';
@@ -50,7 +51,11 @@ export default class SGE_DefaultGAU extends LightningElement {
 
     get amountFieldLabel() {
         if (this.allocationObjectInfo.data) {
-            return this.allocationObjectInfo.data.fields[ALLOCATION_AMOUNT_FIELD.fieldApiName].label;
+            if(this.defaultGAUEnabled) {
+                return this.allocationObjectInfo.data.fields[ALLOCATION_AMOUNT_FIELD.fieldApiName].label;
+            } else {
+                return REMAINING_AMOUNT_LABEL;
+            }
         }
     }
 

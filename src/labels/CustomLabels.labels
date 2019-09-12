@@ -302,6 +302,13 @@
         <value>Partial</value>
     </labels>
     <labels>
+        <fullName>Remaining_Amount</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Remaining Amount</shortDescription>
+        <value>Remaining Amount</value>
+    </labels>
+    <labels>
         <fullName>Remove</fullName>
         <language>en_US</language>
         <protected>true</protected>

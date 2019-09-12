@@ -24,14 +24,12 @@
 			component.set('v.item.npe01__Paid__c', false);
 		}
 		
-		var paymentDateField = component.find('paymentDate');
-        if(paymentDateField){
-			// Set the Payment Date field if marked paid or written off, and the field is blank
-			// Clear the Payment Date if paid and written off become unchecked
-			if(paymentDateField.get('v.value') == null || payDate == null){
-				paymentDateField.set('v.value', payDate);
-			}
-        }
+		// Set the Payment Date field if marked paid or written off, and the field is blank
+		// Clear the Payment Date if paid and written off become unchecked
+		if(component.get('v.item.npe01__Payment_Date__c') == null || payDate == null){
+			// paymentDateField.set('v.value', payDate);
+			component.set('v.item.npe01__Payment_Date__c', payDate);
+		}
 
 		// Set the Payment Method field to 'required' if payment is paid or written off
 		var methodInput = component.find('methodField');

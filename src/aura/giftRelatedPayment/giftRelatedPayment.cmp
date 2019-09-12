@@ -53,12 +53,14 @@
             </aura:if>
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <lightning:input aura:id="paymentDate"
-                required="{! and(v.giftModel.contactAndOrgSetting.npsp__Enforce_Accounting_Data_Consistency__c, or(v.item.npe01__Paid__c, v.item.npe01__Written_Off__c))}"
-                disabled="{!v.rowDisabled}"
-                label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Date__c}"
-                type="date"
-                value="{!v.item.npe01__Payment_Date__c}"  />
+            <aura:if isTrue="{!v.renderRequiredInputs}">
+                <lightning:input aura:id="{!and(v.giftModel.contactAndOrgSetting.npsp__Enforce_Accounting_Data_Consistency__c, or(v.item.npe01__Paid__c, v.item.npe01__Written_Off__c)) ? 'requiredField' : ''}"
+                    required="{! and(v.giftModel.contactAndOrgSetting.npsp__Enforce_Accounting_Data_Consistency__c, or(v.item.npe01__Paid__c, v.item.npe01__Written_Off__c))}"
+                    disabled="{!v.rowDisabled}"
+                    label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Date__c}"
+                    type="date"
+                    value="{!v.item.npe01__Payment_Date__c}"  />
+            </aura:if>
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
             <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}</label>

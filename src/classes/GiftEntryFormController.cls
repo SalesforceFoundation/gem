@@ -51,9 +51,9 @@ public with sharing class GiftEntryFormController {
 
         @AuraEnabled public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
         @AuraEnabled public Map<String, String> bdiLabels;
-        @AuraEnabled Map<String, List<String>> picklistValues {get;set;}
-        @AuraEnabled Map<String, Boolean> closedWonStageMap {get;set;}
-        @AuraEnabled Map<String, String> diToOppFieldMap {get;set;}
+        @AuraEnabled public Map<String, List<String>> picklistValues {get;set;}
+        @AuraEnabled public Map<String, Boolean> closedWonStageMap {get;set;}
+        @AuraEnabled public Map<String, String> diToOppFieldMap {get;set;}
 
         public GiftFormModel() {
             this.objNameToApiToLabel = getObjNameToApiToLabel();

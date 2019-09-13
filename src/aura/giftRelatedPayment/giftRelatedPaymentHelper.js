@@ -41,21 +41,7 @@
 		this.rerenderInputs(component, 'renderRequiredInputs');
 
 	},
-	getAccountingDataConsistencyEnforced: function(component) {
-		var getAccountingDataConsistencyEnforced = component.get('c.getIsEnforceAccountingDataConsistencyEnabled');
-
-		getAccountingDataConsistencyEnforced.setCallback(this, function(response) {
-			var state = response.getState();
-			if (state === 'SUCCESS') {
-				var queriedDataConsistencyEnabled = response.getReturnValue();
-				component.set('v.accountingDataConsistencyEnabled', queriedDataConsistencyEnabled);
-			} else if (state === 'ERROR') {
-				// When there is an error, don't do anything. The Boolean already has a default value.
-			}
-		});
-		$A.enqueueAction(getAccountingDataConsistencyEnforced);
-	}, rerenderInputs: function(component, booleanAttr) {
-		console.log('calling rerender input');
+	rerenderInputs: function(component, booleanAttr) {
 		var boolString = 'v.'+booleanAttr;
 		component.set(boolString, false);
 		setTimeout($A.getCallback(() => component.set(boolString, true)));

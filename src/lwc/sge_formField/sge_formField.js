@@ -39,7 +39,15 @@
 import {LightningElement, api, track} from 'lwc';
 
 export default class SGE_FormField extends LightningElement {
-    @api sobject;
+    @api
+    get sobject(){
+        return this._sobject;
+    }
+    set sobject(value){
+        this.setAttribute('sobject', value);
+        this._sobject = value;
+        this.value = this.sobject[this.field.name];
+    }
     @api disableInputs;
     @api field = {};
     @track value;

@@ -16,4 +16,4 @@ class CheckExistingRecordTypes(BaseSalesforceApiTask):
         record_types = [
             rt for rt in describe_results["recordTypeInfos"] if not rt["master"]
         ]
-        return len(record_types) == 0
+        return len(record_types) > 0

@@ -165,6 +165,13 @@ tasks:
             path: scripts/configure_default_settings.cls
             apex: AddGiftProcessor();
 
+    opp_record_types_exist:
+        description: Checks for existing record types.
+        class_path: tasks.check_recordtypes.CheckExistingRecordTypes
+        group: Custom Tasks
+        options:
+            sobject: Opportunity
+
 flows:
     config_apextest:
         steps:
@@ -408,6 +415,8 @@ plans:
                     unmanaged: False
             3:
                 task: deploy_installer_config
+                checks:
+                    - when: "tasks.opp_record_types_exist()"
                 options:
                     unmanaged: False
             4:

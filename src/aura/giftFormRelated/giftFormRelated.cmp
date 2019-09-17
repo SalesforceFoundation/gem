@@ -82,12 +82,11 @@
                         </div>
                     </lightning:layoutItem>
                     {!v.body}
-                    <aura:if isTrue="{!v.rowCmpName == 'c:giftRelatedAllocation'}">
+                    <aura:if isTrue="{!v.objectName == 'npsp__Allocation__c'}">
                         <lightning:layoutItem size="12">
                             <c:sge_defaultGau
                                     allocatedAmount="{!v.amountTotal}"
-                                    totalAmount="{!v.donationAmt}"
-                                    hasDefaultAllocation="{!v.editMode}"/>
+                                    totalAmount="{!v.donationAmt}" />
                         </lightning:layoutItem>
                     </aura:if>
                     <lightning:layoutItem padding="around-small" size="12">

@@ -118,6 +118,7 @@
         <members>Interval</members>
         <members>Number_of_Payments</members>
         <members>Partial</members>
+        <members>Remaining_Amount</members>
         <members>Remove</members>
         <members>Required_Fields_Missing</members>
         <name>CustomLabel</name>

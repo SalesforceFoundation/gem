@@ -7,21 +7,16 @@
             return;
         }
 
-        // NOTE: This calculation will NOT work with negative numbers.
         var donationAmt = component.get('v.donationAmt');
 
         // Get the percentage as a decimal.
-        var percent = (Math.round((+percentInput + 0.00001) * 100) / 100)/100;
+        var percent = +percentInput / 100;
 
         // Figure out what the percentage of the donation amount is.
-        // We multiply by 100 so we can use the floor function as a replacement
-        // for the truncate function. 
-        var percentageOfAmount = donationAmt * percent * 100;
+        var percentageOfAmount = donationAmt * percent;
 
-        // Get the floor so that in cases where the amount is an odd number, we can divide evenly
-        // and give the left over penny to the default.
-        var flooredPercentageAmount = Math.floor(percentageOfAmount);
-        var actualAmount = flooredPercentageAmount / 100;
+        // Round the amount to the nearest penny, following the same rounding that NPSP uses
+        var actualAmount = Math.round(percentageOfAmount * 100) / 100;
 
         component.set('v.item.npsp__Amount__c', actualAmount);
 

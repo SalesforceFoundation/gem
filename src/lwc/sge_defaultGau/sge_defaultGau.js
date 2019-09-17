@@ -40,7 +40,7 @@ export default class SGE_DefaultGAU extends LightningElement {
     get remainderAmount() {
         if(isNumber(this.totalAmount)) {
             if(isNumber(this.allocatedAmount)) {
-                return this.totalAmount - this.allocatedAmount;
+                return Math.round((this.totalAmount - this.allocatedAmount) * 100) / 100;
             } else {
                 return this.totalAmount;
             }
@@ -68,7 +68,7 @@ export default class SGE_DefaultGAU extends LightningElement {
     }
 
     get gauObjectLabel() {
-        if(this.gauObjectInfo.data && this.defaultGAUEnabled) {
+        if(this.gauObjectInfo.data) {
             return this.gauObjectInfo.data.label;
         }
     }

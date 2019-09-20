@@ -175,10 +175,13 @@ tasks:
             path: scripts/configure_default_settings.cls
             apex: AddGiftProcessor();
 
-    record_types_exist:
+    opp_record_types_exist:
         description: Checks for existing Opportunity record types, returns True if found.
         class_path: tasks.check_recordtypes.CheckExistingRecordTypes
         group: Custom Tasks
+        options:
+            sobject: Opportunity
+            ignored_record_types: NPSP_Default
 
 flows:
     config_apextest:
@@ -438,7 +441,7 @@ plans:
             3:
                 task: deploy_opp_record_types
                 checks:
-                    - when: "tasks.record_types_exist(sobject='Opportunity')"
+                    - when: "tasks.opp_record_types_exist()"
                       action: skip
                       message: Skipped because Opportunity record types already exist.
                 options:

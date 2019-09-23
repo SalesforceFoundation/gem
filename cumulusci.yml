@@ -49,6 +49,16 @@ tasks:
             path: unpackaged/config/recommended
             unmanaged: True
 
+    deploy_opp_record_types:
+        description: Deploys GEM Opportunity Record Types.
+        class_path: cumulusci.tasks.salesforce.Deploy
+        ui_options:
+            name: Deploy GEM Opportunity Record Types
+        options:
+            namespace_inject: $project_config.project__package__namespace
+            path: unpackaged/config/opportunity_record_types
+            unmanaged: True
+
     deploy_qa_config:
         description: Deploys QA configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
         class_path: cumulusci.tasks.salesforce.Deploy
@@ -165,12 +175,22 @@ tasks:
             path: scripts/configure_default_settings.cls
             apex: AddGiftProcessor();
 
+    opp_record_types_exist:
+        description: Checks for existing Opportunity record types, returns True if found.
+        class_path: tasks.check_recordtypes.CheckExistingRecordTypes
+        group: Custom Tasks
+        options:
+            sobject: Opportunity
+            ignored_record_types: NPSP_Default
+
 flows:
     config_apextest:
         steps:
             3:
-                task: deploy_installer_config
+                task: deploy_opp_record_types
             4:
+                task: deploy_installer_config
+            5:
                 task: deploy_dev_config
 
     config_dev:
@@ -178,10 +198,12 @@ flows:
             3:
                 task: deploy_dev_config_delete
             4:
-                task: deploy_installer_config
+                task: deploy_opp_record_types
             5:
-                task: deploy_dev_config
+                task: deploy_installer_config
             6:
+                task: deploy_dev_config
+            7:
                 flow: test_data_setup
 
     config_qa:
@@ -191,14 +213,16 @@ flows:
             3:
                 task: deploy_dev_config_delete
             4:
-                task: deploy_installer_config
+                task: deploy_opp_record_types
             5:
-                task: deploy_dev_config
+                task: deploy_installer_config
             6:
-                task: update_admin_profile
+                task: deploy_dev_config
             7:
-                flow: test_data_dev_org
+                task: update_admin_profile
             8:
+                flow: test_data_dev_org
+            9:
                 flow: test_data_setup
 
     config_regression:
@@ -229,6 +253,10 @@ flows:
     config_managed:
         steps:
             3:
+                task: deploy_opp_record_types
+                options:
+                    unmanaged: False
+            4:
                 task: deploy_installer_config
                 options:
                     unmanaged: False
@@ -365,18 +393,22 @@ flows:
               options:
                   unmanaged: False
           3:
-              task: deploy_installer_config
+              task: deploy_opp_record_types
               options:
                   unmanaged: False
           4:
+              task: deploy_installer_config
+              options:
+                  unmanaged: False
+          5:
               task: execute_installer_settings
               options:
                   managed: True
-          5:
+          6:
               task: deploy_abacus_settings
               options:
                   managed: True
-          6:
+          7:
               task: deploy_trial_config
 
 
@@ -407,25 +439,33 @@ plans:
                 options:
                     unmanaged: False
             3:
-                task: deploy_installer_config
+                task: deploy_opp_record_types
+                checks:
+                    - when: "tasks.opp_record_types_exist()"
+                      action: skip
+                      message: Skipped because Opportunity record types already exist.
                 options:
                     unmanaged: False
             4:
+                task: deploy_installer_config
+                options:
+                    unmanaged: False
+            5:
                 task: deploy_dev_config
                 options:
                     unmanaged: False
                 checks:
                     - when: "'hed' in tasks.get_installed_packages()"
                       action: hide
-            5:
+            6:
                 task: execute_installer_settings
                 options:
                     managed: True
-            6:
+            7:
                 task: deploy_abacus_settings
                 options:
                     managed: True
-            7:
+            8:
                 task: deploy_trial_config
         checks:
             - when: "org_config.organization_sobject['SignupCountryIsoCode'] != 'US'"

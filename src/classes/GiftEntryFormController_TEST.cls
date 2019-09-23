@@ -136,7 +136,7 @@ private class GiftEntryFormController_TEST {
         // Test stripping Lightning attributes from JSON, then processing it into a Donation
         String testJson = '{"di":{"sobjectType":"npsp__DataImport__c","npsp__Contact1_Firstname__c":"Firstname","npsp__Contact1_Lastname__c":"Lastname","npsp__Donation_Amount__c":1000,"npsp__Donation_Name__c":"Test Opp","npsp__DonationImported__c":null'
         + ',"npsp__Account1Imported__c":"","npsp__Contact1Imported__c":"","npsp__DonationCampaignImported__c":"","Donation_Honoree_Contact__c":"","Donation_Matching_Gift_Account__c":"","Donation_Matching_Gift__c":"","npsp__Donation_Stage__c":"Closed Won","npsp__Payment_Method__c":"","Donation_Tribute_Type__c":"","Donation_Acknowledgment_Status__c":"","Donation_Matching_Gift_Status__c":"","npsp__Donation_Date__c":"2018-09-05"}'
-        + ',"opp":{"sobjectType":"Opportunity","Id":"","StageName":"","ForecastCategory":""}'
+        + ',"opp":{"sobjectType":"Opportunity","Id":null,"StageName":"","ForecastCategory":"","Name":"TestJSON","CloseDate":"2018-08-06"}'
         + ',"allocs":['
         + '{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"'+gauAmt+'","npsp__Percent__c":""}'
         + ',{"npsp__Opportunity__c":"","npsp__General_Accounting_Unit__c":"'+gauId+'","npsp__Amount__c":"","npsp__Percent__c":"'+gauPerc+'"}'
@@ -183,7 +183,7 @@ private class GiftEntryFormController_TEST {
         //  Using the previously created Opportunity, run the process again with the payment marked paid,
         //  and make sure no new Data Import objects were created
         testJson = testJson.replace('"npe01__Paid__c":false', '"npe01__Paid__c":true');
-        testJson = testJson.replace('"Id":"","StageName":"","ForecastCategory":""', 
+        testJson = testJson.replace('"Id":null,"StageName":"","ForecastCategory":""', 
             '"Id":"'+ oppId +'","StageName":"Closed Won","ForecastCategory":"Closed"');
         testJson = testJson.replace('"npsp__DonationImported__c":null', 
             '"npsp__DonationImported__c":"'+ oppId +'"');

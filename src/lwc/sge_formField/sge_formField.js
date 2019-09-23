@@ -51,9 +51,13 @@ export default class SGE_FormField extends LightningElement {
     @api disableInputs;
     @api field = {};
     @track value;
+    @track renderInput = true;
 
+    /**
+     * Load the default field value into the actual value attribute
+     */
     connectedCallback() {
-        this.value = this.sobject[this.field.name];
+        this.setDefaultVal();
     }
 
     /**
@@ -86,6 +90,46 @@ export default class SGE_FormField extends LightningElement {
         let data = {};
         data[this.field.name] = field.value;
         return data;
+    }
+
+    @api
+    resetToDefault(loadingValues) {
+        this.renderInput = false;
+        setTimeout(() => {
+            this.renderInput = true;
+            if(loadingValues){
+                this.loadValueFromObject();
+            } else {
+                this.setDefaultVal();
+            }
+        });
+    }
+
+    loadValueFromObject() {
+        let fieldVal = this.sobject[this.field.name];
+        // If the picklist value is blank, we need to change what the field gets set to
+        if(this.field.typeName === 'PICKLIST' && !fieldVal){
+            fieldVal = '';
+        }
+        this.value = fieldVal;
+    }
+
+    setDefaultVal() {
+        let defaultVal = null;
+        if(this.field.typeName === 'PICKLIST'){
+            defaultVal = '';
+        }
+        if(this.field.hasOwnProperty('defaultValue')){
+            defaultVal = this.field.defaultValue;
+        } else if(this.field.hasOwnProperty('defaultValueFormula')){
+            defaultVal = this.field.defaultValueFormula;
+        }
+        this.value = defaultVal;
+    }
+
+    get value() {
+        const field = this.getRawField();
+        return field.value;
     }
 
     getRawField() {

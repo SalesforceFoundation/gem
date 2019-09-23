@@ -1,5 +1,5 @@
 <template>
-    <lightning-record-edit-form object-api-name='Opportunity'>
+    <lightning-record-edit-form object-api-name='Opportunity' if:true={renderInput}>
         <label class={labelClassName}>{field.label}</label>
         <lightning-input-field
             field-name={field.name} 

@@ -78,6 +78,25 @@ export default class SGE_DynamicForm extends LightningElement {
         return oppData;
     }
 
+    @api
+    loadRecordValues() {
+        this.resetInputs(true);
+    }
+
+    @api
+    rerenderInputs() {
+        this.resetInputs(false);
+    }
+
+    resetInputs(loadingValues){
+        const sections = this.template.querySelectorAll("c-sge_form-section");
+        if(sections !== null && typeof sections !== 'undefined') {
+            sections.forEach(section => {
+                section.resetAllInputs(loadingValues);
+            });
+        }
+    }
+
     /**
      * Check for fields that are required but not filled in.
      *

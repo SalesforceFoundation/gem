@@ -1,6 +1,6 @@
 {
   "orgName": "GEM - Beta Test Org",
-  "edition": "Developer",
+  "edition": "Partner Developer",
   "settings" : {
     "orgPreferenceSettings": {
         "chatterEnabled": true,

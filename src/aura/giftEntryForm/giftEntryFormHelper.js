@@ -96,6 +96,7 @@
                     component.set('v.disableBlurEvents', false);
                     // Hide and show lookup fields to update them
                     this.rerenderInputs(component, 'renderInputs');
+                    this.rerenderCustomFields(component, true);
                 }
 
                 this.setDefaults(component, giftModel.opp);
@@ -127,16 +128,18 @@
         this.resetObjectFields(component, 'opp');
         this.resetObjectFields(component, 'di');
         this.rerenderInputs(component, 'renderInputs');
+        this.rerenderCustomFields(component, false);
     },
     resetObjectFields: function(component, varName) {
         var objVarString = 'v.' + varName;
-        var opp = component.get(objVarString);
+        var obj = component.get(objVarString);
         var vField;
         // TODO: Clean this up, we don't want to reset these fields
-        for(var field in opp) {
+        for(var field in obj) {
             if(field === 'sobjectType'
                 || field === 'npe01__Do_Not_Automatically_Create_Payment__c'
                 || field === 'AccountId'
+                || field === 'npsp__Donation_Donor__c'
                 || field === 'npsp__Primary_Contact__c') {
                 continue;
             }
@@ -533,8 +536,8 @@
         // This is done to avoid referencing GEM namespace fields in markup
         this.mapOppToDi(component, di, mergedOpp);
         giftModel['di'] = di;
-        // Lookup values are converted from array to ID during mapOppToDi, so we need to update
-        giftModel['opp'] = opp;
+        // When updating an Opportunity, the DataImport isn't currently used, so we need the merged field data
+        giftModel['opp'] = mergedOpp;
 
         // Clear unneeded variables
         giftModel['objNameToApiToLabel'] = {};
@@ -633,6 +636,14 @@
         const dynamicForm = component.find('sge_dynamicForm');
         const values = dynamicForm.get('v.values');
         return values;
+    },
+    rerenderCustomFields: function(component, loadExistingValues) {
+        const dynamicForm = component.find('sge_dynamicForm');
+        if(loadExistingValues){
+            dynamicForm.loadRecordValues();
+        } else {
+            dynamicForm.rerenderInputs();
+        }
     },
     getInvalidDynamicFields: function(component) {
         const dynamicForm = component.find('sge_dynamicForm');

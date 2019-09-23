@@ -383,18 +383,18 @@ public with sharing class GiftEntryFormController {
         // Upsert or Delete the provided Donor and Donation information
         List<Database.UpsertResult> saveResults = new List<Database.UpsertResult>();
         try {
-            Boolean processDI = true;
+            Boolean createOrEditOpportunity = true;
             Boolean updateGift = false;
             // If the Opportunity is closed or has payments, the DataImport cannot be processed
             if((giftModel.opp.ForecastCategory != null && giftModel.opp.ForecastCategory == 'Closed') || 
                 (giftModel.opp.npe01__Number_of_Payments__c != null && giftModel.opp.npe01__Number_of_Payments__c > 0)){
-                    processDI = false;
+                    createOrEditOpportunity = false;
             } else if(giftModel.oppId != null){
                 // If the Opportunity can be updated, and it already exists, update via Data Import process
                 updateGift = true;
             }
 
-            if(!processDI){
+            if(!createOrEditOpportunity){
                 // If we can't process the DataImport, check for an existing one instead of creating a new one
                 List<npsp__DataImport__c> dataImports = [SELECT Id, npsp__DonationImported__c 
                     FROM npsp__DataImport__c 
@@ -407,13 +407,24 @@ public with sharing class GiftEntryFormController {
                 }
             }
 
-            // Insert or Update the provided Donation information
-            if(giftModel.di != null && giftModel.di.Id == null){
+            // Check if we are updating an existing gift, and do that directly instead of using DataImport
+            Boolean updateExistingGift = createOrEditOpportunity 
+                && (giftModel.di.npsp__DonationImported__c != null 
+                || (giftModel.opp != null && giftModel.opp.Id != null));
+
+            // If not updating, insert the provided Donation information for new gifts
+            if(!updateExistingGift && giftModel.di != null && giftModel.di.Id == null){
                 UTIL_CrudFLS.checkUpsert(giftModel.di);
                 saveResults.addAll(Database.upsert(new List<npsp__DataImport__c>{giftModel.di}));
             }
 
-            if(processDI){
+            if(updateExistingGift){
+                // We need to make changes to an existing opportunity
+                // Because DataImport ignores null values, we can't clear fields using that process, 
+                // so we use a normal Update call instead
+                saveResults.add(Database.upsert(giftModel.opp));
+            } else if(createOrEditOpportunity) {
+                // Run the DataImport process for new gifts
                 runGiftProcess(giftModel.di.Id, false, updateGift);
             }
 

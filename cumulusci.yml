@@ -221,8 +221,6 @@ flows:
             7:
                 task: update_admin_profile
             8:
-                flow: test_data_dev_org
-            9:
                 flow: test_data_setup
 
     config_regression:

@@ -94,4 +94,117 @@ public with sharing class Post_Install_Script_TEST {
         System.assertEquals(true, relSync.hed__Active__c);
         System.assertEquals(0, relSync.hed__Load_Order__c);
     }
+
+
+    /**
+     * Do our best to simulate NPSP being installed after HEDA.
+     */
+    @isTest
+    static void adminAccountUpdate() {
+
+        //Insert HEDA Trigger Handlers
+        List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
+        hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
+
+        Post_Install_Script.insertTdtmDefaults();
+
+        //Insert NPSP Trigger Handlers, but deactivated because otherwise NPSP will do this for us when running a test
+        List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
+        for(npsp__Trigger_Handler__c th : npspHandlers) {
+            th.npsp__Active__c = false;
+        }
+        insert npspHandlers;
+
+        Contact co = new Contact(
+            FirstName = 'Test',
+            LastName = 'Name'
+        );
+
+        insert co;
+        co = [SELECT Id, AccountId FROM Contact WHERE Id = :co.Id];
+
+        Account ac = [
+                SELECT Id, Type, RecordTypeId, RecordType.Name, npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c
+                FROM Account WHERE Id = :co.AccountId
+        ];
+
+        // assert initial state
+        System.assertEquals(false, ac.npe01__SYSTEMIsIndividual__c);
+        System.assertEquals(null, ac.npe01__SYSTEM_AccountType__c);
+
+        // reactivate our trigger handlers to simulate NPSP/GEM being installed
+        for(npsp__Trigger_Handler__c th : npspHandlers) {
+            th.npsp__Active__c = true;
+        }
+        update npspHandlers;
+
+        Test.startTest();
+
+        Post_Install_Script.queueAccountProcessor();
+
+        Test.stopTest();
+
+        ac = [
+                SELECT Id, Type, RecordTypeId, RecordType.Name, npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c
+                FROM Account WHERE Id = :co.AccountId
+        ];
+
+        System.assertEquals(true, ac.npe01__SYSTEMIsIndividual__c);
+        System.assertEquals('One-to-One Individual', ac.npe01__SYSTEM_AccountType__c);
+        System.assertEquals(null, ac.Type);
+    }
+
+    @isTest
+    static void householdAccountUpdate() {
+        //Insert HEDA Trigger Handlers
+        List<hed.TDTM_Global_API.TdtmToken> hedaTokens = hed.TDTM_Global_API.getDefaultTdtmConfig();
+        hed.TDTM_Global_API.setTdtmConfig(hedaTokens);
+
+
+        //Insert NPSP Trigger Handlers, but deactivated. Otherwise NPSP creates these records on its own.
+        List<npsp__Trigger_Handler__c> npspHandlers = npsp.TDTM_Config_API.getDefaultRecords();
+        for(npsp__Trigger_Handler__c th : npspHandlers) {
+            th.npsp__Active__c = false;
+        }
+        insert npspHandlers;
+
+        Post_Install_Script.insertTdtmDefaults();
+
+        Account ac = new Account(
+                Name = 'Test Household Acct',
+                RecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID()
+        );
+
+        insert ac;
+
+        ac = [
+                SELECT Id, Type, RecordTypeId, RecordType.Name, npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c
+                FROM Account WHERE Id = :ac.Id
+        ];
+
+        // assert initial state
+        System.assertEquals(false, ac.npe01__SYSTEMIsIndividual__c);
+        System.assertEquals(null, ac.npe01__SYSTEM_AccountType__c);
+
+        // reactivate our trigger handlers to simulate NPSP/GEM being installed
+        for(npsp__Trigger_Handler__c th : npspHandlers) {
+            th.npsp__Active__c = true;
+        }
+        update npspHandlers;
+
+        Test.startTest();
+
+        Post_Install_Script.queueAccountProcessor();
+
+        Test.stopTest();
+
+        ac = [
+                SELECT Id, Type, RecordTypeId, RecordType.Name, npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c
+                FROM Account WHERE Id = :ac.Id
+        ];
+
+        System.assertEquals(true, ac.npe01__SYSTEMIsIndividual__c);
+        System.assertEquals('Household Account', ac.npe01__SYSTEM_AccountType__c);
+        System.assertEquals('Household', ac.Type);
+    }
 }

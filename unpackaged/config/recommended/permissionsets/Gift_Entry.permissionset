@@ -8,6 +8,14 @@
         <application>hed__HEDA</application>
         <visible>true</visible>
     </applicationVisibilities>
+    <classAccesses>
+        <apexClass>DynamicFieldDisplayController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>GiftEntryFormController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <description>Lets a user access the data required for Single Gift Entry.</description>
     <fieldPermissions>
         <editable>false</editable>

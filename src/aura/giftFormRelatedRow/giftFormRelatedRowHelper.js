@@ -30,19 +30,25 @@
         
         // Show error messages if required fields are blank
         var reqFields = component.find('requiredField');
+        reqFields = this.singleInputToArray(reqFields);
+
+        // Add inputs that are set to required but don't have the correct aura:id
+        var inputs = this.getInputs(component);
+        for(var i in inputs){
+            var field = inputs[i];
+            var isRequired = field.get('v.required');
+            if(isRequired){
+                reqFields.push(field);
+            }
+        }
 
         // The aura:id of 'noDuplicates' is used to prevent duplicate values across rows
         var noDuplicatesList = component.find('noDuplicates');
-
-        // TODO: Check for required inputs that aren't using aura:id of requiredField
-        // (helper function isn't correctly returning inputs right now)
-        // var inputFields = helper.getInputs(component);
         
         if(!reqFields && !noDuplicatesList){
             return true;
         }
-     
-        reqFields = this.singleInputToArray(reqFields);
+
         noDuplicatesList = this.singleInputToArray(noDuplicatesList);
         
         // Check required fields
@@ -73,7 +79,12 @@
         return validForm && duplicateCheck;
     },
     getInputs: function(component){
-        return component.find({ instancesOf : 'lightning:input' });
+        var inputs = [];
+        var wrapper = component.find('rowWrapper');
+        if(wrapper){
+            inputs = wrapper.find({ instancesOf : 'lightning:input' });
+        }
+        return inputs;
     },
     singleInputToArray: function(findResult){
         // Convert a single input to an array for use in reduce functions

@@ -24,6 +24,7 @@
             var editMode = (canEditRow === true) ? false : component.get('v.editModeOverride');
             var editModePaidPayments = component.get('v.editModePaidPayments');
             var showLabels = (index == 0 || newRowNum == 0) ? true : false;
+            var giftModel = component.get('v.giftModel');
 
             $A.createComponent(
                 rowCmpName, {
@@ -37,7 +38,8 @@
                     'amtField': amtField,
                     'showLabels': showLabels,
                     'editMode': editMode,
-                    'editModePaidPayments': editModePaidPayments
+                    'editModePaidPayments': editModePaidPayments,
+                    'giftModel': giftModel
                 },
                 function(relatedCmp, status, errorMessage){
                     if (status === 'SUCCESS') {

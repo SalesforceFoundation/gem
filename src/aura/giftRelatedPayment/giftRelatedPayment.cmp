@@ -1,4 +1,4 @@
-<aura:component extends="c:giftFormRelatedRow">
+<aura:component extends="c:giftFormRelatedRow" >
     
     <aura:dependency resource="markup://c:dynamicFieldDisplay"/>
     <aura:method name="clearAmount" />
@@ -14,11 +14,10 @@
     <aura:attribute name="item"
         type="npe01__OppPayment__c" 
         default="{sobjectType:'npe01__OppPayment__c'}" />
+    <aura:attribute type="Boolean" name="renderRequiredInputs" default="true" />
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-    <aura:handler name="change"
-        value="{!v.item.npe01__Scheduled_Date__c}" 
-        action="{!c.handlePaidOrWriteOff}"/>
+
     <aura:handler name="change"
         value="{!v.item.npe01__Paid__c}"
         action="{!c.handlePaidOrWriteOff}"/>
@@ -26,6 +25,7 @@
         value="{!v.item.npe01__Written_Off__c}"
         action="{!c.handlePaidOrWriteOff}"/>
 
+    <div aura:id="rowWrapper">
     <lightning:layout multipleRows="true">
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
             <lightning:input aura:id="requiredField" 
@@ -40,18 +40,22 @@
                 value="{!v.item.npe01__Payment_Amount__c}" />
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <lightning:input aura:id="requiredField" required="true"
-                disabled="{!v.rowDisabled}"
-                label="{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}"
-                type="date"
-                value="{!v.item.npe01__Scheduled_Date__c}"  />
+            <aura:if isTrue="{!v.renderRequiredInputs}">
+                <lightning:input required="{!and(v.giftModel.contactAndOrgSetting.npsp__Enforce_Accounting_Data_Consistency__c,and(not(v.item.npe01__Paid__c), not(v.item.npe01__Written_Off__c)))}"
+                                 disabled="{!v.rowDisabled}"
+                                 label="{!v.objectFieldData.objectLabels.Payment.npe01__Scheduled_Date__c}"
+                                 type="date"
+                                 value="{!v.item.npe01__Scheduled_Date__c}"  />
+            </aura:if>
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="2">
-            <lightning:input aura:id="paymentDate"
-                disabled="{!v.rowDisabled}"
-                label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Date__c}"
-                type="date"
-                value="{!v.item.npe01__Payment_Date__c}"  />
+            <aura:if isTrue="{!v.renderRequiredInputs}">
+                <lightning:input required="{! and(v.giftModel.contactAndOrgSetting.npsp__Enforce_Accounting_Data_Consistency__c, or(v.item.npe01__Paid__c, v.item.npe01__Written_Off__c))}"
+                    disabled="{!v.rowDisabled}"
+                    label="{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Date__c}"
+                    type="date"
+                    value="{!v.item.npe01__Payment_Date__c}"  />
+            </aura:if>
         </lightning:layoutItem>
         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
             <label class="slds-form-element__label">{!v.objectFieldData.objectLabels.Payment.npe01__Payment_Method__c}</label>
@@ -87,6 +91,7 @@
             <lightning:input name="oppId" type="text" label="Opportunity" value="{!v.item.npe01__Opportunity__c}" />
         </div>
     </lightning:layout>
+    </div>
 
     <c:dynamicFieldDisplay objectNameToSobject='{!v.objectNameToSobject}'
         rowDisabled='{!v.rowDisabled}'

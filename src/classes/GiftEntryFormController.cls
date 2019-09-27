@@ -47,6 +47,7 @@ public with sharing class GiftEntryFormController {
         @AuraEnabled public List<npe01__OppPayment__c> payments {get;set;}
         @AuraEnabled public List<npsp__Allocation__c> allocs {get;set;}
         @AuraEnabled public List<npsp__Partial_Soft_Credit__c> partialCredits {get;set;}
+        @AuraEnabled public npe01__Contacts_And_Orgs_Settings__c contactAndOrgSetting {get;set;}
 
         @AuraEnabled public Map<String, Map<String,String>> objNameToApiToLabel {get;set;}
         @AuraEnabled public Map<String, String> bdiLabels;
@@ -64,6 +65,7 @@ public with sharing class GiftEntryFormController {
             this.allocs = new List<npsp__Allocation__c>();
             this.bdiLabels = batchDataImportLabels;
             this.diToOppFieldMap = getDataImportToOpportunityFieldMap();
+            this.contactAndOrgSetting = npsp.UTIL_CustomSettings_API.getContactsSettings();
         }
 
         public GiftFormModel(Id oppId) {

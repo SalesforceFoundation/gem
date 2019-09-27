@@ -7,6 +7,7 @@
     <aura:method name="clickDeleteRow" />
 
     <aura:attribute type="Map" name="objectFieldData" />
+    <aura:attribute type="Object" name="giftModel" />
     <aura:attribute type="sObject[]" name="rowList" />
     <aura:attribute type="Boolean" name="showLabels" default="true" />
     <aura:attribute type="Decimal" name="donationAmt" />

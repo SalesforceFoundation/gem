@@ -84,9 +84,14 @@
         <members>Donation_Match_Select_Opp_Selected</members>
         <members>Error</members>
         <members>Error_Duplicate_Value</members>
+        <members>Error_Field_Not_Found</members>
         <members>Error_Gift_Field_Mapping</members>
+        <members>Error_Layout_Not_Found</members>
+        <members>Error_No_Access</members>
         <members>Error_No_Data_Import_Mapping</members>
+        <members>Error_Object_Not_Found</members>
         <members>Error_Offline</members>
+        <members>Error_Opportunity_Not_Created</members>
         <members>Error_Unknown</members>
         <members>Frequency</members>
         <members>Full</members>
@@ -118,8 +123,12 @@
         <members>Interval</members>
         <members>Number_of_Payments</members>
         <members>Partial</members>
+        <members>Payment_Month</members>
+        <members>Payment_Week</members>
+        <members>Payment_Year</members>
         <members>Remove</members>
         <members>Required_Fields_Missing</members>
+        <members>Toggle</members>
         <name>CustomLabel</name>
     </types>
     <types>

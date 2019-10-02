@@ -71,7 +71,7 @@ public with sharing class UTIL_Describe {
                 objectDescribes.put(objectName, gd.get(objectName).getDescribe());
             }
         } else {
-            throw new SchemaDescribeException('Invalid object name \'' + objectName + '\'');
+            throw new SchemaDescribeException(System.Label.Error_Object_Not_Found + ' \'' + objectName + '\'');
         }
     }
 
@@ -92,7 +92,7 @@ public with sharing class UTIL_Describe {
                 Schema.DescribeFieldResult dfr = fieldTokens.get(objectName).get(fieldName).getDescribe();
                 fieldDescribes.get(objectName).put(fieldName, dfr);
             } else {
-                throw new SchemaDescribeException('Invalid field name \'' + fieldName + '\'');
+                throw new SchemaDescribeException(System.Label.Error_Field_Not_Found + ' \'' + fieldName + '\'');
             }
         }
     }

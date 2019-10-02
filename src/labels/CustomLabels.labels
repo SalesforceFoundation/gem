@@ -64,11 +64,11 @@
         <value>Duplicate values are not allowed:</value>
     </labels>
     <labels>
-        <fullName>Error_No_Data_Import_Mapping</fullName>
+        <fullName>Error_Field_Not_Found</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>No Data Import mapping was found</shortDescription>
-        <value>We can&apos;t find a Data Import mapping for this Opportunity field:</value>
+        <shortDescription>Field name not found:</shortDescription>
+        <value>Field name not found:</value>
     </labels>
     <labels>
         <fullName>Error_Gift_Field_Mapping</fullName>
@@ -78,11 +78,46 @@
         <value>The JSON used to define Gift Entry Field Mapping is malformed. Please review and correct the syntax in the Dependent Field List on this Mapping record</value>
     </labels>
     <labels>
+        <fullName>Error_Layout_Not_Found</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Page layout not found</shortDescription>
+        <value>Page layout not found</value>
+    </labels>
+    <labels>
+        <fullName>Error_No_Access</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Insufficient access</shortDescription>
+        <value>Insufficient access</value>
+    </labels>
+    <labels>
+        <fullName>Error_No_Data_Import_Mapping</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No Data Import mapping was found</shortDescription>
+        <value>We can&apos;t find a Data Import mapping for this Opportunity field:</value>
+    </labels>
+    <labels>
+    <fullName>Error_Object_Not_Found</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Custom object not found:</shortDescription>
+        <value>Custom object not found:</value>
+    </labels>
+    <labels>
         <fullName>Error_Offline</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>No response from server or client is offline</shortDescription>
         <value>No response from server or client is offline</value>
+    </labels>
+    <labels>
+        <fullName>Error_Opportunity_Not_Created</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Opportunity was not created or matched</shortDescription>
+        <value>Opportunity was not created or matched</value>
     </labels>
     <labels>
         <fullName>Error_Unknown</fullName>
@@ -302,6 +337,27 @@
         <value>Partial</value>
     </labels>
     <labels>
+        <fullName>Payment_Month</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month</shortDescription>
+        <value>Month</value>
+    </labels>
+    <labels>
+        <fullName>Payment_Week</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Week</shortDescription>
+        <value>Week</value>
+    </labels>
+    <labels>
+        <fullName>Payment_Year</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Year</shortDescription>
+        <value>Year</value>
+    </labels>
+    <labels>
         <fullName>Remove</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -314,5 +370,12 @@
         <protected>true</protected>
         <shortDescription>A required field is not filled in.</shortDescription>
         <value>A required field is not filled in.</value>
+    </labels>
+    <labels>
+        <fullName>Toggle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Toggle</shortDescription>
+        <value>Toggle</value>
     </labels>
 </CustomLabels>

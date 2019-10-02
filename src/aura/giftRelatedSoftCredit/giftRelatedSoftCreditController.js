@@ -16,9 +16,10 @@
 		// component.set('v.removeButtonDisabled', false);
 	},
 	handleTypeChange: function(component, event, helper) {
+		var fullOption = $A.get('$Label.c.Full');
 		var newType = event.getParam('value');
 		var donAmt = component.get('v.donationAmt');
-		if(newType == 'Full' && donAmt){
+		if(newType == fullOption && donAmt){
 			component.set('v.item.npsp__Amount__c', donAmt);
 			// Also call the event from the extended giftFormRelatedRow component
 			helper.amountCheck(component, event, helper);
@@ -28,9 +29,10 @@
 		helper.handleAmountCheckHelper(component);
 	},
 	handleDonationChange: function(component, event, helper) {
+		var fullOption = $A.get('$Label.c.Full');
 		var newAmt = event.getParam('value');
 		var creditType = component.get('v.creditType');
-		if(creditType == 'Full' && newAmt){
+		if(creditType == fullOption && newAmt){
 			component.set('v.item.npsp__Amount__c', newAmt);
 		}
 	}

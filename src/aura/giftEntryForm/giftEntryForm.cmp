@@ -306,6 +306,7 @@
                     donationAmt="{!v.opp.Amount}"
                     preventAmountSurplus="true"
                     preventAmountDeficit="false"
+                    warnAmountDeficit="false"
                     objectFieldData="{!v.objectFieldData}"
                     modelAttribute="allocs"
                     buttonTitle="Add New Allocation"

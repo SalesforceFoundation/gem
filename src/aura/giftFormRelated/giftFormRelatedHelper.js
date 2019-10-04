@@ -117,6 +117,7 @@
         var amountTotal = this.getAmtTotal(component);
         var preventAmountSurplus = component.get('v.preventAmountSurplus');
         var preventAmountDeficit = component.get('v.preventAmountDeficit');
+        var warnAmountDeficit = component.get('v.warnAmountDeficit');
         var displayErrorOnAmountSurplus = component.get('v.displayErrorOnAmountSurplus');
         var donationAmt = component.get('v.donationAmt');
         // If there is a donation amount and a total, and they do not match, show message
@@ -142,7 +143,9 @@
                 component.set('v.messageIsError', true);
                 preventSubmit = true;
             }
-            amtError += $A.get('$Label.c.Gift_Amounts_Do_Not_Match');
+            if(warnAmountDeficit) {
+                amtError += $A.get('$Label.c.Gift_Amounts_Do_Not_Match');
+            }
         } else {
             amtError = '';
         }

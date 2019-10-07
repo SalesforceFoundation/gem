@@ -12,11 +12,11 @@
     </applicationVisibilities>
 
     <classAccesses>
-        <apexClass>DynamicFieldDisplayController</apexClass>
+        <apexClass>%%%NAMESPACE%%%DynamicFieldDisplayController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>GiftEntryFormController</apexClass>
+        <apexClass>%%%NAMESPACE%%%GiftEntryFormController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     

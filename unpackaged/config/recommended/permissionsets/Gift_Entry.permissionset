@@ -9,11 +9,11 @@
         <visible>true</visible>
     </applicationVisibilities>
     <classAccesses>
-        <apexClass>DynamicFieldDisplayController</apexClass>
+        <apexClass>%%%NAMESPACE%%%DynamicFieldDisplayController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>GiftEntryFormController</apexClass>
+        <apexClass>%%%NAMESPACE%%%GiftEntryFormController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <description>Lets a user access the data required for Single Gift Entry.</description>

@@ -1849,6 +1849,56 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_1_Amount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_1_GAU__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_1_Import_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_1_Imported__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_1_Percent__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_2_Amount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_2_GAU__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_2_Import_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_2_Imported__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__GAU_Allocation_2_Percent__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>npsp__DataImport__c.npsp__HomeAddressImportStatus__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1900,6 +1950,36 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>npsp__DataImport__c.npsp__NPSP_Data_Import_Batch__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__Opportunity_Contact_Role_1_ImportStatus__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__Opportunity_Contact_Role_1_Imported__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__Opportunity_Contact_Role_1_Role__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__Opportunity_Contact_Role_2_ImportStatus__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__Opportunity_Contact_Role_2_Imported__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>npsp__DataImport__c.npsp__Opportunity_Contact_Role_2_Role__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

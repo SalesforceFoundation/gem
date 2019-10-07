@@ -34,6 +34,7 @@
     <aura:attribute type="Boolean" name="checkAmountTotals" default="false" />
     <aura:attribute type="Boolean" name="preventAmountSurplus" default="false" />
     <aura:attribute type="Boolean" name="preventAmountDeficit" default="false" />
+    <aura:attribute type="Boolean" name="warnAmountDeficit" default="true" />
     <aura:attribute type="Boolean" name="displayErrorOnAmountSurplus" default="true"/>
     <aura:attribute type="Boolean" name="preventSubmit" default="false" />
     <aura:attribute type="Boolean" name="blockItemChangeEvent" />
@@ -82,11 +83,18 @@
                         </div>
                     </lightning:layoutItem>
                     {!v.body}
+                    <aura:if isTrue="{!v.objectName == 'npsp__Allocation__c'}">
+                        <lightning:layoutItem size="12">
+                            <c:sge_defaultGau
+                                    allocatedAmount="{!v.amountTotal}"
+                                    totalAmount="{!v.donationAmt}" />
+                        </lightning:layoutItem>
+                    </aura:if>
                     <lightning:layoutItem padding="around-small" size="12">
                         <lightning:button aura:id="add-button" 
                             disabled="{!v.addButtonDisabled}" 
                             label="{!v.buttonTitle}" 
-                            onclick="{!c.clickAddRow}" />
+                            onclick="{!c.clickAddRow}"/>
                     </lightning:layoutItem>
                 </lightning:layout>
             </lightning:layoutItem>

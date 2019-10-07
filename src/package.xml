@@ -127,6 +127,7 @@
         <members>Payment_Month</members>
         <members>Payment_Week</members>
         <members>Payment_Year</members>
+        <members>Remaining_Amount</members>
         <members>Remove</members>
         <members>Required_Fields_Missing</members>
         <members>Toggle</members>
@@ -167,6 +168,7 @@
         <name>Layout</name>
     </types>
     <types>
+        <members>sge_defaultGau</members>
         <members>sge_dynamicForm</members>
         <members>sge_formField</members>
         <members>sge_formSection</members>

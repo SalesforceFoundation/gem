@@ -6,13 +6,19 @@
             component.set('v.item.npsp__Percent__c', null);
             return;
         }
-        
-        var percent = Math.round((+percentInput + 0.00001) * 100) / 100;
-        component.set('v.item.npsp__Percent__c', percent);
 
         var donationAmt = component.get('v.donationAmt');
-        var amt = percent * donationAmt / 100;
-        component.set('v.item.npsp__Amount__c', amt);
+
+        // Get the percentage as a decimal.
+        var percent = +percentInput / 100;
+
+        // Figure out what the percentage of the donation amount is.
+        var percentageOfAmount = donationAmt * percent;
+
+        // Round the amount to the nearest penny, following the same rounding that NPSP uses
+        var actualAmount = Math.round(percentageOfAmount * 100) / 100;
+
+        component.set('v.item.npsp__Amount__c', actualAmount);
 
         // Also trigger a change event to check totals
         helper.amountCheck(component, event, helper);

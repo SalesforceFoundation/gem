@@ -295,7 +295,6 @@
                         </lightning:layoutItem>
                     </lightning:layout>
                 </lightning:layoutItem>
-
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                     editMode="{!v.editMode}"
                     editModePaidPayments="{!v.editModePaidPayments}"
@@ -308,6 +307,7 @@
                     donationAmt="{!v.opp.Amount}"
                     preventAmountSurplus="true"
                     preventAmountDeficit="false"
+                    warnAmountDeficit="false"
                     objectFieldData="{!v.objectFieldData}"
                     modelAttribute="allocs"
                     buttonTitle="Add New Allocation"

@@ -133,7 +133,7 @@
     },
     handleSobjectChange: function(component, sobjectRecord, controllingField, picklistValue, fieldNameToFieldLabel) {
         // We set the display section to true if the sobject record's selected picklist value
-        // is the same as the picklast value this section is for. 
+        // is the same as the picklist value this section is for.
         // If it is not the same picklist value, we hide the section because these fields should not be shown
         // for the selected picklist value
         var sobjectRecordSelectedPicklistValue = sobjectRecord[controllingField];

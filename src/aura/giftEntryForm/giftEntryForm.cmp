@@ -155,6 +155,10 @@
                                 disabled="{!v.donorExists == false}"
                                 label="{!$Label.c.Gift_Edit_Selected_Donor}"
                                 onclick="{!c.clickEditDonor}" />
+                            <lightning:button aura:id="editDonorModal"
+                                              disabled="{!!v.donorExists}"
+                                              label="{!$Label.c.Gift_Edit_Selected_Donor}"
+                                              onclick="{!c.openEditDonorModal}"/>
                         </lightning:layoutItem>
 
                         <!--BEGIN SCOPED MATCH NOTIFICATION-->

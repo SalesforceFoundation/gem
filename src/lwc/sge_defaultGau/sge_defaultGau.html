@@ -1,0 +1,33 @@
+<template>
+    <lightning-layout multiple-rows="true">
+        <lightning-layout-item size="12" medium-device-size="10">
+        <lightning-layout>
+            <lightning-layout-item padding="around-small" size="12" medium-device-size="6">
+                <label class="slds-form-element__label">{gauObjectLabel}</label>
+                <lightning-input label="Amount"
+                                name="defaultGAUAmount"
+                                type="text"
+                                value={defaultGAUName}
+                                disabled
+                                variant="label-hidden">
+                </lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item padding="around-small" size="6" medium-device-size="3">
+                <label class="slds-form-element__label">{amountFieldLabel}</label>
+                <lightning-input label="Amount"
+                                name="defaultGAUAmount"
+                                type="number"
+                                formatter="currency"
+                                value={remainderAmount}
+                                disabled
+                                variant="label-hidden"
+                                step="0.01">
+                </lightning-input>
+            </lightning-layout-item>
+        </lightning-layout>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" padding="horizontal-small">
+            <hr class="slds-m-top_xx-small slds-m-bottom_xxx-small"></hr>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

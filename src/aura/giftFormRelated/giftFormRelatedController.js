@@ -33,7 +33,7 @@
         var rowList = component.get('v.rowList');
 
         // If Payments are being overwritten, call delete on each of them first
-        if(thisObj == 'npe01__OppPayment__c' && rowList.length > 0){
+        if(thisObj === 'npe01__OppPayment__c' && rowList.length > 0){
             helper.deleteAll(component);
         }
 
@@ -60,12 +60,12 @@
     handleMessage: function(component, event, helper){
         var channel = event.getParam('channel');
 
-        if(channel == 'deleteRowEvent'){
+        if(channel === 'deleteRowEvent'){
             helper.handleRowDelete(component, helper);
-        } else if(channel == 'amtChange'){
+        } else if(channel === 'amtChange'){
             var thisObj = component.get('v.objectName');
             // If the amount changes, we want to force validation on the Payment scheduler
-            if(thisObj == 'npe01__OppPayment__c'){
+            if(thisObj === 'npe01__OppPayment__c'){
                 helper.handleAmtChangeHelper(component, true);
             }
         }

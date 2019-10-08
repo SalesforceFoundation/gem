@@ -24,6 +24,7 @@
             var editMode = (canEditRow === true) ? false : component.get('v.editModeOverride');
             var editModePaidPayments = component.get('v.editModePaidPayments');
             var showLabels = (index == 0 || newRowNum == 0) ? true : false;
+            var giftModel = component.get('v.giftModel');
 
             $A.createComponent(
                 rowCmpName, {
@@ -37,7 +38,8 @@
                     'amtField': amtField,
                     'showLabels': showLabels,
                     'editMode': editMode,
-                    'editModePaidPayments': editModePaidPayments
+                    'editModePaidPayments': editModePaidPayments,
+                    'giftModel': giftModel
                 },
                 function(relatedCmp, status, errorMessage){
                     if (status === 'SUCCESS') {
@@ -115,6 +117,7 @@
         var amountTotal = this.getAmtTotal(component);
         var preventAmountSurplus = component.get('v.preventAmountSurplus');
         var preventAmountDeficit = component.get('v.preventAmountDeficit');
+        var warnAmountDeficit = component.get('v.warnAmountDeficit');
         var displayErrorOnAmountSurplus = component.get('v.displayErrorOnAmountSurplus');
         var donationAmt = component.get('v.donationAmt');
         // If there is a donation amount and a total, and they do not match, show message
@@ -140,7 +143,9 @@
                 component.set('v.messageIsError', true);
                 preventSubmit = true;
             }
-            amtError += $A.get('$Label.c.Gift_Amounts_Do_Not_Match');
+            if(warnAmountDeficit) {
+                amtError += $A.get('$Label.c.Gift_Amounts_Do_Not_Match');
+            }
         } else {
             amtError = '';
         }

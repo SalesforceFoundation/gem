@@ -44,6 +44,8 @@
 
 public with sharing class UTIL_Describe {
 
+    public static Boolean checkCRUD = true;
+
     // throw custom exceptions when a bogus object or field is provided.
     public class SchemaDescribeException extends Exception {}
 
@@ -187,7 +189,6 @@ public with sharing class UTIL_Describe {
     * @return Map<String, Schema.DescribeFieldResult> a map of field names names to describe field results.
     */
     public static Map<String, Schema.DescribeFieldResult> getAllFieldsDescribe(String objectName) {
-
         // make sure we have this field's schema mapped
         fillFieldMapsForObject(objectName);
 
@@ -203,9 +204,6 @@ public with sharing class UTIL_Describe {
     * @return string the name of the of the field's type
     */
     public static String getFieldType(String objectName, String fieldName) {
-        // fields in our own package must not have their prefix for the Describe Field Map
-        fieldName = UTIL_Namespace.StrTokenRemoveNSPrefix(fieldName);
-
         // make sure we have this field's schema mapped
         if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
             fillFieldMapsForObject(objectName, fieldName);
@@ -222,9 +220,6 @@ public with sharing class UTIL_Describe {
     * @return Schema.DescribeFieldResult the describe field result for the given field
     */
     public static Schema.DescribeFieldResult getFieldDescribe(String objectName, String fieldName) {
-        // fields in our own package must not have their prefix for the Describe Field Map
-        fieldName = UTIL_Namespace.StrTokenRemoveNSPrefix(fieldName);
-
         // make sure we have this field's schema mapped
         if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
             fillFieldMapsForObject(objectName, fieldName);
@@ -241,9 +236,6 @@ public with sharing class UTIL_Describe {
     * @return string the label of the field
     */
     public static String getFieldLabel(String objectName, String fieldName) {
-        // fields in our own package must not have their prefix for the Describe Field Map
-        fieldName = UTIL_Namespace.StrTokenRemoveNSPrefix(fieldName);
-
         // make sure we have this field's schema mapped
         if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
             fillFieldMapsForObject(objectName, fieldName);
@@ -333,7 +325,7 @@ public with sharing class UTIL_Describe {
      */
     public static String getAllFieldsQueryStringFromObject(String sObjectName) {
         DescribeSObjectResult objectDescribe = getObjectDescribe(sObjectName);
-        if(!objectDescribe.isAccessible()) {
+        if(checkCRUD && !objectDescribe.isAccessible()) {
             throw new UTIL_CrudFLS.AccessException(objectDescribe, 'read');
         }
 
@@ -342,7 +334,7 @@ public with sharing class UTIL_Describe {
     	Set<String> accessibleFields = new Set<String>();
   
     	for(Schema.DescribeFieldResult field : fields.values()){
-      		if(field.isAccessible()) {
+      		if(!checkCRUD || field.isAccessible()) {
                 if(field.getType() == Schema.DisplayType.Location){
                     // Since Geolocation fields return an object, including them was causing an internal server error
                     // The Latitude and Longitude fields are still included in the list and can be referenced

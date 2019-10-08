@@ -36,7 +36,9 @@
 * @group-content
 * @description This is the post install script for Adv.
 **/
-global with sharing class Post_Install_Script implements InstallHandler{
+global without sharing class Post_Install_Script implements InstallHandler{
+
+    static final Integer ACCOUNT_BATCH_SIZE = 200;
 
     global void onInstall(InstallContext context) {
         //Initial installation.
@@ -84,6 +86,67 @@ global with sharing class Post_Install_Script implements InstallHandler{
         );
 
         insert gemTDTMTriggers;    
+    }
+
+
+    /**
+     * Starts a new chained queueable account processing job.
+     * Used when GEM/NPSP are installed in an org that already has EDA installed.
+     *
+     * @return  Id of the Queueable
+     */
+    global static Id queueAccountProcessor() {
+        return System.enqueueJob(new NPSP_Account_Processor());
+    }
+
+    /**
+     * Populate the npe01__SYSTEM_AccountType__c, npe01__SYSTEMIsIndividual__c and Type fields with the correct values
+     * for each Account that is Administrative or Household as indicated by record type.
+     */
+    static void populateNPSPAccountFields() {
+        Id adminAccountRecordTypeId = hed.UTIL_Describe_API.getAdminAccRecTypeID();
+        Id hhAccountRecordTypeId = hed.UTIL_Describe_API.getHhAccRecTypeID();
+
+        List<Account> accounts = [
+                SELECT Id, RecordTypeId, RecordType.Name
+                FROM Account
+                WHERE (RecordTypeId = :adminAccountRecordTypeId OR RecordTypeId = :hhAccountRecordTypeId)
+                    AND npe01__SYSTEM_AccountType__c = null
+                    AND Type = null
+                    AND npe01__SYSTEMIsIndividual__c = false
+                LIMIT :ACCOUNT_BATCH_SIZE
+        ];
+
+
+        for(Account a : accounts) {
+            if(a.RecordTypeId == hhAccountRecordTypeId) {
+                a.npe01__SYSTEM_AccountType__c = 'Household Account';
+                a.Type = 'Household';
+            } else if(a.RecordTypeId == adminAccountRecordTypeId) {
+                a.npe01__SYSTEM_AccountType__c = 'One-to-One Individual';
+            }
+            a.npe01__SYSTEMIsIndividual__c = true;
+        }
+
+        try {
+            update accounts;
+            if(accounts.size() == ACCOUNT_BATCH_SIZE) {
+                queueAccountProcessor();
+            }
+        } catch (Exception ex) {
+            npsp.ERR_Handler_API.processError(ex, 'NPSP_Account_Processor');
+        }
+    }
+
+
+    /**
+     * Queueable class for populating NPSP fields on Accounts.
+     * Used when NPSP and GEM have been installed in an org that already had EDA.
+     */
+    public class NPSP_Account_Processor implements Queueable {
+        public void execute(System.QueueableContext ctx) {
+            populateNPSPAccountFields();
+        }
     }
 
 }

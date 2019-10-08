@@ -11,6 +11,15 @@
         <visible>false</visible>
     </applicationVisibilities>
 
+    <classAccesses>
+        <apexClass>%%%NAMESPACE%%%DynamicFieldDisplayController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>%%%NAMESPACE%%%GiftEntryFormController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    
     <layoutAssignments>
         <layout>Account-%%%NAMESPACE%%%GEM Organization Layout</layout>
     </layoutAssignments>

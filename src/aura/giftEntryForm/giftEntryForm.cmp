@@ -102,12 +102,14 @@
         </header>
         <div class="outerDivContainer">
         <div class="slds-card" aura:id="formWrapper">
+            
+            <lightning:layout
+                multipleRows="true">
+            <lightning:layoutItem size="12">
             <lightning:recordEditForm objectApiName="Opportunity"
                 recordId="{!v.opp.Id}">
             <lightning:messages />
 
-            <lightning:layout
-                multipleRows="true">
                 <lightning:layoutItem size="12">
                     <div class="slds-page-header slds-page-header__title">
                         <h2>{!$Label.c.Gift_Donor_Information}</h2>
@@ -257,10 +259,16 @@
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
-                            <c:giftPicklist picklistValues="{!v.objectFieldData.picklistOptions.npsp__Donation_Stage__c}"
-                                fieldLabel="{!v.objectFieldData.objectLabels.Opportunity.StageName}"
-                                disabled="{!v.oppClosed}"
-                                selectedVal="{!v.opp.StageName}" />
+                            <label class="show-required slds-form-element__label">
+                                {!v.objectFieldData.objectLabels.Opportunity.StageName}
+                            </label>
+                            <aura:if isTrue="{!v.renderRequiredInputs}">
+                                <lightning:inputField aura:id="requiredField" 
+                                    disabled="{!v.oppClosed}"
+                                    variant="label-hidden"
+                                    fieldName="StageName"
+                                    value="{!v.opp.StageName}" />
+                            </aura:if>
                         </lightning:layoutItem>
 
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3"
@@ -286,7 +294,6 @@
                         </lightning:layoutItem>
                     </lightning:layout>
                 </lightning:layoutItem>
-
                 <c:giftFormRelated sectionTitle="{!$Label.c.Gift_Allocations}"
                     editMode="{!v.editMode}"
                     editModePaidPayments="{!v.editModePaidPayments}"
@@ -299,6 +306,7 @@
                     donationAmt="{!v.opp.Amount}"
                     preventAmountSurplus="true"
                     preventAmountDeficit="false"
+                    warnAmountDeficit="false"
                     objectFieldData="{!v.objectFieldData}"
                     modelAttribute="allocs"
                     buttonTitle="Add New Allocation"
@@ -334,15 +342,6 @@
                     startDate="{!v.opp.CloseDate}"
                     objectFieldData="{!v.objectFieldData}"
                     giftModel="{!v.giftModel}" />
-
-                <lightning:layoutItem size="12" aura:id="dynamicFormContainer" class="slds-hidden">
-                    <c:sge_dynamicForm
-                        sobject="{!v.opp}"
-                        disableinputs="{!v.oppClosed}"
-                        aura:id="sge_dynamicForm"
-                        onload="{!c.handleDynamicFormLoaded}">
-                    </c:sge_dynamicForm>
-                </lightning:layoutItem>
 
                 <aura:if isTrue="{!v.submitError}">
                     <div id="submitError"
@@ -381,8 +380,19 @@
                     <lightning:input aura:id="oppId"
                         value="{!v.giftModel.oppId}" />
                 </div>
-            </lightning:layout>
             </lightning:recordEditForm>
+            </lightning:layoutItem>
+
+                <lightning:layoutItem size="12" aura:id="dynamicFormContainer" class="slds-hidden">
+                    <c:sge_dynamicForm
+                        sobject="{!v.opp}"
+                        disableinputs="{!v.oppClosed}"
+                        aura:id="sge_dynamicForm"
+                        onload="{!c.handleDynamicFormLoaded}">
+                    </c:sge_dynamicForm>
+                </lightning:layoutItem>
+            </lightning:layout>
+            
         </div>
         </div>
     </aura:if>

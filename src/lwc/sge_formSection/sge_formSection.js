@@ -41,8 +41,9 @@ import {LightningElement, api, track} from 'lwc';
 export default class SGE_FormSection extends LightningElement {
     @api section;
     @api sobject;
-    @api disableinputs;
+    @api disableInputs;
     @track expanded = true;
+    @track renderInputs = true;
 
     /**
      * @returns {*} Object where keys are field API names, and values are the value in the field.
@@ -75,6 +76,17 @@ export default class SGE_FormSection extends LightningElement {
         });
 
         return invalidFields;
+    }
+
+    @api
+    resetAllInputs(loadingValues) {
+        const fields = this.template.querySelectorAll("c-sge_form-field");
+        if(fields !== null && typeof fields !== 'undefined') {
+            fields.forEach(field => {
+                field.resetToDefault(loadingValues);
+            });
+        }
+        return true;
     }
 
     /**

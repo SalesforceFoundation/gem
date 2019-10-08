@@ -18,7 +18,7 @@
     width: 0;
 }
 .THIS .select-container .slds-form-element__label {
-    display: none;
+    display: none !important;
 }
 /*
 .THIS .uiInput--default .form-element__label {

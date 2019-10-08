@@ -1,12 +1,6 @@
-# Python
-*.py                  @SalesforceFoundation/release-engineering
-
 # CumulusCI
-/cumulusci.yml        @SalesforceFoundation/release-engineering
-/tasks/               @SalesforceFoundation/release-engineering
+/cumulusci.yml        @SalesforceFoundation/release-engineering-reviewers
+/tasks/               @SalesforceFoundation/release-engineering-reviewers
 
-# Heroku CI
-/Gemfile.lock         @SalesforceFoundation/release-engineering
-/app.json             @SalesforceFoundation/release-engineering
-/requirements.txt     @SalesforceFoundation/release-engineering
-/runtime.txt          @SalesforceFoundation/release-engineering
+# SFDX
+/sfdx-project.json        @SalesforceFoundation/release-engineering-reviewers

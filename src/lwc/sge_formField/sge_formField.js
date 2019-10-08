@@ -39,15 +39,31 @@
 import {LightningElement, api, track} from 'lwc';
 
 export default class SGE_FormField extends LightningElement {
-    @api sobject;
-    @api disableinputs;
-    @api field = {};
-    @track value;
-
-    connectedCallback() {
+    @api
+    get sobject(){
+        return this._sobject;
+    }
+    set sobject(value){
+        this.setAttribute('sobject', value);
+        this._sobject = value;
         this.value = this.sobject[this.field.name];
     }
+    @api disableInputs;
+    @api field = {};
+    @track value;
+    @track renderInput = true;
 
+    /**
+     * Load the default field value into the actual value attribute
+     */
+    connectedCallback() {
+        this.setDefaultVal();
+    }
+
+    /**
+     * Class name for indicating when a given field is required.
+     * @returns {string}
+     */
     get labelClassName() {
         return this.field.required ? 'show-required slds-form-element__label' : 'slds-form-element__label';
     }
@@ -65,12 +81,55 @@ export default class SGE_FormField extends LightningElement {
         return true;
     }
 
+    /**
+     * @returns {object} Object with a single key/value pair where the key is the field name
+     */
     @api
     get fieldObject() {
         const field = this.getRawField();
         let data = {};
         data[this.field.name] = field.value;
         return data;
+    }
+
+    @api
+    resetToDefault(loadingValues) {
+        this.renderInput = false;
+        setTimeout(() => {
+            this.renderInput = true;
+            if(loadingValues){
+                this.loadValueFromObject();
+            } else {
+                this.setDefaultVal();
+            }
+        });
+    }
+
+    loadValueFromObject() {
+        let fieldVal = this.sobject[this.field.name];
+        // If the picklist value is blank, we need to change what the field gets set to
+        if(this.field.typeName === 'PICKLIST' && !fieldVal){
+            fieldVal = '';
+        }
+        this.value = fieldVal;
+    }
+
+    setDefaultVal() {
+        let defaultVal = null;
+        if(this.field.typeName === 'PICKLIST'){
+            defaultVal = '';
+        }
+        if(this.field.hasOwnProperty('defaultValue')){
+            defaultVal = this.field.defaultValue;
+        } else if(this.field.hasOwnProperty('defaultValueFormula')){
+            defaultVal = this.field.defaultValueFormula;
+        }
+        this.value = defaultVal;
+    }
+
+    get value() {
+        const field = this.getRawField();
+        return field.value;
     }
 
     getRawField() {

@@ -6,8 +6,8 @@
 * @date 2018-07-26
 */
 String adminEmail = 'testing@example.com';
-String giftEntryPS = 'Gift Entry';
-String giftProfileName = 'Gift Processor';
+String giftEntryPS = 'Gift Entry (Managed)';
+String giftProfileName = 'Standard User';
 
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
 

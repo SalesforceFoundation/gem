@@ -139,6 +139,8 @@
     },
     handleDonorFormSuccess: function(component, event, helper) {
         helper.closeOverlayLibModal(component);
+        // implement things here
+
     },
     openEditDonorModal: function (component, event, helper) {
         const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';

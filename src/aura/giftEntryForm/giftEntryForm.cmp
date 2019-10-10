@@ -153,10 +153,6 @@
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="slds-form-element__label">&nbsp;</label>
                             <br/>
-                            <lightning:button aura:id="editDonorButton"
-                                disabled="{!v.donorExists == false}"
-                                label="{!$Label.c.Gift_Edit_Selected_Donor}"
-                                onclick="{!c.clickEditDonor}" />
                             <lightning:button aura:id="editDonorModal"
                                               disabled="{!!v.donorExists}"
                                               label="{!$Label.c.Gift_Edit_Selected_Donor}"

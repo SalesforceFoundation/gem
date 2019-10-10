@@ -657,7 +657,7 @@
         if(message === 'cancel') {
             this.closeOverlayLibModal(component);
         } else if(message === 'save') {
-
+            component.find('donorEditForm').submit();
         }
     },
     parseToast: function(toastMessage) {

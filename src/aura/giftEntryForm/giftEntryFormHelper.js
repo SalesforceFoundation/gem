@@ -651,16 +651,14 @@
         return fields;
     },
     closeOverlayLibModal: function(component) {
-        component.get('v.editDonorModalPromise').close();
+        component.get('v.editDonorModalPromise').then(modal => modal.close());
     },
     handleEditDonorModalMessage: function(component, message) {
         if(message === 'cancel') {
-
+            this.closeOverlayLibModal(component);
         } else if(message === 'save') {
 
         }
-
-        this.closeOverlayLibModal(component);
     },
     parseToast: function(toastMessage) {
         var isRecordEdit = false;

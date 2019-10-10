@@ -134,14 +134,11 @@
         const section = event.currentTarget.dataset.section;
         helper.doToggleSection(component, section);
     },
-    handleDonorFormSave: function(component, event, helper) {
-        console.log('save success');
-    },
     handleDonorFormCancel: function(component, event, helper) {
-        console.log('cancel success')
+        helper.closeOverlayLibModal(component);
     },
     handleDonorFormSuccess: function(component, event, helper) {
-        console.log('success success');
+        helper.closeOverlayLibModal(component);
     },
     openEditDonorModal: function (component, event, helper) {
         const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
@@ -153,6 +150,7 @@
             'objectApiName': 'Contact',
             'mode': 'edit',
             'onsuccess': component.getReference('c.handleDonorFormSuccess'),
+            'oncancel': component.getReference('c.handleDonorFormCancel'),
             'columns': '2',
             'layoutType': 'Full',
 

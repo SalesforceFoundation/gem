@@ -6,5 +6,5 @@
             message: message
         });
         msg.fire();
-            }
+    }
 });

@@ -119,6 +119,8 @@
             helper.setDonation(component, message);
         } else if (channel === 'onError') {
             helper.showErrorToast(message.errorMessage, message.title);
+        } else if(channel === 'editDonorModal') {
+            helper.handleEditDonorModalMessage(component, message);
         }
     },
     handleDynamicFormLoaded: function(component, event, helper) {
@@ -132,8 +134,14 @@
         const section = event.currentTarget.dataset.section;
         helper.doToggleSection(component, section);
     },
-    handleDonorFormSubmitted: function(component, event, helper) {
-
+    handleDonorFormSave: function(component, event, helper) {
+        console.log('save success');
+    },
+    handleDonorFormCancel: function(component, event, helper) {
+        console.log('cancel success')
+    },
+    handleDonorFormSuccess: function(component, event, helper) {
+        console.log('success success');
     },
     openEditDonorModal: function (component, event, helper) {
         const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
@@ -144,25 +152,23 @@
             'recordId': donorId,
             'objectApiName': 'Contact',
             'mode': 'edit',
-            'onsuccess': '{!c.handleDonorFormSubmitted}',
+            'onsuccess': component.getReference('c.handleDonorFormSuccess'),
             'columns': '2',
             'layoutType': 'Full',
 
         }], [
-            'c:sge_editDonorFooter', {}
+            'c:giftEntryEditDonorFooter', {}
         ]], function (components, status, error) {
             if (status === 'SUCCESS') {
-                components[1].set('v.onsave', () => components[0].submit());
-
-                debugger;
-
-                component.find('overlayLib').showCustomModal({
+                const editDonorModalPromise = component.find('overlayLib').showCustomModal({
                     header: 'Edit Contact',
                     body: components[0],
                     showCloseButton: true,
                     cssClass: 'slds-modal_medium',
                     footer: components[1]
                 });
+
+                component.set('v.editDonorModalPromise', editDonorModalPromise);
             }
         });
     },

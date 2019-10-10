@@ -650,6 +650,18 @@
         const fields = dynamicForm.get('v.invalidFields');
         return fields;
     },
+    closeOverlayLibModal: function(component) {
+        component.get('v.editDonorModalPromise').close();
+    },
+    handleEditDonorModalMessage: function(component, message) {
+        if(message === 'cancel') {
+
+        } else if(message === 'save') {
+
+        }
+
+        this.closeOverlayLibModal(component);
+    },
     parseToast: function(toastMessage) {
         var isRecordEdit = false;
 

@@ -127,11 +127,6 @@ export default class SGE_FormField extends LightningElement {
         this.value = defaultVal;
     }
 
-    get value() {
-        const field = this.getRawField();
-        return field.value;
-    }
-
     getRawField() {
         return this.template.querySelector('lightning-input-field');
     }

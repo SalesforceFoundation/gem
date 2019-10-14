@@ -6,7 +6,7 @@
     <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
 
     <aura:if isTrue="{!v.showSpinner}">
-        <lightning:spinner variant="brand"/>
+        <lightning:spinner variant="brand" alternativeText="{!$Label.c.Saving}"/>
     </aura:if>
     <lightning:recordForm
             aura:id="donorEditForm"

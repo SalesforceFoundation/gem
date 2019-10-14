@@ -1,8 +1,9 @@
 ({
-    handleMessage: function(component, event) {
+    handleMessage: function(component, event, helper) {
         var channel = event.getParam('channel');
         var message = event.getParam('message');
         if(channel === 'editDonorModal' && message === 'save') {
+            helper.showSpinner(component);
             component.find('donorEditForm').submit();
         }
     },
@@ -13,9 +14,9 @@
         helper.sendMessage('cancel');
     },
     handleSubmit: function(component, event, helper) {
-        component.set('v.showSpinner', true);
+        helper.showSpinner(component);
     },
     handleError: function(component, event, helper) {
-        component.set('v.showSpinner', false);
+        helper.hideSpinner(component);
     }
 });

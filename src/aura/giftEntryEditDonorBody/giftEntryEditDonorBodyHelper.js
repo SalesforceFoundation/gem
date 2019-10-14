@@ -6,5 +6,11 @@
             message: message
         });
         msg.fire();
+    },
+    showSpinner: function(component) {
+        component.set('v.showSpinner', true);
+    },
+    hideSpinner: function(component) {
+        component.set('v.showSpinner', false);
     }
 });

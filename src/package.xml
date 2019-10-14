@@ -133,11 +133,8 @@
         <members>Remove</members>
         <members>Required_Fields_Missing</members>
         <members>Toggle</members>
+        <members>Saving</members>
         <name>CustomLabel</name>
-    </types>
-    <types>
-        <members>CustomLabels</members>
-        <name>CustomLabels</name>
     </types>
     <types>
         <members>GEM_API_Settings.GEM_config</members>

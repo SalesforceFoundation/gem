@@ -43,7 +43,7 @@
                 onclick="{!c.toggleRelatedSection}">
             <h2><lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
                 size="x-small"
-                alternativeText="Toggle Payment Information" />
+                alternativeText="{!$Label.c.Toggle + ' ' + v.sectionTitle}" />
             {!v.sectionTitle}</h2>
         </button>
     </lightning:layoutItem>
@@ -88,9 +88,9 @@
                 <lightning:select name="frequency" 
                     label="{!$Label.c.Frequency}" 
                     value="{!v.intervalFreq}">
-                    <option value="Month">Month</option>
-                    <option value="Year">Year</option>
-                    <option value="Week">Week</option>
+                    <option value="Month">{!$Label.c.Payment_Month}</option>
+                    <option value="Year">{!$Label.c.Payment_Year}</option>
+                    <option value="Week">{!$Label.c.Payment_Week}</option>
                 </lightning:select>
             </lightning:layoutItem>
             <lightning:layoutItem padding="around-small" size="12">

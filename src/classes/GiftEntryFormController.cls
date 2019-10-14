@@ -448,7 +448,7 @@ public with sharing class GiftEntryFormController {
             }
 
             if(oppId == null){
-                throw returnAuraException('No Opportunity was created or matched');
+                throw returnAuraException(System.Label.Error_Opportunity_Not_Created);
             }
 
             if(giftModel.allocs != null && !giftModel.allocs.isEmpty()){
@@ -562,7 +562,7 @@ public with sharing class GiftEntryFormController {
 
             return JSON.serialize(opportunityWrappers);
         } catch (Exception ex){
-            throw new AuraHandledException('ERROR: ' + ex.getMessage());
+            throw new AuraHandledException(System.Label.Error + ': ' + ex.getMessage());
         }
     }
 
@@ -742,15 +742,14 @@ public with sharing class GiftEntryFormController {
     // Not currently used, but useful for processing a large number of DataImport objects
     @AuraEnabled
     public static Id runGiftBatch(Id batchId) {
-        if(batchId != null) {
+        try {
             List<npsp.BDI_DataImport_API.ProcessDataImportBatchesResult> batchesResults =
                 new List<npsp.BDI_DataImport_API.ProcessDataImportBatchesResult>();
             List<Id> listBatchId = new List<Id>{batchId};
             batchesResults = npsp.BDI_DataImport_API.processDataImportBatches(listBatchId);
             return batchesResults[0].apexJobId;
-        } else {
-            System.debug('No Data Import Settings were found');
-            return null;
+        } catch(Exception e) {
+            throw returnAuraException(e.getMessage());
         }
     }
 

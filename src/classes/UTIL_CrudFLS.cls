@@ -287,11 +287,14 @@ public with sharing class UTIL_CrudFLS {
      */
     public class AccessException extends Exception {
         public AccessException(Schema.DescribeSObjectResult objectDescribe, String operation) {
-            this.setMessage('No ' + operation + ' access for object ' + objectDescribe.getName());
+            this.setMessage(operation + ' ' + Label.Error_Access_Required + '. ' 
+                + Label.npsp.stgLabelObject + ': ' + objectDescribe.getName());
         }
 
         public AccessException(Schema.DescribeSObjectResult objectDescribe, Schema.DescribeFieldResult fieldDescribe, String operation) {
-            this.setMessage('No ' + operation + ' access on ' + objectDescribe.getName() + ' for field ' + fieldDescribe.getName());
+            this.setMessage(operation + ' ' + Label.Error_Access_Required + '. ' 
+                + Label.npsp.stgLabelObject + ': ' + objectDescribe.getName() + ' '
+                + Label.Field + ': ' + fieldDescribe.getName());
         }
     }
 

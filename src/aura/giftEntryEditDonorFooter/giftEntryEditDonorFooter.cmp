@@ -3,18 +3,18 @@
         <lightning:layoutItem>
             <lightning:button
                     class="slds-m-horizontal--xx-small"
-                    label="Save"
-                    variant="Brand"
-                    onclick="{!c.saveClick}"
+                    label="Cancel"
+                    variant="Neutral"
+                    onclick="{!c.cancelClick}"
             >
             </lightning:button>
         </lightning:layoutItem>
         <lightning:layoutItem>
             <lightning:button
                     class="slds-m-horizontal--xx-small"
-                    label="Cancel"
-                    variant="Neutral"
-                    onclick="{!c.cancelClick}"
+                    label="Save"
+                    variant="Brand"
+                    onclick="{!c.saveClick}"
             >
             </lightning:button>
         </lightning:layoutItem>

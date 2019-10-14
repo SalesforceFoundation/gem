@@ -57,17 +57,6 @@
 
         helper.checkValidation(component);
     },
-    clickEditDonor: function(component, event, helper) {
-        var donorType = component.get('v.di.npsp__Donation_Donor__c');
-        var lookupValue;
-        if(donorType === 'Account1'){
-            lookupValue = component.get('v.opp.AccountId');
-        } else {
-            lookupValue = component.get('v.opp.npsp__Primary_Contact__c');
-        }
-        var donorId = helper.getIdFromLookupValue(lookupValue);
-        helper.showEditRecordModal(component, donorId);
-    },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
         component.set('v.disableCreate', true);
@@ -144,15 +133,19 @@
     },
     openEditDonorModal: function (component, event, helper) {
         const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
+        const objectType = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'Contact' : 'Account';
         const lookupValue = component.find(lookupField).get('v.value');
         const donorId = helper.getIdFromLookupValue(lookupValue);
+        if(!donorId){
+            return;
+        }
 
 
         $A.createComponents([
             ['c:giftEntryEditDonorBody', {
                 'aura:id': 'donorEditModalBody',
                 'recordId': donorId,
-                'objectApiName': 'Contact',
+                'objectApiName': objectType,
             }], ['c:giftEntryEditDonorFooter', {}
             ]], function (components, status, error) {
             if (status === 'SUCCESS') {

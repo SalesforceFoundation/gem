@@ -206,14 +206,6 @@
         });
         event.fire();
     },
-    showEditRecordModal: function(component, objId) {
-        var event = $A.get('e.force:editRecord');
-        event.setParams({
-            recordId: objId
-        });
-        component.set('v.donorEditWasOpened', true);
-        event.fire();
-    },
     handleSaveGift: function(component) {
         component.set('v.showSpinner', true);
         var action = component.get('c.saveGift');

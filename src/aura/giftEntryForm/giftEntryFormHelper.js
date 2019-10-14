@@ -211,6 +211,7 @@
         event.setParams({
             recordId: objId
         });
+        component.set('v.donorEditWasOpened', true);
         event.fire();
     },
     handleSaveGift: function(component) {

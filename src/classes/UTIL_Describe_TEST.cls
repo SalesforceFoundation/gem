@@ -80,12 +80,12 @@ public with sharing class UTIL_Describe_TEST {
         try {
             s = UTIL_Describe.getObjectLabel('sdlkfjsdlkfjsldkfjlsdkfj');
         } catch (exception e) {
-            system.assertEquals('Invalid object name \'sdlkfjsdlkfjsldkfjlsdkfj\'', e.getMessage());
+            system.assertEquals(System.Label.Error_Object_Not_Found + ' \'sdlkfjsdlkfjsldkfjlsdkfj\'', e.getMessage());
         }
         try {
             s = UTIL_Describe.getFieldLabel('Opportunity', 'sdlkfjsdlkfjsldkfjlsdkfj');
         } catch (exception e) {
-            system.assertEquals('Invalid field name \'sdlkfjsdlkfjsldkfjlsdkfj\'', e.getMessage());
+            system.assertEquals(System.Label.Error_Field_Not_Found + ' \'sdlkfjsdlkfjsldkfjlsdkfj\'', e.getMessage());
         }
     }
 

@@ -58,7 +58,7 @@
                         onclick="{!c.toggleRelatedSection}">
                         <h2><lightning:icon iconName="{!v.expandSection == true ? 'utility:chevrondown' : 'utility:chevronright'}" 
                             size="x-small"
-                            alternativeText="Toggle Section" />
+                            alternativeText="{!$Label.c.Toggle + ' ' + v.sectionTitle}" />
                             {!v.sectionTitle}</h2>
                     </button>
                 </lightning:layoutItem>

@@ -38,6 +38,8 @@
 **/
 global with sharing class API_HEDA extends hed.Advancement_Adapter {
 
+    private String ACCT_TDTM_CLASS = 'ACCT_IndividualAccounts_TDTM';
+
     /*******************************************************************************************************
     * @description To be called by the HEDA TDTM trigger dispatcher
     * It returns the HEDA TDTM tokens with the new one from Adv
@@ -55,7 +57,7 @@ global with sharing class API_HEDA extends hed.Advancement_Adapter {
     *******************************************************************************************************/
     global override void rollupAccounts(list<Id> listAccountId) {
         //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
-        if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
+        if(TDTM_Glue.getNPSPTriggerActiveMap().get(ACCT_TDTM_CLASS) == true) {
             npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
             adapter.rollupAccounts(listAccountId);
         }
@@ -69,7 +71,7 @@ global with sharing class API_HEDA extends hed.Advancement_Adapter {
     *******************************************************************************************************/
     global override void moveOppsToContactAccount(Map<Id,Id> mapContactIdAccountIdNew, Map<Id,Id> mapContactIdAccountIdOld) {
         //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
-        if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
+        if(TDTM_Glue.getNPSPTriggerActiveMap().get(ACCT_TDTM_CLASS) == true) {
             npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
             adapter.moveOppsToContactAccount(mapContactIdAccountIdNew, mapContactIdAccountIdOld);
         }
@@ -83,7 +85,7 @@ global with sharing class API_HEDA extends hed.Advancement_Adapter {
     *******************************************************************************************************/
     global override void primaryContact(Account a, Id contactId) {
         //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
-        if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
+        if(TDTM_Glue.getNPSPTriggerActiveMap().get(ACCT_TDTM_CLASS) == true) {
             a.npe01__One2OneContact__c = contactId;
         }
     }
@@ -95,7 +97,7 @@ global with sharing class API_HEDA extends hed.Advancement_Adapter {
     *******************************************************************************************************/
     global override void configAccountForContact(Account a) {
         //We only need to inject the logic if NPSP's ACCT_IndividualAccounts_TDTM is active
-        if(TDTM_Glue.getNPSPTriggerActiveMap().get('ACCT_IndividualAccounts_TDTM') == true) {
+        if(TDTM_Glue.getNPSPTriggerActiveMap().get(ACCT_TDTM_CLASS) == true) {
             TDTM_Glue.updateNPSPAccountModel();
             npsp.ADV_Adapter adapter = new npsp.ADV_Adapter();
             adapter.configAccountForContact(a);

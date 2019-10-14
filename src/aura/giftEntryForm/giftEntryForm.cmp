@@ -49,6 +49,7 @@
     <aura:attribute type="Boolean" name="renderInputs" default="true" />
     <aura:attribute type="Boolean" name="renderDonorInputs" default="true" />
     <aura:attribute type="Boolean" name="renderRequiredInputs" default="true" />
+    <aura:attribute type="Boolean" name="donorEditWasOpened" default="false" />
     <aura:attribute type="Integer" name="paymentTimer" />
 
     <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.onDonorChange}"/>

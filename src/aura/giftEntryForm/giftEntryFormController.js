@@ -168,10 +168,11 @@
             });
     },
     handleToast: function(component, event, helper) {
-        var isRecordEdit = helper.parseToast(event.getParams().message);
+        var isRecordEdit = component.get('v.donorEditWasOpened');
 
         if (isRecordEdit == true) {
             helper.rerenderInputs(component, 'renderDonorInputs');
+            component.set('v.donorEditWasOpened', false);
         }
     }
 })

@@ -211,6 +211,7 @@
         event.setParams({
             recordId: objId
         });
+        component.set('v.donorEditWasOpened', true);
         event.fire();
     },
     handleSaveGift: function(component) {
@@ -649,14 +650,5 @@
         const dynamicForm = component.find('sge_dynamicForm');
         const fields = dynamicForm.get('v.invalidFields');
         return fields;
-    },
-    parseToast: function(toastMessage) {
-        var isRecordEdit = false;
-
-        if (toastMessage.endsWith('was saved.')) {
-            isRecordEdit = true;
-        }
-
-        return isRecordEdit;
     }
 })

@@ -81,7 +81,7 @@ public with sharing class SGE_GiftEntryService {
         try {
             rawMetadata = Metadata.Operations.retrieve(Metadata.MetadataType.Layout, layouts)[0];
         } catch(Exception ex) {
-            throw new AuraHandledException('No Opportunity layout named ' + layoutName + ' found');
+            throw new AuraHandledException(System.Label.Error_Layout_Not_Found + ': ' + layoutName);
         }
         Metadata.Layout layout = (Metadata.Layout)rawMetadata;
 

@@ -37,6 +37,7 @@
  * @description This component represents a single section within the custom fields layout for Single Gift Entry
  **/
 import {LightningElement, api, track} from 'lwc';
+import toggle from '@salesforce/label/c.Toggle';
 
 export default class SGE_FormSection extends LightningElement {
     @api section;
@@ -95,6 +96,14 @@ export default class SGE_FormSection extends LightningElement {
      */
     get iconName() {
         return this.expanded ? 'utility:chevrondown' : 'utility:chevronright';
+    }
+
+    /**
+     * Get the alternative text that represents the section expand/collapse button
+     * @returns {string} containing the section expand alternative text
+     */
+    get altTextLabel() {
+        return toggle + ' ' + this.section.label;
     }
 
     /**

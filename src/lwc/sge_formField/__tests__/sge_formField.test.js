@@ -54,30 +54,8 @@ describe('c-sge_form-field', () => {
         return flushPromises().then(() => {
             // check for updated value on the sge_form-field component
             const value = element.fieldObject;
-            expect(value).toMatchSnapshot();
+            expect(value.hasOwnProperty('Test_Number_Field__c'));
+            expect(value['Test_Number_Field__c']).toBeNull();
         });
     });
-
-    it('should load with matcing donation info', () => {
-        const element = createElement('c-sge_form-field', { is: SGE_FormField });
-        element.sobject = {
-            'Test_Number_Field__c': 123
-        };
-        element.field = {
-            'typeName': 'DOUBLE',
-            'required': false,
-            'name': 'Test_Number_Field__c',
-            'label': 'Test Number Field',
-            'helpText': null
-        };
-
-        document.body.appendChild(element);
-
-        return flushPromises().then(() => {
-            // check for updated value on the sge_form-field component
-            const value = element.fieldObject;
-            expect(value).toMatchSnapshot();
-        });
-    });
-
 });

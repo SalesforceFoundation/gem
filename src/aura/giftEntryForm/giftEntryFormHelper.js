@@ -656,17 +656,9 @@
     handleEditDonorModalMessage: function(component, message) {
         if(message === 'cancel') {
             this.closeOverlayLibModal(component);
-        } else if(message === 'save') {
-            component.find('donorEditForm').submit();
+        } else if(message === 'success') {
+            this.closeOverlayLibModal(component);
+            this.rerenderInputs(component, 'renderDonorInputs');
         }
-    },
-    parseToast: function(toastMessage) {
-        var isRecordEdit = false;
-
-        if (toastMessage.endsWith('was saved.')) {
-            isRecordEdit = true;
-        }
-
-        return isRecordEdit;
     }
-})
+});

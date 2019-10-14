@@ -35,6 +35,8 @@
     <types>
         <members>dynamicFieldDisplay</members>
         <members>dynamicFieldDisplaySection</members>
+        <members>giftEntryEditDonorBody</members>
+        <members>giftEntryEditDonorFooter</members>
         <members>giftEntryForm</members>
         <members>giftFormRelated</members>
         <members>giftFormRelatedRow</members>

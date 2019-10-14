@@ -9,7 +9,7 @@
         // Set the namespace var so components load in managed package
         var namespace = component.getType().split(':')[0];
         component.set('v.namespacePrefix', namespace);
-        if(namespace !== 'c'){
+        if(namespace !== 'c') {
             component.set('v.namespaceFieldPrefix', namespace+'__');
         }
     },
@@ -146,19 +146,15 @@
         const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
         const lookupValue = component.find(lookupField).get('v.value');
         const donorId = helper.getIdFromLookupValue(lookupValue);
-        $A.createComponents([['lightning:recordForm', {
-            'aura:id': 'donorEditForm',
-            'recordId': donorId,
-            'objectApiName': 'Contact',
-            'mode': 'edit',
-            'onsuccess': component.getReference('c.handleDonorFormSuccess'),
-            'oncancel': component.getReference('c.handleDonorFormCancel'),
-            'columns': '2',
-            'layoutType': 'Full',
 
-        }], [
-            'c:giftEntryEditDonorFooter', {}
-        ]], function (components, status, error) {
+
+        $A.createComponents([
+            ['c:giftEntryEditDonorBody', {
+                'aura:id': 'donorEditModalBody',
+                'recordId': donorId,
+                'objectApiName': 'Contact',
+            }], ['c:giftEntryEditDonorFooter', {}
+            ]], function (components, status, error) {
             if (status === 'SUCCESS') {
                 const editDonorModalPromise = component.find('overlayLib').showCustomModal({
                     header: 'Edit Contact',
@@ -206,12 +202,5 @@
                     helper.sendMessage('onError', message);
                 }
             });
-    },
-    handleToast: function(component, event, helper) {
-        var isRecordEdit = helper.parseToast(event.getParams().message);
-
-        if (isRecordEdit == true) {
-            helper.rerenderInputs(component, 'renderDonorInputs');
-        }
     }
-})
+});

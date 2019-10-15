@@ -334,9 +334,11 @@ flows:
                   11:
                       name: EDA - Contact Key Affiliation Fields
                   13:
-                      name: EDA - Deploy Course Connection Record Types
+                      name: EDA - Deploy Case Behavior Record Types
                   14:
-                      name: Facility Display Name Formula Field
+                      name: EDA - Deploy Course Connection Record Types
+                  15:
+                      name: EDA - Facility Display Name Formula Field
           2:
               task: deploy_pre
           3:

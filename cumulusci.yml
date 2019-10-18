@@ -184,6 +184,11 @@ tasks:
             ignored_record_types: NPSP_Default
 
 flows:
+    deploy_unmanaged:
+        steps:
+            4:
+                task: None # uninstall_packaged_incremental
+
     beta_dependencies:
         steps:
             3:
@@ -274,11 +279,6 @@ flows:
                 options:
                    managed: True
                    namespace: hed
-
-    deploy_unmanaged:
-        steps:
-            4:
-                task: None # uninstall_packaged_incremental
 
     dependencies:
         steps:

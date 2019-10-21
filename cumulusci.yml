@@ -183,6 +183,12 @@ tasks:
             sobject: Opportunity
             ignored_record_types: NPSP_Default
 
+    npm_install:
+        description: Intsalls npm dependencies
+        class_path: cumulusci.tasks.command.Command
+        options:
+            command: npm install
+
 flows:
     config_apextest:
         steps:
@@ -261,6 +267,7 @@ flows:
 
     ci_feature:
         steps:
+            0.5: npm_install
             1:
                 flow: beta_dependencies
             4:

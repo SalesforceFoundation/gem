@@ -187,7 +187,7 @@ tasks:
         description: Intsalls npm dependencies with npm install
         class_path: cumulusci.tasks.command.Command
         options:
-            command: npm install
+            command: npm install --dev
 
     run_jest_tests:
         desciprion: Runs jest tests

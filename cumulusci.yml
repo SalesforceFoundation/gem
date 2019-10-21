@@ -272,9 +272,9 @@ flows:
             1:
                 flow: None #beta_dependencies
             2:
-                task: None
+                flow: None
             3:
-                task: None
+                flow: None
             4:
                 task: None #run_tests
                 #options:

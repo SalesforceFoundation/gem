@@ -58,4 +58,6 @@ describe('c-sge_form-field', () => {
             expect(value['Test_Number_Field__c']).toBeNull();
         });
     });
+
+    it('should fail', () => { expect(true).toBe(false); })
 });

@@ -189,6 +189,12 @@ tasks:
         options:
             command: npm install
 
+    run_jest_tests:
+        desciprion: Runs jest tests
+        class_path: cumulusci.tasks.command.Command
+        options:
+            command: npm run test:unit
+
 flows:
     config_apextest:
         steps:
@@ -269,6 +275,8 @@ flows:
         steps:
             0.5:
                 task: npm_install
+            0.75:
+                task: run_jest_tests
             1:
                 flow: None #beta_dependencies
             2:

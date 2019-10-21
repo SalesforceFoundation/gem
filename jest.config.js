@@ -8,5 +8,6 @@ module.exports = {
         '<rootDir>/node_modules/',
         '<rootDir>/test/specs/'
     ],
-    setupFiles: ['./jest.setup.js']
+    setupFiles: ['./jest.setup.js'],
+    "reporters": ["default", "jest-junit"]
 };

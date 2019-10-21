@@ -451,7 +451,6 @@ plans:
         title: Install GEM
         tier: primary
         description: Installs the Gift Entry Manager
-        junit_path: .
         steps:
             1:
                 flow: install_prod_with_abacus

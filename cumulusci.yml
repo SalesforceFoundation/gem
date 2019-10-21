@@ -184,7 +184,7 @@ tasks:
             ignored_record_types: NPSP_Default
 
     npm_install:
-        description: Intsalls npm dependencies
+        description: Intsalls npm dependencies with npm install
         class_path: cumulusci.tasks.command.Command
         options:
             command: npm install
@@ -267,16 +267,17 @@ flows:
 
     ci_feature:
         steps:
-            1: npm_install
-            #1:
-                #flow: beta_dependencies
-            #4:
-                #task: run_tests
+            0.5:
+                task: npm_install
+            1:
+                flow: None #beta_dependencies
+            4:
+                task: None #run_tests
                 #options:
                     #managed: True
                     #namespace: npsp
-            #5:
-                #task: None # github_parent_to_children
+            5:
+                task: None # github_parent_to_children
 
     ci_feature_beta_deps:
         description: When run, the latest version (including betas) of Cumulus and EDA are installed, and all tests are run.

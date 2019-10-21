@@ -3,7 +3,7 @@
         <lightning:layoutItem>
             <lightning:button
                     class="slds-m-horizontal--xx-small"
-                    label="Cancel"
+                    label="{!$Label.c.Cancel}"
                     variant="Neutral"
                     onclick="{!c.cancelClick}"
             >
@@ -12,7 +12,7 @@
         <lightning:layoutItem>
             <lightning:button
                     class="slds-m-horizontal--xx-small"
-                    label="Save"
+                    label="{!$Label.c.Gift_Create}"
                     variant="Brand"
                     onclick="{!c.saveClick}"
             >

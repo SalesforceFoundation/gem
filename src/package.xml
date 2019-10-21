@@ -84,6 +84,7 @@
         <members>Donation_Match_Payments_Selected</members>
         <members>Donation_Match_Select_Opp</members>
         <members>Donation_Match_Select_Opp_Selected</members>
+        <members>Edit_Donor</members>
         <members>Error</members>
         <members>Error_Access_Required</members>
         <members>Error_Duplicate_Value</members>

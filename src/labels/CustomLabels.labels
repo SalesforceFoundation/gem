@@ -50,6 +50,13 @@
         <value>Updating this Opportunity</value>
     </labels>
     <labels>
+        <fullName>Edit_Donor</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Edit Donor</shortDescription>
+        <value>Edit Donor</value>
+    </labels>
+    <labels>
         <fullName>Error</fullName>
         <language>en_US</language>
         <protected>true</protected>

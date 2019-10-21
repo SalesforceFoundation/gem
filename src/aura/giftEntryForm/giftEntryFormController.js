@@ -150,7 +150,7 @@
             ]], function (components, status, error) {
             if (status === 'SUCCESS') {
                 const editDonorModalPromise = component.find('overlayLib').showCustomModal({
-                    header: 'Edit Contact',
+                    header: $A.get('$Label.c.Edit_Donor'),
                     body: components[0],
                     showCloseButton: true,
                     cssClass: 'slds-modal_medium',

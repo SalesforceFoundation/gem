@@ -273,21 +273,17 @@ flows:
 
     ci_feature:
         steps:
-            0.5:
+            0.1:
                 task: npm_install
-            0.75:
+            0.2:
                 task: run_jest_tests
             1:
-                flow: None #beta_dependencies
-            2:
-                flow: None
-            3:
-                flow: None
+                flow: beta_dependencies
             4:
-                task: None #run_tests
-                #options:
-                    #managed: True
-                    #namespace: npsp
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: npsp
             5:
                 task: None # github_parent_to_children
 

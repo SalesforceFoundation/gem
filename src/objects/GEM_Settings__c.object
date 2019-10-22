@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <customSettingsType>Hierarchy</customSettingsType>
-    <description>Settings relating to Gift Entry, including options for how HEDA and NPSP interact.</description>
+    <description>Settings relating to Gift Entry, including options for how EDA and NPSP interact.</description>
     <enableFeeds>false</enableFeeds>
     <fields>
         <fullName>Sync_Account_Models__c</fullName>
         <defaultValue>false</defaultValue>
-        <description>If checked, the Account model settings from HEDA will overwrite the equivalent settings in NPSP.</description>
+        <description>If checked, the Account model settings from EDA will overwrite the equivalent settings in NPSP.</description>
         <externalId>false</externalId>
-        <inlineHelpText>If checked, the Account model settings from HEDA will overwrite the equivalent settings in NPSP.</inlineHelpText>
+        <inlineHelpText>If checked, the Account model settings from EDA will overwrite the equivalent settings in NPSP.</inlineHelpText>
         <label>Sync Account Models</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>

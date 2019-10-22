@@ -1,0 +1,23 @@
+<aura:component description="giftEntryEditDonorBody">
+    <aura:attribute name="recordId" type="String" access="public"/>
+    <aura:attribute name="objectApiName" type="String" access="public"/>
+    <aura:attribute name="showSpinner" type="Boolean"/>
+
+    <aura:handler event="ltng:sendMessage" action="{!c.handleMessage}" />
+
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner variant="brand" alternativeText="{!$Label.c.Saving}"/>
+    </aura:if>
+    <lightning:recordForm
+            aura:id="donorEditForm"
+            objectApiName="{!v.objectApiName}"
+            recordId="{!v.recordId}"
+            mode="edit"
+            onsuccess="{!c.handleSuccess}"
+            onsubmit="{!c.handleSubmit}"
+            onerror="{!c.handleError}"
+            columns="2"
+            layoutType="Full"
+            oncancel="{!c.handleCancel}"
+    />
+</aura:component>

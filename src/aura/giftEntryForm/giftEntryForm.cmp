@@ -52,11 +52,12 @@
     <aura:attribute type="Boolean" name="donorEditWasOpened" default="false" />
     <aura:attribute type="Integer" name="paymentTimer" />
 
+    <aura:attribute type="Aura.Action" name="editDonorModalPromise" description="Holds a reference to the edit donor modal so it can be closed"/>
+
     <aura:handler name="change" value="{!v.opp.AccountId}" action="{!c.onDonorChange}"/>
     <aura:handler name="change" value="{!v.opp.npsp__Primary_Contact__c}" action="{!c.onDonorChange}"/>
     <aura:handler name="change" value="{!v.opp.Amount}" action="{!c.handlePaymentChange}"/>
     <aura:handler name="change" value="{!v.opp.CloseDate}" action="{!c.handlePaymentChange}"/>
-    <aura:handler event="force:showToast" action="{!c.handleToast}"/>
 
     <aura:attribute name="di" 
         type="npsp__DataImport__c" 
@@ -152,10 +153,10 @@
                         <lightning:layoutItem padding="around-small" size="6" mediumDeviceSize="3">
                             <label class="slds-form-element__label">&nbsp;</label>
                             <br/>
-                            <lightning:button aura:id="editDonorButton"
-                                disabled="{!v.donorExists == false}"
-                                label="{!$Label.c.Gift_Edit_Selected_Donor}"
-                                onclick="{!c.clickEditDonor}" />
+                            <lightning:button aura:id="editDonorModal"
+                                              disabled="{!!v.donorExists}"
+                                              label="{!$Label.c.Gift_Edit_Selected_Donor}"
+                                              onclick="{!c.openEditDonorModal}"/>
                         </lightning:layoutItem>
 
                         <!--BEGIN SCOPED MATCH NOTIFICATION-->

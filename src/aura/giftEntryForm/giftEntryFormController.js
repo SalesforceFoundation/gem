@@ -9,7 +9,7 @@
         // Set the namespace var so components load in managed package
         var namespace = component.getType().split(':')[0];
         component.set('v.namespacePrefix', namespace);
-        if(namespace !== 'c'){
+        if(namespace !== 'c') {
             component.set('v.namespaceFieldPrefix', namespace+'__');
         }
     },
@@ -56,17 +56,6 @@
         }
 
         helper.checkValidation(component);
-    },
-    clickEditDonor: function(component, event, helper) {
-        var donorType = component.get('v.di.npsp__Donation_Donor__c');
-        var lookupValue;
-        if(donorType === 'Account1'){
-            lookupValue = component.get('v.opp.AccountId');
-        } else {
-            lookupValue = component.get('v.opp.npsp__Primary_Contact__c');
-        }
-        var donorId = helper.getIdFromLookupValue(lookupValue);
-        helper.showEditRecordModal(component, donorId);
     },
     clickCreate: function(component, event, helper) {
         component.set('v.showSpinner', true);
@@ -119,6 +108,8 @@
             helper.setDonation(component, message);
         } else if (channel === 'onError') {
             helper.showErrorToast(message.errorMessage, message.title);
+        } else if(channel === 'editDonorModal') {
+            helper.handleEditDonorModalMessage(component, message);
         }
     },
     handleDynamicFormLoaded: function(component, event, helper) {
@@ -131,6 +122,44 @@
     toggleSection: function(component, event, helper) {
         const section = event.currentTarget.dataset.section;
         helper.doToggleSection(component, section);
+    },
+    handleDonorFormCancel: function(component, event, helper) {
+        helper.closeOverlayLibModal(component);
+    },
+    handleDonorFormSuccess: function(component, event, helper) {
+        helper.closeOverlayLibModal(component);
+        // implement things here
+
+    },
+    openEditDonorModal: function (component, event, helper) {
+        const lookupField = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'contactLookup' : 'accountLookup';
+        const objectType = component.get('v.di.npsp__Donation_Donor__c') === 'Contact1' ? 'Contact' : 'Account';
+        const lookupValue = component.find(lookupField).get('v.value');
+        const donorId = helper.getIdFromLookupValue(lookupValue);
+        if(!donorId){
+            return;
+        }
+
+
+        $A.createComponents([
+            ['c:giftEntryEditDonorBody', {
+                'aura:id': 'donorEditModalBody',
+                'recordId': donorId,
+                'objectApiName': objectType,
+            }], ['c:giftEntryEditDonorFooter', {}
+            ]], function (components, status, error) {
+            if (status === 'SUCCESS') {
+                const editDonorModalPromise = component.find('overlayLib').showCustomModal({
+                    header: $A.get('$Label.c.Edit_Donor'),
+                    body: components[0],
+                    showCloseButton: true,
+                    cssClass: 'slds-modal_medium',
+                    footer: components[1]
+                });
+
+                component.set('v.editDonorModalPromise', editDonorModalPromise);
+            }
+        });
     },
     openMatchModal: function(component, event, helper) {
         $A.createComponent('npsp:BGE_DonationSelector', {
@@ -166,13 +195,5 @@
                     helper.sendMessage('onError', message);
                 }
             });
-    },
-    handleToast: function(component, event, helper) {
-        var isRecordEdit = component.get('v.donorEditWasOpened');
-
-        if (isRecordEdit == true) {
-            helper.rerenderInputs(component, 'renderDonorInputs');
-            component.set('v.donorEditWasOpened', false);
-        }
     }
-})
+});

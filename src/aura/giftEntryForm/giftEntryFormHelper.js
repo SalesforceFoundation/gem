@@ -206,14 +206,6 @@
         });
         event.fire();
     },
-    showEditRecordModal: function(component, objId) {
-        var event = $A.get('e.force:editRecord');
-        event.setParams({
-            recordId: objId
-        });
-        component.set('v.donorEditWasOpened', true);
-        event.fire();
-    },
     handleSaveGift: function(component) {
         component.set('v.showSpinner', true);
         var action = component.get('c.saveGift');
@@ -650,5 +642,16 @@
         const dynamicForm = component.find('sge_dynamicForm');
         const fields = dynamicForm.get('v.invalidFields');
         return fields;
+    },
+    closeOverlayLibModal: function(component) {
+        component.get('v.editDonorModalPromise').then(modal => modal.close());
+    },
+    handleEditDonorModalMessage: function(component, message) {
+        if(message === 'cancel') {
+            this.closeOverlayLibModal(component);
+        } else if(message === 'success') {
+            this.closeOverlayLibModal(component);
+            this.rerenderInputs(component, 'renderDonorInputs');
+        }
     }
-})
+});

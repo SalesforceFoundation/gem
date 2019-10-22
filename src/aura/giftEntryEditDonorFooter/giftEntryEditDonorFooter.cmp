@@ -1,0 +1,22 @@
+<aura:component description="giftEntryEditDonorFooter">
+    <lightning:layout horizontalAlign="end">
+        <lightning:layoutItem>
+            <lightning:button
+                    class="slds-m-horizontal--xx-small"
+                    label="{!$Label.c.Cancel}"
+                    variant="Neutral"
+                    onclick="{!c.cancelClick}"
+            >
+            </lightning:button>
+        </lightning:layoutItem>
+        <lightning:layoutItem>
+            <lightning:button
+                    class="slds-m-horizontal--xx-small"
+                    label="{!$Label.c.Gift_Create}"
+                    variant="Brand"
+                    onclick="{!c.saveClick}"
+            >
+            </lightning:button>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

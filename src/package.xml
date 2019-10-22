@@ -35,6 +35,8 @@
     <types>
         <members>dynamicFieldDisplay</members>
         <members>dynamicFieldDisplaySection</members>
+        <members>giftEntryEditDonorBody</members>
+        <members>giftEntryEditDonorFooter</members>
         <members>giftEntryForm</members>
         <members>giftFormRelated</members>
         <members>giftFormRelatedRow</members>
@@ -82,6 +84,7 @@
         <members>Donation_Match_Payments_Selected</members>
         <members>Donation_Match_Select_Opp</members>
         <members>Donation_Match_Select_Opp_Selected</members>
+        <members>Edit_Donor</members>
         <members>Error</members>
         <members>Error_Access_Required</members>
         <members>Error_Duplicate_Value</members>
@@ -131,11 +134,8 @@
         <members>Remove</members>
         <members>Required_Fields_Missing</members>
         <members>Toggle</members>
+        <members>Saving</members>
         <name>CustomLabel</name>
-    </types>
-    <types>
-        <members>CustomLabels</members>
-        <name>CustomLabels</name>
     </types>
     <types>
         <members>GEM_API_Settings.GEM_config</members>

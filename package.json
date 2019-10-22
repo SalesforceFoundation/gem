@@ -18,9 +18,7 @@
   },
   "homepage": "https://github.com/SalesforceFoundation/gem#readme",
   "devDependencies": {
-    "@salesforce/sfdx-lwc-jest": "^0.5.5"
-  },
-  "dependencies": {
+    "@salesforce/sfdx-lwc-jest": "^0.5.5",
     "jest-junit": "^8.0.0"
   }
 }

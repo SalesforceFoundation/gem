@@ -9,5 +9,5 @@ module.exports = {
         '<rootDir>/test/specs/'
     ],
     setupFiles: ['./jest.setup.js'],
-    "reporters": ["default", "jest-junit"]
+    reporters: ["default", "jest-junit"]
 };

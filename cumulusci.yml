@@ -183,6 +183,18 @@ tasks:
             sobject: Opportunity
             ignored_record_types: NPSP_Default
 
+    npm_install:
+        description: Intsalls npm dependencies with npm install
+        class_path: cumulusci.tasks.command.Command
+        options:
+            command: npm install --dev
+
+    run_jest_tests:
+        desciprion: Runs jest tests
+        class_path: cumulusci.tasks.command.Command
+        options:
+            command: npm run test:unit
+
 flows:
     config_apextest:
         steps:
@@ -261,6 +273,10 @@ flows:
 
     ci_feature:
         steps:
+            0.1:
+                task: npm_install
+            0.2:
+                task: run_jest_tests
             1:
                 flow: beta_dependencies
             4:
@@ -274,6 +290,10 @@ flows:
     ci_feature_beta_deps:
         description: When run, the latest version (including betas) of Cumulus and EDA are installed, and all tests are run.
         steps:
+            0.1:
+                task: npm_install
+            0.2:
+                task: run_jest_tests
             5:
                 task: run_tests
                 options:

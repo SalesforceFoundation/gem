@@ -176,7 +176,7 @@
         <name>LightningComponentBundle</name>
     </types>
     <types>
-        <members>Gift_Entry_Managed</members>
+        <members>GEM_Gift_Entry</members>
         <name>PermissionSet</name>
     </types>
     <version>45.0</version>

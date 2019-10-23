@@ -25,10 +25,12 @@ packaged
 .sfdx
 .vscode
 .cci
+junit.xml
 
 # macOS Specific Ignores
 # https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
 *.DS_Store
 .AppleDouble
 .LSOverride
+
 

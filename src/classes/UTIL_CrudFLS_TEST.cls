@@ -114,24 +114,4 @@ private with sharing class UTIL_CrudFLS_TEST {
             System.assert(exceptionCaught, 'No exception caught.');
         }
     }
-
-    @isTest
-    private static void testCheckReadFieldNegative() {
-        User u = [SELECT Id FROM User WHERE Username = :RO_USER_NAME LIMIT 1];
-
-        System.runAs(u) {
-            Boolean exceptionCaught = false;
-            String roleField = UTIL_Namespace.StrTokenNSPrefix('Primary_Academic_Program__c');
-            try {
-                UTIL_CrudFLS.checkAccess(UTIL_CrudFLS.CRUD_OPERATION.READ, 'Contact', new List<String>{roleField});
-            } catch(UTIL_CrudFLS.AccessException ex) {
-                exceptionCaught = true;
-                System.debug(ex.getMessage()); 
-                System.assert(ex.getMessage().contains('read access required. Object: Contact Field: ' + roleField), 
-                    'Expected to catch read exception for Primary_Academic_Program__c field on Contact object');
-            }
-            System.assert(exceptionCaught, 'No exception caught.');
-        }
-    }
-
 }

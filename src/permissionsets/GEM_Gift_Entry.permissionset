@@ -16,7 +16,11 @@
         <apexClass>GiftEntryFormController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <description>Lets a user access the data required for Gift Entry.</description>
+    <classAccesses>
+        <apexClass>SGE_GiftEntryService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <description>Grants access to the tools and data structure required for Gift Entry.</description>
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.AccountId</field>

@@ -196,21 +196,13 @@ tasks:
             command: npm run test:unit
 
 flows:
-    deploy_unmanaged:
-        steps:
-            4:
-                task: None # uninstall_packaged_incremental
-
-    beta_dependencies:
-        steps:
-            3:
-                task: deploy_opp_record_types
-
     config_apextest:
         steps:
             3:
-                task: deploy_installer_config
+                task: deploy_opp_record_types
             4:
+                task: deploy_installer_config
+            5:
                 task: deploy_dev_config
 
     config_dev:
@@ -218,10 +210,12 @@ flows:
             3:
                 task: deploy_dev_config_delete
             4:
-                task: deploy_installer_config
+                task: deploy_opp_record_types
             5:
-                task: deploy_dev_config
+                task: deploy_installer_config
             6:
+                task: deploy_dev_config
+            7:
                 flow: test_data_setup
 
     config_qa:
@@ -231,12 +225,14 @@ flows:
             3:
                 task: deploy_dev_config_delete
             4:
-                task: deploy_installer_config
+                task: deploy_opp_record_types
             5:
-                task: deploy_dev_config
+                task: deploy_installer_config
             6:
-                task: update_admin_profile
+                task: deploy_dev_config
             7:
+                task: update_admin_profile
+            8:
                 flow: test_data_setup
 
     config_regression:
@@ -267,6 +263,10 @@ flows:
     config_managed:
         steps:
             3:
+                task: deploy_opp_record_types
+                options:
+                    unmanaged: False
+            4:
                 task: deploy_installer_config
                 options:
                     unmanaged: False
@@ -299,11 +299,6 @@ flows:
                 options:
                    managed: True
                    namespace: hed
-
-    dependencies:
-        steps:
-            3:
-              task: deploy_opp_record_types
 
     dev_org_beta_deps:
         description: Set up an org as a development environment for unmanaged metadata based on the latest version (including betas).
@@ -362,10 +357,6 @@ flows:
           2:
               task: deploy_pre
           3:
-              task: deploy_opp_record_types
-              options:
-                  unmanaged: False
-          4:
               task: install_managed
 
     install_regression:
@@ -422,18 +413,22 @@ flows:
               options:
                   unmanaged: False
           3:
-              task: deploy_installer_config
+              task: deploy_opp_record_types
               options:
                   unmanaged: False
           4:
+              task: deploy_installer_config
+              options:
+                  unmanaged: False
+          5:
               task: execute_installer_settings
               options:
                   managed: True
-          5:
+          6:
               task: deploy_abacus_settings
               options:
                   managed: True
-          6:
+          7:
               task: deploy_trial_config
 
 

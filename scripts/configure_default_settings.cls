@@ -7,6 +7,7 @@
 */
 String adminEmail = 'testing@example.com';
 String giftEntryPS = 'GEM Gift Entry';
+String giftEntryPS2 = 'GEM Record Type Access';
 String giftProfileName = 'Standard User';
 
 private static %%%NAMESPACE%%%GEM_Settings__c orgGemSettings;
@@ -112,6 +113,7 @@ public static void AddGiftProcessor() {
         ];
 
         PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Label =: giftEntryPS];
+        PermissionSet ps2 = [SELECT Id FROM PermissionSet WHERE Label =: giftEntryPS2];
         
         List<User> giftProcessors = [SELECT Id FROM User WHERE ProfileId = :newUserProfile.Id AND IsActive = true];
         if(giftProcessors.size() == 0) {
@@ -133,6 +135,7 @@ public static void AddGiftProcessor() {
             insert users;
 
             insert new PermissionSetAssignment(AssigneeId = users[0].Id, PermissionSetId = ps.Id);
+            insert new PermissionSetAssignment(AssigneeId = users[0].Id, PermissionSetId = ps2.Id);
         }
     } catch (System.DmlException e) {
         Database.rollback(sp);

@@ -7,6 +7,10 @@
         <name>Layout</name>
     </types>
     <types>
+        <members>GEM_Record_Type_Access</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
         <members>New_Household_Account</members>
         <name>QuickAction</name>
     </types>

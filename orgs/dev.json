@@ -2,13 +2,21 @@
   "edition": "Developer",
   "orgName": "GEM - Dev Workspace",
   "hasSampleData": "true",
-  "settings" : {
-    "orgPreferenceSettings": {
-        "chatterEnabled": true,
-        "disableParallelApexTesting": true,
-        "s1DesktopEnabled": true,
-        "s1EncryptedStoragePref2": false,
-        "translation": true
+  "settings": {
+    "chatterSettings": {
+      "enableChatter": true
+    },
+    "apexSettings": {
+      "enableDisableParallelApexTesting": true
+    },
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    },
+    "languageSettings": {
+      "enableTranslationWorkbench": true
     }
   }
 }

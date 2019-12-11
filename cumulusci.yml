@@ -13,6 +13,14 @@ project:
         prefix_beta: beta/gem/
         repo_url: https://github.com/SalesforceFoundation/gem
 
+sources:
+    abacus:
+        github: https://github.com/SalesforceFoundation/Abacus
+    EDA:
+        github: https://github.com/SalesforceFoundation/EDA
+    npsp:
+        github: https://github.com/SalesforceFoundation/Cumulus
+
 tasks:
     deploy_abacus_settings:
         description: Configure the default Accounting Support Settings for Gift Processing
@@ -431,6 +439,10 @@ flows:
           7:
               task: deploy_trial_config
 
+    regression_tests:
+        steps:
+            1:
+                flow: abacus:regression_tests_managed
 
     # Temporary workaround for deployment issue introduced in 1c00b3c
     deploy_packaging:

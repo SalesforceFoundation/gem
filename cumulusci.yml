@@ -495,7 +495,7 @@ plans:
     emea:
         slug: emea
         title: Install GEM
-        tier: Secondary
+        tier: additional
         description: Installs the Gift Entry Manager
         is_listed: False
         steps:

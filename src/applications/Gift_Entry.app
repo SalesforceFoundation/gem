@@ -20,5 +20,6 @@
     <tabs>standard-report</tabs>
     <tabs>Single_Gift_Entry</tabs>
     <tabs>npsp__Batch_Gift_Entry</tabs>
+    <tabs>npe03__Recurring_Donation__c</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

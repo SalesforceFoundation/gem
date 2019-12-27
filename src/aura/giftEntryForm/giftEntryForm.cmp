@@ -341,7 +341,6 @@
                     donationAmt="{!v.opp.Amount}"
                     paymentMethod="{!v.di.npsp__Payment_Method__c}"
                     donationStage="{!v.opp.StageName}"
-                    startDate="{!v.opp.CloseDate}"
                     objectFieldData="{!v.objectFieldData}"
                     giftModel="{!v.giftModel}" />
 

@@ -65,6 +65,16 @@
 
 		component.set('v.paymentList', paymentList);
 	},
+	setDefaults: function(component) {
+		// For new forms, set Date to Today, otherwise use existing value
+        var curDate = component.get('v.startDate');
+        if(!curDate) {
+            // Set Close Date to Today
+            var closeDate = new Date();
+            closeDate = this.convertDateToString(closeDate);
+            component.set('v.startDate', closeDate);
+        }
+	},
 	setPaymentFields: function(paymentProxy, paymentPaid, date, amt, method){
 		var singlePayment = this.proxyToObj(paymentProxy);
 		var strDate = this.convertDateToString(date);

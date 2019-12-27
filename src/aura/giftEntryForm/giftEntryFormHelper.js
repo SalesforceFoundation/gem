@@ -156,7 +156,7 @@
             component.set(vField, val);
         }
     },
-    setDefaults: function(component, opp) {
+    setDefaults: function(component) {
         // For new forms, set Date to Today, otherwise use existing value
         var curDate = component.get('v.opp.CloseDate');
         if(!curDate) {

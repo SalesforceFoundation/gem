@@ -7,6 +7,7 @@
         <aura:attribute name="amtWasChanged" type="Boolean" />
     </aura:method>
 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:handler name="change" value="{!v.donationAmt}" action="{!c.handleAmtChange}"/>
     <aura:handler name="change" value="{!v.paymentMethod}" action="{!c.handleMethodChange}"/>
     <aura:handler name="change" value="{!v.paymentList}" action="{!c.handlePaymentsChange}"/>

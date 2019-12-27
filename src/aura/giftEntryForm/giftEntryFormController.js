@@ -21,7 +21,6 @@
         component.set('v.paymentValChanged', true);
     },
     checkPaymentChange: function(component, event, helper){
-        // test comment
         // This is run "on blur" to prevent mutiple calls as the donation amount changes
         var fieldVal = event.getSource().get('v.value');
         var paymentValChanged = component.get('v.paymentValChanged');

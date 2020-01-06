@@ -99,7 +99,7 @@
                     this.rerenderCustomFields(component, true);
                 }
 
-                this.setDefaults(component, giftModel.opp);
+                this.setDefaults(component);
                 this.checkValidation(component);
                 component.set('v.showSpinner', false);
                 component.set('v.disableCreate', false);

@@ -544,29 +544,35 @@
     </layoutSections>    
     <quickActionList>
         <quickActionListItems>
-            <quickActionName>Contact.npsp__New_Recurring_Donation</quickActionName>
+            <quickActionName>FeedItem.TextPost</quickActionName>
         </quickActionListItems>
         <quickActionListItems>
-            <quickActionName>FeedItem.TextPost</quickActionName>
+            <quickActionName>npsp__NewContact</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>New_Organization</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>New_Household_Account</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>Contact.npsp__New_Recurring_Donation</quickActionName>
+        </quickActionListItems>            
+        <quickActionListItems>
+            <quickActionName>Contact.npsp__New_Relationship</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>npsp__New_Campaign</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>npsp__NewTask</quickActionName>
         </quickActionListItems>
         <quickActionListItems>
             <quickActionName>FeedItem.ContentPost</quickActionName>
         </quickActionListItems>
         <quickActionListItems>
-            <quickActionName>FeedItem.MobileSmartActions</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.RypplePost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.LinkPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.PollPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.QuestionPost</quickActionName>
-        </quickActionListItems>
+            <quickActionName>npsp__LogACall</quickActionName>
+        </quickActionListItems>            
     </quickActionList>
     <relatedContent>
         <relatedContentItems>

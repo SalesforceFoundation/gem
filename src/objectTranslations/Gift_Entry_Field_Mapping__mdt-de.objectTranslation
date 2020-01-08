@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>Controlling_Field__c</name>
+    <help>Das Feld im Steuerobjekt, das steuert, welche Felder dynamisch angezeigt werden.</help>
+    <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+    <label>Steuerfeld</label>
+  </fields>
+  <fields>
+    <name>Controlling_Object__c</name>
+    <help>Das Objekt, das das Feld enthält, das steuert, welche Felder dynamisch angezeigt werden.</help>
+    <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+    <label>Steuerobjekt</label>
+  </fields>
+  <fields>
+    <name>Dependent_Field_List__c</name>
+    <help>JSON-formatierte Metadaten zur Bezeichnung der Steuerfeldwerte für das Formularlayout und die Felder, die diese Werte bereitstellen.</help>
+    <label>Liste mit abhängigen Feldern</label>
+  </fields>
+  <gender>Neuter</gender>
+  <caseValues>
+    <plural>false</plural>
+    <caseType>Nominative</caseType>
+    <value>Gift Entry Field Mapping</value>
+  </caseValues>
+  <caseValues>
+    <plural>true</plural>
+    <caseType>Nominative</caseType>
+    <value>Gift Entry Field Mappings</value>
+  </caseValues>
+</CustomObjectTranslation>

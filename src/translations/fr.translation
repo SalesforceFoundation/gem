@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customLabels>
+        <name>Cancel</name>
+        <label>Annuler</label>
+    </customLabels>
+    <customLabels>
+        <name>Date_of_First_Payment</name>
+        <label>Date du premier paiement</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Description</name>
+        <label>Cet écran affiche les opportunités ouvertes et les opportunités qui ont des paiements non payés.</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Payments</name>
+        <label>Créer ou modifier des paiements</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Payments_Selected</name>
+        <label>Création ou modification de paiements</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Select_Opp</name>
+        <label>Sélectionner cette opportunité</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Select_Opp_Selected</name>
+        <label>Mise à jour de cette opportunité</label>
+    </customLabels>
+    <customLabels>
+        <name>Edit_Donor</name>
+        <label>Modifier le donateur</label>
+    </customLabels>
+    <customLabels>
+        <name>Error</name>
+        <label>Erreur</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Access_Required</name>
+        <label>accès obligatoire</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Duplicate_Value</name>
+        <label>Les valeurs en double ne sont pas autorisées :</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Field_Not_Found</name>
+        <label>Nom de champ introuvable :</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Gift_Field_Mapping</name>
+        <label>Le JSON utilisé pour définir le mappage de champs de saisie de don est incorrect. Vérifiez et corrigez la syntaxe dans la liste des champs dépendants sur l’enregistrement Mappage</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Layout_Not_Found</name>
+        <label>Présentation de page introuvable</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_No_Data_Import_Mapping</name>
+        <label>Impossible de trouver un mappage d’importation de données pour ce champ Opportunité :</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Object_Not_Found</name>
+        <label>Objet personnalisé introuvable :</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Offline</name>
+        <label>Aucune réponse du serveur ou le client est hors ligne</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Opportunity_Not_Created</name>
+        <label>L’opportunité n’a pas été créée ni mise en correspondance</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Unknown</name>
+        <label>Erreur inconnue</label>
+    </customLabels>
+    <customLabels>
+        <name>Field</name>
+        <label>Champ</label>
+    </customLabels>
+    <customLabels>
+        <name>Frequency</name>
+        <label>Fréquence</label>
+    </customLabels>
+    <customLabels>
+        <name>Full</name>
+        <label>Complète</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Allocations</name>
+        <label>Allocations</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Amounts_Do_Not_Match</name>
+        <label>Les montants ne correspondent pas au total du don</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Amounts_Greater_than_Donation</name>
+        <label>Le montant total est supérieur au montant du don</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Calculate_Payments</name>
+        <label>Calculer des paiements</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Clear_Calculate_Payments</name>
+        <label>Effacer et calculer de nouveaux paiements</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Create</name>
+        <label>Enregistrer</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Credit_Type</name>
+        <label>Type de crédit</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_ID_Placeholder</name>
+        <label>OpportunityIdPlaceholder</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Information</name>
+        <label>Informations sur le don</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Locked</name>
+        <label>L’opportunité correspondante étant fermée, ses champs ne peuvent pas être modifiés ici. Les enregistrements associés, tels que les paiements, peuvent toujours être mis à jour via ce formulaire.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Locked_Payments</name>
+        <label>L’opportunité correspondante ayant des paiements associés, ses champs ne peuvent pas être modifiés ici. Les enregistrements associés, tels que les paiements, peuvent toujours être mis à jour via ce formulaire.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Information</name>
+        <label>Informations sur le donateur</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Required</name>
+        <label>Les informations sur le donateur sont obligatoires.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Type</name>
+        <label>Type de donateur</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Edit_Selected_Donor</name>
+        <label>Modifier le donateur sélectionné</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Entry_Header</name>
+        <label>Saisie de don unique</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Form_Error</name>
+        <label>Erreur sur le formulaire</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Matching_Gift</name>
+        <label>Dons jumelés</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Payment_Scheduler</name>
+        <label>Planificateur de paiement</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Save_Message_Detail</name>
+        <label>Votre don a été ajouté</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Save_Message_Title</name>
+        <label>Détails enregistrés</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Show_Matching</name>
+        <label>Afficher les résultats correspondant aux données avant de procéder à l’envoi ?</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Soft_Credits</name>
+        <label>Crédits indirects</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Tribute_Information</name>
+        <label>Informations sur l’hommage</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Update</name>
+        <label>Mettre à jour le don</label>
+    </customLabels>
+    <customLabels>
+        <name>Interval</name>
+        <label>Période</label>
+    </customLabels>
+    <customLabels>
+        <name>Number_of_Payments</name>
+        <label>Nombre de paiements</label>
+    </customLabels>
+    <customLabels>
+        <name>Partial</name>
+        <label>Partiel</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Month</name>
+        <label>Mois</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Week</name>
+        <label>Semaine</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Year</name>
+        <label>Année</label>
+    </customLabels>
+    <customLabels>
+        <name>Remaining_Amount</name>
+        <label>Montant restant</label>
+    </customLabels>
+    <customLabels>
+        <name>Remove</name>
+        <label>Supprimer</label>
+    </customLabels>
+    <customLabels>
+        <name>Required_Fields_Missing</name>
+        <label>Un champ obligatoire n’est pas rempli.</label>
+    </customLabels>
+    <customLabels>
+        <name>Toggle</name>
+        <label>Basculement</label>
+    </customLabels>
+    <customLabels>
+        <name>Saving</name>
+        <label>Enregistrement</label>
+    </customLabels>
+    <customTabs>
+        <name>Single_Gift_Entry</name>
+        <label>Saisie de don unique</label>
+    </customTabs>
+    <customApplications>
+        <name>Gift_Entry</name>
+        <label>Gift Entry Manager</label>
+    </customApplications>
+</Translations>

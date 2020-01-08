@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>Sync_Account_Models__c</name>
+    <help>Si cette case est cochée, les paramètres du modèle de compte d’EDA remplaceront les paramètres équivalents dans NPSP.</help>
+    <label>Synchroniser les modèles de compte</label>
+  </fields>
+</CustomObjectTranslation>

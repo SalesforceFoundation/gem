@@ -19,7 +19,7 @@
   <fields>
     <name>Donation_Honoree_Name__c</name>
     <help>Opportunity.npsp__Honoree_Name__c</help>
-    <label>Donation Honoree Name</label>
+    <label>Donation Honouree Name</label>
   </fields>
   <fields>
     <name>Donation_Matching_Gift_Account__c</name>

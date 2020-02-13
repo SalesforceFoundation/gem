@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>Do_Not_Automatically_Create_Payment__c</name>
+    <help>Opportunity.npe01__Do_Not_Automatically_Create_Payment__c</help>
+    <label>Zahlung nicht automatisch erstellen</label>
+  </fields>
+  <fields>
+    <name>Donation_Acknowledgment_Status__c</name>
+    <help>Opportunity.npsp__Acknowledgment_Status__c</help>
+    <label>Spendenbestätigungsstatus</label>
+  </fields>
+  <fields>
+    <name>Donation_Honoree_Contact__c</name>
+    <help>Opportunity.npsp__Honoree_Contact__c</help>
+    <relationshipLabel>NPSP-Datenimporte (Kontakt des Spendenbegünstigten)</relationshipLabel>
+    <label>Kontakt des Spendenbegünstigten</label>
+  </fields>
+  <fields>
+    <name>Donation_Honoree_Name__c</name>
+    <help>Opportunity.npsp__Honoree_Name__c</help>
+    <label>Name des Spendenbegünstigten</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Account__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Account__c</help>
+    <relationshipLabel>NPSP-Datenimporte (Account)</relationshipLabel>
+    <label>Spendenaccount für übereinst. Schenkung</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Employer__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Employer__c</help>
+    <label>Arbeitgeber Spende übereinst. Schenkung</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Status__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Status__c</help>
+    <label>Status Spende übereinst. Schenkung</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift__c</name>
+    <help>Opportunity.npsp__Matching_Gift__c</help>
+    <relationshipLabel>NPSP-Datenimporte (Spende übereinstimmende Schenkung)</relationshipLabel>
+    <label>Spende übereinstimmende Schenkung</label>
+  </fields>
+  <fields>
+    <name>Donation_Notification_Message__c</name>
+    <help>Opportunity.npsp__Notification_Message__c</help>
+    <label>Spendenbenachrichtigungsmeldung</label>
+  </fields>
+  <fields>
+    <name>Donation_Notification_Recipient_Contact__c</name>
+    <help>Opportunity.npsp__Notification_Recipient_Contact__c</help>
+    <relationshipLabel>NPSP-Datenimporte (Spendenbenachrichtig.-Empfängerkontakt)</relationshipLabel>
+    <label>Spendenbenachrichtig.-Empfängerkontakt</label>
+  </fields>
+  <fields>
+    <name>Donation_Tribute_Type__c</name>
+    <help>Opportunity.npsp__Tribute_Type__c</help>
+    <label>Spendenanerkennungstyp</label>
+  </fields>
+  <fields>
+    <name>Notification_Recipient_Name__c</name>
+    <help>Opportunity.npsp__Notification_Recipient_Name__c</help>
+    <label>Name des Benachrichtigungsempfängers</label>
+  </fields>
+  <fields>
+    <name>Post_Process_Object_JSON__c</name>
+    <label>Nachverarbeitungs-Objekt-JSON</label>
+  </fields>
+  <layouts>
+    <layout>GEM Gift Layout</layout>
+    <sections>
+      <label>Kontakt1 Informationen</label>
+      <section>Contact1 Information</section>
+    </sections>
+    <sections>
+      <label>Haushalt-Accountinformationen</label>
+      <section>Household Account Information</section>
+    </sections>
+    <sections>
+      <label>Informationen zur Anerkennung</label>
+      <section>Tribute Information</section>
+    </sections>
+    <sections>
+      <label>Account1 Organisationsinformationen</label>
+      <section>Account1 Organization Information</section>
+    </sections>
+    <sections>
+      <label>Kontakt2 Informationen</label>
+      <section>Contact2 Information</section>
+    </sections>
+    <sections>
+      <label>Account2 Organisationsinformationen</label>
+      <section>Account2 Organization Information</section>
+    </sections>
+    <sections>
+      <label>Privatadresse</label>
+      <section>Home Address</section>
+    </sections>
+    <sections>
+      <label>Spendeninformationen</label>
+      <section>Donation Information</section>
+    </sections>
+    <sections>
+      <label>Kampagneninformationen</label>
+      <section>Campaign Information</section>
+    </sections>
+    <sections>
+      <label>Übereinstimmende Schenkung</label>
+      <section>Matching Gift</section>
+    </sections>
+    <sections>
+      <label>Informationen zur Zuordnung 1 zur allgemeinen Buchungseinheit</label>
+      <section>GAU Allocation 1 Information</section>
+    </sections>
+    <sections>
+      <label>Informationen zur Zuordnung 2 zur allgemeinen Buchungseinheit</label>
+      <section>GAU Allocation 2 Information</section>
+    </sections>
+    <sections>
+      <label>Informationen zur Opportunity-Kontaktrolle 1</label>
+      <section>Opportunity Contact Role 1 Information</section>
+    </sections>
+    <sections>
+      <label>Informationen zur Opportunity-Kontaktrolle 2</label>
+      <section>Opportunity Contact Role 2 Information</section>
+    </sections>
+    <sections>
+      <label>Benutzerdefinierte Links</label>
+      <section>Custom Links</section>
+    </sections>
+  </layouts>
+</CustomObjectTranslation>

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customLabels>
+        <name>Cancel</name>
+        <label>Cancel</label>
+    </customLabels>
+    <customLabels>
+        <name>Date_of_First_Payment</name>
+        <label>Date of First Payment</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Description</name>
+        <label>This screen displays open Opportunities and Opportunities that have unpaid Payments.</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Payments</name>
+        <label>Create or Edit Payments</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Payments_Selected</name>
+        <label>Creating or Editing Payments</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Select_Opp</name>
+        <label>Select this Opportunity</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Select_Opp_Selected</name>
+        <label>Updating this Opportunity</label>
+    </customLabels>
+    <customLabels>
+        <name>Edit_Donor</name>
+        <label>Edit Donor</label>
+    </customLabels>
+    <customLabels>
+        <name>Error</name>
+        <label>Error</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Access_Required</name>
+        <label>access required</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Duplicate_Value</name>
+        <label>Duplicate values are not allowed:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Field_Not_Found</name>
+        <label>Field name not found:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Gift_Field_Mapping</name>
+        <label>The JSON used to define Gift Entry Field Mapping is malformed. Please review and correct the syntax in the Dependent Field List on this Mapping record</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Layout_Not_Found</name>
+        <label>Page layout not found</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_No_Data_Import_Mapping</name>
+        <label>We can't find a Data Import mapping for this Opportunity field:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Object_Not_Found</name>
+        <label>Custom object not found:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Offline</name>
+        <label>No response from server or client is offline</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Opportunity_Not_Created</name>
+        <label>Opportunity was not created or matched</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Unknown</name>
+        <label>Unknown Error</label>
+    </customLabels>
+    <customLabels>
+        <name>Field</name>
+        <label>Field</label>
+    </customLabels>
+    <customLabels>
+        <name>Frequency</name>
+        <label>Frequency</label>
+    </customLabels>
+    <customLabels>
+        <name>Full</name>
+        <label>Full</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Allocations</name>
+        <label>Allocations</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Amounts_Do_Not_Match</name>
+        <label>Amounts do not match with Donation total</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Amounts_Greater_than_Donation</name>
+        <label>Amount total is greater than donation amount</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Calculate_Payments</name>
+        <label>Calculate Payments</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Clear_Calculate_Payments</name>
+        <label>Clear and Calculate New Payments</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Create</name>
+        <label>Save</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Credit_Type</name>
+        <label>Credit Type</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_ID_Placeholder</name>
+        <label>OpportunityIdPlaceholder</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Information</name>
+        <label>Donation Information</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Locked</name>
+        <label>The matched Opportunity is closed, so its fields cannot be edited here. Related records, such as Payments, can still be updated through this form.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Locked_Payments</name>
+        <label>The matched Opportunity has associated payments, so its fields cannot be edited here. Related records, such as Payments, can still be updated through this form.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Information</name>
+        <label>Donor Information</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Required</name>
+        <label>Donor information is required.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Type</name>
+        <label>Donor Type</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Edit_Selected_Donor</name>
+        <label>Edit Selected Donor</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Entry_Header</name>
+        <label>Single Gift Entry</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Form_Error</name>
+        <label>Error on Form</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Matching_Gift</name>
+        <label>Matching Gift</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Payment_Scheduler</name>
+        <label>Payment Scheduler</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Save_Message_Detail</name>
+        <label>Your gift has been added</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Save_Message_Title</name>
+        <label>Details Saved</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Show_Matching</name>
+        <label>Show data matching results before submitting?</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Soft_Credits</name>
+        <label>Soft Credits</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Tribute_Information</name>
+        <label>Tribute Information</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Update</name>
+        <label>Update Gift</label>
+    </customLabels>
+    <customLabels>
+        <name>Interval</name>
+        <label>Interval</label>
+    </customLabels>
+    <customLabels>
+        <name>Number_of_Payments</name>
+        <label>Number of Payments</label>
+    </customLabels>
+    <customLabels>
+        <name>Partial</name>
+        <label>Partial</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Month</name>
+        <label>Month</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Week</name>
+        <label>Week</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Year</name>
+        <label>Year</label>
+    </customLabels>
+    <customLabels>
+        <name>Remaining_Amount</name>
+        <label>Remaining Amount</label>
+    </customLabels>
+    <customLabels>
+        <name>Remove</name>
+        <label>Remove</label>
+    </customLabels>
+    <customLabels>
+        <name>Required_Fields_Missing</name>
+        <label>A required field is not filled in.</label>
+    </customLabels>
+    <customLabels>
+        <name>Toggle</name>
+        <label>Toggle</label>
+    </customLabels>
+    <customLabels>
+        <name>Saving</name>
+        <label>Saving</label>
+    </customLabels>
+    <customTabs>
+        <name>Single_Gift_Entry</name>
+        <label>Single Gift Entry</label>
+    </customTabs>
+    <customApplications>
+        <name>Gift_Entry</name>
+        <label>Gift Entry Manager</label>
+    </customApplications>
+</Translations>

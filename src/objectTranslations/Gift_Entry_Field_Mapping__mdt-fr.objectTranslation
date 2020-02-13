@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>Controlling_Field__c</name>
+    <help>Le champ sur l’objet de contrôle qui contrôle quels champs sont affichés de manière dynamique.</help>
+    <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+    <label>Champ de contrôle</label>
+  </fields>
+  <fields>
+    <name>Controlling_Object__c</name>
+    <help>L’objet contenant le champ qui contrôle quels champs sont affichés de manière dynamique.</help>
+    <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+    <label>Objet de contrôle</label>
+  </fields>
+  <fields>
+    <name>Dependent_Field_List__c</name>
+    <help>Métadonnées au format JSON qui identifient les valeurs des champs de contrôle pour la présentation du formulaire et les champs exposés par ces valeurs.</help>
+    <label>Liste des champs dépendants</label>
+  </fields>
+  <gender>Masculine</gender>
+  <startsWith>Consonant</startsWith>
+  <caseValues>
+    <plural>false</plural>
+    <value>Mappage de champs de saisie de don</value>
+  </caseValues>
+  <caseValues>
+    <plural>true</plural>
+    <value>Mappages de champs de saisie de don</value>
+  </caseValues>
+</CustomObjectTranslation>

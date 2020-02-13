@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>Controlling_Field__c</name>
+    <help>The field on the controlling object that controls which fields are dynamically displayed.</help>
+    <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+    <label>Controlling Field</label>
+  </fields>
+  <fields>
+    <name>Controlling_Object__c</name>
+    <help>The object containing the field that controls which fields are dynamically displayed.</help>
+    <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+    <label>Controlling Object</label>
+  </fields>
+  <fields>
+    <name>Dependent_Field_List__c</name>
+    <help>JSON-formatted metadata that identifies the Controlling Field values for the form layout and the fields those values expose.</help>
+    <label>Dependent Field List</label>
+  </fields>
+  <startsWith>Consonant</startsWith>
+  <caseValues>
+    <plural>false</plural>
+    <value>Gift Entry Field Mapping</value>
+  </caseValues>
+  <caseValues>
+    <plural>true</plural>
+    <value>Gift Entry Field Mappings</value>
+  </caseValues>
+</CustomObjectTranslation>

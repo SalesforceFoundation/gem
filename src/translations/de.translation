@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customLabels>
+        <name>Cancel</name>
+        <label>Abbrechen</label>
+    </customLabels>
+    <customLabels>
+        <name>Date_of_First_Payment</name>
+        <label>Datum der ersten Zahlung</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Description</name>
+        <label>Auf diesem Bildschirm werden offene Opportunities angezeigt und Opportunities mit nicht ausgeführten Zahlungen.</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Payments</name>
+        <label>Zahlungen erstellen oder bearbeiten</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Payments_Selected</name>
+        <label>Zahlungen werden erstellt oder bearbeitet</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Select_Opp</name>
+        <label>Diese Opportunity auswählen</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Select_Opp_Selected</name>
+        <label>Diese Opportunity wird aktualisiert</label>
+    </customLabels>
+    <customLabels>
+        <name>Edit_Donor</name>
+        <label>Spender bearbeiten</label>
+    </customLabels>
+    <customLabels>
+        <name>Error</name>
+        <label>Fehler</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Access_Required</name>
+        <label>Zugriff erforderlich</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Duplicate_Value</name>
+        <label>Doppelte Werte sind nicht zulässig.</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Field_Not_Found</name>
+        <label>Feldname nicht gefunden:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Gift_Field_Mapping</name>
+        <label>Die zum Definieren der Schenkungseintrags-Feldzuordnung verwendete JSON-Datei ist ungültig. Bitte überprüfen und korrigieren Sie die Syntax in der Liste mit den abhängigen Feldern zu diesem Zuordnungsdatensatz.</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Layout_Not_Found</name>
+        <label>Seitenlayout nicht gefunden</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_No_Data_Import_Mapping</name>
+        <label>Eine Datenimport-Zuordnung zu diesem Opportunity-Feld wurde nicht gefunden:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Object_Not_Found</name>
+        <label>Benutzerdefiniertes Objekt nicht gefunden:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Offline</name>
+        <label>Keine Antwort vom Server oder der Client ist offline.</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Opportunity_Not_Created</name>
+        <label>Die Opportunity wurde weder erstellt noch zugeordnet.</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Unknown</name>
+        <label>Unbekannter Fehler</label>
+    </customLabels>
+    <customLabels>
+        <name>Field</name>
+        <label>Feld</label>
+    </customLabels>
+    <customLabels>
+        <name>Frequency</name>
+        <label>Häufigkeit</label>
+    </customLabels>
+    <customLabels>
+        <name>Full</name>
+        <label>Vollständig</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Allocations</name>
+        <label>Zuordnungen</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Amounts_Do_Not_Match</name>
+        <label>Die Beträge stimmen nicht mit der Spendensumme überein.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Amounts_Greater_than_Donation</name>
+        <label>Der Gesamtbetrag ist größer als der Spendenbetrag.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Calculate_Payments</name>
+        <label>Zahlungen berechnen</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Clear_Calculate_Payments</name>
+        <label>Löschen und neue Zahlungen berechnen</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Create</name>
+        <label>Speichern</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Credit_Type</name>
+        <label>Kredittyp</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_ID_Placeholder</name>
+        <label>OpportunityIdPlaceholder</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Information</name>
+        <label>Spendeninformationen</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Locked</name>
+        <label>Die zugeordnete Opportunity ist geschlossen, sodass ihre Felder hier nicht bearbeitet werden können. Verwandte Datensätze, wie z. B. Zahlungen, können dennoch mit diesem Formular aktualisiert werden.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Locked_Payments</name>
+        <label>Die zugeordnete Opportunity verfügt über zugewiesene Zahlungen, sodass ihre Felder hier nicht bearbeitet werden können. Zugehörige Datensätze, wie z. B. Zahlungen, können dennoch mit diesem Formular aktualisiert werden.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Information</name>
+        <label>Spenderinformationen</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Required</name>
+        <label>Es sind Spenderinformationen erforderlich.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Type</name>
+        <label>Spendertyp</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Edit_Selected_Donor</name>
+        <label>Ausgewählten Spender bearbeiten</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Entry_Header</name>
+        <label>Einzelner Schenkungseintrag</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Form_Error</name>
+        <label>Fehler im Formular</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Matching_Gift</name>
+        <label>Übereinstimmende Schenkung</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Payment_Scheduler</name>
+        <label>Zahlungsplaner</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Save_Message_Detail</name>
+        <label>Ihre Schenkung wurde hinzugefügt.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Save_Message_Title</name>
+        <label>Die Details wurden gespeichert.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Show_Matching</name>
+        <label>Vor dem Senden mit den Daten übereinstimmende Ergebnisse anzeigen?</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Soft_Credits</name>
+        <label>Soft Credits</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Tribute_Information</name>
+        <label>Informationen zur Anerkennung</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Update</name>
+        <label>Schenkung aktualisieren</label>
+    </customLabels>
+    <customLabels>
+        <name>Interval</name>
+        <label>Intervall</label>
+    </customLabels>
+    <customLabels>
+        <name>Number_of_Payments</name>
+        <label>Anzahl der Zahlungen</label>
+    </customLabels>
+    <customLabels>
+        <name>Partial</name>
+        <label>Teilweise</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Month</name>
+        <label>Monat</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Week</name>
+        <label>Woche</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Year</name>
+        <label>Jahr</label>
+    </customLabels>
+    <customLabels>
+        <name>Remaining_Amount</name>
+        <label>Verbleibender Betrag</label>
+    </customLabels>
+    <customLabels>
+        <name>Remove</name>
+        <label>Entfernen</label>
+    </customLabels>
+    <customLabels>
+        <name>Required_Fields_Missing</name>
+        <label>Ein Pflichtfeld wurde nicht ausgefüllt.</label>
+    </customLabels>
+    <customLabels>
+        <name>Toggle</name>
+        <label>Umschalten</label>
+    </customLabels>
+    <customLabels>
+        <name>Saving</name>
+        <label>Speichern</label>
+    </customLabels>
+    <customTabs>
+        <name>Single_Gift_Entry</name>
+        <label>Einzelner Schenkungseintrag</label>
+    </customTabs>
+    <customApplications>
+        <name>Gift_Entry</name>
+        <label>Gift Entry Manager</label>
+    </customApplications>
+</Translations>

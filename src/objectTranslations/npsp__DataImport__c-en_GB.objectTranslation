@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>Do_Not_Automatically_Create_Payment__c</name>
+    <help>Opportunity.npe01__Do_Not_Automatically_Create_Payment__c</help>
+    <label>Do Not Automatically Create Payment</label>
+  </fields>
+  <fields>
+    <name>Donation_Acknowledgment_Status__c</name>
+    <help>Opportunity.npsp__Acknowledgment_Status__c</help>
+    <label>Donation Acknowledgment Status</label>
+  </fields>
+  <fields>
+    <name>Donation_Honoree_Contact__c</name>
+    <help>Opportunity.npsp__Honoree_Contact__c</help>
+    <relationshipLabel>NPSP Data Imports (Donation Honouree Contact)</relationshipLabel>
+    <label>Donation Honouree Contact</label>
+  </fields>
+  <fields>
+    <name>Donation_Honoree_Name__c</name>
+    <help>Opportunity.npsp__Honoree_Name__c</help>
+    <label>Donation Honouree Name</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Account__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Account__c</help>
+    <relationshipLabel>NPSP Data Imports (Account)</relationshipLabel>
+    <label>Donation Matching Gift Account</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Employer__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Employer__c</help>
+    <label>Donation Matching Gift Employer</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Status__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Status__c</help>
+    <label>Donation Matching Gift Status</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift__c</name>
+    <help>Opportunity.npsp__Matching_Gift__c</help>
+    <relationshipLabel>NPSP Data Imports (Donation Matching Gift)</relationshipLabel>
+    <label>Donation Matching Gift</label>
+  </fields>
+  <fields>
+    <name>Donation_Notification_Message__c</name>
+    <help>Opportunity.npsp__Notification_Message__c</help>
+    <label>Donation Notification Message</label>
+  </fields>
+  <fields>
+    <name>Donation_Notification_Recipient_Contact__c</name>
+    <help>Opportunity.npsp__Notification_Recipient_Contact__c</help>
+    <relationshipLabel>NPSP Data Imports (Donation Notification Recipient Contact)</relationshipLabel>
+    <label>Donation Notification Recipient Contact</label>
+  </fields>
+  <fields>
+    <name>Donation_Tribute_Type__c</name>
+    <help>Opportunity.npsp__Tribute_Type__c</help>
+    <label>Donation Tribute Type</label>
+  </fields>
+  <fields>
+    <name>Notification_Recipient_Name__c</name>
+    <help>Opportunity.npsp__Notification_Recipient_Name__c</help>
+    <label>Notification Recipient Name</label>
+  </fields>
+  <fields>
+    <name>Post_Process_Object_JSON__c</name>
+    <label>Post Process Object JSON</label>
+  </fields>
+  <layouts>
+    <layout>GEM Gift Layout</layout>
+    <sections>
+      <label>Contact1 Information</label>
+      <section>Contact1 Information</section>
+    </sections>
+    <sections>
+      <label>Household Account Information</label>
+      <section>Household Account Information</section>
+    </sections>
+    <sections>
+      <label>Tribute Information</label>
+      <section>Tribute Information</section>
+    </sections>
+    <sections>
+      <label>Account1 Organisation Information</label>
+      <section>Account1 Organization Information</section>
+    </sections>
+    <sections>
+      <label>Contact2 Information</label>
+      <section>Contact2 Information</section>
+    </sections>
+    <sections>
+      <label>Account2 Organisation Information</label>
+      <section>Account2 Organization Information</section>
+    </sections>
+    <sections>
+      <label>Home Address</label>
+      <section>Home Address</section>
+    </sections>
+    <sections>
+      <label>Donation Information</label>
+      <section>Donation Information</section>
+    </sections>
+    <sections>
+      <label>Campaign Information</label>
+      <section>Campaign Information</section>
+    </sections>
+    <sections>
+      <label>Matching Gift</label>
+      <section>Matching Gift</section>
+    </sections>
+    <sections>
+      <label>GAU Allocation 1 Information</label>
+      <section>GAU Allocation 1 Information</section>
+    </sections>
+    <sections>
+      <label>GAU Allocation 2 Information</label>
+      <section>GAU Allocation 2 Information</section>
+    </sections>
+    <sections>
+      <label>Opportunity Contact Role 1 Information</label>
+      <section>Opportunity Contact Role 1 Information</section>
+    </sections>
+    <sections>
+      <label>Opportunity Contact Role 2 Information</label>
+      <section>Opportunity Contact Role 2 Information</section>
+    </sections>
+    <sections>
+      <label>Custom Links</label>
+      <section>Custom Links</section>
+    </sections>
+  </layouts>
+</CustomObjectTranslation>

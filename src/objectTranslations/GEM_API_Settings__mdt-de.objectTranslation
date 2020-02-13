@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>API_HEDA_Class__c</name>
+    <help>Der Name der Klasse, die EDA den Zugriff auf die TDTM-Schnittstelle des Gift Entry Managements ermöglicht. Der Standardwert für dieses Feld darf nicht geändert werden.</help>
+    <label>API EDA-Klasse</label>
+  </fields>
+  <fields>
+    <name>API_NPSP_Class__c</name>
+    <help>Der Name der Klasse, die NPSP den Zugriff auf die TDTM-Schnittstelle des Gift Entry Managements ermöglicht. Der Standardwert für dieses Feld darf nicht geändert werden.</help>
+    <label>API NPSP-Klasse</label>
+  </fields>
+  <fields>
+    <name>Use_GEM__c</name>
+    <help>Verwaltetes Paket zum Aktivieren des Gift Entry Managements in EDA und NPSP. Der Standardwert für dieses Feld darf nicht geändert werden.</help>
+    <label>GEM verwenden</label>
+  </fields>
+  <layouts>
+    <layout>GEM API Settings Layout</layout>
+    <sections>
+      <label>Benutzerdefinierte Links</label>
+      <section>Custom Links</section>
+    </sections>
+  </layouts>
+  <gender>Neuter</gender>
+  <caseValues>
+    <plural>false</plural>
+    <caseType>Nominative</caseType>
+    <value>GEM API Settings</value>
+  </caseValues>
+  <caseValues>
+    <plural>true</plural>
+    <caseType>Nominative</caseType>
+    <value>GEM API Settings</value>
+  </caseValues>
+</CustomObjectTranslation>

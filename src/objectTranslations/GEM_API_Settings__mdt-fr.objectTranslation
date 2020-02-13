@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>API_HEDA_Class__c</name>
+    <help>Le nom de la classe qui active EDA pour accéder à l’interface TDTM Gift Entry Management. Ne pas modifier la valeur par défaut pour ce champ.</help>
+    <label>API classe EDA</label>
+  </fields>
+  <fields>
+    <name>API_NPSP_Class__c</name>
+    <help>Le nom de la classe qui active NPSP pour accéder à l’interface TDTM Gift Entry Management. Ne pas modifier la valeur par défaut pour ce champ.</help>
+    <label>API classe NPSP</label>
+  </fields>
+  <fields>
+    <name>Use_GEM__c</name>
+    <help>Activer le package géré Gift Entry Management dans EDA et NPSP. Ne pas modifier la valeur par défaut pour ce champ.</help>
+    <label>Utiliser GEM</label>
+  </fields>
+  <layouts>
+    <layout>GEM API Settings Layout</layout>
+    <sections>
+      <label>Liens Personnalisés</label>
+      <section>Custom Links</section>
+    </sections>
+  </layouts>
+  <gender>Masculine</gender>
+  <startsWith>Consonant</startsWith>
+  <caseValues>
+    <plural>false</plural>
+    <value>Paramètre de l'API GEM</value>
+  </caseValues>
+  <caseValues>
+    <plural>true</plural>
+    <value>Paramètres de l'API GEM</value>
+  </caseValues>
+</CustomObjectTranslation>

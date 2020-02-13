@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>Controlling_Field__c</name>
+    <help>El campo del objeto de control que controla qué objetos se muestran dinámicamente.</help>
+    <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+    <label>Campo de control</label>
+  </fields>
+  <fields>
+    <name>Controlling_Object__c</name>
+    <help>El objeto que contiene el campo que controla qué objetos se muestran dinámicamente.</help>
+    <relationshipLabel>Gift_Entry_Field_Mappings</relationshipLabel>
+    <label>Objeto de control</label>
+  </fields>
+  <fields>
+    <name>Dependent_Field_List__c</name>
+    <help>Metadatos con formato JSON que identifica los valores de campos de control para el formato de formulario y los campos que exponen esos valores.</help>
+    <label>Lista de campos dependiente</label>
+  </fields>
+  <gender>Masculine</gender>
+  <caseValues>
+    <plural>false</plural>
+    <value>Asignación de campo de entrada de regalo</value>
+  </caseValues>
+  <caseValues>
+    <plural>true</plural>
+    <value>Asignaciones de campos de entrada de regalos</value>
+  </caseValues>
+</CustomObjectTranslation>

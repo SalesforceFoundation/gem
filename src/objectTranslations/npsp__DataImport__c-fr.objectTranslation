@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fields>
+    <name>Do_Not_Automatically_Create_Payment__c</name>
+    <help>Opportunity.npe01__Do_Not_Automatically_Create_Payment__c</help>
+    <label>Ne pas créer automatiquement de paiement</label>
+  </fields>
+  <fields>
+    <name>Donation_Acknowledgment_Status__c</name>
+    <help>Opportunity.npsp__Acknowledgment_Status__c</help>
+    <label>Statut de confirmation du don</label>
+  </fields>
+  <fields>
+    <name>Donation_Honoree_Contact__c</name>
+    <help>Opportunity.npsp__Honoree_Contact__c</help>
+    <relationshipLabel>Importations de données NPSP (Contact honoraire du don)</relationshipLabel>
+    <label>Contact honoraire du don</label>
+  </fields>
+  <fields>
+    <name>Donation_Honoree_Name__c</name>
+    <help>Opportunity.npsp__Honoree_Name__c</help>
+    <label>Nom honoraire du don</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Account__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Account__c</help>
+    <relationshipLabel>Importations de données NPSP (Compte)</relationshipLabel>
+    <label>Compte dons jumelés du don</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Employer__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Employer__c</help>
+    <label>Employeur dons jumelés du don</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift_Status__c</name>
+    <help>Opportunity.npsp__Matching_Gift_Status__c</help>
+    <label>Statut dons jumelés du don</label>
+  </fields>
+  <fields>
+    <name>Donation_Matching_Gift__c</name>
+    <help>Opportunity.npsp__Matching_Gift__c</help>
+    <relationshipLabel>Importations de données NPSP (Dons jumelés du don)</relationshipLabel>
+    <label>Dons jumelés du don</label>
+  </fields>
+  <fields>
+    <name>Donation_Notification_Message__c</name>
+    <help>Opportunity.npsp__Notification_Message__c</help>
+    <label>Message de notification du don</label>
+  </fields>
+  <fields>
+    <name>Donation_Notification_Recipient_Contact__c</name>
+    <help>Opportunity.npsp__Notification_Recipient_Contact__c</help>
+    <relationshipLabel>Importations de données NPSP (Contact destinataire de notification du don)</relationshipLabel>
+    <label>Contact destinataire notification don</label>
+  </fields>
+  <fields>
+    <name>Donation_Tribute_Type__c</name>
+    <help>Opportunity.npsp__Tribute_Type__c</help>
+    <label>Type d’hommage du don</label>
+  </fields>
+  <fields>
+    <name>Notification_Recipient_Name__c</name>
+    <help>Opportunity.npsp__Notification_Recipient_Name__c</help>
+    <label>Nom du destinataire de la notification</label>
+  </fields>
+  <fields>
+    <name>Post_Process_Object_JSON__c</name>
+    <label>JSON pour objet traitement publication</label>
+  </fields>
+  <layouts>
+    <layout>GEM Gift Layout</layout>
+    <sections>
+      <label>Informations sur le contact1</label>
+      <section>Contact1 Information</section>
+    </sections>
+    <sections>
+      <label>Informations sur le compte du foyer</label>
+      <section>Household Account Information</section>
+    </sections>
+    <sections>
+      <label>Informations sur l’hommage</label>
+      <section>Tribute Information</section>
+    </sections>
+    <sections>
+      <label>Informations sur l’organisation compte1</label>
+      <section>Account1 Organization Information</section>
+    </sections>
+    <sections>
+      <label>Informations sur le contact2</label>
+      <section>Contact2 Information</section>
+    </sections>
+    <sections>
+      <label>Informations sur l’organisation compte2</label>
+      <section>Account2 Organization Information</section>
+    </sections>
+    <sections>
+      <label>Adresse du domicile</label>
+      <section>Home Address</section>
+    </sections>
+    <sections>
+      <label>Informations sur le don</label>
+      <section>Donation Information</section>
+    </sections>
+    <sections>
+      <label>Information de campagne</label>
+      <section>Campaign Information</section>
+    </sections>
+    <sections>
+      <label>Dons jumelés</label>
+      <section>Matching Gift</section>
+    </sections>
+    <sections>
+      <label>Information 1 des allocations UCG</label>
+      <section>GAU Allocation 1 Information</section>
+    </sections>
+    <sections>
+      <label>Information 2 des allocations UCG</label>
+      <section>GAU Allocation 2 Information</section>
+    </sections>
+    <sections>
+      <label>Information 1 des rôles de contacts d’opportunités</label>
+      <section>Opportunity Contact Role 1 Information</section>
+    </sections>
+    <sections>
+      <label>Information 2 des rôles de contacts d’opportunités</label>
+      <section>Opportunity Contact Role 2 Information</section>
+    </sections>
+    <sections>
+      <label>Liens Personnalisés</label>
+      <section>Custom Links</section>
+    </sections>
+  </layouts>
+</CustomObjectTranslation>

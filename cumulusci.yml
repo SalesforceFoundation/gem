@@ -22,10 +22,6 @@ sources:
         github: https://github.com/SalesforceFoundation/Cumulus
 
 tasks:
-    uninstall_packaged_incremental:
-        options:
-            ignore_types: ['RecordType','CustomObjectTranslation']
-    
     deploy_abacus_settings:
         description: Configure the default Accounting Support Settings for Gift Processing
         class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
@@ -460,6 +456,9 @@ flows:
                             - Gift_Entry
                         CustomField:
                             - npsp__DataImport__c.Donation_Primary_Campaign__c
+                    ignore_types:
+                        - RecordType
+                        - CustomObjectTranslation
 
 plans:
     existing_org:

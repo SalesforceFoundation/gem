@@ -173,22 +173,6 @@
         <members>npsp__DataImport__c-en_GB</members>
         <members>npsp__DataImport__c-es</members>
         <members>npsp__DataImport__c-fr</members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
-        <members></members>
         <name>CustomObjectTranslation</name>
     </types>
     <types>

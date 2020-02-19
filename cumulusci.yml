@@ -456,6 +456,9 @@ flows:
                             - Gift_Entry
                         CustomField:
                             - npsp__DataImport__c.Donation_Primary_Campaign__c
+                    ignore_types:
+                        - RecordType
+                        - CustomObjectTranslation
 
 plans:
     existing_org:

@@ -149,6 +149,49 @@
         <name>CustomObject</name>
     </types>
     <types>
+        <members>GEM_API_Settings__mdt-de</members>
+        <members>GEM_API_Settings__mdt-en_GB</members>
+        <members>GEM_API_Settings__mdt-es</members>
+        <members>GEM_API_Settings__mdt-fr</members>
+        <members>GEM_Settings__c-de</members>
+        <members>GEM_Settings__c-en_GB</members>
+        <members>GEM_Settings__c-es</members>
+        <members>GEM_Settings__c-fr</members>
+        <members>Gift_Entry_Field_Mapping__mdt-de</members>
+        <members>Gift_Entry_Field_Mapping__mdt-en_GB</members>
+        <members>Gift_Entry_Field_Mapping__mdt-es</members>
+        <members>Gift_Entry_Field_Mapping__mdt-fr</members>
+        <members>hed__Affiliation__c-de</members>
+        <members>hed__Affiliation__c-en_GB</members>
+        <members>hed__Affiliation__c-es</members>
+        <members>hed__Affiliation__c-fr</members>
+        <members>hed__Relationship__c-de</members>
+        <members>hed__Relationship__c-en_GB</members>
+        <members>hed__Relationship__c-es</members>
+        <members>hed__Relationship__c-fr</members>
+        <members>npsp__DataImport__c-de</members>
+        <members>npsp__DataImport__c-en_GB</members>
+        <members>npsp__DataImport__c-es</members>
+        <members>npsp__DataImport__c-fr</members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <members></members>
+        <name>CustomObjectTranslation</name>
+    </types>
+    <types>
         <members>Single_Gift_Entry</members>
         <name>CustomTab</name>
     </types>
@@ -174,6 +217,13 @@
         <members>sge_formSection</members>
         <members>sge_service</members>
         <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>de</members>
+        <members>en_GB</members>
+        <members>es</members>
+        <members>fr</members>
+        <name>Translations</name>
     </types>
     <version>45.0</version>
 </Package>

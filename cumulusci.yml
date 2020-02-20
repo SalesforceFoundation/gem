@@ -14,8 +14,6 @@ project:
         repo_url: https://github.com/SalesforceFoundation/gem
 
 sources:
-    abacus:
-        github: https://github.com/SalesforceFoundation/Abacus
     EDA:
         github: https://github.com/SalesforceFoundation/EDA
     npsp:
@@ -261,10 +259,6 @@ flows:
                 task: execute_trial_settings
                 options:
                     managed: True
-            7:
-                task: deploy_abacus_settings
-                options:
-                    managed: True
 
 
 
@@ -336,7 +330,7 @@ flows:
             2:
                 task: test_data_dev_org
 
-    install_prod_with_abacus:
+    install_prod:
       steps:
           1:
               task: update_dependencies
@@ -344,7 +338,6 @@ flows:
                   dependencies:
                       - github: https://github.com/SalesforceFoundation/Cumulus
                       - github: https://github.com/SalesforceFoundation/EDA
-                      - github: https://github.com/SalesforceFoundation/Abacus
               ui_options:
                   1:
                       name: NPSP - Account Record Types
@@ -376,7 +369,6 @@ flows:
               options:
                   dependencies:
                       - github: https://github.com/SalesforceFoundation/EDA
-                      - github: https://github.com/SalesforceFoundation/Abacus
           3:
               task: deploy_pre
           4:
@@ -387,14 +379,13 @@ flows:
                   include_beta: True
                   dependencies:
                       - github: https://github.com/SalesforceFoundation/EDA
-                      - github: https://github.com/SalesforceFoundation/Abacus
           6:
               task: install_managed_beta
 
     trial_org:
       steps:
           1:
-              flow: install_prod_with_abacus
+              flow: install_prod
           2:
               flow: config_managed
           3:
@@ -406,16 +397,12 @@ flows:
               options:
                   managed: True
           5:
-              task: deploy_abacus_settings
-              options:
-                  managed: True
-          6:
               task: deploy_trial_config
 
     existing_org:
       steps:
           1:
-              flow: install_prod_with_abacus
+              flow: install_prod
           2:
               task: deploy_post
               options:
@@ -433,16 +420,7 @@ flows:
               options:
                   managed: True
           6:
-              task: deploy_abacus_settings
-              options:
-                  managed: True
-          7:
               task: deploy_trial_config
-
-    regression_tests:
-        steps:
-            1:
-                flow: abacus:regression_tests_managed
 
     # Temporary workaround for deployment issue introduced in 1c00b3c
     deploy_packaging:
@@ -468,7 +446,7 @@ plans:
         description: Installs the Gift Entry Manager
         steps:
             1:
-                flow: install_prod_with_abacus
+                flow: install_prod
             2:
                 task: deploy_post
                 options:
@@ -497,10 +475,6 @@ plans:
                 options:
                     managed: True
             7:
-                task: deploy_abacus_settings
-                options:
-                    managed: True
-            8:
                 task: deploy_trial_config
         checks:
             - when: "org_config.organization_sobject['SignupCountryIsoCode'] != 'US'"
@@ -515,7 +489,7 @@ plans:
         is_listed: False
         steps:
             1:
-                flow: install_prod_with_abacus
+                flow: install_prod
             2:
                 task: deploy_post
                 options:
@@ -544,10 +518,6 @@ plans:
                 options:
                     managed: True
             7:
-                task: deploy_abacus_settings
-                options:
-                    managed: True
-            8:
                 task: deploy_trial_config
 
 orgs:

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customLabels>
+        <name>Cancel</name>
+        <label>Cancelar</label>
+    </customLabels>
+    <customLabels>
+        <name>Date_of_First_Payment</name>
+        <label>Fecha de primer pago</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Description</name>
+        <label>Esta pantalla muestra oportunidades abiertas y oportunidades que tienen pagos no realizados.</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Payments</name>
+        <label>Crear o modificar pagos</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Payments_Selected</name>
+        <label>Creando o modificando pagos</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Select_Opp</name>
+        <label>Seleccionar esta oportunidad</label>
+    </customLabels>
+    <customLabels>
+        <name>Donation_Match_Select_Opp_Selected</name>
+        <label>Actualizando esta oportunidad</label>
+    </customLabels>
+    <customLabels>
+        <name>Edit_Donor</name>
+        <label>Modificar donante</label>
+    </customLabels>
+    <customLabels>
+        <name>Error</name>
+        <label>Error</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Access_Required</name>
+        <label>se requiere acceso</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Duplicate_Value</name>
+        <label>No se permiten los valores duplicados:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Field_Not_Found</name>
+        <label>No se encontró el nombre de campo:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Gift_Field_Mapping</name>
+        <label>El JSON empleado para definir la Asignación de campo de entrada de regalo no está formado correctamente. Revise y corrija la sintaxis de la lista de campos dependientes en este registro de asignación</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Layout_Not_Found</name>
+        <label>No se encontró el formato de página</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_No_Data_Import_Mapping</name>
+        <label>No podemos encontrar una asignación de importación de datos para este campo de oportunidad:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Object_Not_Found</name>
+        <label>No se encontró el objeto personalizado:</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Offline</name>
+        <label>No hay respuesta del servidor o el cliente no tiene conexión</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Opportunity_Not_Created</name>
+        <label>No se creó o se encontró una coincidencia de la oportunidad</label>
+    </customLabels>
+    <customLabels>
+        <name>Error_Unknown</name>
+        <label>Error desconocido</label>
+    </customLabels>
+    <customLabels>
+        <name>Field</name>
+        <label>Campo</label>
+    </customLabels>
+    <customLabels>
+        <name>Frequency</name>
+        <label>Frecuencia</label>
+    </customLabels>
+    <customLabels>
+        <name>Full</name>
+        <label>Completo</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Allocations</name>
+        <label>Asignaciones</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Amounts_Do_Not_Match</name>
+        <label>Los montos no coinciden con el total de la donación</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Amounts_Greater_than_Donation</name>
+        <label>El monto total es mayor que el monto de la donación</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Calculate_Payments</name>
+        <label>Calcular pagos</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Clear_Calculate_Payments</name>
+        <label>Borrar y calcular nuevos pagos</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Create</name>
+        <label>Guardar</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Credit_Type</name>
+        <label>Tipo de crédito</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_ID_Placeholder</name>
+        <label>OpportunityIdPlaceholder</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Information</name>
+        <label>Información de donación</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Locked</name>
+        <label>La oportunidad coincidente está cerrada, de modo que sus campos no pueden modificarse aquí. Los registros relacionados, como los pagos, aún podrán actualizarse a través de este formulario.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donation_Locked_Payments</name>
+        <label>La oportunidad coincidente tiene pagos asociados, de modo que sus campos no pueden modificarse aquí. Los registros relacionados, como los pagos, aún podrán actualizarse a través de este formulario.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Information</name>
+        <label>Información de donante</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Required</name>
+        <label>La información de donante es obligatoria.</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Donor_Type</name>
+        <label>Tipo de donante</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Edit_Selected_Donor</name>
+        <label>Modificar donante seleccionado</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Entry_Header</name>
+        <label>Entrada de regalo único</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Form_Error</name>
+        <label>Error en el formulario</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Matching_Gift</name>
+        <label>Regalo coincidente</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Payment_Scheduler</name>
+        <label>Programador de pagos</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Save_Message_Detail</name>
+        <label>Se agregó su regalo</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Save_Message_Title</name>
+        <label>Detalles guardados</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Show_Matching</name>
+        <label>¿Mostrar resultados de datos coincidentes antes de enviar?</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Soft_Credits</name>
+        <label>Créditos blandos</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Tribute_Information</name>
+        <label>Información tributaria</label>
+    </customLabels>
+    <customLabels>
+        <name>Gift_Update</name>
+        <label>Actualizar regalo</label>
+    </customLabels>
+    <customLabels>
+        <name>Interval</name>
+        <label>Intervalo</label>
+    </customLabels>
+    <customLabels>
+        <name>Number_of_Payments</name>
+        <label>Número de pagos</label>
+    </customLabels>
+    <customLabels>
+        <name>Partial</name>
+        <label>Parcial</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Month</name>
+        <label>Mes</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Week</name>
+        <label>Semana</label>
+    </customLabels>
+    <customLabels>
+        <name>Payment_Year</name>
+        <label>Año</label>
+    </customLabels>
+    <customLabels>
+        <name>Remaining_Amount</name>
+        <label>Monto restante</label>
+    </customLabels>
+    <customLabels>
+        <name>Remove</name>
+        <label>Eliminar</label>
+    </customLabels>
+    <customLabels>
+        <name>Required_Fields_Missing</name>
+        <label>Un campo obligatorio no está relleno.</label>
+    </customLabels>
+    <customLabels>
+        <name>Toggle</name>
+        <label>Alternar</label>
+    </customLabels>
+    <customLabels>
+        <name>Saving</name>
+        <label>Guardando</label>
+    </customLabels>
+    <customTabs>
+        <name>Single_Gift_Entry</name>
+        <label>Entrada de regalo único</label>
+    </customTabs>
+    <customApplications>
+        <name>Gift_Entry</name>
+        <label>Gestor de entradas de regalos</label>
+    </customApplications>
+</Translations>

@@ -507,7 +507,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Do_Not_Automatically_Create_Payment__c</field>
+                <field>Do_Not_Automatically_Create_Payment2__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>

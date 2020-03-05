@@ -62,6 +62,7 @@
         <members>hed__Affiliation__c.Related_Opportunity_Contact_Role__c</members>
         <members>hed__Relationship__c.Related_Opportunity_Contact_Role__c</members>
         <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment__c</members>
+        <members>npsp__DataImport__c.Do_Not_Automatically_Create_Payment2__c</members>
         <members>npsp__DataImport__c.Donation_Acknowledgment_Status__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Contact__c</members>
         <members>npsp__DataImport__c.Donation_Honoree_Name__c</members>
@@ -133,9 +134,13 @@
         <members>Remaining_Amount</members>
         <members>Remove</members>
         <members>Required_Fields_Missing</members>
-        <members>Toggle</members>
         <members>Saving</members>
+        <members>Toggle</members>
         <name>CustomLabel</name>
+    </types>
+    <types>
+        <members>CustomLabels</members>
+        <name>CustomLabels</name>
     </types>
     <types>
         <members>GEM_API_Settings.GEM_config</members>
@@ -147,6 +152,33 @@
         <members>GEM_API_Settings__mdt</members>
         <members>Gift_Entry_Field_Mapping__mdt</members>
         <name>CustomObject</name>
+    </types>
+    <types>
+        <members>GEM_Settings__c-de</members>
+        <members>GEM_Settings__c-en_GB</members>
+        <members>GEM_Settings__c-es</members>
+        <members>GEM_Settings__c-fr</members>
+        <members>GEM_API_Settings__mdt-de</members>
+        <members>GEM_API_Settings__mdt-en_GB</members>
+        <members>GEM_API_Settings__mdt-es</members>
+        <members>GEM_API_Settings__mdt-fr</members>
+        <members>Gift_Entry_Field_Mapping__mdt-de</members>
+        <members>Gift_Entry_Field_Mapping__mdt-en_GB</members>
+        <members>Gift_Entry_Field_Mapping__mdt-es</members>
+        <members>Gift_Entry_Field_Mapping__mdt-fr</members>
+        <members>hed__Affiliation__c-de</members>
+        <members>hed__Affiliation__c-en_GB</members>
+        <members>hed__Affiliation__c-es</members>
+        <members>hed__Affiliation__c-fr</members>
+        <members>hed__Relationship__c-de</members>
+        <members>hed__Relationship__c-en_GB</members>
+        <members>hed__Relationship__c-es</members>
+        <members>hed__Relationship__c-fr</members>
+        <members>npsp__DataImport__c-de</members>
+        <members>npsp__DataImport__c-en_GB</members>
+        <members>npsp__DataImport__c-es</members>
+        <members>npsp__DataImport__c-fr</members>
+        <name>CustomObjectTranslation</name>
     </types>
     <types>
         <members>Single_Gift_Entry</members>
@@ -174,6 +206,13 @@
         <members>sge_formSection</members>
         <members>sge_service</members>
         <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>de</members>
+        <members>en_GB</members>
+        <members>es</members>
+        <members>fr</members>
+        <name>Translations</name>
     </types>
     <version>45.0</version>
 </Package>

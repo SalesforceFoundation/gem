@@ -5,10 +5,36 @@
         <defaultValue>false</defaultValue>
         <description>Check to prevent automatic payment creation</description>
         <externalId>false</externalId>
-        <inlineHelpText>Opportunity.npe01__Do_Not_Automatically_Create_Payment__c</inlineHelpText>
+        <inlineHelpText></inlineHelpText>
         <label>Do Not Automatically Create Payment</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Do_Not_Automatically_Create_Payment2__c</fullName>
+        <description>Check to prevent automatic payment creation</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Opportunity.npe01__Do_Not_Automatically_Create_Payment__c</inlineHelpText>
+        <label>Do Not Automatically Create Payment</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>False</fullName>
+                    <default>false</default>
+                    <label>False</label>
+                </value>
+                <value>
+                    <fullName>True</fullName>
+                    <default>false</default>
+                    <label>True</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>       
     </fields>
     <fields>
         <fullName>Donation_Acknowledgment_Status__c</fullName>

@@ -209,7 +209,7 @@ private class GiftEntryFormController_TEST {
     @isTest
     private static void testRunGiftProcessUpdate() {
         npsp__DataImport__c diObj = getTestDI();
-        diObj.Do_Not_Automatically_Create_Payment__c = true;
+        diObj.Do_Not_Automatically_Create_Payment2__c = 'true';
         diObj.npsp__Donation_Stage__c = openStage;
         insert diObj;
 

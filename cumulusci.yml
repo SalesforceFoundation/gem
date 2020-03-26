@@ -477,48 +477,9 @@ plans:
             7:
                 task: deploy_trial_config
         checks:
-            - when: "org_config.organization_sobject['SignupCountryIsoCode'] != 'US'"
+            - when: "org_config.organization_sobject['SignupCountryIsoCode'] in ['BR','AR','CL']"
               action: error
               message: "Sorry, this product is not available in your region."
-
-    emea:
-        slug: emea
-        title: Install GEM
-        tier: additional
-        description: Installs the Gift Entry Manager
-        is_listed: False
-        steps:
-            1:
-                flow: install_prod
-            2:
-                task: deploy_post
-                options:
-                    unmanaged: False
-            3:
-                task: deploy_opp_record_types
-                checks:
-                    - when: "tasks.opp_record_types_exist()"
-                      action: skip
-                      message: Skipped because Opportunity record types already exist.
-                options:
-                    unmanaged: False
-            4:
-                task: deploy_installer_config
-                options:
-                    unmanaged: False
-            5:
-                task: deploy_dev_config
-                options:
-                    unmanaged: False
-                checks:
-                    - when: "'hed' in tasks.get_installed_packages()"
-                      action: hide
-            6:
-                task: execute_installer_settings
-                options:
-                    managed: True
-            7:
-                task: deploy_trial_config
 
 orgs:
     scratch:

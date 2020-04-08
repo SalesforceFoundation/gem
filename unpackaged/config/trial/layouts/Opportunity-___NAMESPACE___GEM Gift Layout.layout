@@ -271,12 +271,6 @@
         <relatedList>npe01__OppPayment__c.npe01__Opportunity__c</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>NAME</fields>
-        <fields>abacus__Amount__c</fields>
-        <fields>abacus__Due_Date__c</fields>
-        <relatedList>abacus__Installment__c.abacus__Opportunity__c</relatedList>
-    </relatedLists>
-    <relatedLists>
         <customButtons>npsp__Manage_Allocations</customButtons>
         <excludeButtons>New</excludeButtons>
         <fields>NAME</fields>

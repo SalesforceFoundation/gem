@@ -90,14 +90,6 @@
         <fields>npsp__Percent__c</fields>
         <relatedList>npsp__Allocation__c.npsp__Payment__c</relatedList>
     </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <fields>abacus__Amount__c</fields>
-        <fields>abacus__General_Accounting_Unit__c</fields>
-        <fields>abacus__Due_Date__c</fields>
-        <fields>abacus__Type__c</fields>
-        <relatedList>abacus__Ledger_Entry__c.abacus__Payment__c</relatedList>
-    </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>true</showHighlightsPanel>
     <showInteractionLogPanel>true</showInteractionLogPanel>

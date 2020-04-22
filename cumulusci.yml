@@ -330,36 +330,6 @@ flows:
             2:
                 task: test_data_dev_org
 
-    install_prod:
-      steps:
-          1:
-              task: update_dependencies
-              options:
-                  dependencies:
-                      - github: https://github.com/SalesforceFoundation/Cumulus
-                      - github: https://github.com/SalesforceFoundation/EDA
-              ui_options:
-                  1:
-                      name: NPSP - Account Record Types
-                  2:
-                      name: NPSP - Opportunity Record Types
-                  9:
-                      name: NPSP Config for Salesforce Mobile App
-                  10:
-                      name: EDA - Account Record Types
-                  11:
-                      name: EDA - Contact Key Affiliation Fields
-                  13:
-                      name: EDA - Deploy Case Behavior Record Types
-                  14:
-                      name: EDA - Deploy Course Connection Record Types
-                  15:
-                      name: EDA - Facility Display Name Formula Field
-          2:
-              task: deploy_pre
-          3:
-              task: install_managed
-
     install_regression:
       steps:
           1:
@@ -446,12 +416,37 @@ plans:
         description: Installs the Gift Entry Manager
         steps:
             1:
-                flow: install_prod
+                task: update_dependencies
+                options:
+                    dependencies:
+                        - github: https://github.com/SalesforceFoundation/Cumulus
+                        - github: https://github.com/SalesforceFoundation/EDA
+                ui_options:
+                    1:
+                        name: NPSP - Account Record Types
+                    2:
+                        name: NPSP - Opportunity Record Types
+                    9:
+                        name: NPSP Config for Salesforce Mobile App
+                    10:
+                        name: EDA - Account Record Types
+                    11:
+                        name: EDA - Contact Key Affiliation Fields
+                    13:
+                        name: EDA - Deploy Case Behavior Record Types
+                    14:
+                        name: EDA - Deploy Course Connection Record Types
+                    15:
+                        name: EDA - Facility Display Name Formula Field
             2:
+                task: deploy_pre
+            3:
+                task: install_managed
+            4:
                 task: deploy_post
                 options:
                     unmanaged: False
-            3:
+            5:
                 task: deploy_opp_record_types
                 checks:
                     - when: "tasks.opp_record_types_exist()"
@@ -459,22 +454,22 @@ plans:
                       message: Skipped because Opportunity record types already exist.
                 options:
                     unmanaged: False
-            4:
+            6:
                 task: deploy_installer_config
                 options:
                     unmanaged: False
-            5:
+            7:
                 task: deploy_dev_config
                 options:
                     unmanaged: False
                 checks:
                     - when: "'hed' in tasks.get_installed_packages()"
                       action: hide
-            6:
+            8:
                 task: execute_installer_settings
                 options:
                     managed: True
-            7:
+            9:
                 task: deploy_trial_config
         checks:
             - when: "org_config.organization_sobject['SignupCountryIsoCode'] in ['BR','AR','CL']"

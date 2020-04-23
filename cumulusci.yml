@@ -367,29 +367,6 @@ flows:
           4:
               task: deploy_trial_config
 
-    existing_org:
-      steps:
-          1:
-              flow: install_prod
-          2:
-              task: deploy_post
-              options:
-                  unmanaged: False
-          3:
-              task: deploy_opp_record_types
-              options:
-                  unmanaged: False
-          4:
-              task: deploy_installer_config
-              options:
-                  unmanaged: False
-          5:
-              task: execute_installer_settings
-              options:
-                  managed: True
-          6:
-              task: deploy_trial_config
-
     # Temporary workaround for deployment issue introduced in 1c00b3c
     deploy_packaging:
         steps:

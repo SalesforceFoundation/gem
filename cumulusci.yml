@@ -357,16 +357,14 @@ flows:
           1:
               flow: install_prod
           2:
-              flow: config_managed
-          3:
               task: deploy_dev_config
               options:
                   unmanaged: False
-          4:
+          3:
               task: execute_trial_settings
               options:
                   managed: True
-          5:
+          4:
               task: deploy_trial_config
 
     existing_org:

@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@salesforce/sfdx-lwc-jest": "^0.7.1"
+    "@salesforce/sfdx-lwc-jest": ">=0.7.1"
   },
   "scripts": {
     "test:unit": "lwc-jest",

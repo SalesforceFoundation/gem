@@ -1,7 +1,3 @@
-/**
- * Shared functions used in Jest tests.
- */
-
 global.flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
 global.clearDOM = () => {

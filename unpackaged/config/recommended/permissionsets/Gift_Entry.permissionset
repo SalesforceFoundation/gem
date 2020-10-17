@@ -4,7 +4,6 @@
         <application>%%%NAMESPACE%%%Gift_Entry</application>
         <visible>true</visible>
     </applicationVisibilities>
-    </applicationVisibilities>
     <classAccesses>
         <apexClass>%%%NAMESPACE%%%DynamicFieldDisplayController</apexClass>
         <enabled>true</enabled>

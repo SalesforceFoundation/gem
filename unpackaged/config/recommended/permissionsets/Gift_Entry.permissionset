@@ -4,10 +4,6 @@
         <application>%%%NAMESPACE%%%Gift_Entry</application>
         <visible>true</visible>
     </applicationVisibilities>
-    <applicationVisibilities>
-        <application>hed__HEDA</application>
-        <visible>true</visible>
-    </applicationVisibilities>
     <classAccesses>
         <apexClass>%%%NAMESPACE%%%DynamicFieldDisplayController</apexClass>
         <enabled>true</enabled>

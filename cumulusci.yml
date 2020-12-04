@@ -277,6 +277,7 @@ flows:
                 task: test_data_user_setup
             3:
                 task: execute_install_apex
+                when: "'gem' not in org_config.installed_packages"
 
     test_data_dev_org:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'

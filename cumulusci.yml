@@ -1,3 +1,4 @@
+minimum_cumulusci_version: 3.23.0
 project:
     dependencies:
         - github: https://github.com/SalesforceFoundation/Cumulus
@@ -35,9 +36,7 @@ tasks:
         ui_options:
             name: Deploy Custom NPSP Metadata
         options:
-            namespace_inject: $project_config.project__package__namespace
             path: unpackaged/config/dev
-            unmanaged: True
 
     deploy_dev_config_delete:
         description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
@@ -51,9 +50,7 @@ tasks:
         ui_options:
             name: Deploy Recommended Settings
         options:
-            namespace_inject: $project_config.project__package__namespace
             path: unpackaged/config/recommended
-            unmanaged: True
 
     deploy_opp_record_types:
         description: Deploys GEM Opportunity Record Types.
@@ -61,25 +58,19 @@ tasks:
         ui_options:
             name: Deploy GEM Opportunity Record Types
         options:
-            namespace_inject: $project_config.project__package__namespace
             path: unpackaged/config/opportunity_record_types
-            unmanaged: True
 
     deploy_qa_config:
         description: Deploys QA configuration. Assigns page layouts, compact layouts, and sets tab visibilities.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
-            namespace_inject: $project_config.project__package__namespace
             path: unpackaged/config/qa
-            unmanaged: True
 
     deploy_regression_config:
         description: Deploys regression testing configuration. Assigns page layouts.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
-            namespace_inject: $project_config.project__package__namespace
             path: unpackaged/config/regression
-            unmanaged: False
 
     deploy_trial_config:
         description: Deploys metadata for end user. Assigns page layouts and compact layouts.
@@ -87,9 +78,7 @@ tasks:
         ui_options:
             name: Deploy Trial Metadata
         options:
-            namespace_inject: $project_config.project__package__namespace
             path: unpackaged/config/trial
-            unmanaged: False
 
     execute_install_apex:
         description: Runs most of the install script methods from Post_Install_Script class
@@ -233,33 +222,20 @@ flows:
         steps:
             3:
                 task: deploy_dev_config
-                options:
-                    unmanaged: False
             4:
                 task: deploy_qa_config
-                options:
-                    unmanaged: False
             5:
                 task: deploy_regression_config
-                options:
-                    unmanaged: False
             6:
                 task: execute_trial_settings
-                options:
-                    managed: True
-
 
 
     config_managed:
         steps:
             3:
                 task: deploy_opp_record_types
-                options:
-                    unmanaged: False
             4:
                 task: deploy_installer_config
-                options:
-                    unmanaged: False
 
     ci_feature:
         steps:
@@ -301,6 +277,7 @@ flows:
                 task: test_data_user_setup
             3:
                 task: execute_install_apex
+                when: "'gem' not in org_config.installed_packages"
 
     test_data_dev_org:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'
@@ -338,12 +315,8 @@ flows:
               flow: install_prod
           2:
               task: deploy_dev_config
-              options:
-                  unmanaged: False
           3:
               task: execute_trial_settings
-              options:
-                  managed: True
           4:
               task: deploy_trial_config
 
@@ -363,12 +336,7 @@ flows:
                         - RecordType
                         - CustomObjectTranslation
 
-plans:
-    existing_org:
-        slug: install
-        title: Install GEM
-        tier: primary
-        description: Installs the Gift Entry Manager
+    customer_org:
         steps:
             1:
                 task: update_dependencies
@@ -426,6 +394,15 @@ plans:
                     managed: True
             9:
                 task: deploy_trial_config
+plans:
+    existing_org:
+        slug: install
+        title: Install GEM
+        tier: primary
+        description: Installs the Gift Entry Manager
+        steps:
+            1:
+                flow: customer_org
         checks:
             - when: "org_config.organization_sobject['SignupCountryIsoCode'] in ['BR','AR','CL']"
               action: error

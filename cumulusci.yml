@@ -237,36 +237,39 @@ flows:
             4:
                 task: deploy_installer_config
 
-    ci_feature:
+    ci_feature_npsp:
         steps:
             1:
-                flow: beta_dependencies
+                flow: dependencies
+                options:
+                    update_dependencies:
+                        include_beta: True    
+            2:
+                flow: deploy_unmanaged
+            3:
+                flow: config_apextest                
             4:
                 task: run_tests
                 options:
                     managed: True
                     namespace: npsp
-            5:
-                task: None # github_parent_to_children
 
-    ci_feature_beta_deps:
-        description: When run, the latest version (including betas) of Cumulus and EDA are installed, and all tests are run.
-        steps:
-            5:
-                task: run_tests
-                options:
-                   managed: True
-                   namespace: hed
-
-    dev_org_beta_deps:
-        description: Set up an org as a development environment for unmanaged metadata based on the latest version (including betas).
+    ci_feature_eda:
         steps:
             1:
-                flow: beta_dependencies
+                flow: dependencies
+                options:
+                    update_dependencies:
+                        include_beta: True    
             2:
                 flow: deploy_unmanaged
             3:
-                flow: config_dev
+                flow: config_apextest                
+            4:
+                task: run_tests
+                options:
+                    managed: True
+                    namespace: hed
 
     test_data_setup:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'

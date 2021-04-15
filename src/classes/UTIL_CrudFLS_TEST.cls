@@ -39,12 +39,13 @@
 */
 @isTest
 private with sharing class UTIL_CrudFLS_TEST {
-    private static String RO_USER_NAME = 'adv_readonly_tester@sfdodevs.org';
-    private static String LEAD_LASTNAME = 'testLead';
+    private static final String RO_USER_NAME = 'adv_readonly_tester@sfdodevs.org';
+    private static final String LEAD_LASTNAME = 'testLead';
+    private static final String PROFILE_MINIMUM_ACCESS = 'Minimum Access - Salesforce';
 
     @testSetup
     private static void setup() {
-        UTIL_UnitTestData_TEST.createNewUserWithProfile(RO_USER_NAME, 'Read Only');
+        UTIL_UnitTestData_TEST.createNewUserWithProfile(RO_USER_NAME, PROFILE_MINIMUM_ACCESS);
         Lead ld = new Lead(LastName = LEAD_LASTNAME, Company = 'Test');
         insert ld;
     }

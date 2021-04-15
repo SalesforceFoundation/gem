@@ -3,6 +3,8 @@ project:
     dependencies:
         - github: https://github.com/SalesforceFoundation/Cumulus
         - github: https://github.com/SalesforceFoundation/EDA
+    dependency_resolutions:
+        preproduction: include_beta
     name: Advancement
     package:
         name: Gift Entry Manager

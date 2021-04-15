@@ -364,6 +364,9 @@ flows:
                         name: EDA - Deploy Course Connection Record Types
                     15:
                         name: EDA - Facility Display Name Formula Field
+                    16:
+                        name: EDA - Health Check
+
             2:
                 task: deploy_pre
             3:

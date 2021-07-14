@@ -180,6 +180,22 @@ tasks:
             sobject: Opportunity
             ignored_record_types: NPSP_Default
 
+    run_eda_tests:
+        description: Runs EDA tests
+        class_path: cumulusci.tasks.apex.testrunner.RunApexTests
+        group: Tests
+        options:
+            managed: True
+            namespace: hed
+
+    run_npsp_tests:
+        description: Runs NPSP tests
+        class_path: cumulusci.tasks.apex.testrunner.RunApexTests
+        group: Tests
+        options:
+            managed: True
+            namespace: npsp
+
 flows:
     config_apextest:
         steps:
@@ -242,36 +258,21 @@ flows:
     ci_feature_npsp:
         steps:
             1:
-                flow: dependencies
-                options:
-                    update_dependencies:
-                        include_beta: True    
+                flow: qa_org_2gp
             2:
-                flow: deploy_unmanaged
+                flow: config_apextest
             3:
-                flow: config_apextest                
-            4:
-                task: run_tests
-                options:
-                    managed: True
-                    namespace: npsp
+                task: run_npsp_tests
+
 
     ci_feature_eda:
         steps:
             1:
-                flow: dependencies
-                options:
-                    update_dependencies:
-                        include_beta: True    
+                flow: qa_org_2gp
             2:
-                flow: deploy_unmanaged
+                flow: config_apextest
             3:
-                flow: config_apextest                
-            4:
-                task: run_tests
-                options:
-                    managed: True
-                    namespace: hed
+                task: run_eda_tests
 
     test_data_setup:
         description: 'WARNING: This flow deletes all data first, then loads the complete test data set based on 100 Contacts into the target org.'

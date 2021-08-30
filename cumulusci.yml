@@ -298,9 +298,6 @@ flows:
               flow: None # Workaround for SFDO-Tooling/CumulusCI #1098
           2:
               task: update_dependencies
-              options:
-                  dependencies:
-                      - github: https://github.com/SalesforceFoundation/EDA
           3:
               task: deploy_pre
           4:
@@ -309,8 +306,6 @@ flows:
               task: update_dependencies
               options:
                   include_beta: True
-                  dependencies:
-                      - github: https://github.com/SalesforceFoundation/EDA
           6:
               task: install_managed_beta
 

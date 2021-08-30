@@ -44,7 +44,7 @@ private with sharing class UTIL_CrudFLS_TEST {
 
     @testSetup
     private static void setup() {
-        UTIL_UnitTestData_TEST.createNewUserWithProfile(RO_USER_NAME, 'Read Only');
+        UTIL_UnitTestData_TEST.createNewUserWithProfile(RO_USER_NAME, 'ReadOnly');
         Lead ld = new Lead(LastName = LEAD_LASTNAME, Company = 'Test');
         insert ld;
     }

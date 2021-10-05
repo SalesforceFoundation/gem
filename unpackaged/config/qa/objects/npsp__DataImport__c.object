@@ -13,7 +13,7 @@
     </fields>
     <fields>
         <fullName>Test_Checkbox_Field__c</fullName>
-        <inlineHelpText>Opportunity.Test_Checkbox_Field__c</inlineHelpText>
+        <inlineHelpText>Opportunity.%%%NAMESPACED_ORG%%%Test_Checkbox_Field__c</inlineHelpText>
         <externalId>false</externalId>
         <valueSet>
             <valueSetDefinition>
